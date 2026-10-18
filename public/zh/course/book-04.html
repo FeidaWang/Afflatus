@@ -1,0 +1,120 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="让记录可信：SQL、关系、约束与迁移"><meta name="theme-color" content="#faf9f5"><meta name="referrer" content="strict-origin-when-cross-origin"><title>让记录可信 · AFFLATUS</title><link rel="canonical" href="https://feida.au/zh/course/book-04.html"><link rel="alternate" hreflang="en" href="https://feida.au/en/course/book-04.html"><link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course/book-04.html"><link rel="icon" href="/favicons/course.svg"><link rel="stylesheet" href="/styles/responsive-primitives.css"><link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/styles/shared-header.css"><link rel="stylesheet" href="/styles/course-chrome.css"><link rel="stylesheet" href="/styles/course-lesson.css"><meta property="og:type" content="article"><meta property="og:title" content="让记录可信"><meta property="og:description" content="让记录可信：SQL、关系、约束与迁移"><meta property="og:url" content="https://feida.au/zh/course/book-04.html"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"让记录可信","description":"让记录可信：SQL、关系、约束与迁移","inLanguage":"zh-CN","url":"https://feida.au/zh/course/book-04.html","learningResourceType":"Self-study lesson","isAccessibleForFree":true,"dateModified":"2026-09-27","isPartOf":{"@type":"Course","name":"From vibe coding to a personal FDE","url":"https://feida.au/zh/course.html"}}</script></head><body class="course-reading"><a class="reader-skip" href="#lesson-body">跳到课程正文</a>
+<header id="afflatus-header" data-afflatus-header="">
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/zh/" data-header-path="/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="主导航" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/zh/portfolio.html" data-header-path="/portfolio.html"><span class="af-nav-label" data-en="Portfolio" data-zh="作品集">作品集</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">市场</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/zh/arena.html" data-header-path="/arena.html"><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">股票观察</span></a><a href="/zh/sectors.html" data-header-path="/sectors.html"><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI 产业</span></a><a href="/zh/signal.html" data-header-path="/signal.html"><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">经济动态</span></a></div></div>
+      <a href="/zh/course.html" data-header-path="/course.html" aria-current="page"><span class="af-nav-label" data-en="Learn" data-zh="学习">学习</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">故事</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">更多</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-more"><a href="/zh/horoscope.html" data-header-path="/horoscope.html"><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language="" href="/en/course/book-04.html" hreflang="en" aria-label="Switch to English" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">EN</a>
+    <button type="button" class="af-header-menu" data-header-disclosure="" aria-expanded="false" aria-controls="af-primary-nav" aria-label="打开导航" data-aria-en="Open navigation" data-aria-zh="打开导航"><svg class="af-menu-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M1 2h30M1 12h30M1 22h13"></path></svg></button>
+  </div>
+</header>
+<div class="reading-progress" aria-hidden="true"><i></i></div><main id="mainContent"><div class="reader-breadcrumb"><a href="/zh/course.html#curriculum">课程书架</a><span>/</span><span>自学公开课程</span></div><section class="reader-hero"><div class="reader-hero-copy"><p class="reader-eyebrow">第 04 周 <span>/ 24</span> · 理解基础</p><h1>让记录可信</h1><p class="reader-deck">让记录可信：SQL、关系、约束与迁移</p><div class="reader-meta"><span>10 小时核心 + 2 小时机动</span><span>学习 · 实验 · 独立练习</span></div><a class="reader-start" href="#lesson-body">开始阅读 ↓</a></div><div class="reader-cover"><img src="/assets/course-covers/week-04-zh.svg" width="480" height="492" alt="让记录可信" fetchpriority="high"><span>24 周个人 FDE 实践路线</span></div></section><div class="reader-layout"><aside class="reader-toc"><details open><summary>本页目录</summary><nav aria-label="文章目录"><a href="#section-1" class="toc-level-2">学习内容与理解目标</a><a href="#section-2" class="toc-level-2">学习链接与选读范围</a><a href="#section-3" class="toc-level-2">实战拆解</a><a href="#section-4" class="toc-level-2">交付与验收</a><a href="#section-5" class="toc-level-2">本周可复制的协作提示</a><a href="#section-6" class="toc-level-2">本周来源与核对范围</a></nav></details><a class="toc-back" href="/zh/course.html#curriculum">← 24 周课程</a></aside><article id="lesson-body" class="lesson-prose"><blockquote>
+<p><strong>本周要回答：</strong> 当数据积累到几十条或几百条，你能说明每个数字从哪里来，重复和缺失怎样处理吗？</p>
+</blockquote>
+<p><strong>进入本周前：</strong> 理解对象、数组、输入校验和基本 Git；能够分辨“原始数据”与“计算结果”。</p>
+<figure class="lesson-figure"><div class="figure-top"><span>图 04.1</span><span>本周的思考路径</span></div><ol class="learning-flow"><li><span>01</span><strong>定义数据粒度</strong></li><li><span>02</span><strong>约束写入</strong></li><li><span>03</span><strong>查询与核对</strong></li><li><span>04</span><strong>迁移与恢复</strong></li></ol><figcaption>课程示意图 · 根据本周实验步骤绘制，表示建议流程，不是实测结果。</figcaption></figure><h2 id="section-1">学习内容与理解目标</h2>
+<p>本周以本地 SQLite 或另一种已了解的关系数据库学习数据建模。先定义一行代表什么，再考虑表怎么关联。掌握主键、外键、非空、唯一约束、查询条件、排序、聚合和基本连接；学会区分零、未知和不适用。数据库查询本身不复杂，真正容易出错的是把不同粒度的数据混在一起。</p>
+<p>建议使用两个简单实体：任务与运行记录。一项任务可以有多次运行，失败运行也需要记录。还应理解事务与迁移：多个有关联的写入不能只成功一半；修改字段要有版本和恢复路径。本周只用合成数据，不搭一个云端分析平台。</p>
+<h2 id="section-2">学习链接与选读范围</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>级别</th>
+<th>官方或原始资料</th>
+<th>本周只读这些</th>
+<th align="right">阅读预算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>必读</td>
+<td><a href="https://cs50.harvard.edu/sql/weeks/0/" rel="noreferrer">R18 · CS50 SQL Week 0：Querying</a></td>
+<td>筛选、排序与聚合；逐条核对手算结果。</td>
+<td align="right">45 分钟</td>
+</tr>
+<tr>
+<td>必读</td>
+<td><a href="https://cs50.harvard.edu/sql/weeks/2/" rel="noreferrer">R19 · CS50 SQL Week 2：Designing</a></td>
+<td>主键、外键、约束与表的关系。</td>
+<td align="right">45 分钟</td>
+</tr>
+<tr>
+<td>选读</td>
+<td><a href="https://cs50.harvard.edu/sql/" rel="noreferrer">R17 · Harvard CS50 SQL</a></td>
+<td>Relating 与 Writing 中连接、写入和事务相关内容。</td>
+<td align="right">30 分钟</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-3">实战拆解</h2>
+<ol>
+<li><p>画出两张表，并用一句话解释每张表“一行是什么”。先准备十几条带重复、缺失和失败的合成记录，手算两三个查询答案。</p>
+</li>
+<li><p>写创建表与种子数据脚本，明确约束。插入一条明显无效记录，确认数据库会拒绝，且应用能给出可理解的错误。</p>
+</li>
+<li><p>完成三类查询：找出未完成任务、按类别统计真实运行、计算有数据记录的耗时。统计成功率时保留失败和未知的区别，写明分母。</p>
+</li>
+<li><p>做一次小迁移，例如增加一个状态字段。先备份、迁移、验证、再恢复到备份；不要只记录“迁移命令执行成功”。</p>
+</li>
+<li><p>建立最小数据字典：字段含义、单位、空值含义、来源和保留期限。没有业务用途的字段先删除，而不是为了未来可能有用而全部收集。</p>
+</li>
+</ol>
+<h2 id="section-4">交付与验收</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>本周交付</th>
+<th>怎样确认真的完成</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>schema 与迁移</td>
+<td>约束可实际触发；能恢复一份本地备份。</td>
+</tr>
+<tr>
+<td>三条可核验查询</td>
+<td>结果与合成数据手算一致，连接没有意外把行数翻倍。</td>
+</tr>
+<tr>
+<td>数据字典</td>
+<td>每个指标的粒度、来源、单位和缺失含义明确。</td>
+</tr>
+</tbody></table></div>
+<p><strong>不用代码生成器的练习：</strong> 自己写一条查询：找出“有失败运行、但之后从未成功”的任务；先用几行纸面数据确定答案，再执行。</p>
+<p><strong>隐私与安全检查：</strong> 数据库文件、备份和导出的 CSV 都可能包含敏感信息。公开仓库只放合成种子，不上传真实数据库；网络输入必须通过参数化接口传入查询，不直接拼接 SQL。不要把备份复制到公开静态目录。</p>
+<p><strong>落到日常生活：</strong> 为一个常用工具增加最少量结构化记录，之后能查“哪里经常失败”，而不是收集自己完整的生活轨迹。</p>
+<p><strong>过关或补课判断：</strong> 能解释连接和聚合的分母、能识别重复写入后再继续。把“无数据”显示为零属于尚未过关。</p>
+<h2 id="section-5">本周可复制的协作提示</h2>
+<pre><code class="language-text">请先审查一行数据的含义，再设计最少的关系表与约束。只用合成记录，写三个可以手算核验的查询和一个可回退迁移。不要接云端数据库，不用真实生活或工作记录作种子。
+</code></pre>
+<h2 id="section-6">本周来源与核对范围</h2><p class="source-baseline">来源编号与核对说明沿用课程原文，基线为 2026-09-27。未逐一登录完成外部实验；实施前请核对最新版本与访问条件。</p><ol class="source-list"><li id="R17"><span>R17</span><div><a href="https://cs50.harvard.edu/sql/" rel="noreferrer">Harvard CS50 SQL ↗</a><p>公开目录；查询、关系、设计与写入是主线选读范围。</p></div></li><li id="R18"><span>R18</span><div><a href="https://cs50.harvard.edu/sql/weeks/0/" rel="noreferrer">CS50 SQL Week 0：Querying ↗</a><p>选 SELECT、筛选、排序与聚合。</p></div></li><li id="R19"><span>R19</span><div><a href="https://cs50.harvard.edu/sql/weeks/2/" rel="noreferrer">CS50 SQL Week 2：Designing ↗</a><p>选键、约束、关系和设计取舍。</p></div></li></ol></article></div><nav class="reader-adjacent" aria-label="前后课程"><a href="book-03.html"><span>上一周 · 03</span><strong>学会接管故障 ←</strong></a><a href="book-05.html"><span>下一周 · 05</span><strong>从程序到页面 →</strong></a></nav><nav class="reader-support" aria-label="课程资料"><a href="guide.html">课程导读 ↗</a><a href="handbook.html">手册与七张模板 ↗</a><a href="resources.html">78 项来源索引 ↗</a><a href="/en/course/book-04.html" hreflang="en">Read in English ↗</a></nav></main><footer class="pa-footer">
+  <div class="pa-footer-inner">
+    <a class="pa-footer-brand" href="/zh/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></a>
+    <nav class="pa-footer-pages" aria-label="探索站点" data-aria-en="Explore the site" data-aria-zh="探索站点">
+      <a href="/zh/portfolio.html" data-en="Portfolio" data-zh="作品集">作品集</a>
+      <a href="/zh/arena.html" data-en="Arena" data-zh="竞技场">竞技场</a>
+      <a href="/zh/sectors.html" data-en="AI industry" data-zh="AI 产业">AI 产业</a>
+      <a href="/zh/signal.html" data-en="Economic updates" data-zh="经济动态">经济动态</a>
+      <a href="/zh/course.html" data-en="Learn" data-zh="学习">学习</a>
+      <a href="/zh/serial.html" data-en="Stories" data-zh="故事">故事</a>
+      <a href="/zh/horoscope.html" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</a>
+    </nav>
+    <div class="pa-footer-personal">
+      <span class="pa-footer-copyright">© 2026 RSI AI</span>
+      <nav class="pa-footer-socials" aria-label="社交主页" data-aria-en="Social profiles" data-aria-zh="社交主页">
+        <a href="https://www.linkedin.com/in/feida-wang/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24ZM96,176a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0ZM88,96a12,12,0,1,1,12-12A12,12,0,0,1,88,96Zm96,80a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140Z"></path></svg>
+        </a>
+        <a href="https://github.com/FeidaWang" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,0-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"></path></svg>
+        </a>
+        <a href="https://www.zhihu.com/people/ye-piao-xue" target="_blank" rel="noopener noreferrer" aria-label="知乎" data-i18n-static-aria="">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.721 0C2.251 0 0 2.25 0 5.719V18.28C0 21.751 2.252 24 5.721 24h12.56C21.751 24 24 21.75 24 18.281V5.72C24 2.249 21.75 0 18.281 0zm1.964 4.078c-.271.73-.5 1.434-.68 2.11h4.587c.545-.006.445 1.168.445 1.171H9.384a58.104 58.104 0 01-.112 3.797h2.712c.388.023.393 1.251.393 1.266H9.183a9.223 9.223 0 01-.408 2.102l.757-.604c.452.456 1.512 1.712 1.906 2.177.473.681.063 2.081.063 2.081l-2.794-3.382c-.653 2.518-1.845 3.607-1.845 3.607-.523.468-1.58.82-2.64.516 2.218-1.73 3.44-3.917 3.667-6.497H4.491c0-.015.197-1.243.806-1.266h2.71c.024-.32.086-3.254.086-3.797H6.598c-.136.406-.158.447-.268.753-.594 1.095-1.603 1.122-1.907 1.155.906-1.821 1.416-3.6 1.591-4.064.425-1.124 1.671-1.125 1.671-1.125zM13.078 6h6.377v11.33h-2.573l-2.184 1.373-.401-1.373h-1.219zm1.313 1.219v8.86h.623l.263.937 1.455-.938h1.456v-8.86z"></path></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer><script type="module" src="/lib/course-reader.js"></script></body></html>

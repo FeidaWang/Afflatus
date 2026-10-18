@@ -1,0 +1,120 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="建立可信经验：AI 任务账本、用量估计与不确定性"><meta name="theme-color" content="#faf9f5"><meta name="referrer" content="strict-origin-when-cross-origin"><title>可信的任务账本 · AFFLATUS</title><link rel="canonical" href="https://feida.au/zh/course/book-19.html"><link rel="alternate" hreflang="en" href="https://feida.au/en/course/book-19.html"><link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course/book-19.html"><link rel="icon" href="/favicons/course.svg"><link rel="stylesheet" href="/styles/responsive-primitives.css"><link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/styles/shared-header.css"><link rel="stylesheet" href="/styles/course-chrome.css"><link rel="stylesheet" href="/styles/course-lesson.css"><meta property="og:type" content="article"><meta property="og:title" content="可信的任务账本"><meta property="og:description" content="建立可信经验：AI 任务账本、用量估计与不确定性"><meta property="og:url" content="https://feida.au/zh/course/book-19.html"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"可信的任务账本","description":"建立可信经验：AI 任务账本、用量估计与不确定性","inLanguage":"zh-CN","url":"https://feida.au/zh/course/book-19.html","learningResourceType":"Self-study lesson","isAccessibleForFree":true,"dateModified":"2026-09-27","isPartOf":{"@type":"Course","name":"From vibe coding to a personal FDE","url":"https://feida.au/zh/course.html"}}</script></head><body class="course-reading"><a class="reader-skip" href="#lesson-body">跳到课程正文</a>
+<header id="afflatus-header" data-afflatus-header="">
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/zh/" data-header-path="/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="主导航" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/zh/portfolio.html" data-header-path="/portfolio.html"><span class="af-nav-label" data-en="Portfolio" data-zh="作品集">作品集</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">市场</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/zh/arena.html" data-header-path="/arena.html"><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">股票观察</span></a><a href="/zh/sectors.html" data-header-path="/sectors.html"><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI 产业</span></a><a href="/zh/signal.html" data-header-path="/signal.html"><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">经济动态</span></a></div></div>
+      <a href="/zh/course.html" data-header-path="/course.html" aria-current="page"><span class="af-nav-label" data-en="Learn" data-zh="学习">学习</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">故事</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">更多</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-more"><a href="/zh/horoscope.html" data-header-path="/horoscope.html"><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language="" href="/en/course/book-19.html" hreflang="en" aria-label="Switch to English" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">EN</a>
+    <button type="button" class="af-header-menu" data-header-disclosure="" aria-expanded="false" aria-controls="af-primary-nav" aria-label="打开导航" data-aria-en="Open navigation" data-aria-zh="打开导航"><svg class="af-menu-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M1 2h30M1 12h30M1 22h13"></path></svg></button>
+  </div>
+</header>
+<div class="reading-progress" aria-hidden="true"><i></i></div><main id="mainContent"><div class="reader-breadcrumb"><a href="/zh/course.html#curriculum">课程书架</a><span>/</span><span>自学公开课程</span></div><section class="reader-hero"><div class="reader-hero-copy"><p class="reader-eyebrow">第 19 周 <span>/ 24</span> · 掌握改变的边界</p><h1>可信的任务账本</h1><p class="reader-deck">建立可信经验：AI 任务账本、用量估计与不确定性</p><div class="reader-meta"><span>10 小时核心 + 2 小时机动</span><span>学习 · 实验 · 独立练习</span></div><a class="reader-start" href="#lesson-body">开始阅读 ↓</a></div><div class="reader-cover"><img src="/assets/course-covers/week-19-zh.svg" width="480" height="492" alt="可信的任务账本" fetchpriority="high"><span>24 周个人 FDE 实践路线</span></div></section><div class="reader-layout"><aside class="reader-toc"><details open><summary>本页目录</summary><nav aria-label="文章目录"><a href="#section-1" class="toc-level-2">学习内容与理解目标</a><a href="#section-2" class="toc-level-2">学习链接与选读范围</a><a href="#section-3" class="toc-level-2">实战拆解</a><a href="#section-4" class="toc-level-2">交付与验收</a><a href="#section-5" class="toc-level-2">本周可复制的协作提示</a><a href="#section-6" class="toc-level-2">本周来源与核对范围</a></nav></details><a class="toc-back" href="/zh/course.html#curriculum">← 24 周课程</a></aside><article id="lesson-body" class="lesson-prose"><blockquote>
+<p><strong>本周要回答：</strong> 你推荐某个模型或强度，是因为它真的在同类任务上更合适，还是因为最近一次表现令人印象深刻？</p>
+</blockquote>
+<p><strong>进入本周前：</strong> 至少有少量真实运行记录，能区分任务、尝试、结果与人工复核；缺少数据也可以开始，但不能假装已经校准。</p>
+<figure class="lesson-figure"><div class="figure-top"><span>图 19.1</span><span>本周的思考路径</span></div><ol class="learning-flow"><li><span>01</span><strong>记录尝试</strong></li><li><span>02</span><strong>标注来源</strong></li><li><span>03</span><strong>比较同类任务</strong></li><li><span>04</span><strong>建议或不推荐</strong></li></ol><figcaption>课程示意图 · 根据本周实验步骤绘制，表示建议流程，不是实测结果。</figcaption></figure><h2 id="section-1">学习内容与理解目标</h2>
+<p>启动 P3——AI 任务与成本账本。每条记录只保留必要字段：任务类别、运行环境、真实模型或工具版本、可获得的推理配置、尝试次数、主动耗时、结果与用量来源。未知记为 null 或明确状态，不用零替代。原始提示与个人资料默认不收集。</p>
+<p>比较模型时，任务难度、工具权限、上下文长度和重试策略都可能影响结果。中位数可描述典型情况，较差情形和失败比例也必须看；小样本只能支持局部观察。某个固定样本数不是“校准完成”的通行证。订阅额度百分比也不是天然可换算为统一 token 数，无法从官方或实测获得就标估计或不可得。</p>
+<h2 id="section-2">学习链接与选读范围</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>级别</th>
+<th>官方或原始资料</th>
+<th>本周只读这些</th>
+<th align="right">阅读预算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>必读复习</td>
+<td><a href="https://cs50.harvard.edu/sql/" rel="noreferrer">R17 · Harvard CS50 SQL</a></td>
+<td>聚合、筛选与查询；保持任务粒度和尝试粒度分开。</td>
+<td align="right">35 分钟</td>
+</tr>
+<tr>
+<td>必读复习</td>
+<td><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" rel="noreferrer">R42 · Anthropic：Demystifying evals for AI agents</a></td>
+<td>多次尝试、结果与回归记录的用途。</td>
+<td align="right">35 分钟</td>
+</tr>
+<tr>
+<td>安全选读</td>
+<td><a href="https://opentelemetry.io/docs/security/handling-sensitive-data/" rel="noreferrer">R65 · OpenTelemetry：Handling sensitive data</a></td>
+<td>用量与追踪字段最小化。</td>
+<td align="right">30 分钟</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-3">实战拆解</h2>
+<ol>
+<li><p>定义任务账本的数据契约，把“模型自述成功”和“本人或检查器确认成功”分开。包含失败、超时、取消与未知，不只录入令人满意的任务。</p>
+</li>
+<li><p>对官方显示、直接测量、估算与未知分别打标签。拿不到准确调用费用或上下文长度时，保留来源与限制，不从界面猜一个精确数字。</p>
+</li>
+<li><p>只在相近任务组内计算耗时、重试与完成情况。先检查重复记录和异常缺失，再画或计算汇总；数据太少时输出“证据不足”。</p>
+</li>
+<li><p>设计一个简单建议规则，例如优先使用在该类低风险任务中已有可接受结果的常规档，遇到指定失败再升级。规则先人工审阅，不让模型根据一次结果不断换档。</p>
+</li>
+<li><p>将 P3 用于下一次真实开发会话的选择与预算记录。只记录必要元数据，展示统计改进可以先不增加一次额外 LLM 调用。</p>
+</li>
+</ol>
+<h2 id="section-4">交付与验收</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>本周交付</th>
+<th>怎样确认真的完成</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可信任务账本</td>
+<td>任务与尝试清楚区分；结果和用量的来源可追溯。</td>
+</tr>
+<tr>
+<td>带限制的汇总</td>
+<td>相近任务可比较，未知与失败没有被吞掉。</td>
+</tr>
+<tr>
+<td>一个局部建议</td>
+<td>明确适用范围；数据不足时保持不推荐，而非制造精确排行榜。</td>
+</tr>
+</tbody></table></div>
+<p><strong>不用代码生成器的练习：</strong> 自己检查一组包含重复与缺失的合成记录，解释为什么直接取平均会误导，再写正确查询。</p>
+<p><strong>隐私与安全检查：</strong> 不要读取不透明内部数据库、抓取会话凭据或绕过产品接口来获得额度。只使用官方提供、本人有权导出的信息。对任务名称和文件路径也做最小化；公开聚合仍可能暴露个人活动，不自动发布。</p>
+<p><strong>落到日常生活：</strong> 下次开工前按任务类别选择已有验证的配置，而不是默认最大强度。课后看它是否降低返工和切换成本，不把用完套餐当成收益。</p>
+<p><strong>过关或补课判断：</strong> 能够把实测、估算和未知分开，就完成 RSI 的记录层。样本不足是合格结论，不为凑数量大量制造无意义任务。</p>
+<h2 id="section-5">本周可复制的协作提示</h2>
+<pre><code class="language-text">请以隐私最小化的元数据建立任务账本，区分任务、尝试、结果和用量来源。只比较相近任务，未知不填零，不伪造模型或额度。先用本地统计提出有限建议，不新增自我反思调用。
+</code></pre>
+<h2 id="section-6">本周来源与核对范围</h2><p class="source-baseline">来源编号与核对说明沿用课程原文，基线为 2026-09-27。未逐一登录完成外部实验；实施前请核对最新版本与访问条件。</p><ol class="source-list"><li id="R17"><span>R17</span><div><a href="https://cs50.harvard.edu/sql/" rel="noreferrer">Harvard CS50 SQL ↗</a><p>公开目录；查询、关系、设计与写入是主线选读范围。</p></div></li><li id="R42"><span>R42</span><div><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" rel="noreferrer">Anthropic：Demystifying evals for AI agents ↗</a><p>2026-01-09；用于结果评测与过程检查的思路。</p></div></li><li id="R65"><span>R65</span><div><a href="https://opentelemetry.io/docs/security/handling-sensitive-data/" rel="noreferrer">OpenTelemetry：Handling sensitive data ↗</a><p>遥测最小化、处理与过滤；不默认上传全部提示和输出。</p></div></li></ol></article></div><nav class="reader-adjacent" aria-label="前后课程"><a href="book-18.html"><span>上一周 · 18</span><strong>照看运行中的系统 ←</strong></a><a href="book-20.html"><span>下一周 · 20</span><strong>改进，也可以拒绝 →</strong></a></nav><nav class="reader-support" aria-label="课程资料"><a href="guide.html">课程导读 ↗</a><a href="handbook.html">手册与七张模板 ↗</a><a href="resources.html">78 项来源索引 ↗</a><a href="/en/course/book-19.html" hreflang="en">Read in English ↗</a></nav></main><footer class="pa-footer">
+  <div class="pa-footer-inner">
+    <a class="pa-footer-brand" href="/zh/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></a>
+    <nav class="pa-footer-pages" aria-label="探索站点" data-aria-en="Explore the site" data-aria-zh="探索站点">
+      <a href="/zh/portfolio.html" data-en="Portfolio" data-zh="作品集">作品集</a>
+      <a href="/zh/arena.html" data-en="Arena" data-zh="竞技场">竞技场</a>
+      <a href="/zh/sectors.html" data-en="AI industry" data-zh="AI 产业">AI 产业</a>
+      <a href="/zh/signal.html" data-en="Economic updates" data-zh="经济动态">经济动态</a>
+      <a href="/zh/course.html" data-en="Learn" data-zh="学习">学习</a>
+      <a href="/zh/serial.html" data-en="Stories" data-zh="故事">故事</a>
+      <a href="/zh/horoscope.html" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</a>
+    </nav>
+    <div class="pa-footer-personal">
+      <span class="pa-footer-copyright">© 2026 RSI AI</span>
+      <nav class="pa-footer-socials" aria-label="社交主页" data-aria-en="Social profiles" data-aria-zh="社交主页">
+        <a href="https://www.linkedin.com/in/feida-wang/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24ZM96,176a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0ZM88,96a12,12,0,1,1,12-12A12,12,0,0,1,88,96Zm96,80a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140Z"></path></svg>
+        </a>
+        <a href="https://github.com/FeidaWang" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,0-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"></path></svg>
+        </a>
+        <a href="https://www.zhihu.com/people/ye-piao-xue" target="_blank" rel="noopener noreferrer" aria-label="知乎" data-i18n-static-aria="">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.721 0C2.251 0 0 2.25 0 5.719V18.28C0 21.751 2.252 24 5.721 24h12.56C21.751 24 24 21.75 24 18.281V5.72C24 2.249 21.75 0 18.281 0zm1.964 4.078c-.271.73-.5 1.434-.68 2.11h4.587c.545-.006.445 1.168.445 1.171H9.384a58.104 58.104 0 01-.112 3.797h2.712c.388.023.393 1.251.393 1.266H9.183a9.223 9.223 0 01-.408 2.102l.757-.604c.452.456 1.512 1.712 1.906 2.177.473.681.063 2.081.063 2.081l-2.794-3.382c-.653 2.518-1.845 3.607-1.845 3.607-.523.468-1.58.82-2.64.516 2.218-1.73 3.44-3.917 3.667-6.497H4.491c0-.015.197-1.243.806-1.266h2.71c.024-.32.086-3.254.086-3.797H6.598c-.136.406-.158.447-.268.753-.594 1.095-1.603 1.122-1.907 1.155.906-1.821 1.416-3.6 1.591-4.064.425-1.124 1.671-1.125 1.671-1.125zM13.078 6h6.377v11.33h-2.573l-2.184 1.373-.401-1.373h-1.219zm1.313 1.219v8.86h.623l.263.937 1.455-.938h1.456v-8.86z"></path></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer><script type="module" src="/lib/course-reader.js"></script></body></html>
