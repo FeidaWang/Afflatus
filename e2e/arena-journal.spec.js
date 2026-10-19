@@ -50,7 +50,7 @@ test('shows provider quotes and daily candles instead of sample data', async ({ 
   await expect(page.locator('.periods button')).toHaveText(['M', '3M', 'YTD', 'Y', 'MAX']);
   await expect(page.locator('.index-strip')).toHaveCount(0);
   await expect(page.locator('body')).not.toContainText(/fictional|sample data|Oct 2, 16:00/i);
-  await expect(page).toHaveTitle('US stock journal · AFFLATUS');
+  await expect(page).toHaveTitle('Stock Journal — US stocks of the AI era · AFFLATUS');
 
   expect(requests.filter((path) => path.startsWith('/api/vibe-'))).toEqual([]);
   expect(requests.filter((path) => /paper-grid\.png|pigment-wash\.png/.test(path))).toEqual([]);

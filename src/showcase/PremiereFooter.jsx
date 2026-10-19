@@ -1,14 +1,7 @@
-import { navigationHref } from '../lib/siteNavigation.js';
+import { navigationHref, navigationLabel } from '../lib/siteNavigation.js';
 
-const pages = [
-  ['/portfolio.html', 'Portfolio', '作品集'],
-  ['/arena.html', 'Arena', '竞技场'],
-  ['/sectors.html', 'AI industry', 'AI 产业'],
-  ['/signal.html', 'Economic updates', '经济动态'],
-  ['/course.html', 'Learn', '学习'],
-  ['/serial.html', 'Stories', '故事'],
-  ['/horoscope.html', 'Astrology for fun', '趣味占星'],
-];
+const pages = ['/portfolio.html', '/arena.html', '/sectors.html', '/signal.html', '/course.html', '/serial.html', '/horoscope.html']
+  .map(path => { const { en, zh } = navigationLabel(path); return [path, en, zh]; });
 // Same destinations and icon artwork as the course footer.
 const socials = [
   {

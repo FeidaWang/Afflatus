@@ -8,9 +8,6 @@
 .observatory-page button:disabled{opacity:.45;cursor:default}
 .observatory-page :focus-visible{outline:2px solid var(--sage-deep);outline-offset:4px}
 .observatory-page #afflatus-header{--af-paper:var(--bg);--af-ink:var(--text);--af-menu-paper:var(--card);color-scheme:inherit;border-bottom:1px solid var(--line)}
-.observatory-page #afflatus-header .af-brand-full{display:block;opacity:1}
-.observatory-page #afflatus-header .af-brand-compact{display:none}
-.observatory-page #afflatus-header .af-wordmark{flex:0 0 124px;overflow:visible}
 .observatory-page #afflatus-header .af-header-inner{gap:12px}
 .observatory-page #afflatus-header .af-header-language{border:1px solid var(--line)}
 .observatory-page .wrap{max-width:800px;padding:22px 24px calc(116px + env(safe-area-inset-bottom,0px))}

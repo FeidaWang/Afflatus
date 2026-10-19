@@ -18,8 +18,6 @@ button img{flex:none}
 body[data-reader-theme="night"] button img,body[data-reader-theme="night"] .book-hotspot img{filter:invert(1)}
 .novels-page #afflatus-header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--rule);position:relative}
 .novels-page #afflatus-header .af-wordmark,.novels-page #afflatus-header button{color:var(--ink)}
-.novels-page #afflatus-header .af-brand-full{display:inline}
-.novels-page #afflatus-header .af-brand-compact{display:none}
 .wrap{max-width:840px;margin:0 auto;padding:24px 24px calc(36px + var(--safe-b))}
 .muted{color:var(--muted);font-size:13px}
 .library-intro{margin:0 0 26px}
@@ -149,8 +147,6 @@ body:not(.reader-enhanced) .book-stage{height:auto}body:not(.reader-enhanced) .b
 @media(prefers-reduced-motion:reduce){.toc-drawer,.toc-backdrop,.toast{transition:none}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none}}
 body.novels-page:has(> #afflatus-header){padding-top:0}
 .novels-page #afflatus-header{--af-paper:var(--paper);--af-ink:var(--ink);--af-menu-paper:var(--surface)}
-.novels-page #afflatus-header .af-brand-full{opacity:1}
-.novels-page #afflatus-header .af-wordmark{flex:0 0 124px;overflow:visible}
 .novels-page #afflatus-header .af-header-inner{gap:12px}
 .toc-drawer{z-index:10002}.toc-backdrop{z-index:10001}
 .reader-enhanced .reader-return{display:none}

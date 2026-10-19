@@ -1,11 +1,11 @@
 import { ArrowRight } from '@phosphor-icons/react';
-import { navigationHref } from '../lib/siteNavigation.js';
+import { navigationHref, navigationLabel } from '../lib/siteNavigation.js';
 import { getLocale } from '../lib/localeStore.js';
 import { FilmPlayer } from './FilmPlayer.jsx';
 import { PremiereFooter } from './PremiereFooter.jsx';
 
 const work = [
-  { href: '/sectors.html', en: 'AI industry atlas', zh: 'AI 产业图谱' },
+  { href: '/sectors.html', ...navigationLabel('/sectors.html') },
   { href: '/course.html', en: 'FDE 0→1', zh: 'FDE 0→1' },
   { href: '/serial.html', en: 'A library of stories', zh: '原创故事书架' },
 ];
@@ -44,7 +44,7 @@ export function App({ language: initialLanguage } = {}) {
       </section>
       <section className="destinations section-shell" id="destinations" aria-labelledby="destinations-title">
         <h2 id="destinations-title">{zh ? '找到你的入口。' : 'Find your way in.'}</h2>
-        <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{[['/serial.html', 'Stories', '故事'], ['/portfolio.html', 'Portfolio', '作品集'], ['/course.html', 'Learn', '学习'], ['/arena.html', 'Markets', '市场']].map(([href, en, cn]) => <SiteLink key={href} href={href} language={language}>{zh ? cn : en}</SiteLink>)}</nav>
+        <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{['/serial.html', '/portfolio.html', '/course.html', '/arena.html'].map(href => <SiteLink key={href} href={href} language={language}>{navigationLabel(href)[language]}</SiteLink>)}</nav>
       </section>
     </main>
     <PremiereFooter language={language} />

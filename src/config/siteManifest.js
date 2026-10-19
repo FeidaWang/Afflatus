@@ -65,15 +65,15 @@ export const ROUTE_SEO = Object.freeze({
   arena: {
     social: {
       background: 'assets/og-backgrounds/arena.jpg',
-      eyebrow: { en: 'US STOCK JOURNAL', zh: '美股看板' },
-      title: { en: 'Arena', zh: '竞技场' },
+      eyebrow: { en: 'AI-ERA US STOCKS', zh: 'AI 时代美股' },
+      title: { en: 'Stock Journal', zh: '美股看板' },
       subtitle: {
         en: 'Latest quotes and daily charts for AI-era US companies.',
         zh: 'AI 时代美股公司的最新报价与日线走势。',
       },
       alt: {
-        en: 'Arena market intelligence data lanes',
-        zh: '竞技场市场情报数据轨道',
+        en: 'Stock Journal market data lanes',
+        zh: '美股看板市场数据轨道',
       },
       images: { en: routeOgImage('arena', 'en'), zh: routeOgImage('arena', 'zh') },
     },
@@ -112,14 +112,14 @@ export const ROUTE_SEO = Object.freeze({
     social: {
       background: 'assets/og-backgrounds/signal.jpg',
       eyebrow: { en: 'MACRO DOSSIER', zh: '宏观档案' },
-      title: { en: 'Federal Reserve watch', zh: '美联储观察' },
+      title: { en: 'Fed Watch', zh: '美联储观察' },
       subtitle: {
         en: 'Decision-relevant macro signals with explicit provenance.',
         zh: '带明示来源的决策型宏观信号。',
       },
       alt: {
-        en: 'Signal macroeconomic research dossier',
-        zh: 'Signal 宏观经济研究档案',
+        en: 'Fed Watch macroeconomic research dossier',
+        zh: '美联储观察宏观经济研究档案',
       },
       images: { en: routeOgImage('signal', 'en'), zh: routeOgImage('signal', 'zh') },
     },
@@ -222,7 +222,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 15, group: null, en: 'Portfolio', zh: '作品集' },
+    nav: { order: 15, group: null, en: 'Portfolio', zh: '投资组合' },
     themeColor: '#05070b',
     schema: ['ProfilePage'],
     seo: ROUTE_SEO.portfolio,
@@ -248,21 +248,21 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 20, group: null, en: 'Arena', zh: '竞技场' },
+    nav: { order: 20, group: null, en: 'Stock Journal', zh: '美股看板' },
     themeColor: '#05070e',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.arena,
     capabilities: ['live-data', 'canvas', 'svg-viz', 'admin-session'],
     metadata: {
-      title: "US stock journal · AFFLATUS",
+      title: "Stock Journal — US stocks of the AI era · AFFLATUS",
       description: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       canonical: 'https://feida.au/en/arena.html',
-      ogTitle: "US stock journal · AFFLATUS",
+      ogTitle: "Stock Journal — US stocks of the AI era · AFFLATUS",
       ogDescription: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       ogImage: ROUTE_SEO.arena.social.images.en,
     },
     locales: {
-      en: {"title": "US stock journal · AFFLATUS", "description": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice."},
+      en: {"title": "Stock Journal — US stocks of the AI era · AFFLATUS", "description": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice."},
       zh: {"title": "美股看板 · AFFLATUS", "description": "关注 AI 时代的美股公司：Finnhub 最新报价与 Twelve Data 日线走势。报价可能有延迟，不构成投资建议。"},
     },
   },
@@ -274,7 +274,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 30, group: null, en: 'Sectors', zh: '板块' },
+    nav: { order: 30, group: null, en: 'AI Observatory', zh: 'AI 观察站' },
     themeColor: '#e8e6dc',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.sectors,
@@ -300,22 +300,22 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 40, group: null, en: 'Signal', zh: '信号' },
+    nav: { order: 40, group: null, en: 'Fed Watch', zh: '美联储观察' },
     themeColor: '#faf9f5',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.signal,
     capabilities: ['data-feed'],
     metadata: {
-      title: "Economic updates — Federal Reserve watch · AFFLATUS",
+      title: "Fed Watch — Federal Reserve, fiscal policy and AI · AFFLATUS",
       description: "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
       canonical: 'https://feida.au/en/signal.html',
-      ogTitle: "Economic updates — Federal Reserve watch · AFFLATUS",
+      ogTitle: "Fed Watch — Federal Reserve, fiscal policy and AI · AFFLATUS",
       ogDescription: "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
       ogImage: ROUTE_SEO.signal.social.images.en,
     },
     locales: {
-      en: {"title": "Economic updates — Federal Reserve watch · AFFLATUS", "description": "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources."},
-      zh: {"title": "经济动态 — 美联储观察 · AFFLATUS", "description": "探索2026年1月起的美联储决议、美国财政政策和AI产业传导，查看注明日期的一手来源。"},
+      en: {"title": "Fed Watch — Federal Reserve, fiscal policy and AI · AFFLATUS", "description": "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources."},
+      zh: {"title": "美联储观察 — 货币、财政与 AI · AFFLATUS", "description": "探索2026年1月起的美联储决议、美国财政政策和AI产业传导，查看注明日期的一手来源。"},
     },
   },
   {
@@ -326,7 +326,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 60, group: 'labs', en: 'Horoscope', zh: '观星' },
+    nav: { order: 60, group: 'labs', en: 'Astrology for fun', zh: '趣味占星' },
     themeColor: '#202320',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.horoscope,
@@ -353,7 +353,7 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'zh',
     publishedLocales: ['zh'],
-    nav: { order: 70, group: 'labs', en: 'Novels', zh: '小说' },
+    nav: { order: 70, group: 'labs', en: 'Stories', zh: '故事' },
     themeColor: '#f4f0e7',
     schema: ['Book', 'CreativeWorkSeries'],
     seo: ROUTE_SEO.serial,
@@ -387,16 +387,16 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.course,
     capabilities: ['learning-map'],
     metadata: {
-      title: "Learn to build useful tools with AI · AFFLATUS",
+      title: "Course — Learn to build useful tools with AI · AFFLATUS",
       description: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
       canonical: 'https://feida.au/en/course.html',
-      ogTitle: "Learn to build useful tools with AI · AFFLATUS",
+      ogTitle: "Course — Learn to build useful tools with AI · AFFLATUS",
       ogDescription: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
       ogImage: ROUTE_SEO.course.social.images.en,
     },
     locales: {
-      en: {"title": "Learn to build useful tools with AI · AFFLATUS", "description": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them."},
-      zh: {"title": "一步步，把 AI 做成能用的工具 · AFFLATUS", "description": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"},
+      en: {"title": "Course — Learn to build useful tools with AI · AFFLATUS", "description": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them."},
+      zh: {"title": "课程 — 一步步，把 AI 做成能用的工具 · AFFLATUS", "description": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"},
     },
   },
   {
@@ -441,26 +441,27 @@ export const NAV_ROUTES = Object.freeze(
     })),
 );
 
-// Homepage labels and grouping live with route metadata; URLs derive from NAV_ROUTES.
+// Homepage grouping lives with route metadata; URLs and route labels derive from NAV_ROUTES.
+// Only anchored sub-destinations carry their own label.
 export const HOME_NAV_GROUPS = Object.freeze([
   { id: 'markets', label: { en: 'Markets', zh: '市场' }, items: [
-    { routeId: 'signal', label: { en: 'Federal Reserve watch', zh: '美联储观察' } },
+    { routeId: 'signal' },
     { routeId: 'signal', hash: '#treasuryYieldBoard', label: { en: '10Y / 30Y yield monitor', zh: '10年 / 30年期收益率' } },
     { routeId: 'portfolio', hash: '#fy2026Performance', label: { en: 'FY25/26 flight record', zh: 'FY25/26 飞行记录' } },
   ] },
   { id: 'lab', label: { en: 'Lab', zh: '实验室' }, items: [
-    { routeId: 'arena', label: { en: 'US stock journal', zh: '美股看板' } },
-    { routeId: 'sectors', label: { en: 'US–China AI model war', zh: '中美 AI 模型战争' } },
-    { routeId: 'horoscope', label: { en: 'Local-first astrology', zh: '本地优先星盘' } },
+    { routeId: 'arena' },
+    { routeId: 'sectors' },
+    { routeId: 'horoscope' },
   ] },
   { id: 'writing', label: { en: 'Writing', zh: '写作' }, items: [
-    { routeId: 'course', label: { en: 'Forward Deployed Engineer 0→1', zh: '前沿部署工程师 0→1' } },
-    { routeId: 'serial', label: { en: 'Original novels', zh: '原创小说' } },
+    { routeId: 'course' },
+    { routeId: 'serial' },
   ] },
 ].map(group => Object.freeze({ ...group, items: group.items.map(item => {
   const route = NAV_ROUTES.find(route => route.id === item.routeId);
   if (!route) throw new Error(`Unknown navigation route: ${item.routeId}`);
-  return Object.freeze({ ...item, href: `${route.path}${item.hash || ''}` });
+  return Object.freeze({ ...item, label: item.label || { en: route.en, zh: route.zh }, href: `${route.path}${item.hash || ''}` });
 }) })));
 
 export const BUILD_ROUTES = Object.freeze(

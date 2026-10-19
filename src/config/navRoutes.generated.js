@@ -12,38 +12,38 @@ export const NAV_ROUTES = Object.freeze([
     "id": "portfolio",
     "path": "/portfolio.html",
     "en": "Portfolio",
-    "zh": "作品集"
+    "zh": "投资组合"
   },
   {
     "id": "arena",
     "path": "/arena.html",
-    "en": "Arena",
-    "zh": "竞技场"
+    "en": "Stock Journal",
+    "zh": "美股看板"
   },
   {
     "id": "sectors",
     "path": "/sectors.html",
-    "en": "Sectors",
-    "zh": "板块"
+    "en": "AI Observatory",
+    "zh": "AI 观察站"
   },
   {
     "id": "signal",
     "path": "/signal.html",
-    "en": "Signal",
-    "zh": "信号"
+    "en": "Fed Watch",
+    "zh": "美联储观察"
   },
   {
     "id": "horoscope",
     "path": "/horoscope.html",
-    "en": "Horoscope",
-    "zh": "观星",
+    "en": "Astrology for fun",
+    "zh": "趣味占星",
     "group": "labs"
   },
   {
     "id": "serial",
     "path": "/serial.html",
-    "en": "Novels",
-    "zh": "小说",
+    "en": "Stories",
+    "zh": "故事",
     "publishedLocales": [
       "zh"
     ],
@@ -69,7 +69,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
       {
         "routeId": "signal",
         "label": {
-          "en": "Federal Reserve watch",
+          "en": "Fed Watch",
           "zh": "美联储观察"
         },
         "href": "/signal.html"
@@ -104,7 +104,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
       {
         "routeId": "arena",
         "label": {
-          "en": "US stock journal",
+          "en": "Stock Journal",
           "zh": "美股看板"
         },
         "href": "/arena.html"
@@ -112,16 +112,16 @@ export const HOME_NAV_GROUPS = Object.freeze([
       {
         "routeId": "sectors",
         "label": {
-          "en": "US–China AI model war",
-          "zh": "中美 AI 模型战争"
+          "en": "AI Observatory",
+          "zh": "AI 观察站"
         },
         "href": "/sectors.html"
       },
       {
         "routeId": "horoscope",
         "label": {
-          "en": "Local-first astrology",
-          "zh": "本地优先星盘"
+          "en": "Astrology for fun",
+          "zh": "趣味占星"
         },
         "href": "/horoscope.html"
       }
@@ -137,16 +137,16 @@ export const HOME_NAV_GROUPS = Object.freeze([
       {
         "routeId": "course",
         "label": {
-          "en": "Forward Deployed Engineer 0→1",
-          "zh": "前沿部署工程师 0→1"
+          "en": "Course",
+          "zh": "课程"
         },
         "href": "/course.html"
       },
       {
         "routeId": "serial",
         "label": {
-          "en": "Original novels",
-          "zh": "原创小说"
+          "en": "Stories",
+          "zh": "故事"
         },
         "href": "/serial.html"
       }

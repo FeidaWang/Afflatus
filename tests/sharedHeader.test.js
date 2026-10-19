@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { parse } from 'parse5';
 import { describe, expect, it } from 'vitest';
 import { headerBlockFor, headerFiles } from '../scripts/shared-header.mjs';
+import { NAV_ROUTES } from '../src/config/navRoutes.generated.js';
 
 const attr = (node, name) => node.attrs?.find((entry) => entry.name === name)?.value ?? null;
 const classesOf = (node) => (attr(node, 'class') || '').split(/\s+/).filter(Boolean);
@@ -68,5 +69,31 @@ describe.each(headerFiles)('%s shared header', (file) => {
     const headings = nodes.filter((node) => node.tagName === 'h1');
     expect(headings).toHaveLength(1);
     expect(elements(header).some((node) => node.tagName === 'h1')).toBe(false);
+  });
+});
+
+// One en/zh label per destination: header, static footers and NAV_ROUTES agree.
+describe('destination labels', () => {
+  // The brand link to / is the wordmark, not a labelled destination.
+  const labelFor = (path) => path !== '/' && NAV_ROUTES.find((route) => route.path === path);
+  const linkLabels = (root) => elements(root)
+    .filter((node) => node.tagName === 'a' && labelFor(attr(node, 'data-header-path') || attr(node, 'href')))
+    .map((node) => {
+      const path = attr(node, 'data-header-path') || attr(node, 'href');
+      const label = elements(node).find((child) => attr(child, 'data-en') !== null) || node;
+      return { path, en: attr(label, 'data-en'), zh: attr(label, 'data-zh') };
+    });
+
+  it.each(headerFiles)('%s uses the manifest label for every header and footer link', (file) => {
+    const root = parse(readFileSync(file, 'utf8'));
+    const regions = elements(root).filter((node) => attr(node, 'data-afflatus-header') !== null || classesOf(node).includes('pa-footer'));
+    for (const { path, en, zh } of regions.flatMap(linkLabels)) {
+      expect({ path, en, zh }).toEqual({ path, en: labelFor(path).en, zh: labelFor(path).zh });
+    }
+  });
+
+  it('has no single-item dropdown', () => {
+    const groups = elements(parse(headerBlockFor())).filter((node) => classesOf(node).includes('af-header-dropdown'));
+    for (const group of groups) expect(elements(group).filter((node) => node.tagName === 'a').length).toBeGreaterThan(1);
   });
 });

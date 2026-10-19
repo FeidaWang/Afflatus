@@ -56,7 +56,7 @@ describe('localized site generator', () => {
 
   it('links English fixed-locale navigation directly to the Chinese-only bookshelf', () => {
     const html = transformLocalizedDocument(fixture, arena, 'en');
-    expect(html).toContain('href="/zh/serial.html">Novels</a>');
+    expect(html).toContain('href="/zh/serial.html">Stories</a>');
     expect(html).not.toContain('href="/en/serial.html"');
   });
 });
