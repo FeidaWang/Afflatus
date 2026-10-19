@@ -32,7 +32,7 @@ localizeMarkup();
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(localizeMarkup), { once: true });
 else requestAnimationFrame(localizeMarkup);
 addEventListener('hashchange', localizeMarkup);
-if (isZh) document.title = '2025–26 财年交易记录 · AFFLATUS';
+if (isZh) document.title = '投资组合 — 2025–26 财年交易记录 · AFFLATUS';
 
 /* ------------------------------------------------------------------ data */
 const THEMES = {

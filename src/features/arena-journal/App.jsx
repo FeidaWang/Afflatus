@@ -9,7 +9,7 @@ import {MarketClock} from './MarketClock.jsx';
 import {assessNyseSession} from '../../lib/marketSession.js';
 
 // Must match the route metadata in src/config/siteManifest.js.
-export const JOURNAL_TITLES={en:'US stock journal · AFFLATUS',zh:'美股看板 · AFFLATUS'};
+export const JOURNAL_TITLES={en:'Stock Journal — US stocks of the AI era · AFFLATUS',zh:'美股看板 · AFFLATUS'};
 const QUOTE_REFRESH_MS=60_000;
 
 const strings={

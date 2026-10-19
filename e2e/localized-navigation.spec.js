@@ -5,10 +5,10 @@ const groupTriggers = (page) => page.locator('#afflatus-header [data-header-disc
 
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers(page)).toHaveText(['市场', '更多']);
+  await expect(groupTriggers(page)).toHaveText(['市场']);
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers(page)).toHaveText(['Markets', 'More']);
+  await expect(groupTriggers(page)).toHaveText(['Markets']);
 
   // Fixed-locale pages do not own the adaptive preference. Seed the state
   // explicitly so this assertion never depends on a previous navigation.
@@ -19,7 +19,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
     languageSwitch(page).click(),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(groupTriggers(page)).toHaveText(['市场', '更多']);
+  await expect(groupTriggers(page)).toHaveText(['市场']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {

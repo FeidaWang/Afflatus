@@ -33,11 +33,6 @@ body.arena-page .stock-dialog {
   width: min(580px, calc(100vw - 2 * var(--arena-content-edge)));
 }
 
-body.arena-page #afflatus-header #af-more {
-  left: auto;
-  right: 0;
-}
-
 @media (max-width: 979px) {
   body.arena-page {
     --arena-content-edge: var(--af-header-compact-gap);
