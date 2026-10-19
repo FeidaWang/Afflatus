@@ -123,6 +123,18 @@
       "speedIndexMs": 2964,
       "scriptBytes": 36739,
       "totalBytes": 198597
+    },
+    {
+      "id": "about",
+      "path": "/about.html",
+      "performanceScore": 1,
+      "lcpMs": 1503,
+      "tbtMs": 0,
+      "cls": 0,
+      "clsBudgetBase": 0,
+      "speedIndexMs": 778,
+      "scriptBytes": 7446,
+      "totalBytes": 102752
     }
   ]
 }

@@ -118,6 +118,17 @@ const personNode = () => ({
   name: 'Feida Wang',
   alternateName: 'Bruce',
   url: `${SITE_URL}/`,
+  jobTitle: 'Software Engineer',
+  address: { '@type': 'PostalAddress', addressLocality: 'Melbourne', addressCountry: 'AU' },
+  knowsAbout: [
+    'Software engineering',
+    'Agentic coding',
+    'Full-stack development',
+    'UI/UX design',
+    'AI industry research',
+    'Financial modelling',
+  ],
+  sameAs: ['https://www.linkedin.com/in/feida-wang/'],
 });
 
 const websiteNode = (language) => ({
@@ -198,6 +209,19 @@ function buildProfileGraph(route, locale, facts, url) {
     imageNode(route, locale, url),
     ...(route.id === 'main' ? [] : [breadcrumbNode(route, locale, url)]),
     page,
+  ];
+}
+
+function buildAboutGraph(route, locale, facts, url) {
+  const page = basePageNode(route, locale, facts, url, 'AboutPage');
+  page.mainEntity = { '@id': PROFILE_ID };
+  page.about = { '@id': PROFILE_ID };
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    page,
+    breadcrumbNode(route, locale, url),
   ];
 }
 
@@ -416,6 +440,7 @@ function buildCourseGraph(route, locale, facts, url) {
 
 const BUILDERS = Object.freeze({
   profile: buildProfileGraph,
+  about: buildAboutGraph,
   arena: buildArenaGraph,
   sectors: buildSectorsGraph,
   signal: buildSignalGraph,

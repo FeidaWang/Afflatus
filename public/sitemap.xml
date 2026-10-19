@@ -105,6 +105,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/course.html"/>
   </url>
   <url>
+    <loc>https://feida.au/en/about.html</loc>
+    <lastmod>2026-10-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/about.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/about.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/about.html"/>
+  </url>
+  <url>
+    <loc>https://feida.au/zh/about.html</loc>
+    <lastmod>2026-10-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/about.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/about.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/about.html"/>
+  </url>
+  <url>
     <loc>https://feida.au/en/course/book-01.html</loc>
     <lastmod>2026-09-28</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/course/book-01.html"/>

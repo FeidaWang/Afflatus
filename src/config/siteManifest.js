@@ -183,6 +183,23 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'course' },
   },
+  about: {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'ABOUT · AFFLATUS', zh: '关于 · AFFLATUS' },
+      title: { en: 'About Feida Wang', zh: '关于王飞达' },
+      subtitle: {
+        en: 'Software engineer in Melbourne, building AI-era products with coding agents.',
+        zh: '墨尔本的软件工程师，用编程智能体构建 AI 时代的产品。',
+      },
+      alt: {
+        en: 'About Feida Wang, software engineer in Melbourne',
+        zh: '关于王飞达，墨尔本软件工程师',
+      },
+      images: { en: routeOgImage('about', 'en'), zh: routeOgImage('about', 'zh') },
+    },
+    structuredData: { kind: 'about' },
+  },
 });
 
 export const SITE_MANIFEST = Object.freeze([
@@ -397,6 +414,32 @@ export const SITE_MANIFEST = Object.freeze([
     locales: {
       en: {"title": "Course — Learn to build useful tools with AI · AFFLATUS", "description": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them."},
       zh: {"title": "课程 — 一步步，把 AI 做成能用的工具 · AFFLATUS", "description": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"},
+    },
+  },
+  {
+    id: 'about',
+    file: 'about.html',
+    path: '/about.html',
+    status: 'active',
+    build: true,
+    sitemap: true,
+    defaultLocale: 'en',
+    nav: { order: 90, group: 'labs', en: 'About', zh: '关于' },
+    themeColor: '#faf9f5',
+    schema: ['AboutPage', 'Person'],
+    seo: ROUTE_SEO.about,
+    capabilities: [],
+    metadata: {
+      title: "About Feida Wang · AFFLATUS",
+      description: "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction.",
+      canonical: 'https://feida.au/en/about.html',
+      ogTitle: "About Feida Wang · AFFLATUS",
+      ogDescription: "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction.",
+      ogImage: ROUTE_SEO.about.social.images.en,
+    },
+    locales: {
+      en: {"title": "About Feida Wang · AFFLATUS", "description": "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction."},
+      zh: {"title": "关于王飞达 · AFFLATUS", "description": "王飞达是墨尔本的软件工程师，用编程智能体构建 AI 时代的产品：AI 产业图谱、经济动态、实践课程与原创小说。"},
     },
   },
   {

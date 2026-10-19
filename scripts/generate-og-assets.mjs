@@ -23,6 +23,7 @@ const ACCENTS = Object.freeze({
   horoscope: '#9a5a3d',
   serial: '#ffc4a0',
   course: '#729cff',
+  about: '#9bd7ff',
 });
 
 const mimeFor = (filename) => {
