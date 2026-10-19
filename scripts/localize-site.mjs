@@ -24,6 +24,7 @@ import {
   localizedRouteUrl,
 } from '../src/config/siteManifest.js';
 import {
+  novelSocialCardPath,
   readerPath,
   readerUrl,
 } from '../src/lib/serialRoutes.js';
@@ -76,6 +77,12 @@ function setAttr(node, name, value) {
 
 function removeAttr(node, name) {
   if (node.attrs) node.attrs = node.attrs.filter((attr) => attr.name !== name);
+}
+
+function renameElement(node, tagName) {
+  if (!node) return;
+  node.tagName = tagName;
+  node.nodeName = tagName;
 }
 
 function hasClass(node, className) {
@@ -506,6 +513,38 @@ function novelLocale(locale) {
   return locale === 'en' || locale === 'zh' ? locale : 'adaptive';
 }
 
+const EXCERPT_MIN = 80;
+const EXCERPT_MAX = 100;
+
+// The opening of a chapter's prose for its meta description: story blocks
+// only (sys cards are UI chrome), no line breaks, and runs of punctuation left
+// by joining paragraphs collapsed to their first mark. Cut at the last
+// sentence end between EXCERPT_MIN and EXCERPT_MAX characters when there is
+// one, else at a clause break, else hard at EXCERPT_MAX.
+export function chapterExcerpt(blocks) {
+  const text = (blocks || [])
+    .filter((block) => block.type !== 'sys')
+    .map((block) => String(block.text || ''))
+    .join('')
+    .replace(/\s*\n\s*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/([，。！？；：、,.!?;:])[，。！？；：、,.!?;:]+/g, '$1');
+  const chars = Array.from(text);
+  if (chars.length <= EXCERPT_MAX) return text;
+  const cutAfter = (marks) => {
+    for (let index = EXCERPT_MAX; index >= EXCERPT_MIN; index -= 1) {
+      if (marks.includes(chars[index - 1])) return index;
+    }
+    return -1;
+  };
+  const sentence = cutAfter('。！？…');
+  if (sentence > 0) return chars.slice(0, sentence).join('');
+  const clause = cutAfter('，；：、—');
+  const cut = clause > 0 ? clause - 1 : EXCERPT_MAX - 1;
+  return `${chars.slice(0, cut).join('')}…`;
+}
+
 function novelPageCopy(locale, entry, chapter = null) {
   if (chapter) {
     return locale === 'en'
@@ -515,7 +554,7 @@ function novelPageCopy(locale, entry, chapter = null) {
       }
       : {
         title: `${chapter.title} — 《${entry.novel.title}》· ${SITE_NAME}`,
-        description: `原创中文连载《${entry.novel.title}》${chapter.title}，护眼阅读。`,
+        description: `《${entry.novel.title}》${chapter.title}：${chapterExcerpt(chapter.blocks)}`,
       };
   }
   return locale === 'en'
@@ -562,8 +601,9 @@ function setNovelAlternates(document, input) {
   )).join(''));
 }
 
-function setNovelJsonLd(document, entry, chapter, locale) {
+function setNovelJsonLd(document, entry, chapter, locale, description) {
   const bookUrl = readerUrl({ locale, bookId: entry.id });
+  const chapterUrl = chapter ? readerUrl({ locale, bookId: entry.id, chapterId: chapter.id }) : null;
   const graph = [
     {
       '@type': 'CreativeWorkSeries',
@@ -583,6 +623,7 @@ function setNovelJsonLd(document, entry, chapter, locale) {
       author: { '@type': 'Person', name: entry.novel.author },
       isPartOf: { '@id': `${bookUrl}#series` },
       url: bookUrl,
+      image: `https://feida.au${novelSocialCardPath({ bookId: entry.id })}`,
       // The full chapter list belongs to the book landing only; repeating it
       // on every chapter page added ~30 KB per document.
       ...(chapter ? {} : {
@@ -599,21 +640,27 @@ function setNovelJsonLd(document, entry, chapter, locale) {
     const position = entry.chapters.findIndex((item) => String(item.id) === String(chapter.id)) + 1;
     graph.push({
       '@type': ['Chapter', 'Article'],
+      '@id': `${chapterUrl}#chapter`,
+      name: chapter.title,
       headline: chapter.title,
+      description,
       position,
       wordCount: chapter.wordCount || undefined,
       inLanguage: 'zh-CN',
       author: { '@type': 'Person', name: entry.novel.author },
+      image: `https://feida.au${novelSocialCardPath({ bookId: entry.id, chapterId: chapter.id })}`,
       isPartOf: { '@id': `${bookUrl}#book` },
-      mainEntityOfPage: readerUrl({ locale, bookId: entry.id, chapterId: chapter.id }),
+      url: chapterUrl,
+      mainEntityOfPage: chapterUrl,
     });
   }
   graph.push({
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: locale === 'en' ? 'Novels' : '小说', item: `https://feida.au${locale === 'adaptive' ? '' : `/${locale}`}/serial.html` },
-      { '@type': 'ListItem', position: 2, name: entry.novel.title, item: bookUrl },
-      ...(chapter ? [{ '@type': 'ListItem', position: 3, name: chapter.title, item: readerUrl({ locale, bookId: entry.id, chapterId: chapter.id }) }] : []),
+      { '@type': 'ListItem', position: 1, name: locale === 'en' ? 'Home' : '首页', item: `https://feida.au${locale === 'adaptive' ? '' : `/${locale}`}/` },
+      { '@type': 'ListItem', position: 2, name: locale === 'en' ? 'Stories' : '故事', item: `https://feida.au${locale === 'adaptive' ? '' : `/${locale}`}/serial.html` },
+      { '@type': 'ListItem', position: 3, name: entry.novel.title, item: bookUrl },
+      ...(chapter ? [{ '@type': 'ListItem', position: 4, name: chapter.title, item: chapterUrl }] : []),
     ],
   });
   const scripts = all(document, (node) => node.tagName === 'script' && getAttr(node, 'type') === 'application/ld+json');
@@ -641,6 +688,17 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   setMetaContent(document, { property: 'og:description' }, pageCopy.description);
   setMetaContent(document, { property: 'og:url' }, canonical);
   setMetaContent(document, { property: 'og:type' }, chapter ? 'article' : 'book');
+  const socialImage = `https://feida.au${novelSocialCardPath(routeInput)}`;
+  const socialAlt = `《${entry.novel.title}》${chapter ? chapter.title : ''}阅读卡片`;
+  for (const [selector, value] of [
+    [{ property: 'og:image' }, socialImage],
+    [{ property: 'og:image:secure_url' }, socialImage],
+    [{ property: 'og:image:alt' }, socialAlt],
+    [{ name: 'twitter:image' }, socialImage],
+    [{ name: 'twitter:image:alt' }, socialAlt],
+    [{ name: 'twitter:title' }, pageCopy.title],
+    [{ name: 'twitter:description' }, pageCopy.description],
+  ]) setMetaContent(document, selector, value);
   setLinkHref(document, 'canonical', canonical);
   setNovelAlternates(document, routeInput);
   injectNovelShelf(document, catalog, locale);
@@ -660,6 +718,12 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   });
   const tags = byId(document, 'novelTags');
   if (tags) setHtml(tags, (entry.novel.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join(''));
+
+  // One h1 per document: the chapter title on a chapter, the book title on a
+  // book landing. The shelf greeting stays as text, keeping its id and class.
+  const libraryTitle = byId(document, 'libraryTitle');
+  if (libraryTitle) renameElement(libraryTitle, 'p');
+  renameElement(byId(document, chapter ? 'chapterTitle' : 'novelTitle'), 'h1');
 
   const chapterTitle = byId(document, 'chapterTitle');
   const chapterMeta = byId(document, 'chapterMeta');
@@ -713,7 +777,7 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
       setHtmlFragmentAtEnd(body, '<noscript><style>body.reader-enhanced[data-reader-route="book"][data-reader-view="library"] .hero,body.reader-enhanced[data-reader-route="book"][data-reader-view="library"] .reader-shell{display:block}</style></noscript>');
     }
   }
-  setNovelJsonLd(document, entry, chapter, fixedLocale);
+  setNovelJsonLd(document, entry, chapter, fixedLocale, pageCopy.description);
   return serialize(document);
 }
 

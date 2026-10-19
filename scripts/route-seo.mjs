@@ -494,6 +494,46 @@ export function validateRouteStructuredData(route, graph) {
   return errors;
 }
 
+// Book landings and chapter pages are emitted by scripts/localize-site.mjs.
+// A book page must describe the Book with its chapters; a chapter page its
+// Chapter (name, position, isPartOf the Book). Both carry the breadcrumb
+// 首页 › 故事 › 书名 (› 章节).
+export function validateNovelStructuredData(graph, { book, chapter = null, position = null }) {
+  const errors = [];
+  const nodes = graph?.['@graph'];
+  if (graph?.['@context'] !== 'https://schema.org' || !Array.isArray(nodes)) {
+    return ['structured data must contain a Schema.org @graph.'];
+  }
+  const ofType = (type) => nodes.find((node) =>
+    (Array.isArray(node['@type']) ? node['@type'] : [node['@type']]).includes(type));
+  const bookNode = ofType('Book');
+  if (!bookNode) errors.push('missing Book.');
+  else {
+    if (bookNode.name !== book.title) errors.push(`Book name is ${JSON.stringify(bookNode.name)}.`);
+    if (!bookNode.author?.name) errors.push('Book has no author.');
+    if (!bookNode.inLanguage) errors.push('Book has no inLanguage.');
+    if (!chapter && bookNode.hasPart?.length !== book.chapterCount) {
+      errors.push(`Book lists ${bookNode.hasPart?.length ?? 0} chapters, expected ${book.chapterCount}.`);
+    }
+  }
+  if (chapter) {
+    const chapterNode = ofType('Chapter');
+    if (!chapterNode) errors.push('missing Chapter.');
+    else {
+      if (chapterNode.name !== chapter.title) errors.push(`Chapter name is ${JSON.stringify(chapterNode.name)}.`);
+      if (chapterNode.position !== position) errors.push(`Chapter position is ${chapterNode.position}, expected ${position}.`);
+      if (!bookNode || chapterNode.isPartOf?.['@id'] !== bookNode['@id']) errors.push('Chapter is not isPartOf its Book.');
+    }
+  }
+  const items = ofType('BreadcrumbList')?.itemListElement || [];
+  const expected = ['首页', '故事', book.title, ...(chapter ? [chapter.title] : [])];
+  if (items.map((item) => item.name).join(' › ') !== expected.join(' › ')
+    || items.some((item, index) => item.position !== index + 1 || !item.item)) {
+    errors.push(`BreadcrumbList must be ${expected.join(' › ')}.`);
+  }
+  return errors;
+}
+
 export function renderRouteSeoBlock(route, {
   locale = 'adaptive',
   facts = {},

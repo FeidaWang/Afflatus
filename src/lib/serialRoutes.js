@@ -45,3 +45,11 @@ export function readerLocale(pathname, documentLocale = 'adaptive') {
 export function chapterIdEquals(left, right) {
   return String(left) === String(right);
 }
+
+// Per-book and per-chapter social cards (scripts/generate-og-assets.mjs).
+export function novelSocialCardPath({ bookId, chapterId = null }) {
+  const safeBookId = safeSegment(bookId, SEGMENT_RE, 'book');
+  return chapterId == null
+    ? `/assets/og/novels/${safeBookId}.jpg`
+    : `/assets/og/novels/${safeBookId}/${safeSegment(chapterId, CHAPTER_RE, 'chapter')}.jpg`;
+}

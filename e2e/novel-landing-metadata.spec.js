@@ -22,4 +22,8 @@ test('novel chapter keeps its own canonical after boot', async ({ page }) => {
   const url = 'https://feida.au/zh/novels/wanjie-zhongchun/1/';
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', url);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', url);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^《万界种春》第1章 · 坍缩预警：/);
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /^《万界种春》第1章 · 坍缩预警：/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://feida.au/assets/og/novels/wanjie-zhongchun/1.jpg');
+  await expect(page.locator('h1')).toHaveText('第1章 · 坍缩预警');
 });

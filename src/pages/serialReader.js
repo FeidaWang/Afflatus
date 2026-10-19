@@ -99,6 +99,13 @@ export function mountSerialReader() {
     );
     var path = serialApi.readerPath({ locale:locale, bookId:state.novelId, chapterId:chapter.id });
     var canonicalUrl = 'https://feida.au' + path;
+    // The prerendered chapter document already carries this chapter's
+    // excerpt description and social card; restore those instead.
+    if (path === initialMetadata.path) {
+      document.title = initialMetadata.title;
+      initialMetadata.nodes.forEach(function (entry) { entry.node.setAttribute(entry.attr, entry.value); });
+      return;
+    }
     var title = chapter.title + ' — 《' + currentNovel.novel.title + '》· ' + SITE_NAME;
     var description = '原创中文连载《' + currentNovel.novel.title + '》' + chapter.title + '，护眼阅读。';
     document.title = title;
