@@ -42,6 +42,13 @@ export function App({ language: initialLanguage } = {}) {
           <SiteLink href="/sectors.html#sources" language={language}>{zh ? '阅读研究' : 'Read the research'}</SiteLink>
         </div></div>
       </section>
+      <section className="home-essay section-shell" id="about-me" aria-labelledby="about-me-title">
+        <p className="eyebrow">{zh ? '关于我' : 'ABOUT ME'}</p>
+        <div className="essay-grid"><h2 id="about-me-title">{zh ? '我是王飞达，墨尔本的软件工程师。' : 'I’m Feida Wang, a software engineer in Melbourne.'}</h2><div>
+          <p>{zh ? '我借助编程智能体设计、构建并上线真实运行的软件：AI 产业研究、经济动态、实践课程，还有原创小说。' : 'I design, build and ship working software with coding agents: AI industry research, economic updates, a course and original fiction.'}</p>
+          <SiteLink href="/about.html" language={language}>{zh ? '更多关于我' : 'More about me'}</SiteLink>
+        </div></div>
+      </section>
       <section className="destinations section-shell" id="destinations" aria-labelledby="destinations-title">
         <h2 id="destinations-title">{zh ? '找到你的入口。' : 'Find your way in.'}</h2>
         <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{['/serial.html', '/portfolio.html', '/course.html', '/arena.html'].map(href => <SiteLink key={href} href={href} language={language}>{navigationLabel(href)[language]}</SiteLink>)}</nav>

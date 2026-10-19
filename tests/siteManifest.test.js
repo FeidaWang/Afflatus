@@ -40,6 +40,7 @@ describe('siteManifest', () => {
       '/horoscope.html',
       '/serial.html',
       '/course.html',
+      '/about.html',
     ]);
     for (const route of NAV_ROUTES) {
       expect(route.en).toBeTruthy();

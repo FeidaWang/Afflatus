@@ -59,7 +59,7 @@ test.describe('Mobile primary navigation', () => {
       const nav = page.locator('#af-primary-nav');
       await expect(nav).toBeVisible();
       const items = nav.locator(':scope > a, :scope > .af-header-group > button');
-      await expect(items).toHaveCount(5);
+      await expect(items).toHaveCount(6);
 
       const bounds = await items.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()));
       for (const item of bounds) {

@@ -55,6 +55,13 @@ export const NAV_ROUTES = Object.freeze([
     "en": "Course",
     "zh": "课程",
     "group": "labs"
+  },
+  {
+    "id": "about",
+    "path": "/about.html",
+    "en": "About",
+    "zh": "关于",
+    "group": "labs"
   }
 ]);
 

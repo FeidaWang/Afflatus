@@ -1,0 +1,30 @@
+/* About page: a single reading column under the shared masthead. */
+.about-body { margin: 0; background: #faf9f5; color: #141413; font-family: var(--af-font-sans, "Anthropic Sans", Arial, "PingFang SC", sans-serif); }
+.about-skip { position: fixed; top: 12px; left: 12px; z-index: 10002; padding: 12px 18px; background: #141413; color: #faf9f5; transform: translateY(-160%); }
+.about-skip:focus { transform: none; }
+.about-page { box-sizing: border-box; width: 100%; max-width: 760px; margin: 0 auto; padding: calc(var(--af-header-height, 68px) + 72px) 24px 96px; outline: none; }
+.about-eyebrow { margin: 0 0 16px; font-size: 12px; line-height: 1.5; letter-spacing: .08em; color: #5e5d59; }
+.about-page h1 { margin: 0 0 32px; font-size: clamp(40px, 6vw, 64px); line-height: 1.08; font-weight: 500; letter-spacing: -.03em; }
+.about-page h2 { margin: 0 0 20px; font-size: 24px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; }
+.about-page p, .about-page li { font-size: 18px; line-height: 1.7; }
+.about-page p { margin: 0 0 16px; }
+.about-page .about-lead { font-size: 22px; line-height: 1.55; }
+.about-section { margin-top: 56px; padding-top: 40px; border-top: 1px solid #dedfd5; }
+.about-list { margin: 0; padding-left: 1.2em; }
+.about-list li + li { margin-top: 10px; }
+.about-projects, .about-contact { margin: 0; padding: 0; list-style: none; }
+.about-projects li + li { margin-top: 24px; }
+.about-projects a { font-size: 20px; font-weight: 600; }
+.about-projects p { margin: 4px 0 0; color: #3d3d3a; }
+.about-contact { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 8px; }
+.about-page a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.about-page a:hover { text-decoration-thickness: 2px; }
+.about-page a:focus-visible { outline: 2px solid #141413; outline-offset: 3px; }
+.about-contact a { display: inline-flex; align-items: center; min-height: 44px; }
+
+@media (max-width: 640px) {
+  .about-page { padding: calc(var(--af-header-height, 60px) + 40px) 16px 64px; }
+  .about-page p, .about-page li { font-size: 17px; }
+  .about-page .about-lead { font-size: 19px; }
+  .about-section { margin-top: 40px; padding-top: 32px; }
+}
