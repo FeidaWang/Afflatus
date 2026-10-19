@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, readFile, copyFile } from 'node:fs/promises';
+import { mkdir, readFile, copyFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { profileCardHtml } from './og-profile-card.mjs';
@@ -10,6 +10,7 @@ import {
   socialCardFilename,
   SITE_NAME,
 } from '../src/config/siteManifest.js';
+import { novelSocialCardPath } from '../src/lib/serialRoutes.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUTPUT_DIR = path.join(ROOT, 'public/assets/og');
@@ -25,6 +26,10 @@ const ACCENTS = Object.freeze({
   course: '#729cff',
   about: '#9bd7ff',
 });
+
+// 150+ chapter cards ship in the repository; a lower quality than route cards
+// keeps each around a third of their size.
+const NOVEL_CARD_QUALITY = 72;
 
 const mimeFor = (filename) => {
   if (filename.endsWith('.png')) return 'image/png';
@@ -139,6 +144,60 @@ h1 {
 </html>`;
 };
 
+// Each book gets its own tint of the serial background. Books without an
+// entry here take a hue derived from their id.
+const BOOK_HUES = Object.freeze({
+  'wanjie-zhongchun': 120,
+  'yuxi-gongci': 20,
+  'changye-qingjian': 215,
+});
+const bookHue = (bookId) => BOOK_HUES[bookId]
+  ?? [...bookId].reduce((hash, char) => (hash * 31 + char.codePointAt(0)) % 360, 7);
+
+const novelCardHtml = ({ book, chapter, backgroundDataUrl }) => {
+  const hue = bookHue(book.id);
+  const accent = `hsl(${hue} 70% 74%)`;
+  const [number, name] = chapter
+    ? (chapter.title.includes(' · ') ? chapter.title.split(' · ', 2) : ['', chapter.title])
+    : ['', book.novel.title];
+  const nameSize = Array.from(name).length > 10 ? 64 : 84;
+  const pagePath = chapter
+    ? `feida.au/zh/novels/${book.id}/${chapter.id}/`
+    : `feida.au/zh/novels/${book.id}/`;
+  return `<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><style>
+* { box-sizing: border-box; }
+html, body { width: ${SOCIAL_CARD.width}px; height: ${SOCIAL_CARD.height}px; margin: 0; overflow: hidden; }
+body { position: relative; color: #f7f1e8; background: #08070a; font-family: "Songti SC", "STSong", "PingFang SC", serif; }
+.background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(${hue}deg) saturate(.85) brightness(.75); }
+.wash { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,7,10,.97) 0%, rgba(8,7,10,.9) 52%, rgba(8,7,10,.35) 100%); }
+.frame { position: absolute; inset: 28px; border: 1px solid rgba(255,255,255,.18); }
+.frame::before { content: ""; position: absolute; left: 34px; top: -2px; width: 68px; height: 3px; background: ${accent}; }
+.content { position: absolute; inset: 64px 72px 56px; display: flex; flex-direction: column; }
+.eyebrow { font: 20px "PingFang SC", sans-serif; letter-spacing: .2em; color: ${accent}; }
+.book { margin-top: 18px; font-size: 34px; letter-spacing: .06em; color: rgba(247,241,232,.8); }
+.number { margin-top: auto; font: 26px "PingFang SC", sans-serif; letter-spacing: .24em; color: ${accent}; }
+h1 { margin: 10px 0 0; max-width: 960px; font-size: ${nameSize}px; line-height: 1.2; font-weight: 600; text-wrap: balance; text-shadow: 0 3px 28px rgba(0,0,0,.6); }
+.subtitle { margin: 18px 0 0; font: 24px/1.5 "PingFang SC", sans-serif; color: rgba(247,241,232,.72); }
+.footer { margin-top: 40px; display: flex; justify-content: space-between; font: 16px "PingFang SC", sans-serif; letter-spacing: .08em; color: rgba(247,241,232,.55); }
+</style></head>
+<body>
+  <img class="background" src="${backgroundDataUrl}" alt="">
+  <div class="wash"></div>
+  <div class="frame"></div>
+  <main class="content">
+    <div class="eyebrow">原创中文连载 · ${escapeHtml(book.novel.author)}</div>
+    ${chapter ? `<div class="book">《${escapeHtml(book.novel.title)}》</div>` : ''}
+    ${chapter ? `<div class="number">${escapeHtml(number)}</div>` : '<div class="number"></div>'}
+    <h1>${chapter ? escapeHtml(name) : `《${escapeHtml(name)}》`}</h1>
+    ${chapter ? '' : `<p class="subtitle">${escapeHtml(book.novel.subtitle || '')}</p>`}
+    <div class="footer"><span>${escapeHtml(pagePath)}</span><span>${SITE_NAME.toUpperCase()}</span></div>
+  </main>
+</body>
+</html>`;
+};
+
 await mkdir(OUTPUT_DIR, { recursive: true });
 const sansFont = await asDataUrl(
   path.join(FONT_DIR, 'anthropic-sans-roman.woff2'),
@@ -183,6 +242,36 @@ try {
       console.log(`GENERATED: ${path.relative(ROOT, outputPath)}`);
     }
   }
+
+  // Novel cards, plus a manifest of the titles they were drawn with so
+  // og:check can tell when a book or chapter title has changed since.
+  const serialRoute = SITE_MANIFEST.find((route) => route.id === 'serial');
+  const serialBackgroundPath = path.join(ROOT, serialRoute.seo.social.background);
+  const serialBackground = await asDataUrl(serialBackgroundPath, mimeFor(serialBackgroundPath));
+  const novelsIndex = JSON.parse(await readFile(path.join(ROOT, 'public/novels-index.json'), 'utf8'));
+  const manifest = {};
+  for (const entry of novelsIndex.novels || []) {
+    const { chapters = [] } = JSON.parse(await readFile(path.join(ROOT, 'public/novels', `${entry.id}.json`), 'utf8'));
+    const book = { ...entry, chapters };
+    manifest[book.id] = { title: book.novel.title, chapters: {} };
+    await mkdir(path.join(OUTPUT_DIR, 'novels', book.id), { recursive: true });
+    for (const chapter of [null, ...chapters]) {
+      await page.setContent(
+        novelCardHtml({ book, chapter, backgroundDataUrl: serialBackground }),
+        { waitUntil: 'load' },
+      );
+      await page.evaluate(() => document.fonts.ready);
+      const outputPath = path.join(
+        ROOT,
+        'public',
+        novelSocialCardPath({ bookId: book.id, ...(chapter ? { chapterId: chapter.id } : {}) }),
+      );
+      await page.screenshot({ path: outputPath, type: 'jpeg', quality: NOVEL_CARD_QUALITY });
+      if (chapter) manifest[book.id].chapters[chapter.id] = chapter.title;
+    }
+    console.log(`GENERATED: ${chapters.length + 1} novel cards for ${book.id}`);
+  }
+  await writeFile(path.join(ROOT, 'scripts/data/novel-og-cards.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 } finally {
   await browser.close();
 }

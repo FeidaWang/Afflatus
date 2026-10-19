@@ -7,6 +7,7 @@ import {
   SOCIAL_CARD,
   socialCardFilename,
 } from '../src/config/siteManifest.js';
+import { novelSocialCardPath } from '../src/lib/serialRoutes.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const activeRoutes = SITE_MANIFEST.filter((route) => route.status === 'active');
@@ -147,11 +148,63 @@ for (const route of activeRoutes) {
   for (const locale of SITE_LOCALES) await validateCard(route, locale);
 }
 
+// Novel cards: one per book and per chapter, drawn with the titles recorded
+// in scripts/data/novel-og-cards.json, which must still match the books.
+let novelCards = 0;
+async function validateNovelCard(publicPath) {
+  const relativePath = publicPath.replace(/^\/+/, '');
+  let buffer;
+  try {
+    buffer = await readFile(path.join(ROOT, 'public', relativePath));
+  } catch (error) {
+    fail(relativePath, `cannot read novel card (${error.code || error.message}); run npm run og:generate`);
+    return;
+  }
+  novelCards += 1;
+  totalBytes += buffer.length;
+  if (buffer.length > SOCIAL_CARD.maxBytes) {
+    fail(relativePath, `${buffer.length} bytes exceeds ${SOCIAL_CARD.maxBytes}-byte budget`);
+  }
+  try {
+    const dimensions = jpegDimensions(buffer);
+    if (dimensions.width !== SOCIAL_CARD.width || dimensions.height !== SOCIAL_CARD.height) {
+      fail(relativePath, `${dimensions.width}×${dimensions.height}, expected ${SOCIAL_CARD.width}×${SOCIAL_CARD.height}`);
+    }
+  } catch (error) {
+    fail(relativePath, error.message);
+  }
+}
+
+const novelsIndex = JSON.parse(await readFile(path.join(ROOT, 'public/novels-index.json'), 'utf8'));
+let novelManifest = {};
+try {
+  novelManifest = JSON.parse(await readFile(path.join(ROOT, 'scripts/data/novel-og-cards.json'), 'utf8'));
+} catch (error) {
+  fail('scripts/data/novel-og-cards.json', `cannot read (${error.code || error.message}); run npm run og:generate`);
+}
+for (const entry of novelsIndex.novels || []) {
+  const { chapters = [] } = JSON.parse(await readFile(path.join(ROOT, 'public/novels', `${entry.id}.json`), 'utf8'));
+  const drawn = novelManifest[entry.id];
+  if (drawn && drawn.title !== entry.novel.title) {
+    fail(`novels/${entry.id}`, 'book card was drawn with an old title; run npm run og:generate');
+  }
+  if (drawn && Object.keys(drawn.chapters || {}).length !== chapters.length) {
+    fail(`novels/${entry.id}`, 'chapter cards do not match the published chapter count; run npm run og:generate');
+  }
+  await validateNovelCard(novelSocialCardPath({ bookId: entry.id }));
+  for (const chapter of chapters) {
+    if (drawn && drawn.chapters?.[chapter.id] !== chapter.title) {
+      fail(`novels/${entry.id}/${chapter.id}`, 'chapter card was drawn with a different title; run npm run og:generate');
+    }
+    await validateNovelCard(novelSocialCardPath({ bookId: entry.id, chapterId: chapter.id }));
+  }
+}
+
 if (failures.length) {
   failures.forEach((message) => console.error(`FAIL: ${message}`));
   process.exit(1);
 }
 
 console.log(
-  `OK: ${imageUrls.size} route social cards (${SOCIAL_CARD.width}×${SOCIAL_CARD.height}, ${(totalBytes / 1_000_000).toFixed(2)} MB total)`,
+  `OK: ${imageUrls.size} route social cards + ${novelCards} novel cards (${SOCIAL_CARD.width}×${SOCIAL_CARD.height}, ${(totalBytes / 1_000_000).toFixed(2)} MB total)`,
 );

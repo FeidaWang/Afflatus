@@ -10,12 +10,14 @@ import {
   localizedRouteUrl,
 } from '../src/config/siteManifest.js';
 import {
+  novelSocialCardPath,
   readerPath,
   readerUrl,
 } from '../src/lib/serialRoutes.js';
 import {
   buildRouteStructuredData,
   loadRouteSeoFacts,
+  validateNovelStructuredData,
   validateRouteStructuredData,
 } from './route-seo.mjs';
 
@@ -216,6 +218,7 @@ const novelsIndex = JSON.parse(
   readFileSync(path.join(ROOT, 'public/novels-index.json'), 'utf8'),
 );
 let novelDocumentCount = 0;
+const novelUniqueness = new Map();
 
 for (const indexedNovel of novelsIndex.novels || []) {
   const book = JSON.parse(
@@ -317,6 +320,36 @@ for (const indexedNovel of novelsIndex.novels || []) {
         );
       }
 
+      // Each book and chapter page is its own search result: one h1 naming
+      // it, and a description and social card no other novel page shares.
+      const headings = all(document, (node) => node.tagName === 'h1');
+      const expectedHeading = chapter ? chapter.title : indexedNovel.novel.title;
+      if (headings.length !== 1 || textContent(headings[0]).trim() !== expectedHeading) {
+        fail(relativePath, `expected one h1 ${JSON.stringify(expectedHeading)}, found ${JSON.stringify(headings.map((node) => textContent(node).trim()))}`);
+      }
+      const description = meta(relativePath, document, ['name', 'description']) || '';
+      if (chapter && !description.startsWith(`《${indexedNovel.novel.title}》${chapter.title}：`)) {
+        fail(relativePath, 'chapter description must open with the book and chapter title');
+      }
+      const image = meta(relativePath, document, ['property', 'og:image']);
+      const expectedImage = `https://feida.au${novelSocialCardPath(routeInput)}`;
+      if (image !== expectedImage) fail(relativePath, `og:image is ${JSON.stringify(image)}, expected ${JSON.stringify(expectedImage)}`);
+      else if (!existsSync(path.join(outputRoot, novelSocialCardPath(routeInput)))) fail(relativePath, 'og:image is not emitted');
+      for (const [key, value] of [['description', description], ['og:image', image]]) {
+        if (novelUniqueness.has(`${key}\n${value}`)) fail(relativePath, `${key} duplicates ${novelUniqueness.get(`${key}\n${value}`)}`);
+        novelUniqueness.set(`${key}\n${value}`, relativePath);
+      }
+      if (chapter) {
+        const position = book.chapters.indexOf(chapter);
+        for (const [id, target] of [['prevChapter', book.chapters[position - 1]], ['nextChapter', book.chapters[position + 1]]]) {
+          const link = all(document, (node) => attr(node, 'id') === id)[0];
+          const expectedHref = target ? readerPath({ locale, bookId: indexedNovel.id, chapterId: target.id }) : null;
+          if (!link || link.tagName !== 'a' || (attr(link, 'href') || null) !== expectedHref) {
+            fail(relativePath, `#${id} href is ${JSON.stringify(link && attr(link, 'href'))}, expected ${JSON.stringify(expectedHref)}`);
+          }
+        }
+      }
+
       const jsonScripts = all(
         document,
         (node) =>
@@ -338,9 +371,11 @@ for (const indexedNovel of novelsIndex.novels || []) {
           if (serialized.includes('/novel/')) {
             fail(relativePath, 'novel JSON-LD uses the retired singular /novel/ route');
           }
-          if (chapter && !serialized.includes(chapter.title)) {
-            fail(relativePath, 'chapter JSON-LD does not contain the chapter title');
-          }
+          for (const error of validateNovelStructuredData(graph, {
+            book: { title: indexedNovel.novel.title, chapterCount: book.chapters.length },
+            chapter,
+            position: chapter ? book.chapters.indexOf(chapter) + 1 : null,
+          })) fail(relativePath, `novel JSON-LD: ${error}`);
         } catch (error) {
           fail(relativePath, `invalid novel JSON-LD: ${error.message}`);
         }

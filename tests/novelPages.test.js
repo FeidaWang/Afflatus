@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { transformNovelPageDocument } from '../scripts/localize-site.mjs';
+import { chapterExcerpt, transformNovelPageDocument } from '../scripts/localize-site.mjs';
+import { validateNovelStructuredData } from '../scripts/route-seo.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const source = readFileSync(resolve(root, 'serial.html'), 'utf8');
@@ -87,6 +88,41 @@ describe('pre-rendered novel documents', () => {
     );
   });
 
+  it('gives each chapter its own h1, excerpt description, social card and schema', () => {
+    const [first, second] = entry.chapters;
+    const pages = [first, second].map((chapter) => transformNovelPageDocument(source, catalog, entry, chapter, 'zh'));
+    const field = (html, pattern) => html.match(pattern)?.[1];
+
+    pages.forEach((html, index) => {
+      const chapter = entry.chapters[index];
+      expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
+      expect(html).toContain(`<h1 id="chapterTitle">${chapter.title}</h1>`);
+      expect(html).toContain('<p id="libraryTitle" class="library-title">');
+      expect(html).toContain(`content="https://feida.au/assets/og/novels/wanjie-zhongchun/${chapter.id}.jpg"`);
+      const description = field(html, /<meta name="description" content="([^"]*)"/);
+      expect(description.startsWith(`《万界种春》${chapter.title}：`)).toBe(true);
+      const graph = JSON.parse(field(html, /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/));
+      expect(validateNovelStructuredData(graph, {
+        book: { title: '万界种春', chapterCount: entry.chapters.length },
+        chapter,
+        position: index + 1,
+      })).toEqual([]);
+    });
+    expect(field(pages[0], /<meta name="description" content="([^"]*)"/))
+      .not.toBe(field(pages[1], /<meta name="description" content="([^"]*)"/));
+  });
+
+  it('cuts chapter excerpts to 80–100 characters of prose without line breaks or sys cards', () => {
+    for (const chapter of entry.chapters) {
+      const excerpt = chapterExcerpt(chapter.blocks);
+      expect(Array.from(excerpt).length).toBeGreaterThanOrEqual(80);
+      expect(Array.from(excerpt).length).toBeLessThanOrEqual(100);
+      expect(excerpt).not.toMatch(/\n|\[SYS\]|[，。！？；：、]{2}/);
+    }
+    expect(chapterExcerpt([{ type: 'p', text: '短句。\n' }, { type: 'sys', text: '【系统】提示' }, { type: 'p', text: '，又一句。' }]))
+      .toBe('短句。又一句。');
+  });
+
   it('emits a book index using the validated chapter file rather than planned counts', () => {
     const html = transformNovelPageDocument(source, catalog, entry, null, 'zh');
     const chapterLinks = html.match(/href="\/zh\/novels\/wanjie-zhongchun\/\d+\/"/g) || [];
@@ -98,6 +134,13 @@ describe('pre-rendered novel documents', () => {
     expect(html).toContain('data-prerendered="book"');
     expect(chapterLinks).toHaveLength(entry.chapters.length);
     expect(entry.chapters).toHaveLength(15);
+    expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
+    expect(html).toContain('<h1 id="novelTitle">万界种春</h1>');
+    expect(html).toContain('content="https://feida.au/assets/og/novels/wanjie-zhongchun.jpg"');
+    const graph = JSON.parse(html.match(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/)[1]);
+    expect(validateNovelStructuredData(graph, {
+      book: { title: '万界种春', chapterCount: entry.chapters.length },
+    })).toEqual([]);
   });
 
   it('preserves work-level URLs and metadata until a chapter is explicitly entered', () => {
