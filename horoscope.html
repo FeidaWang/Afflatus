@@ -176,6 +176,8 @@
 <link rel="stylesheet" href="/styles/horoscope-paper.css">
 <link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles/shared-header.css">
+<link rel="stylesheet" href="/styles/horoscope-almanac.css">
+<script>(function(){var d=document.documentElement,t;if(d.getAttribute('data-fx')!=='almanac')return;try{t=localStorage.getItem('afflatus-horo:almanac-theme')}catch(e){}d.setAttribute('data-alm-theme',t==='dark'||t==='light'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')})();</script>
 </head>
 <body class="horoscope-page observatory-page" data-observatory-view="today" data-lab-theme="night">
 <script>try{if(localStorage.getItem('afflatus-horo:theme')==='paper')document.body.dataset.labTheme='paper';}catch(e){}</script>
@@ -199,6 +201,91 @@
 <a id="chartSkip" class="skip" href="#self" data-en="Skip to the chart form" data-zh="跳到星盘表单">Skip to the chart form</a>
 
 <main class="wrap">
+  <!-- ===== almanac shell (?fx=almanac only; DESIGN.md §4–§5) ===== -->
+  <div class="alm" id="almanacShell" hidden>
+    <div class="alm-device">
+      <span class="alm-device-name" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span>
+      <span class="alm-device-ver">ver 3.0</span>
+      <button type="button" class="alm-key alm-theme" id="almTheme" aria-pressed="false" aria-label="Night mode" data-aria-en="Night mode" data-aria-zh="夜间模式">☾</button>
+    </div>
+    <div class="alm-deck">
+      <nav class="alm-keys" aria-label="Astrology for fun views" data-aria-en="Astrology for fun views" data-aria-zh="趣味占星视图">
+        <button type="button" class="alm-key" data-observatory-nav="today"><span class="alm-led" aria-hidden="true"></span><span class="alm-ic" aria-hidden="true"></span><span data-en="today" data-zh="今日">today</span></button>
+        <button type="button" class="alm-key" data-observatory-nav="self"><span class="alm-led" aria-hidden="true"></span><span class="alm-ic" aria-hidden="true"></span><span data-en="you" data-zh="自我">you</span></button>
+        <button type="button" class="alm-key" data-observatory-nav="relationships"><span class="alm-led" aria-hidden="true"></span><span class="alm-ic" aria-hidden="true"></span><span data-en="two" data-zh="合盘">two</span></button>
+        <button type="button" class="alm-key" data-observatory-nav="journal"><span class="alm-led" aria-hidden="true"></span><span class="alm-ic" aria-hidden="true"></span><span data-en="log" data-zh="手记">log</span></button>
+      </nav>
+      <section class="alm-view" data-alm-view="today" aria-labelledby="almTodayTitle">
+        <div class="alm-inst alm-inst--sticky">
+          <figure class="alm-fig" aria-label="Today’s sky" data-aria-en="Today’s sky" data-aria-zh="今日天空">
+            <span class="alm-fig-c alm-fig-tl">fig. 1</span><span class="alm-fig-c alm-fig-tr" data-en="today’s sky" data-zh="今日天空">today’s sky</span>
+            <div class="alm-fig-obj" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="instrument in preparation" data-zh="仪器准备中">instrument in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+        </div>
+        <div class="alm-read">
+          <p class="alm-label alm-num" id="almDateline"></p>
+          <h2 class="alm-display" id="almTodayTitle" data-en="Today’s sky." data-zh="今日天空。">Today’s sky.</h2>
+          <p class="alm-body" data-en="A preview of the new layout. The instrument and today’s reading arrive in later steps." data-zh="这是新版布局的预览。仪器与今日解读会在后续步骤接入。">A preview of the new layout. The instrument and today’s reading arrive in later steps.</p>
+        </div>
+      </section>
+      <section class="alm-view" data-alm-view="you" hidden aria-labelledby="almYouTitle">
+        <div class="alm-inst">
+          <figure class="alm-fig" aria-label="Four pillars" data-aria-en="Four pillars" data-aria-zh="四柱">
+            <span class="alm-fig-c alm-fig-tl">fig. 2</span><span class="alm-fig-c alm-fig-tr" data-en="four pillars" data-zh="四柱">four pillars</span>
+            <div class="alm-fig-obj alm-fig-obj--wide" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+          <figure class="alm-fig" aria-label="Birth sky" data-aria-en="Birth sky" data-aria-zh="本命盘">
+            <span class="alm-fig-c alm-fig-tl">fig. 3</span><span class="alm-fig-c alm-fig-tr" data-en="birth sky" data-zh="本命盘">birth sky</span>
+            <div class="alm-fig-obj" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+          <figure class="alm-fig" aria-label="Ziwei palaces" data-aria-en="Ziwei palaces" data-aria-zh="紫微十二宫">
+            <span class="alm-fig-c alm-fig-tl">fig. 4</span><span class="alm-fig-c alm-fig-tr" data-en="ziwei palaces" data-zh="紫微十二宫">ziwei palaces</span>
+            <div class="alm-fig-obj" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+          <figure class="alm-fig" aria-label="Luck cycles" data-aria-en="Luck cycles" data-aria-zh="大运">
+            <span class="alm-fig-c alm-fig-tl">fig. 5</span><span class="alm-fig-c alm-fig-tr" data-en="luck cycles" data-zh="大运">luck cycles</span>
+            <div class="alm-fig-obj alm-fig-obj--strip" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+        </div>
+        <div class="alm-read">
+          <h2 class="alm-display alm-display--sub" id="almYouTitle" data-en="Your chart, part by part." data-zh="你的命盘，一件一件看。">Your chart, part by part.</h2>
+          <p class="alm-body" data-en="Four pillars, birth sky, ziwei palaces and luck cycles will sit here, each as its own figure." data-zh="四柱、本命盘、紫微十二宫与大运会在这里，各占一张图。">Four pillars, birth sky, ziwei palaces and luck cycles will sit here, each as its own figure.</p>
+        </div>
+      </section>
+      <section class="alm-view" data-alm-view="two" hidden aria-labelledby="almTwoTitle">
+        <div class="alm-inst alm-inst--sticky">
+          <figure class="alm-fig" aria-label="Two charts interlocked" data-aria-en="Two charts interlocked" data-aria-zh="双盘咬合">
+            <span class="alm-fig-c alm-fig-tl">fig. 6</span><span class="alm-fig-c alm-fig-tr" data-en="interlock" data-zh="双盘咬合">interlock</span>
+            <div class="alm-fig-obj" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+        </div>
+        <div class="alm-read">
+          <h2 class="alm-display alm-display--sub" id="almTwoTitle" data-en="Two skies, side by side." data-zh="两片天空，并排看。">Two skies, side by side.</h2>
+          <p class="alm-body" data-en="People you save stay on this device. Nothing here predicts how a relationship turns out." data-zh="你保存的人只留在这台设备上。这里不预测一段关系的结局。">People you save stay on this device. Nothing here predicts how a relationship turns out.</p>
+        </div>
+      </section>
+      <section class="alm-view" data-alm-view="log" hidden aria-labelledby="almLogTitle">
+        <div class="alm-inst">
+          <figure class="alm-fig" aria-label="This month" data-aria-en="This month" data-aria-zh="本月">
+            <span class="alm-fig-c alm-fig-tl" data-en="calendar" data-zh="月历">calendar</span><span class="alm-fig-c alm-fig-tr" data-en="this month" data-zh="本月">this month</span>
+            <div class="alm-fig-obj" aria-hidden="true"></div>
+            <span class="alm-fig-c alm-fig-bl" data-en="in preparation" data-zh="准备中">in preparation</span><span class="alm-fig-c alm-fig-br">—</span>
+          </figure>
+        </div>
+        <div class="alm-read">
+          <h2 class="alm-display alm-display--sub" id="almLogTitle" data-en="Your days, in words." data-zh="把日子，慢慢写下。">Your days, in words.</h2>
+          <p class="alm-body" data-en="Notes stay in this browser. No streaks to keep." data-zh="手记只保存在此浏览器。不设连签。">Notes stay in this browser. No streaks to keep.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <section id="observatoryToday" class="obs-today" aria-labelledby="obsTitle">
     <div class="obs-topline"><p id="obsDateLabel"></p><button id="obsTheme" type="button" aria-label="切换日间模式" data-aria-en="Switch to day mode" data-aria-zh="切换日间模式" aria-pressed="true"><img src="/assets/labs/icons/moon.svg" width="22" height="22" alt=""></button></div>
     <nav id="obsDates" class="obs-dates" aria-label="最近七天" data-aria-en="Last seven days" data-aria-zh="最近七天"></nav>

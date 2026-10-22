@@ -15,6 +15,7 @@ const BASELINES = {
   'public/styles/responsive-primitives.css': 0,
   'public/styles/afflatus-brand.css': 3,
   'public/styles/horoscope.css': 1,
+  'public/styles/horoscope-almanac.css': 0,
   'public/styles/course-hope.css': 1,
   'index.html': 2,
 };

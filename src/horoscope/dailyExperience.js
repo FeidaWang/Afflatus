@@ -11,10 +11,15 @@ export function mountDailyExperience() {
   let currentDay = localDay(), selectedDay = currentDay, noteDay = currentDay, dirty = false;
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
   const views = ['today','self','relationships','journal'];
+  // ?fx=almanac routes on the DESIGN.md §5 hashes; either set of hashes reaches the same view.
+  const almanac = document.documentElement.getAttribute('data-fx') === 'almanac';
+  const almanacHash = {today:'today',self:'you',relationships:'two',journal:'log'};
+  const fromHash = (hash) => views.find((view) => almanacHash[view] === hash) || hash;
   const labelDate = (day, options) => new Date(`${day}T12:00:00`).toLocaleDateString(lang()==='zh'?'zh-CN':'en-AU',options);
   const icon = (name) => { const img = document.createElement('img'); img.src=`/assets/labs/icons/${name}.svg`; img.alt=''; img.width=24; img.height=24; return img; };
 
   function switchView(view, updateHash = true) {
+    view = fromHash(view);
     if (!views.includes(view)) view = 'today';
     document.body.dataset.observatoryView = view;
     for (const id of ['observatoryToday','observatoryJournal']) $(id).hidden = id === 'observatoryToday' ? view !== 'today' : view !== 'journal';
@@ -22,7 +27,9 @@ export function mountDailyExperience() {
     document.querySelectorAll('[data-observatory-nav]').forEach((button) => {
       if (button.dataset.observatoryNav === view) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
     });
-    if (updateHash && location.hash !== `#${view}`) history.pushState(null,'',`#${view}`);
+    if (almanac) document.querySelectorAll('.alm-view').forEach((section) => { section.hidden = section.dataset.almView !== almanacHash[view]; });
+    const hash = almanac ? almanacHash[view] : view;
+    if (updateHash && location.hash !== `#${hash}`) history.pushState(null,'',`#${hash}`);
     if (view === 'journal') renderJournal();
     window.scrollTo({top:0,behavior:'instant'});
   }
@@ -45,6 +52,7 @@ export function mountDailyExperience() {
     }
     const prompt=DAILY_PROMPTS[((dayIndex(selectedDay)%DAILY_PROMPTS.length)+DAILY_PROMPTS.length)%DAILY_PROMPTS.length];
     $('obsDateLabel').textContent=labelDate(selectedDay,{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+    $('almDateline').textContent=labelDate(currentDay,{year:'numeric',month:'long',day:'numeric',weekday:'long'});
     $('obsTitle').textContent=T(prompt[0],prompt[2]);
     if (lang() === 'zh' && prompt[0] === '留一点时间给自己。') $('obsTitle').textContent = '给自己，\n留一点时间。';
     $('obsAction').textContent=T(prompt[1],prompt[3]);
@@ -129,5 +137,12 @@ export function mountDailyExperience() {
   window.addEventListener('afflatus-lang',()=>{renderDay();renderAreas();renderJournal();applyTheme();});
   document.addEventListener('afflatus-chart-updated',()=>{$('obsChartLink').textContent=T('查看我的星图','View my chart');});
   document.addEventListener('afflatus-chart-created',()=>switchView('self'));
+  if (almanac) {
+    const root=document.documentElement, themeKey='afflatus-horo:almanac-theme', dark=matchMedia('(prefers-color-scheme: dark)');
+    const applyAlmanacTheme=()=>$('almTheme').setAttribute('aria-pressed',String(root.getAttribute('data-alm-theme')==='dark'));
+    $('almTheme').addEventListener('click',()=>{root.setAttribute('data-alm-theme',root.getAttribute('data-alm-theme')==='dark'?'light':'dark');try{storage.setItem(themeKey,root.getAttribute('data-alm-theme'));}catch{}applyAlmanacTheme();});
+    dark.addEventListener('change',(event)=>{let saved=null;try{saved=storage.getItem(themeKey);}catch{}if(!saved){root.setAttribute('data-alm-theme',event.matches?'dark':'light');applyAlmanacTheme();}});
+    applyAlmanacTheme();
+  }
   applyTheme();renderDay();renderAreas();switchView(location.hash.slice(1)||'today',false);
 }
