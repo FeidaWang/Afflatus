@@ -1757,6 +1757,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     button.disabled = true;
     $('birthForm').setAttribute('aria-busy', 'true');
     state.me = b;
+    $('synHint').hidden = true;
     const saved = saveProfile(b);
     $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
     resultAssumptions('b');
@@ -1814,7 +1815,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   {
     const saved = loadProfile();
     if (saved && parseBirth(`${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, saved.hour == null ? '' : String(saved.hour))) {
-      state.me = saved; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
+      state.me = saved; $('synHint').hidden = true; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
     }
   }
 
