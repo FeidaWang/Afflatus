@@ -16,13 +16,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   let allRegions, citiesInRegion, findCityInRegion;
   let pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN;
-  let ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, dailyFortune;
+  let ANIMALS_ZH, ANIMALS_EN, ZODIAC_ZH, ZODIAC_EN, dailyFortune;
   let TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf;
   let STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength;
   let stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis, tenGodDistribution;
   let SHENSHA_RARITY, computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN;
   let solarToLunar, dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL;
-  let cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T;
+  let cstToJD, sunLongitude, moonLongitude, ascendant, signOf, sunSignOf, degInSign, aspectBetween, ASPECT_T;
   let personalityTags, dimensionScores, renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH;
   let dailyDraw, computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH;
   let computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace;
@@ -42,13 +42,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const loadMineFeature = () => mineFeaturePromise || (mineFeaturePromise = import('../horoscope/mineFeature.js').then((feature) => {
     ({
       pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN,
-      ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, dailyFortune,
+      ANIMALS_ZH, ANIMALS_EN, ZODIAC_ZH, ZODIAC_EN, dailyFortune,
       TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf,
       STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength,
       stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis, tenGodDistribution,
       SHENSHA_RARITY, computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN,
       solarToLunar, dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL,
-      cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T,
+      cstToJD, sunLongitude, moonLongitude, ascendant, signOf, sunSignOf, degInSign, aspectBetween, ASPECT_T,
       personalityTags, dimensionScores, renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH,
       dailyDraw, computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH,
       computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace,
@@ -680,11 +680,19 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const l = solarToLunar(y, m, d);
     return l ? natalXiu(l.lMonth, l.lDay) : null;
   };
-  const identityChipsHTML = (chart, y, m, d) => {
-    const zi = zodiacIndex(m, d);
-    const nx = natalXiuOf(y, m, d);
+  // Q1: the birth slot (or an unknown-hour birth day) contains a 节 instant,
+  // so the year or month pillar can't be settled from the input alone.
+  const TERM_NAME = { 315: ['Start of Spring', '立春'] };
+  const boundaryNoteHTML = (chart) => chart.boundaryUnstable
+    ? `<p class="bz-caveat">${chart.boundaryUnstable.pillar === 'year'
+      ? T(`Born in the slot when ${TERM_NAME[315][0]} began — the year and month pillars depend on the exact minute; shown by the slot's start.`, `出生时段内恰逢${TERM_NAME[315][1]}交节——年柱和月柱取决于具体分钟，此处按时段起点排。`)
+      : T('Born in the slot when a solar term began — the month pillar depends on the exact minute; shown by the slot\'s start.', '出生时段内恰逢节气交节——月柱取决于具体分钟，此处按时段起点排。')}</p>`
+    : '';
+  const identityChipsHTML = (chart, birth) => {
+    const { sign: zi, stable } = sunSignOf(birth);
+    const nx = natalXiuOf(birth.y, birth.m, birth.d);
     return `<span class="elem">☾ ${T(ANIMALS_EN[chart.animal], '属' + ANIMALS_ZH[chart.animal])}</span>`
-      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}</span>`
+      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}${stable ? '' : T(' (cusp day, hour unknown)', '（交界日，时辰未知）')}</span>`
       + (nx == null ? '' : `<span class="elem">☘ ${T(`${XIU27_ZH[nx]} mansion`, '本命·' + XIU27_ZH[nx] + '宿')}</span>`);
   };
 
@@ -732,12 +740,12 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     </div>`;
 
     // pillars
-    $('pillarRow').innerHTML = pillarCardsHTML(f.chart);
+    $('pillarRow').innerHTML = pillarCardsHTML(f.chart) + boundaryNoteHTML(f.chart);
 
     // element tally + identity chips
     $('elemRow').innerHTML = f.chart.elements.map((n2, i) =>
       `<span class="elem"><i class="e-${i}"></i>${T(ELEMENTS_EN[i], ELEMENTS_ZH[i])} × ${n2}</span>`).join('')
-      + identityChipsHTML(f.chart, state.me.y, state.me.m, state.me.d);
+      + identityChipsHTML(f.chart, state.me);
 
     // 生辰详批 (子平法): ten gods, hidden stems, nayin, void, twelve stages,
     // seasonal strength, relations, shensha, simplified strength/pattern read.
@@ -961,7 +969,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   }
 
   // ---- render: synastry -----------------------------------------------------
-  const SYN_PILLAR_T = { romance: ['ROMANCE', '情缘'], marriage: ['MARRIAGE', '婚嫁'], career: ['CAREER', '事业'], wealth: ['WEALTH', '财帛'], health: ['HEALTH', '康健'] };
 
   // The full planet layer runs off-main-thread. A new pair terminates the
   // previous Worker, so obsolete charts stop consuming CPU rather than merely
@@ -989,14 +996,16 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     wrap.innerHTML = `<div class="xiu-h">${T('AS FRIENDS / COLLEAGUES / MORE · 分关系评分', '分关系评分 · 朋友到夫妻')}</div>
       <div class="syn-mode-grid">${modes.map((m) => `
         <div class="syn-mode">
-          <div class="sm-h"><span class="sm-n">${T(m.en, m.zh)}</span><b class="sm-v">${m.score}</b></div>
-          <div class="sm-bar"><i style="width:${m.score}%"></i></div>
-          <p class="sm-line">${T(m.line.en, m.line.zh)}</p>
+          <div class="sm-h"><span class="sm-n">${T(m.en, m.zh)}</span><b class="sm-v">${m.score == null ? T('Pending', '待补充') : m.score}</b></div>
+          <div class="sm-bar"><i style="width:${m.score ?? 0}%"></i></div>
+          ${m.line ? `<p class="sm-line">${T(m.line.en, m.line.zh)}</p>` : ''}
         </div>`).join('')}</div>
-      ${aspects && aspects.length ? '' : `<p class="bz-caveat">${T('Bazi layer only so far — planet aspects refine these once the sky finishes loading.', '目前仅八字底盘——星盘相位加载完成后会进一步校准。')}</p>`}`;
+      ${aspects ? '' : `<p class="bz-caveat">${T('Waiting for the planet aspects — these lenses need them, so no number is shown yet.', '等待星盘相位——这五个视角需要相位才能计算，暂不显示分数。')}</p>`}`;
   }
 
   // U2: ziwei life-palace comparison — needs both birth hours.
+  const zwStars = (m) => m.stars !== '命无正曜' ? m.stars
+    : m.borrowed ? T(`No major star — read from the opposite palace (${m.borrowed})`, `命无正曜，借对宫（${m.borrowed}）参看`) : T('No major star', '命无正曜');
   function renderSynZiwei() {
     const wrap = $('synZiwei');
     if (!wrap) return;
@@ -1009,9 +1018,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!zA || !zB) { wrap.innerHTML = ''; return; }
     const s = synastryZiwei(zA, zB);
     wrap.innerHTML = `<div class="xiu-h">${T('ZIWEI LIFE PALACES · 紫微合参', '紫微合参 · 命宫对照')}</div>
-      <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${s.mingA.branch}${T('', '宫')}</span><span class="xiu-d">${s.mingA.stars}</span></div>
-      <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${s.mingB.branch}${T('', '宫')}</span><span class="xiu-d">${s.mingB.stars}</span></div>
-      <div class="xiu-row"><span class="xiu-n">${T(s.relation.en, s.relation.zh)}</span><b>${s.score}</b><span class="xiu-d">${T(s.temperament.en, s.temperament.zh)}</span></div>
+      <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${s.mingA.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingA)}</span></div>
+      <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${s.mingB.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingB)}</span></div>
+      <div class="xiu-row"><span class="xiu-n">${T(s.relation.en, s.relation.zh)}</span><b>${s.score}</b><span class="xiu-d">${s.temperament ? T(s.temperament.en, s.temperament.zh) : T('No major stars on either side to read temperament from.', '两边都无正曜可参，不作气质推断。')}</span></div>
       <p class="bz-caveat">${T('Entry-level read: life-palace branch relation + major-star temperament only. Entertainment only.', '入门级合参：仅比对命宫地支关系与主星气质组合。仅供娱乐。')}</p>`;
   }
 
@@ -1043,41 +1052,33 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       )}</p>`;
   }
 
-  // 7-day fate calendar (V23 Phase 3, roadmap module 2 point 3): reuses the
-  // existing dailyPull() seeded score (horoscopeEngine.js) for 7 dates —
-  // today/tomorrow show the real number, days 3-7 are time-locked (not a
-  // paywall — the roadmap is explicit: "只做时间解锁") so the page gives a
-  // reason to come back rather than dumping the whole week at once.
+  // 7-day 流日 calendar (Q5): each day's pillar read against both day
+  // pillars via dailyPull() — all seven days shown, nothing time-locked.
+  const PULL_TONE = { smooth: ['Smooth', '顺'], even: ['Even', '平'], yield: ['Give way', '宜让'] };
   function renderSynCalendar() {
     if (!state.me || !state.other) return;
     const cells = [];
     for (let i = 0; i < 7; i++) {
-      const dateStr = dateStrPlus(i);
-      const pull = dailyPull(state.me, state.other, dateStr);
-      const locked = i >= 2;
+      const pull = dailyPull(state.me, state.other, dateStrPlus(i));
       const dayLabel = i === 0 ? T('TODAY', '今天') : i === 1 ? T('TMRW', '明天') : `+${i}${T('d', '天')}`;
-      cells.push(`<div class="syn-cal-cell${locked ? ' locked' : ''}">
+      cells.push(`<div class="syn-cal-cell" title="${attr(T(pull.why.en, pull.why.zh))}">
         <span class="scc-d">${dayLabel}</span>
-        ${locked
-          ? `<span class="scc-v scc-v--locked">···</span><span class="scc-hint">${T(`unlocks in ${i - 1}d`, `${i - 1}天后解锁`)}</span>`
-          : `<span class="scc-v">${pull.score}</span>`}
+        <span class="scc-v">${T(...PULL_TONE[pull.tone])}</span>
+        <span class="scc-hint">${pull.gz}</span>
       </div>`);
     }
     $('synCal').innerHTML = cells.join('');
     $('synCalWrap').hidden = false;
   }
 
-  // Best day this week (V23 Phase 4, feeds the ICS button below) — just the
-  // argmax of the same dailyPull() sweep renderSynCalendar() already does;
-  // no new scoring logic.
+  // First 顺 day this week for the ICS button; null when there is none.
   function bestDayThisWeek(me, other) {
-    let best = null;
     for (let i = 0; i < 7; i++) {
       const dateStr = dateStrPlus(i);
-      const score = dailyPull(me, other, dateStr).score;
-      if (!best || score > best.score) best = { dateStr, score };
+      const pull = dailyPull(me, other, dateStr);
+      if (pull.tone === 'smooth') return { dateStr, pull };
     }
-    return best;
+    return null;
   }
 
   // Tier 0 recall (V23 Phase 4, roadmap module 2): a client-only .ics file
@@ -1108,11 +1109,15 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   $('icsBtn') && $('icsBtn').addEventListener('click', () => {
     if (!state.me || !state.other) return;
     const best = bestDayThisWeek(state.me, state.other);
+    if (!best) {
+      $('icsTip').textContent = T('No smooth day in the next seven — nothing to add.', '未来七天没有「顺」日，暂无可加入的日子。');
+      return;
+    }
     track('ics_subscribed'); // Tier 0 recall guardrail (roadmap module 2)
     downloadICS(
       best.dateStr,
-      T('Your best day together — Afflatus', '你们的最佳共处日 · 观星台'),
-      T('Generated by feida.au/horoscope.html — entertainment only, not advice.', '由 feida.au/horoscope.html 生成——仅供娱乐，不构成任何建议。')
+      T('A smooth day together — Astrology for fun', '一起过的「顺」日 · 趣味占星'),
+      T(`${best.pull.gz} day: ${best.pull.why.en}. Generated by feida.au/horoscope.html — entertainment only, not advice.`, `${best.pull.gz}日：${best.pull.why.zh}。由 feida.au/horoscope.html 生成——仅供娱乐，不构成任何建议。`)
     );
   });
 
@@ -1151,7 +1156,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const caveat = `<p class="bz-caveat">${T(
       `${m.combos.length} combination${m.combos.length === 1 ? '' : 's'} · ${m.clashes.length} clash${m.clashes.length === 1 ? '' : 'es'} found across both charts' branches — tap a highlighted cell to see which pillars connect. Overall branch score ${m.score}/100.`,
       `双方地支之间共找到 ${m.combos.length} 组合 · ${m.clashes.length} 组冲刑害破——点击高亮格可看具体是哪两柱相连。地支综合分 ${m.score}/100。`
-    )}</p>`;
+    )}${m.idsA.length < 4 || m.idsB.length < 4 ? T(' Three-pillar comparison: a missing hour pillar is left out and the remaining cells are scaled up to the full-chart range.', ' 三柱比较：缺时柱的一方不比时柱，其余格按比例换算到四柱满盘的量程。') : ''}</p>`;
     return `<div class="synbm-inner"><svg class="synbm-svg" id="synbmSvg" aria-hidden="true"></svg>${dual}${grid}${caveat}</div>`;
   }
 
@@ -1203,13 +1208,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       <div class="syn-chart">
         <div class="syn-chart-h">${T('ME', '我')}</div>
         <div class="pillars pillars--sm">${pillarCardsHTML(s.chartA, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartA, state.me.y, state.me.m, state.me.d)}</div>
+        <div class="elems">${identityChipsHTML(s.chartA, state.me)}</div>${boundaryNoteHTML(s.chartA)}
       </div>
       <div class="syn-divider" aria-hidden="true">❖</div>
       <div class="syn-chart">
         <div class="syn-chart-h">${T('THEM', '对方')}</div>
         <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartB, state.other.y, state.other.m, state.other.d)}</div>
+        <div class="elems">${identityChipsHTML(s.chartB, state.other)}</div>${boundaryNoteHTML(s.chartB)}
       </div>`;
 
     // 合盘 branch matrix (V25 Part 5 §24.2) — dual charts + 4×4 combo/clash grid
@@ -1250,12 +1255,10 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
     $('synParts').innerHTML = s.parts.map((p) =>
       `<div class="sp ${p.pts > 0 ? 'pos' : p.pts < 0 ? 'neg' : ''}"><span>${T(p.en, p.zh)}</span><b>${p.pts > 0 ? '+' : ''}${p.pts}</b></div>`).join('');
-    $('synPillars').innerHTML = s.pillars.map((p) =>
-      `<div class="spil"><div class="n">${T(...SYN_PILLAR_T[p.id])}</div><div class="s">${p.score}</div></div>`).join('');
 
     // U2: five relationship lenses (bazi-only first paint; the astro layer
     // above re-paints with aspects when it resolves) + ziwei comparison.
-    renderSynModes(state.synAstro && state.synAstro.key === pairKey ? state.synAstro.data.aspects : []);
+    renderSynModes(state.synAstro && state.synAstro.key === pairKey ? state.synAstro.data.aspects : null);
     renderSynZiwei();
 
     // 双人宿曜关系 (V21 Phase 3): natal mansions + both directions of the
@@ -1267,7 +1270,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       $('synXiu').innerHTML = `
         <div class="xiu-h">${T('LUNAR MANSIONS · 宿曜', '宿曜缘分 · 三九秘法')}</div>
         <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${XIU27_ZH[xa]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rab.en, rab.zh)}</b><span class="xiu-d">${T(rab.descEn, rab.descZh)}</span></div>
-        <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${XIU27_ZH[xb]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rba.en, rba.zh)}</b><span class="xiu-d">${T(rba.descEn, rba.descZh)}</span></div>`;
+        <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${XIU27_ZH[xb]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rba.en, rba.zh)}</b><span class="xiu-d">${T(rba.descEn, rba.descZh)}</span></div>
+        <p class="bz-caveat">${T('Mansion tables follow the Xiuyao-jing convention but have not been independently verified against a full published table. Not scored.', '宿曜表按《宿曜经》惯例排出，尚未与完整的公开表独立核对；只作分类，不计分。')}</p>`;
     } else {
       $('synXiu').innerHTML = '';
     }
@@ -1285,20 +1289,31 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       [T('Moon–Moon', '月亮–月亮'), moonA, moonB],
     ];
     const hourMissing = state.me.hour == null || state.other.hour == null;
-    const aspRows = pairs.map(([label, la, lb]) => {
+    // Unknown hour: a pair involving that person's Moon is shown only if the
+    // aspect is the same at the day's first and last minute (CST).
+    const moonDay = (b) => [0, 23 + 59 / 60].map((h) => moonLongitude(cstToJD(b.y, b.m, b.d, h)));
+    const moonVaries = (b, otherLon, key) => b.hour == null && moonDay(b).some((lon) => aspectBetween(lon, otherLon)?.key !== key);
+    const unsettled = [
+      () => false,
+      (key) => moonVaries(state.other, bodies[0][2], key),
+      (key) => moonVaries(state.me, bodies[0][3], key),
+      (key) => moonVaries(state.me, moonB, key) || moonVaries(state.other, moonA, key),
+    ];
+    const aspRows = pairs.map(([label, la, lb], i) => {
       const a = aspectBetween(la, lb);
+      if (unsettled[i](a?.key)) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('depends on the unknown birth hour', '随未知时辰而变，未定')}</span></div>`;
       if (!a) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
       const t = ASPECT_T[a.key];
       return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-arrow">∠</span><b>${T(t.en, t.zh)}</b><span class="xiu-d">${T(t.dEn, t.dZh)}</span></div>`;
     }).join('');
     $('synAstro').innerHTML = `
       <div class="xiu-h">${T('SUN/MOON ASPECTS · 日月相位', '日月相位')}</div>${aspRows}
-      ${hourMissing ? `<p class="bz-caveat">${T('One or both hours unknown — moon positions use a noon approximation.', '有一方未填时辰——月亮位置按正午近似。')}</p>` : ''}`;
+      ${hourMissing ? `<p class="bz-caveat">${T('One or both hours unknown — a Moon aspect is shown only if it holds all day; the resonance score uses the same rule.', '有一方未填时辰——月亮相位只在全天都成立时显示，共鸣指数也按同一规则计算。')}</p>` : ''}`;
 
-    $('pullScore').textContent = pull.score;
+    $('pullScore').textContent = T(...PULL_TONE[pull.tone]);
     $('pullTxt').textContent = T(
-      `Today's pull — under a ${pull.todayElement.en}-day sky. Changes daily; come back tomorrow.`,
-      `今日引力——${pull.todayElement.zh}气当令。每日一变，明日再来。`);
+      `Today (${pull.gz}): ${pull.why.en}. Read from the two day pillars only.`,
+      `今日${pull.gz}：${pull.why.zh}。只看双方日柱。`);
 
     // V23 Phase 3: today's real transit-to-natal weather (module 2 point 1)
     // + 7-day fate calendar (module 2 point 3). The calendar is cheap and
@@ -1561,7 +1576,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!state.mineChart || !state.me) return;
     track('share_card_generated', { type: 'mine' }); // guardrail metric (roadmap module 2)
     const labels = PILLAR_T.map((t) => T(...t));
-    const zi = zodiacIndex(state.me.m, state.me.d);
+    const zi = sunSignOf(state.me).sign;
     void saveShareCard('mine', {
       lang: state.lang,
       pillars: cardPillars(state.mineChart, labels),
@@ -1578,8 +1593,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!state.synData) return;
     track('share_card_generated', { type: 'synastry' }); // guardrail metric (roadmap module 2)
     const labels = PILLAR_T.map((t) => T(...t));
-    const ziA = ZODIAC_GLYPH[zodiacIndex(state.me.m, state.me.d)];
-    const ziB = ZODIAC_GLYPH[zodiacIndex(state.other.m, state.other.d)];
+    const ziA = ZODIAC_GLYPH[sunSignOf(state.me).sign];
+    const ziB = ZODIAC_GLYPH[sunSignOf(state.other).sign];
     // V23 Phase 2: prefer the astro layer's title/score/top line once it has
     // resolved; falls back to the bazi-only base score (frame()/renderShareCard
     // both handle title/hookLine being absent), so the button works even if
