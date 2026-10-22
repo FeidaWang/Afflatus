@@ -71,15 +71,31 @@ const instant = melbourneNoon(date);
 const planets = {};
 for (const body of BODIES) planets[body] = Number(geoLongitude(body, instant).toFixed(4));
 
+// ±30 Melbourne days around today, one row per day at Melbourne noon:
+// [date, ...longitudes in BODIES order], 2 decimals (~4 KB). The almanac
+// page reads retrograde marks off adjacent rows and never loads an ephemeris.
+const WINDOW_DAYS = 30;
+const [cy, cm, cd] = date.split('-').map(Number);
+const rows = [];
+for (let offset = -WINDOW_DAYS; offset <= WINDOW_DAYS; offset++) {
+  const day = new Date(Date.UTC(cy, cm - 1, cd + offset)).toISOString().slice(0, 10);
+  const noon = melbourneNoon(day);
+  rows.push([day, ...BODIES.map((body) => Number(geoLongitude(body, noon).toFixed(2)))]);
+}
+
 const out = {
   generatedAt: instant.toISOString(),
   date,
   planets,
+  window: { center: date, bodies: BODIES, sampledAt: 'Melbourne noon', days: rows },
 };
+
+// Pretty-print, but keep each window row on one line.
+const json = JSON.stringify(out, null, 2).replace(/\[\s*("\d{4}-\d{2}-\d{2}"[^\]]*?)\s*\]/g, (_, row) => `[${row.replace(/\s+/g, ' ')}]`);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(option('output', join(__dirname, '..', 'public', 'transits-daily.json')));
 mkdirSync(dirname(outPath), { recursive: true });
-writeFileSync(outPath, JSON.stringify(out, null, 2) + '\n');
+writeFileSync(outPath, json + '\n');
 console.log(`Wrote ${outPath}`);
-console.log(JSON.stringify(out, null, 2));
+console.log(json);
