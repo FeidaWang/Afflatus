@@ -21,12 +21,16 @@ test.describe('Horoscope M0: hash, fx switch, English-only UI', () => {
   });
 
   test('?fx=almanac survives reload and ?fx=off clears it', async ({ page }) => {
-    await page.goto('/horoscope.html?fx=almanac', { waitUntil: 'domcontentloaded' });
+    // Wait for each load to finish: navigating mid-load aborts module scripts and trips the page-error gate.
+    await page.goto('/horoscope.html?fx=almanac', { waitUntil: 'load' });
+    await settlePage(page);
     await expect(page.locator('html')).toHaveAttribute('data-fx', 'almanac');
     expect(new URL(page.url()).search).toBe('');
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'load' });
+    await settlePage(page);
     await expect(page.locator('html')).toHaveAttribute('data-fx', 'almanac');
-    await page.goto('/horoscope.html?fx=off', { waitUntil: 'domcontentloaded' });
+    await page.goto('/horoscope.html?fx=off', { waitUntil: 'load' });
+    await settlePage(page);
     await expect(page.locator('html')).not.toHaveAttribute('data-fx', /.*/);
   });
 
