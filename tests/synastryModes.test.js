@@ -2,13 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { relationshipScores, synastryZiwei } from '../src/lib/synastryModes.js';
 import { computeZiwei } from '../src/lib/ziwei.js';
 
-const baziSyn = {
-  base: 70,
-  pillars: [
-    { id: 'romance', score: 80 }, { id: 'marriage', score: 60 },
-    { id: 'career', score: 75 }, { id: 'wealth', score: 55 }, { id: 'health', score: 65 },
-  ],
-};
+const baziSyn = { base: 70 };
 
 describe('relationshipScores — five lenses over one chart pair', () => {
   it('returns exactly the five relationship types, each bounded with a line', () => {
@@ -40,9 +34,16 @@ describe('relationshipScores — five lenses over one chart pair', () => {
     const b = relationshipScores(baziSyn, []).find((o) => o.key === 'colleague').score;
     expect(a).toBeLessThan(b);
   });
-  it('missing pillars fall back to 50 without throwing', () => {
-    const out = relationshipScores({ base: 60, pillars: [] }, []);
+  it('aspects not computed yet (null) gives null scores, not 50 (Q4)', () => {
+    const out = relationshipScores(baziSyn, null);
     expect(out.length).toBe(5);
+    for (const o of out) { expect(o.score).toBeNull(); expect(o.line).toBeNull(); }
+  });
+  it('a missing bazi base gives null scores, not 50 (Q4)', () => {
+    for (const o of relationshipScores({}, [])) expect(o.score).toBeNull();
+  });
+  it('an empty-but-computed aspect list is a real result (50-centred), not null', () => {
+    for (const o of relationshipScores(baziSyn, [])) expect(typeof o.score).toBe('number');
   });
   it('is deterministic', () => {
     expect(relationshipScores(baziSyn, [])).toEqual(relationshipScores(baziSyn, []));
@@ -79,12 +80,17 @@ describe('synastryZiwei — life-palace comparison', () => {
       if (order[s.relKey] < order['none']) expect(s.score).toBeLessThan(60);
     }
   });
-  it('empty life palace does not throw (borrows the quiet temperament)', () => {
-    // find a chart with an empty life palace by sweeping; if none found in
-    // the sample, the group function's empty-array branch is still covered
-    // by direct construction:
-    const fake = { ming: 0, palaces: Array.from({ length: 12 }, () => ({ stars: [] })) };
-    const s = synastryZiwei(fake, zA);
+  it('命无正曜 reads the opposite palace without moving its stars (Q8)', () => {
+    const palaces = Array.from({ length: 12 }, () => ({ stars: [] }));
+    palaces[6].stars = [0, 12]; // 紫微 七杀 in 午, opposite an empty 子 life palace
+    const s = synastryZiwei({ ming: 0, palaces }, zA);
+    expect(s.mingA.stars).toBe('命无正曜');
+    expect(s.mingA.borrowed).toBe('紫微七杀');
+    expect(palaces[0].stars).toEqual([]);
     expect(s.score).toBeGreaterThanOrEqual(0);
+  });
+  it('no stars in the life palace or its opposite gives no temperament verdict', () => {
+    const fake = { ming: 0, palaces: Array.from({ length: 12 }, () => ({ stars: [] })) };
+    expect(synastryZiwei(fake, zA).temperament).toBeNull();
   });
 });

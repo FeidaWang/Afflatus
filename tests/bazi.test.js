@@ -182,3 +182,48 @@ describe('western zodiac', () => {
     expect(zodiacIndex(8, 1)).toBe(4);    // Leo
   });
 });
+
+// Q1 (docs/relationships-v2-2026-10-23/DECISIONS): with a known hour the year
+// turns at the 立春 instant and the month at each 节 instant, not at the date.
+describe('computeBazi — exact-instant term boundaries', () => {
+  const gz = (p) => STEMS[p.stem] + BRANCHES[p.branch];
+  // 2024 立春 ≈ 2024-02-04 16:21 CST by this module's solver (published 16:27)
+  it('before the 立春 instant on 立春 day stays in the old year and 丑月', () => {
+    const c = computeBazi({ y: 2024, m: 2, d: 4, hour: 3 });
+    expect(gz(c.year)).toBe('癸卯');
+    expect(gz(c.month)).toBe('乙丑');
+    expect(c.boundaryUnstable).toBeNull();
+  });
+  it('after the 立春 instant flips to 甲辰年丙寅月', () => {
+    const c = computeBazi({ y: 2024, m: 2, d: 4, hour: 17 });
+    expect(gz(c.year)).toBe('甲辰');
+    expect(gz(c.month)).toBe('丙寅');
+  });
+  it('a time slot that contains the 立春 instant is flagged unstable (slot start decides)', () => {
+    const c = computeBazi({ y: 2024, m: 2, d: 4, hour: 15 });
+    expect(gz(c.year)).toBe('癸卯');
+    expect(c.boundaryUnstable).toEqual({ pillar: 'year', termLon: 315 });
+  });
+  it('unknown hour on a 节 day keeps the date rule but is flagged unstable', () => {
+    const c = computeBazi({ y: 2024, m: 2, d: 4, hour: null });
+    expect(gz(c.year)).toBe('甲辰');
+    expect(c.boundaryUnstable).toEqual({ pillar: 'year', termLon: 315 });
+  });
+  it('an ordinary day has no boundary flag', () => {
+    expect(computeBazi({ y: 2024, m: 6, d: 1, hour: 10 }).boundaryUnstable).toBeNull();
+    expect(computeBazi({ y: 2024, m: 6, d: 1, hour: null }).boundaryUnstable).toBeNull();
+  });
+  // 1990 立冬 ≈ 1990-11-08 00:20 CST. A 晚子 birth on 11-07 takes 11-08's day
+  // pillar, but the real instant is still before 立冬, so the month is 戌.
+  it('晚子 advances the day pillar but not a 节 that has not happened yet', () => {
+    const c = computeBazi({ y: 1990, m: 11, d: 7, hour: 23 });
+    expect(c.day).toEqual(computeBazi({ y: 1990, m: 11, d: 8, hour: 0 }).day);
+    expect(BRANCHES[c.month.branch]).toBe('戌');
+    expect(c.boundaryUnstable).toBeNull();
+  });
+  it('早子 slot containing 立冬 is flagged month-unstable', () => {
+    const c = computeBazi({ y: 1990, m: 11, d: 8, hour: 0 });
+    expect(BRANCHES[c.month.branch]).toBe('戌');
+    expect(c.boundaryUnstable).toEqual({ pillar: 'month', termLon: 225 });
+  });
+});

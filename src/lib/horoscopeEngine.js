@@ -31,9 +31,10 @@
    ============================================================ */
 import {
   computeBazi, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN,
-  zodiacIndex, ZODIAC_TRIPLICITY, dayPillar,
+  ZODIAC_TRIPLICITY, dayPillar, pillarName,
 } from './bazi.js';
-import { tenGodOfStem, TEN_GOD_ZH, TEN_GOD_EN, branchRelations } from './ziping.js';
+import { tenGodOfStem, TEN_GOD_ZH, TEN_GOD_EN, branchRelations, stemRelations, ziPingAnalysis } from './ziping.js';
+import { sunSignOf } from './astro.js';
 import { todayPillars } from './baziSchema.js';
 export { encodeShare, decodeShare } from './horoscopeShareCodec.js';
 
@@ -168,10 +169,10 @@ const DOMAIN_TXT = {
            { zh: '借出与担保之事，今日一律三思。', en: 'Loans and guarantees: think three times, then don\'t.' }],
   },
   health: {
-    up:   [{ zh: '气血调和，适合早起舒展、补一个好觉。', en: 'Qi and blood run smooth — stretch early, sleep deep.' },
+    up:   [{ zh: '节奏舒展，适合早起拉伸、补一个好觉。', en: 'An easy rhythm — stretch early, sleep deep.' },
            { zh: '身体轻盈之日，久搁的锻炼计划今天重启最顺。', en: 'A light-body day: the workout plan you shelved restarts easiest today.' }],
     flat: [{ zh: '无大碍，唯久坐伤神，每小时起身走两步。', en: 'Nothing looms — but sitting drains you today. Stand and walk each hour.' },
-           { zh: '脾胃偏弱，饮食七分饱为宜。', en: 'Digestion runs soft; stop at seven-tenths full.' }],
+           { zh: '屏幕时间留意一下，睡前一小时放下手机。', en: 'Mind the screen time — put the phone down an hour before bed.' }],
     down: [{ zh: '注意休息，今日莫熬夜硬扛。', en: 'Guard your rest; don\'t muscle through a late night.' },
            { zh: '情绪耗损大于体力，给自己留一段无人打扰的时间。', en: 'The drain is emotional more than physical — reserve an hour that belongs to no one else.' }],
   },
@@ -284,44 +285,85 @@ export function synastry(birthA, birthB) {
   const dayRel = branchAffinity(A.day.branch, B.day.branch);
   parts.push({ id: 'day', pts: Math.round(dayRel.pts * 1.3), ...BRANCH_NOTE[dayRel.key] }); // day pillar weighs more (the self)
 
-  // element complementarity: partner is strong where I am weakest
-  const weakA = A.elements.indexOf(Math.min(...A.elements));
-  const weakB = B.elements.indexOf(Math.min(...B.elements));
-  let compl = 0;
-  if (B.elements[weakA] >= 2) compl += 6;
-  if (A.elements[weakB] >= 2) compl += 6;
-  parts.push({ id: 'elements', pts: compl, zh: compl > 0 ? '五行互补，缺处有人补位' : '五行各自成局', en: compl > 0 ? 'Elements interlock — each fills the other\'s gap' : 'Two self-contained element sets' });
+  // 互为喜用 (Q3b): the partner's day-master element is one of my favourable
+  // elements (ziping.ziPingAnalysis, simplified 扶抑法). Counted both ways.
+  const favours = (X, Y) => ziPingAnalysis(pillarList(X)).favorable.some((f) => f.el === Y.dayMasterElement);
+  const fAB = favours(A, B), fBA = favours(B, A);
+  const compl = (fAB ? 6 : 0) + (fBA ? 6 : 0);
+  parts.push({ id: 'elements', pts: compl, ...(compl === 12 ? XIYONG_NOTE.both : compl ? XIYONG_NOTE.one : XIYONG_NOTE.none) });
 
-  // day-master generative cycle
-  const dmRel = elementRelation(A.dayMasterElement, B.dayMasterElement);
-  const dmPts = { feeds: 6, drains: 6, same: 3, prize: -2, presses: -4 }[dmRel];
-  parts.push({ id: 'daymaster', pts: dmPts, zh: dmPts > 0 ? '日主相生，相处养人' : dmPts < 0 ? '日主相克，强弱需让' : '日主比和', en: dmPts > 0 ? 'Day masters feed each other' : dmPts < 0 ? 'Day masters contend — someone must yield' : 'Day masters of one kind' });
+  // day-stem relation (Q3): symmetric; 五合 is a combination, not a 克
+  const dmKey = dayStemRelation(A.dayMaster, B.dayMaster);
+  parts.push({ id: 'daymaster', ...DAY_STEM_PART[dmKey] });
 
-  // western triplicity
-  const zA = ZODIAC_TRIPLICITY[zodiacIndex(birthA.m, birthA.d)];
-  const zB = ZODIAC_TRIPLICITY[zodiacIndex(birthB.m, birthB.d)];
-  const zPts = zA === zB ? 8 : ((zA === 0 && zB === 2) || (zA === 2 && zB === 0) || (zA === 1 && zB === 3) || (zA === 3 && zB === 1)) ? 6 : 0;
-  parts.push({ id: 'zodiac', pts: zPts, zh: zPts >= 8 ? '星座同象，火焰同色' : zPts > 0 ? '星座相成，风助火势' : '星座异象，各有天地', en: zPts >= 8 ? 'Same zodiac element — one shade of flame' : zPts > 0 ? 'Complementary elements — wind feeds fire' : 'Different skies, separate weather' });
+  // sun-sign element from the real solar longitude (Q3c, C2)
+  const sA = sunSignOf(birthA), sB = sunSignOf(birthB);
+  if (!sA.stable || !sB.stable) parts.push({ id: 'zodiac', pts: 0, unknown: true, ...ZODIAC_UNKNOWN_NOTE });
+  else parts.push({ id: 'zodiac', ...zodiacPart(ZODIAC_TRIPLICITY[sA.sign], ZODIAC_TRIPLICITY[sB.sign]) });
 
   const base = clamp(46 + parts.reduce((s, p) => s + p.pts, 0), 8, 96);
-
-  // per-life-pillar sub-scores: stable per pair (seed = pair, not date)
-  const pairSeed = strHash(`${birthA.y}-${birthA.m}-${birthA.d}|${birthB.y}-${birthB.m}-${birthB.d}`);
-  const rnd = mulberry32(pairSeed);
-  const pillars = ['romance', 'marriage', 'career', 'wealth', 'health'].map((id) => ({
-    id, score: clamp(Math.round(base + (rnd() * 24 - 12)), 8, 96),
-  }));
-
-  return { base, parts, pillars, chartA: A, chartB: B };
+  return { base, parts, chartA: A, chartB: B };
 }
 
-// Daily couple pull: changes every day (the retention hook), deterministic.
+const pillarList = (c) => [c.year, c.month, c.day, ...(c.hour ? [c.hour] : [])];
+
+const XIYONG_NOTE = {
+  both: { zh: '互为喜用，彼此补位', en: 'Each day master is what the other\'s chart favours' },
+  one: { zh: '一方日主正是另一方所喜', en: 'One day master is what the other\'s chart favours' },
+  none: { zh: '日主五行不在对方喜用之中', en: 'Neither day master is what the other\'s chart favours' },
+};
+
+// Traditional categories (天干五合 / 四冲 / 生 / 比和 / 克 by polarity),
+// original point values — see docs/relationships-v2-2026-10-23/DECISIONS.
+function dayStemRelation(a, b) {
+  const rel = stemRelations([a, b])[0];
+  if (rel?.type === 'combo') return 'combo';
+  if (rel?.type === 'clash') return 'clash';
+  if (STEM_ELEMENT[a] === STEM_ELEMENT[b]) return 'same';
+  if (rel?.type === 'overcome') return a % 2 === b % 2 ? 'sha' : 'guan';
+  return 'feeds';
+}
+const DAY_STEM_PART = {
+  combo: { pts: 8, zh: '日干五合，天然相吸', en: 'Day stems combine — a natural pull' },
+  feeds: { pts: 6, zh: '日主相生，相处养人', en: 'Day masters feed each other' },
+  same: { pts: 3, zh: '日主比和，脾性相近', en: 'Day masters of one kind' },
+  guan: { pts: -1, zh: '日主相克，一方需让', en: 'One day master checks the other — someone yields' },
+  sha: { pts: -3, zh: '日主七杀相克，强弱需调', en: 'A hard check between day masters — balance takes work' },
+  clash: { pts: -6, zh: '日干相冲，节奏相左', en: 'Day stems clash — rhythms pull apart' },
+};
+
+// triplicity: 0 fire 1 earth 2 air 3 water; fire–air and earth–water complement
+const SAME_ELEMENT_NOTE = [
+  { zh: '星座同属火象，热情同频', en: 'Both fire signs — the same spark' },
+  { zh: '星座同属土象，步调踏实', en: 'Both earth signs — the same steady pace' },
+  { zh: '星座同属风象，思路同频', en: 'Both air signs — minds on one wavelength' },
+  { zh: '星座同属水象，情绪相通', en: 'Both water signs — feelings run the same way' },
+];
+function zodiacPart(tA, tB) {
+  if (tA === tB) return { pts: 8, ...SAME_ELEMENT_NOTE[tA] };
+  if (tA % 2 === tB % 2) {
+    return tA % 2 === 0
+      ? { pts: 6, zh: '火风相成，风助火势', en: 'Fire and air — wind feeds the flame' }
+      : { pts: 6, zh: '土水相成，水润土生', en: 'Earth and water — water feeds the soil' };
+  }
+  return { pts: 0, zh: '星座异象，各有天地', en: 'Different elements, separate weather' };
+}
+const ZODIAC_UNKNOWN_NOTE = { zh: '太阳当天换星座且时辰未知，星座项不计', en: 'The Sun changes sign that day and the hour is unknown — sign not scored' };
+
+// Daily couple reading (Q5): today's day pillar against both natal DAY
+// pillars (日支 = spouse palace, 日干 = day master). Three tones, no score;
+// first matching rule wins — see DECISIONS for the rule order.
 export function dailyPull(birthA, birthB, dateStr) {
-  const seed = strHash(`${dateStr}#${birthA.y}-${birthA.m}-${birthA.d}#${birthB.y}-${birthB.m}-${birthB.d}`);
-  const rnd = mulberry32(seed);
   const [ty, tm, td] = dateStr.split('-').map(Number);
   const today = dayPillar(ty, tm, td);
   const el = STEM_ELEMENT[today.stem];
-  const score = clamp(Math.round(40 + rnd() * 56), 8, 96);
-  return { score, todayElement: { zh: ELEMENTS_ZH[el], en: ELEMENTS_EN[el] } };
+  const days = [computeBazi(birthA).day, computeBazi(birthB).day];
+  const branchTypes = days.flatMap((p) => branchRelations([today.branch, p.branch]).map((r) => r.type));
+  const stemCombo = days.some((p) => stemRelations([today.stem, p.stem])[0]?.type === 'combo');
+  let tone, why;
+  if (branchTypes.includes('chong')) { tone = 'yield'; why = { zh: '今日地支冲日支（夫妻宫）', en: "Today's branch clashes a day branch (the partner palace)" }; }
+  else if (branchTypes.includes('liuhe') || branchTypes.includes('banhe')) { tone = 'smooth'; why = { zh: '今日地支合日支（夫妻宫）', en: "Today's branch combines with a day branch (the partner palace)" }; }
+  else if (stemCombo) { tone = 'smooth'; why = { zh: '今日天干与日主五合', en: "Today's stem combines with a day master" }; }
+  else { tone = 'even'; why = { zh: '今日干支与双方日柱无合冲', en: "Today's pillar neither combines with nor clashes either day pillar" }; }
+  return { gz: pillarName(today), tone, why, todayElement: { zh: ELEMENTS_ZH[el], en: ELEMENTS_EN[el] } };
 }
