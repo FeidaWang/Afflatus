@@ -14,7 +14,7 @@
 
 **没有使用 Swiss Ephemeris**（AGPL 或商业双授权），所以不存在 AGPL 传染的问题。
 
-**发现的许可缺口（未修）**：MIT 要求在副本中保留版权与许可声明。`npx vite build` 产出的 `dist/assets/vendor-astronomy-*.js` 里搜不到 `MIT License` 或 `Don Cross`（压缩时去掉了文件头注释），站点上也没有第三方许可页。建议另开一项：构建时保留 legal comments，或增加 `/licenses.txt` 并在页脚链接。
+**许可声明的分发（S3，2026-10-24 已修）**：压缩会去掉 astronomy-engine 自带的文件头。现在做了两件事：`vite.config.js` 用 Rolldown 的 `postBanner`（在压缩之后加），给所有包含 astronomy-engine 的产物（页面分块 `vendor-astronomy-*.js` 和 Worker `horoscopeSynthesis.worker-*.js`）加一行 MIT 声明；根目录的 `THIRD_PARTY_NOTICES.md` 新增 astronomy-engine 一节，附 MIT 全文，构建时作为 `dist/THIRD_PARTY_NOTICES.md` 分发。`npx vite build` 后已确认这两个分块的第一行都是这条声明，`dist/` 里也有这份文件。
 
 ## 2. 宿曜表（REL-060）
 
@@ -33,5 +33,5 @@
 | # | 问题 | 建议 |
 |---|---|---|
 | S1 | 1988 年中国夏令时开始日：仓库 4 月 10 日，tzdata 4 月 17 日 | **已裁定（2026-10-24）**：沿用仓库的 4 月 10 日，大陆出生不跟 tzdata；已加单测锁定 |
-| S2 | 宿曜月首宿表七至十一月的矛盾 | 对照大正藏 T1299 原版影像；核清之前宿曜保持 unverified |
-| S3 | astronomy-engine 的 MIT 声明没有随构建产物分发 | 另开一项修构建或加许可页 |
+| S2 | 宿曜月首宿表七至十一月的矛盾 | 站主裁定（2026-10-24）：保持 unverified，站主自己找第三方核对；代码不改 |
+| S3 | astronomy-engine 的 MIT 声明没有随构建产物分发 | **已修（2026-10-24）**：加了 `postBanner`，并随构建分发 `THIRD_PARTY_NOTICES.md` |

@@ -19,6 +19,13 @@ const dataBridgeScript = readFileSync(
 );
 const dataBridgePattern = /<script\s+src=["']\/lib\/data-bridge\.js["']\s*><\/script>/i;
 
+// MIT requires the notice to travel with every copy. Minification drops
+// astronomy-engine's own header, so any chunk (page or Worker) that bundles
+// it gets this banner after minification (Rolldown postBanner), and
+// THIRD_PARTY_NOTICES.md ships at the site root.
+const ASTRONOMY_NOTICE = '/*! astronomy-engine | MIT License | Copyright (c) 2019-2023 Don Cross <cosinekitty@gmail.com> | https://github.com/cosinekitty/astronomy | full text: /THIRD_PARTY_NOTICES.md */';
+const noticeBanner = (chunk) => (chunk.moduleIds?.some((id) => id.includes('node_modules/astronomy-engine')) ? ASTRONOMY_NOTICE : '');
+
 // MPA multi-entry: index.html (home Three.js app) + the five sub-pages,
 // which used to live untouched in public/ (no bundling/hashing/minification).
 // Moving their *.html files to project root turns them into real Vite entries;
@@ -53,6 +60,13 @@ export default defineConfig({
     ],
   },
   plugins: [
+    {
+      name: 'third-party-notices',
+      apply: 'build',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'THIRD_PARTY_NOTICES.md', source: readFileSync(resolve(import.meta.dirname, 'THIRD_PARTY_NOTICES.md'), 'utf8') });
+      },
+    },
     vibeDevPlugin(),
     novelChunksPlugin(import.meta.dirname),
     {
@@ -81,6 +95,9 @@ export default defineConfig({
     },
   ],
   ssr: { noExternal: ['@phosphor-icons/react'] },
+  worker: {
+    rollupOptions: { output: { postBanner: noticeBanner } },
+  },
   test: {
     // Keep Playwright's browser specs out of Vitest's default *.spec.js
     // discovery. All existing pure/unit suites live under tests/.
@@ -116,7 +133,8 @@ export default defineConfig({
         // it (currently duplicated per-page-bundle).
         manualChunks(id) {
           if (id.includes('node_modules/astronomy-engine')) return 'vendor-astronomy';
-        }
+        },
+        postBanner: noticeBanner,
       }
     }
   }
