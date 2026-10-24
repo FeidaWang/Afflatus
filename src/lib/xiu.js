@@ -12,15 +12,23 @@
       the Xiuyao-jing convention — each LUNAR month assigns a mansion to
       day 1 (正月=室, 二月=奎, 三月=胃, 四月=毕, 五月=参, 六月=鬼,
       七月=张, 八月=角, 九月=氐, 十月=心, 十一月=斗, 十二月=虚), then
-      count forward (lunar day − 1) through the 27 cycle. A leap month is
-      treated as its host month (documented convention choice; schools
-      differ and no independent cross-check was available in this
-      environment — stated honestly here and in the page caveat).
+      count forward (lunar day − 1) through the 27 cycle. CHECKED: the
+      owner's third-party check of the Taishō text (T21 No.1299) confirms
+      these twelve day-1 mansions under the 27-mansion method, and the
+      scripture's own example at p.391b11 (二月五日 → 畢) is locked in
+      tests/xiu.test.js. The printed table in the scripture's first
+      fascicle has column misalignments and mixes in the 28-mansion cycle,
+      so the values rest on the 27-mansion method, not on that layout.
+      A leap month is treated as its host month: No.1299 states no rule,
+      so this is a site convention and stays unverified (the page says so
+      only for leap-month births).
 
    3. 双人宿曜关系 (三九秘法): the distance d from mansion A to mansion B
       (forward in the 27 cycle) maps to 命(0) / 業(9) / 胎(18), otherwise
       d%9 → 1栄 2衰 3安 4危 5成 6壊 7友 8親. Directional; the standard
-      reading combines both directions.
+      reading combines both directions. CHECKED against T1299's 三九祕宿品
+      and its p.391b11 example (畢 命, 觜 栄, 参 衰 … 軫 業, 女 胎).
+      Classification only — never scored (DECISIONS).
    ============================================================ */
 import { jdn } from './bazi.js';
 

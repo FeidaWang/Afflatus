@@ -128,21 +128,30 @@ function person(P, input, config) {
     facts.push(makeFact(`${P}.ziwei.lifePalace`, 'ziwei', ming, { sourceIds: [SOURCE_IDS.ziwei, SOURCE_IDS.lunar], methodVersion: config.ziwei.methodVersion, limitationKeys: ming && !ming.stars.length ? ['no_major_star_borrow_opposite'] : [] }));
   }
 
-  // ---- xiu: natal mansion from the civil (CST) birth date; unverified ----
+  // ---- xiu: natal mansion from the civil (CST) birth date ----
+  // Month-start table and three-nine mapping checked against T1299 (see
+  // SOURCES_AND_LICENSES); a leap-month birth uses the host month, a site
+  // convention the scripture does not state, so only that stays unverified.
   const dates = hourKnown ? t.points.map((u) => { const c = cstOf(u); return [c.y, c.m, c.d]; }) : [[t.legacy.y, t.legacy.m, t.legacy.d]];
-  const mansions = dates.map(([y, m, d]) => { const l = solarToLunar(y, m, d); return l ? natalXiu(l.lMonth, l.lDay) : null; });
-  const mansion = agreed(mansions);
-  facts.push(makeFact(`${P}.xiu.natal`, 'xiu', mansion, { basis: mansion === undefined ? 'conflicted' : 'unverified', sourceIds: [SOURCE_IDS.xiuyao], methodVersion: config.xiu.natalMethodId, limitationKeys: ['table_unverified'] }));
+  const lunars = dates.map(([y, m, d]) => solarToLunar(y, m, d));
+  const mansion = agreed(lunars.map((l) => (l ? natalXiu(l.lMonth, l.lDay) : null)));
+  const leapMonth = lunars.some((l) => l?.isLeap);
+  facts.push(makeFact(`${P}.xiu.natal`, 'xiu', mansion, {
+    basis: mansion === undefined ? 'conflicted' : leapMonth ? 'unverified' : 'computed',
+    sourceIds: [SOURCE_IDS.xiuyao, SOURCE_IDS.lunar], methodVersion: config.xiu.natalMethodId,
+    limitationKeys: leapMonth ? ['leap_month_site_convention'] : [],
+  }));
 
   return {
-    t, facts, pillar, dayMaster, favourable, sign, lons, ming, zw, mansion,
+    t, facts, pillar, dayMaster, favourable, sign, lons, ming, zw, mansion, leapMonth,
     modules: {
       bazi: { status: baziStatus, reasonKeys: baziReasons },
       // A time window is only 'partial' once a western fact actually differs
       // inside it (checked in computeRelationshipReport).
       western: { status: hourKnown ? 'ready' : 'partial', reasonKeys: hourKnown ? [] : ['time_unknown'] },
       ziwei: { status: ziweiStatus, reasonKeys: ziweiReasons },
-      xiu: { status: mansion == null ? 'failed' : 'unverified', reasonKeys: ['table_unverified'] },
+      xiu: mansion == null ? { status: 'failed', reasonKeys: ['lunar_out_of_range'] }
+        : leapMonth ? { status: 'unverified', reasonKeys: ['leap_month_site_convention'] } : { status: 'ready', reasonKeys: [] },
     },
   };
 }
@@ -187,7 +196,8 @@ function pairFacts(A, B, config) {
 
   for (const [dir, X, Y] of [['A_to_B', A, B], ['B_to_A', B, A]]) {
     const v = X.mansion == null || Y.mansion == null ? undefined : xiuRelation(X.mansion, Y.mansion);
-    facts.push(makeFact(`pair.xiu.${dir}`, 'xiu', v, { basis: v === undefined ? 'conflicted' : 'unverified', sourceIds: [SOURCE_IDS.xiuyao], methodVersion: config.xiu.natalMethodId, limitationKeys: ['table_unverified'] }));
+    const leap = X.leapMonth || Y.leapMonth;
+    facts.push(makeFact(`pair.xiu.${dir}`, 'xiu', v, { basis: v === undefined ? 'conflicted' : leap ? 'unverified' : 'computed', sourceIds: [SOURCE_IDS.xiuyao], methodVersion: config.xiu.natalMethodId, limitationKeys: leap ? ['leap_month_site_convention'] : [] }));
   }
   return facts;
 }

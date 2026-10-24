@@ -1270,8 +1270,10 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     renderSynZiwei(L.ziwei);
 
     // 双人宿曜关系 (V21 Phase 3): natal mansions + both directions of the
-    // 三九秘法 relation (it's directional by design). Unverified tables.
+    // 三九秘法 relation (it's directional by design). Tables checked against
+    // T1299; only a leap-month birth (site convention) carries a caveat.
     const xa = facts.get('A.xiu.natal').value, xb = facts.get('B.xiu.natal').value;
+    const leapXiu = ['A.xiu.natal', 'B.xiu.natal'].some((id) => facts.get(id).limitationKeys.includes('leap_month_site_convention'));
     const relAB = facts.get('pair.xiu.A_to_B').value, relBA = facts.get('pair.xiu.B_to_A').value;
     if (xa != null && xb != null && relAB && relBA) {
       const rab = XIU_REL[relAB], rba = XIU_REL[relBA];
@@ -1279,7 +1281,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         <div class="xiu-h">${T('LUNAR MANSIONS · 宿曜', '宿曜缘分 · 三九秘法')}</div>
         <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${XIU27_ZH[xa]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rab.en, rab.zh)}</b><span class="xiu-d">${T(rab.descEn, rab.descZh)}</span></div>
         <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${XIU27_ZH[xb]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rba.en, rba.zh)}</b><span class="xiu-d">${T(rba.descEn, rba.descZh)}</span></div>
-        <p class="bz-caveat">${T('Mansion tables follow the Xiuyao-jing convention but have not been independently verified against a full published table. Not scored.', '宿曜表按《宿曜经》惯例排出，尚未与完整的公开表独立核对；只作分类，不计分。')}</p>`;
+        <p class="bz-caveat">${T('Following the Xiuyao-jing (Taishō No. 1299). Classification only — not scored.', '按《宿曜经》（大正藏 No. 1299）排出；只作分类，不计分。')}${leapXiu ? T(' Born in a leap lunar month: the scripture gives no rule for this, so the site uses the host month — a convention that has not been verified.', '出生在农历闰月：经文对此没有规定，本站按本月处理，这是本站的约定，未经核验。') : ''}</p>`;
     } else {
       $('synXiu').innerHTML = '';
     }

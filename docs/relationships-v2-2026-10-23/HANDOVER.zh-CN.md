@@ -57,3 +57,11 @@
 | 4 S2 | 保持 unverified，代码没改，只在 SOURCES 里记下裁定 |
 | 命令与结果 | `npx vitest run`：136 个文件、1548 项通过，1 项跳过 · `npm run lint:i18n` 通过 · `npx vite build`（仍跳过 prebuild）通过 · Playwright `horoscope-privacy` 与 `horoscope-m0` 在 Chromium 和 WebKit 上 16 项全部通过 · 标定脚本约 21 秒 |
 | 仍未做 | 分类表 `FAMILY_TABLE` 没有外部验证；没有黄金案例对照；没有真机测试 |
+
+# HANDOVER · S2 宿曜核对结果落实（2026-10-24）
+
+| 项 | 内容 |
+|---|---|
+| 依据 | 站主委托第三方依据大正藏 T1299 核对：二十七宿法下的月首宿表、三九秘法映射与仓库一致；p.391b11 明确记载「二月五日 → 毕宿」；原表排版有对位矛盾，数值按二十七宿法确认；闰月经文没有规定 |
+| 改动 | `kernel.js`：宿曜事实非闰月为 `computed`，模块 `ready`；闰月出生为 `unverified`，并带 `leap_month_site_convention` · `contract.js`：来源 id 改为 `src.xiuyao-jing-t1299` · `xiu.js`：头注释写明核对依据 · 页面：只有闰月出生的人才显示未核验提示 · 宿曜仍不计分 |
+| 测试 | `tests/xiu.test.js` 锁住二月五日为毕、十二个月初一、毕宿起算的三九角色；`relationshipsKernel` 加了闰月和非闰月两例。`npx vitest run`：1552 项通过，1 项跳过；`lint:i18n` 通过；本地浏览器核对过非闰月和闰月（2023-03-25）两种提示 |

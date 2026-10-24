@@ -99,11 +99,22 @@ describe('relationships kernel · module status and unknowns', () => {
     expect(conflicted).toBeGreaterThan(5); // the Moon changes sign every ~2.5 days
   });
 
-  it('xiu is always unverified and never scored', () => {
+  it('xiu tables are checked (T1299) and computed, but never scored', () => {
     const r = computeRelationshipReport(request(birth('1990-01-01', exact('12:00')), birth('1992-06-15', exact('07:00'))));
-    expect(r.modules.xiu.status).toBe('unverified');
-    expect(factById(r, 'pair.xiu.A_to_B').basis).toBe('unverified');
-    expect(r.rules.some((x) => x.ruleId.startsWith('xiu.'))).toBe(false);
+    expect(r.modules.xiu.status).toBe('ready');
+    expect(factById(r, 'pair.xiu.A_to_B').basis).toBe('computed');
+    expect(factById(r, 'A.xiu.natal').limitationKeys).toEqual([]);
+    expect(r.rules.some((x) => x.ruleId.startsWith('xiu.') || x.familyId.startsWith('xiu'))).toBe(false);
+  });
+
+  it('a leap-month birth keeps the xiu convention marked unverified', () => {
+    // 2023-03-25 falls in the leap second lunar month.
+    const r = computeRelationshipReport(request(birth('2023-03-25', exact('10:00')), birth('1992-06-15', exact('07:00'))));
+    expect(r.modules.xiu).toEqual({ status: 'unverified', reasonKeys: ['leap_month_site_convention'] });
+    expect(factById(r, 'A.xiu.natal').basis).toBe('unverified');
+    expect(factById(r, 'A.xiu.natal').limitationKeys).toContain('leap_month_site_convention');
+    expect(factById(r, 'B.xiu.natal').basis).toBe('computed');
+    expect(factById(r, 'pair.xiu.B_to_A').basis).toBe('unverified');
   });
 
   it('both exact times: bazi, western and ziwei ready', () => {

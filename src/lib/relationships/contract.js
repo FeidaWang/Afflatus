@@ -73,7 +73,7 @@ export const CAPABILITIES = Object.freeze({
     'mean or apparent solar time',
     'sidereal zodiac, house systems',
     'ziwei four transformations, three-sides-four-corners scoring',
-    'xiu automatic scoring (tables not independently verified)',
+    'xiu scoring (classification only, by decision); leap-month xiu births follow an unverified site convention',
   ],
 });
 
@@ -84,7 +84,7 @@ export const SOURCE_IDS = Object.freeze({
   meeus: 'src.meeus-low-precision',
   astronomyEngine: 'src.astronomy-engine-2.1.19-mit',
   ziwei: 'src.repo.ziwei',
-  xiuyao: 'src.xiuyao-jing-unverified',
+  xiuyao: 'src.xiuyao-jing-t1299',
   lunar: 'src.repo.lunar-table',
   tzIntl: 'src.tzdb-via-intl',
   cnDst: 'src.repo.cn-dst-1986-1991',

@@ -25,7 +25,8 @@
    - Unknown facts give state 'unknown', never 'absent'. The model needs
      bazi, western and ziwei all 'ready' for both people; otherwise every
      dimension and the overall index are null (no silent reweighting).
-   - Xiu is classification only (unverified tables) and never scored.
+   - Xiu is classification only and never scored (DECISIONS; unchanged
+     now that its tables are checked against T1299).
    - Archetypes are directional: A_to_B is what A meets in B. Swapping A
      and B swaps them exactly; all six dimensions are symmetric.
    ============================================================ */
