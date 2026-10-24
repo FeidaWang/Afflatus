@@ -92,11 +92,27 @@ describe('IANA daylight saving: folds and gaps', () => {
     expect(iso(t.points[0])).toBe('1980-07-01T11:00:00.000Z');
   });
 
-  it('an ambiguous time leaves time-sensitive facts conflicted instead of picking one', () => {
-    // Moon moves ~0.5° per hour: over a fold the Moon sign is checked at both readings.
+  it('an ambiguous time is checked at both readings: agreeing facts stay, differing ones turn conflicted', () => {
+    // 01:30 in the NY fold is 13:30 or 14:30 CST — the same 未 hour either way.
     const r = report(birth('2021-11-07', exact('01:30'), { timezone: 'America/New_York' }));
     expect(r.warnings).toContain('A.dst_fold');
-    expect(r.modules.western.status).toBe('partial');
+    expect(fact(r, 'A.bazi.pillar.hour').value.branch).toBe(7);
+    // 00:30 in a Melbourne gap reads as 22:30 or 21:30 CST the previous day:
+    // 亥 either way; a 23:00 boundary would have made the day pillar conflicted.
+    const g = report(birth('2023-10-01', exact('02:30'), { timezone: 'Australia/Melbourne' }));
+    expect(g.warnings).toContain('A.dst_gap');
+    const across = report(birth('2023-04-02', exact('01:15'), { timezone: 'Australia/Melbourne' }));
+    expect(across.warnings).not.toContain('A.dst_fold'); // 01:15 is before the 02:00–03:00 fold
+  });
+
+  it('a slot whose readings differ marks the pillar conflicted', () => {
+    // 23:00–24:00 CST spans no 节 here, but a 22:00 exact vs 23:30 exact differ in day pillar.
+    const a = report(birth('2000-03-10', exact('22:30')));
+    const b = report(birth('2000-03-10', exact('23:30')));
+    expect(fact(a, 'A.bazi.pillar.day').value).not.toEqual(fact(b, 'A.bazi.pillar.day').value);
+    const span = report(birth('2000-03-10', { kind: 'range', start: '22:30', end: '23:45', endDayOffset: 0 }));
+    expect(fact(span, 'A.bazi.pillar.day').basis).toBe('conflicted');
+    expect(fact(span, 'A.bazi.pillar.hour').basis).toBe('conflicted');
   });
 
   it('A and B keep their own zones', () => {

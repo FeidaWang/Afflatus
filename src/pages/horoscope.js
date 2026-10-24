@@ -9,6 +9,8 @@ import { parseBirthForm, birthInputFromSaved, birthAssumptions, clearHoroscopeSt
 import { clockHour } from '../lib/bazi.js';
 import { resolveBirthTime, jdOf } from '../lib/relationships/time.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
+import { createRelationshipsClient, newRequestId } from '../lib/relationships/client.js';
+import { DEFAULT_CONFIG, DIMENSION_IDS, SCHEMA_VERSION } from '../lib/relationships/contract.js';
 import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&url';
 
 (async () => {
@@ -30,7 +32,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace;
   let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
   let mingzaoRank, percentileOf, MINGZAO_DIST;
-  let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei;
+  let dailyPull, dailyCoupleWeather, transitsAreCurrent, ruleLine, DIMENSION_COPY, THEME_COPY, QUESTION_COPY;
   let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
   let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
 
@@ -62,7 +64,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   let synastryFeaturePromise;
   const loadSynastryFeature = () => synastryFeaturePromise || (synastryFeaturePromise = import('../horoscope/synastryFeature.js').then((feature) => {
-    ({ synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei } = feature);
+    ({ dailyPull, dailyCoupleWeather, transitsAreCurrent, ruleLine, DIMENSION_COPY, THEME_COPY, QUESTION_COPY } = feature);
     return feature;
   }));
 
@@ -82,7 +84,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     return downloadShareCard(kind, data, filename);
   };
 
-  const synAstroRunner = createLatestWorkerTask(synthesisWorkerUrl);
+  // REL-070: every pair number comes from the Relationships kernel's report
+  // (Worker, main-thread fallback); this page only renders it.
+  const relClient = createRelationshipsClient({ workerUrl: synthesisWorkerUrl });
   const ephemerisRunner = createLatestWorkerTask(synthesisWorkerUrl);
   let mineRenderEpoch = 0;
   let synRenderEpoch = 0;
@@ -996,29 +1000,20 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   // ---- render: synastry -----------------------------------------------------
 
-  // The full planet layer runs off-main-thread. A new pair terminates the
-  // previous Worker, so obsolete charts stop consuming CPU rather than merely
-  // having their eventual response ignored.
-  async function computeSynAstroLayer(me, other, baziBase) {
-    try {
-      return await synAstroRunner.run('synastry-astro', { me, other, baziBase });
-    } catch (error) {
-      if (error?.name === 'AbortError') throw error;
-      // Workers can be disabled by privacy tooling or older embedded
-      // browsers. Keep the feature available through a lazy main-thread
-      // fallback without putting the ephemeris back in the initial bundle.
-      const { computeSynastryAstro } = await import('../lib/horoscopeSynthesis.js');
-      return computeSynastryAstro({ me, other, baziBase });
-    }
-  }
+  // The report runs off-main-thread. A new pair terminates the previous
+  // Worker, so obsolete charts stop consuming CPU rather than merely having
+  // their eventual response ignored. Nicknames and places never enter it.
+  const pairKeyOf = () => JSON.stringify([state.meInput?.localDate, state.meInput?.time, state.meInput?.timezone, state.meInput?.fixedOffset, state.otherInput]);
+  const relationshipsRequest = () => {
+    const { place, ...A } = state.meInput;
+    return { schemaVersion: SCHEMA_VERSION, requestId: newRequestId(), A, B: state.otherInput, config: DEFAULT_CONFIG, scoreModelId: 'rel-six-dim' };
+  };
 
-  // U2: five relationship lenses (朋友/同事/暧昧/情侣/夫妻) — same signals,
-  // different weights per relationship type. Renders immediately from the
-  // bazi layer (aspects=[]) and re-renders richer once the astro layer lands.
-  function renderSynModes(aspects) {
+  // U2: five relationship lenses (朋友/同事/暧昧/情侣/夫妻), legacy model,
+  // read from the report.
+  function renderSynModes(modes) {
     const wrap = $('synModes');
-    if (!wrap || !state.synData) return;
-    const modes = relationshipScores(state.synData, aspects || []);
+    if (!wrap) return;
     wrap.innerHTML = `<div class="xiu-h">${T('AS FRIENDS / COLLEAGUES / MORE · 分关系评分', '分关系评分 · 朋友到夫妻')}</div>
       <div class="syn-mode-grid">${modes.map((m) => `
         <div class="syn-mode">
@@ -1026,13 +1021,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
           <div class="sm-bar"><i style="width:${m.score ?? 0}%"></i></div>
           ${m.line ? `<p class="sm-line">${T(m.line.en, m.line.zh)}</p>` : ''}
         </div>`).join('')}</div>
-      ${aspects ? '' : `<p class="bz-caveat">${T('Waiting for the planet aspects — these lenses need them, so no number is shown yet.', '等待星盘相位——这五个视角需要相位才能计算，暂不显示分数。')}</p>`}`;
+      <p class="bz-caveat">${T('Earlier model (legacy-resonance · r0), kept while the six-dimension scale is in draft.', '旧模型（legacy-resonance · r0），六维量表定稿前保留。')}</p>`;
   }
 
   // U2: ziwei life-palace comparison — needs both birth hours.
   const zwStars = (m) => m.stars !== '命无正曜' ? m.stars
     : m.borrowed ? T(`No major star — read from the opposite palace (${m.borrowed})`, `命无正曜，借对宫（${m.borrowed}）参看`) : T('No major star', '命无正曜');
-  function renderSynZiwei() {
+  function renderSynZiwei(s) {
     const wrap = $('synZiwei');
     if (!wrap) return;
     if (state.me.hour == null || state.other.hour == null) {
@@ -1040,9 +1035,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         <p class="form-note">${T('Needs both birth hours — the hour branch places each life palace.', '需要双方时辰——时支决定各自命宫位置。')}</p>`;
       return;
     }
-    const zA = computeZiwei(state.me), zB = computeZiwei(state.other);
-    if (!zA || !zB) { wrap.innerHTML = ''; return; }
-    const s = synastryZiwei(zA, zB);
+    if (!s) { wrap.innerHTML = ''; return; }
     wrap.innerHTML = `<div class="xiu-h">${T('ZIWEI LIFE PALACES · 紫微合参', '紫微合参 · 命宫对照')}</div>
       <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${s.mingA.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingA)}</span></div>
       <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${s.mingB.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingB)}</span></div>
@@ -1052,7 +1045,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   function renderSynAstroSections(data) {
     state.synAstroCard = data; // kept for the share-card button
-    renderSynModes(data.aspects); // U2: re-render the five lenses with real aspects
     $('synTitle').innerHTML = `<b>${T(data.title.en, data.title.zh)}</b>`;
     const C = 2 * Math.PI * 58;
     $('sRing').style.strokeDashoffset = (C * (1 - data.score / 100)).toFixed(1);
@@ -1156,8 +1148,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const BM_PLABEL = { year: ['YR', '年'], month: ['MO', '月'], day: ['DAY', '日'], hour: ['HR', '时'] };
   const bmCellClass = (types) => (!types.length ? 'neutral' : types.some((t) => t === 'liuhe' || t === 'banhe' || t === 'sanhe') ? 'harmony' : 'clash');
 
-  function synBaziMatrixHTML(chartA, chartB) {
-    const m = crossBranchMatrix(chartA, chartB);
+  function synBaziMatrixHTML(chartA, chartB, m) {
     const pillarCard = (chart, id, side) => {
       const p = chart[id]; const el = STEM_ELEMENT[p.stem];
       return `<div class="pillar pillar--sm" data-side="${side}" data-pid="${id}"><div class="t">${T(...BM_PLABEL[id])}</div><span class="gz e-${el}">${pillarName(p)}</span></div>`;
@@ -1215,84 +1206,116 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
   }
 
+  // REL-070 six-dimension scale (draft) + evidence ledger + two-way themes,
+  // rendered from the report. Null stays "Pending", never a number.
+  function renderSynScale(report) {
+    const wrap = $('synPillars');
+    if (!wrap) return;
+    const facts = new Map(report.facts.map((f) => [f.id, f]));
+    const matched = report.rules.filter((r) => r.state === 'matched');
+    const unknown = report.rules.filter((r) => r.state === 'unknown').length;
+    const lines = (kind) => {
+      const out = [];
+      for (const r of matched) {
+        const dims = DIMENSION_IDS.filter((d) => r.effects[d]?.[kind] > 0);
+        if (!dims.length) continue;
+        const l = ruleLine(r, facts);
+        out.push(`<p class="syn-line syn-line--${kind === 'support' ? 'pos' : 'neg'}">${T(l.en, l.zh)} <small>· ${dims.map((d) => T(DIMENSION_COPY[d].en, DIMENSION_COPY[d].zh)).join(' / ')}</small></p>`);
+      }
+      return out.join('') || `<p class="form-note">${T('None found.', '未找到。')}</p>`;
+    };
+    const dimRows = DIMENSION_IDS.map((d) => {
+      const s = report.dimensions[d];
+      return `<div class="syn-mode"><div class="sm-h"><span class="sm-n">${T(DIMENSION_COPY[d].en, DIMENSION_COPY[d].zh)}</span><b class="sm-v">${s.value == null ? T('Pending', '待补充') : s.value}</b></div>
+        <div class="sm-bar"><i style="width:${s.value ?? 0}%"></i></div>
+        <p class="sm-line">${T(`support ${+s.support.toFixed(1)} · friction ${+s.friction.toFixed(1)}`, `支持 ${+s.support.toFixed(1)} · 磨合 ${+s.friction.toFixed(1)}`)}</p></div>`;
+    }).join('');
+    const theme = (a, who) => `<div class="xiu-row"><span class="xiu-n">${who}</span><span class="xiu-d">${a.themeIds.length
+      ? a.themeIds.map((id, i) => `${T(THEME_COPY[id].en, THEME_COPY[id].zh)}<br><small>${T(QUESTION_COPY[a.questionIds[i]].en, QUESTION_COPY[a.questionIds[i]].zh)}</small>`).join('<br>')
+      : T('No theme stands out from the facts that are known.', '已知事实里没有突出的主题。')}</span></div>`;
+    const o = report.overall;
+    wrap.innerHTML = `<div class="xiu-h">${T('SIX DIMENSIONS · DRAFT SCALE', '六维量表 · 草案')}</div>
+      <div class="syn-mode-grid">${dimRows}</div>
+      <p class="form-note">${o.value == null
+        ? T('Overall: pending — this scale needs both birth times (bazi, planets and Ziwei all settled). Known facts are listed below.', '综合：待补充——本量表需要双方出生时间（八字、行星与紫微都能确定）。已知事实见下。')
+        : T(`Overall ${o.value} (draft, unverified weights).`, `综合 ${o.value}（草案，权重未核验）。`)}</p>
+      <div class="xiu-h">${T('WHAT SUPPORTS', '支持')}</div>${lines('support')}
+      <div class="xiu-h">${T('WHAT TAKES WORK', '磨合')}</div>${lines('friction')}
+      ${unknown ? `<p class="bz-caveat">${T(`${unknown} check${unknown === 1 ? ' depends' : 's depend'} on a birth time that isn't settled, so they are left out rather than guessed.`, `有 ${unknown} 项检查取决于尚未确定的出生时间，不作猜测，暂不计入。`)}</p>` : ''}
+      <div class="xiu-h">${T('TWO-WAY THEMES', '双向主题')}</div>
+      ${theme(report.archetypes.A_to_B, T('What I meet in them', '我在 TA 身上遇到的'))}
+      ${theme(report.archetypes.B_to_A, T('What they meet in me', 'TA 在我身上遇到的'))}
+      <p class="bz-caveat">${T(`Themes are traditional symbols read as stories — not facts about either of you, and not a forecast. The resonance ring above is the earlier model (legacy-resonance · r0); these dimensions are a separate scale (${o.modelId} · ${o.modelVersion}) and the two should not be compared. Entertainment only.`, `主题是传统取象，当作故事读——不是对你们任何一方的判断，也不是预测。上方共鸣指数用的是旧模型（legacy-resonance · r0）；六维是另一套量表（${o.modelId} · ${o.modelVersion}），两者不可直接比较。仅供娱乐。`)}</p>`;
+  }
+
   async function renderSyn() {
     const me = state.me;
     const other = state.other;
     if (!me || !other) return;
     const epoch = ++synRenderEpoch;
-    synAstroRunner.cancel('pair-changed');
     await Promise.all([loadMineFeature(), loadSynastryFeature()]);
     if (epoch !== synRenderEpoch || state.me !== me || state.other !== other) return;
-    const s = synastry(state.me, state.other);
-    state.synData = s; // kept for the share-card button
-    const pull = dailyPull(state.me, state.other, todayStr());
     $('synResult').hidden = false;
     $('synHint').hidden = true;
+
+    const key = pairKeyOf();
+    let report = state.synReport?.key === key ? state.synReport.report : null;
+    if (!report) {
+      $('synTitle').textContent = T('Reading the sky…', '正在解读星盘……');
+      $('sScore').textContent = '—';
+      for (const id of ['synAttractWrap', 'synFlagsWrap', 'synDavisonSec', 'synBaziMatrixWrap']) $(id).hidden = true;
+      try {
+        report = await relClient.compute(relationshipsRequest());
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        if (epoch === synRenderEpoch) $('synTitle').textContent = T('Could not read these two charts — reload the page and try again.', '未能读取这两张盘——请刷新页面后重试。');
+        return;
+      }
+      if (epoch !== synRenderEpoch || state.me !== me || state.other !== other) return;
+      state.synReport = { key, report };
+    }
+    const L = report.legacy;
+    state.synData = L; // kept for the share-card button
+    const facts = new Map(report.facts.map((f) => [f.id, f]));
 
     // two charts, side by side (left = me, right = them)
     $('synCharts').innerHTML = `
       <div class="syn-chart">
         <div class="syn-chart-h">${T('ME', '我')}</div>
-        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartA, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartA, state.me)}</div>${boundaryNoteHTML(s.chartA)}
+        <div class="pillars pillars--sm">${pillarCardsHTML(L.chartA, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(L.chartA, state.me)}</div>${boundaryNoteHTML(L.chartA)}
       </div>
       <div class="syn-divider" aria-hidden="true">❖</div>
       <div class="syn-chart">
         <div class="syn-chart-h">${T('THEM', '对方')}</div>
-        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartB, state.other)}</div>${boundaryNoteHTML(s.chartB)}
+        <div class="pillars pillars--sm">${pillarCardsHTML(L.chartB, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(L.chartB, state.other)}</div>${boundaryNoteHTML(L.chartB)}
       </div>`;
 
     // 合盘 branch matrix (V25 Part 5 §24.2) — dual charts + 4×4 combo/clash grid
     $('synBaziMatrixWrap').hidden = false;
-    $('synbmWrap').innerHTML = synBaziMatrixHTML(s.chartA, s.chartB);
+    $('synbmWrap').innerHTML = synBaziMatrixHTML(L.chartA, L.chartB, L.matrix);
     wireSynBaziMatrix();
 
     const C = 2 * Math.PI * 58;
     const ring = $('sRing');
     ring.style.strokeDasharray = C.toFixed(1);
     ring.style.strokeDashoffset = C.toFixed(1);
-    requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = (C * (1 - s.base / 100)).toFixed(1); }));
-    $('sScore').textContent = s.base;
+    renderSynAstroSections(L.astro);
 
-    // V23 Phase 2: astro synastry layer — title/resonance/attraction/red-flags/
-    // composite. Dynamically imports astroPlanets.ts only now, when a synastry
-    // is actually cast (same lazy-load discipline as the L3 PRO natal chart).
-    // Cached per (me,other) pair so a language toggle just re-paints instead
-    // of re-fetching the ephemeris.
-    const pairKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
-    if (state.synAstro && state.synAstro.key === pairKey) {
-      renderSynAstroSections(state.synAstro.data);
-    } else {
-      $('synTitle').textContent = T('Reading the sky…', '正在解读星盘……');
-      $('synAttractWrap').hidden = true;
-      $('synFlagsWrap').hidden = true;
-      $('synDavisonSec').hidden = true;
-      computeSynAstroLayer(state.me, state.other, s.base).then((data) => {
-        state.synAstro = { key: pairKey, data };
-        const curKey = state.me && state.other ? `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}` : null;
-        if (curKey === pairKey) renderSynAstroSections(data);
-        track('synastry_cast', { score: data.score }); // north-star metric (roadmap module 2)
-      }).catch((error) => {
-        if (error?.name === 'AbortError') return;
-        $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。');
-      });
-    }
-
-    $('synParts').innerHTML = s.parts.map((p) =>
+    $('synParts').innerHTML = L.parts.map((p) =>
       `<div class="sp ${p.pts > 0 ? 'pos' : p.pts < 0 ? 'neg' : ''}"><span>${T(p.en, p.zh)}</span><b>${p.pts > 0 ? '+' : ''}${p.pts}</b></div>`).join('');
 
-    // U2: five relationship lenses (bazi-only first paint; the astro layer
-    // above re-paints with aspects when it resolves) + ziwei comparison.
-    renderSynModes(state.synAstro && state.synAstro.key === pairKey ? state.synAstro.data.aspects : null);
-    renderSynZiwei();
+    renderSynScale(report);
+    renderSynModes(L.lenses);
+    renderSynZiwei(L.ziwei);
 
     // 双人宿曜关系 (V21 Phase 3): natal mansions + both directions of the
-    // 三九秘法 relation (it's directional by design).
-    const xa = natalXiuOf(state.me.y, state.me.m, state.me.d);
-    const xb = natalXiuOf(state.other.y, state.other.m, state.other.d);
-    if (xa != null && xb != null) {
-      const rab = XIU_REL[xiuRelation(xa, xb)], rba = XIU_REL[xiuRelation(xb, xa)];
+    // 三九秘法 relation (it's directional by design). Unverified tables.
+    const xa = facts.get('A.xiu.natal').value, xb = facts.get('B.xiu.natal').value;
+    const relAB = facts.get('pair.xiu.A_to_B').value, relBA = facts.get('pair.xiu.B_to_A').value;
+    if (xa != null && xb != null && relAB && relBA) {
+      const rab = XIU_REL[relAB], rba = XIU_REL[relBA];
       $('synXiu').innerHTML = `
         <div class="xiu-h">${T('LUNAR MANSIONS · 宿曜', '宿曜缘分 · 三九秘法')}</div>
         <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${XIU27_ZH[xa]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rab.en, rab.zh)}</b><span class="xiu-d">${T(rab.descEn, rab.descZh)}</span></div>
@@ -1301,56 +1324,37 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     } else {
       $('synXiu').innerHTML = '';
     }
-    // 日月相位 (V21 Phase 5): sun/moon cross-aspects between the two charts.
-    const jdA = cstToJD(state.me.y, state.me.m, state.me.d, clockHour(state.me));
-    const jdB = cstToJD(state.other.y, state.other.m, state.other.d, clockHour(state.other));
-    const bodies = [
-      ['☉', T('Sun', '太阳'), sunLongitude(jdA), sunLongitude(jdB)],
-    ];
-    const moonA = moonLongitude(jdA), moonB = moonLongitude(jdB);
+    // 日月相位 (V21 Phase 5): read from the report — a pair whose aspect
+    // differs within an unsettled birth time is shown as unsettled.
     const pairs = [
-      [T('Sun–Sun', '太阳–太阳'), bodies[0][2], bodies[0][3]],
-      [T('Sun–Moon', '太阳–月亮'), bodies[0][2], moonB],
-      [T('Moon–Sun', '月亮–太阳'), moonA, bodies[0][3]],
-      [T('Moon–Moon', '月亮–月亮'), moonA, moonB],
+      [T('Sun–Sun', '太阳–太阳'), 'Sun.Sun'], [T('Sun–Moon', '太阳–月亮'), 'Sun.Moon'],
+      [T('Moon–Sun', '月亮–太阳'), 'Moon.Sun'], [T('Moon–Moon', '月亮–月亮'), 'Moon.Moon'],
     ];
     const hourMissing = state.me.hour == null || state.other.hour == null;
-    // Unknown hour: a pair involving that person's Moon is shown only if the
-    // aspect is the same at the day's first and last minute (CST).
-    const moonDay = (b) => [0, 23 + 59 / 60].map((h) => moonLongitude(cstToJD(b.y, b.m, b.d, h)));
-    const moonVaries = (b, otherLon, key) => b.hour == null && moonDay(b).some((lon) => aspectBetween(lon, otherLon)?.key !== key);
-    const unsettled = [
-      () => false,
-      (key) => moonVaries(state.other, bodies[0][2], key),
-      (key) => moonVaries(state.me, bodies[0][3], key),
-      (key) => moonVaries(state.me, moonB, key) || moonVaries(state.other, moonA, key),
-    ];
-    const aspRows = pairs.map(([label, la, lb], i) => {
-      const a = aspectBetween(la, lb);
-      if (unsettled[i](a?.key)) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('depends on the unknown birth hour', '随未知时辰而变，未定')}</span></div>`;
-      if (!a) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
-      const t = ASPECT_T[a.key];
+    const aspRows = pairs.map(([label, k]) => {
+      const key = facts.get(`pair.western.aspect.${k}`).value;
+      if (key == null) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('depends on the unsettled birth time', '随未定的出生时间而变，未定')}</span></div>`;
+      if (key === 'none') return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
+      const t = ASPECT_T[key];
       return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-arrow">∠</span><b>${T(t.en, t.zh)}</b><span class="xiu-d">${T(t.dEn, t.dZh)}</span></div>`;
     }).join('');
     $('synAstro').innerHTML = `
       <div class="xiu-h">${T('SUN/MOON ASPECTS · 日月相位', '日月相位')}</div>${aspRows}
       ${hourMissing ? `<p class="bz-caveat">${T('One or both hours unknown — a Moon aspect is shown only if it holds all day; the resonance score uses the same rule.', '有一方未填时辰——月亮相位只在全天都成立时显示，共鸣指数也按同一规则计算。')}</p>` : ''}`;
 
+    const pull = dailyPull(state.me, state.other, todayStr());
     $('pullScore').textContent = T(...PULL_TONE[pull.tone]);
     $('pullTxt').textContent = T(
       `Today (${pull.gz}): ${pull.why.en}. Read from the two day pillars only.`,
       `今日${pull.gz}：${pull.why.zh}。只看双方日柱。`);
 
     // V23 Phase 3: today's real transit-to-natal weather (module 2 point 1)
-    // + 7-day fate calendar (module 2 point 3). The calendar is cheap and
-    // synchronous (reuses dailyPull, no fetch); the weather needs the
-    // precomputed transits JSON, fetched once and cached.
+    // + 7-day calendar. Daily content stays outside the static report.
     renderSynCalendar();
-    const weatherPairKey = pairKey;
+    const sunMoon = (b) => { const jd = cstToJD(b.y, b.m, b.d, clockHour(b)); return { Sun: sunLongitude(jd), Moon: moonLongitude(jd) }; };
+    const natalA = sunMoon(state.me), natalB = sunMoon(state.other);
     ensureTransits().then((transits) => {
-      if (!transits || !state.me || !state.other) return;
-      const curKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
-      if (curKey !== weatherPairKey) return; // pair changed while the fetch was in flight
+      if (!transits || !state.me || !state.other || pairKeyOf() !== key) return; // pair changed while the fetch was in flight
       const wWrap = $('synWeatherWrap');
       if (!transitsAreCurrent(transits.date)) {
         wWrap.hidden = false;
@@ -1360,7 +1364,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         );
         return;
       }
-      const weather = dailyCoupleWeather(transits.planets, { Sun: bodies[0][2], Moon: moonA }, { Sun: bodies[0][3], Moon: moonB });
+      const weather = dailyCoupleWeather(transits.planets, natalA, natalB);
       if (weather.lines.length) {
         wWrap.hidden = false;
         $('synWeather').innerHTML = weather.lines.map((l) => `<p class="syn-line syn-line--pos">${T(l.en, l.zh)}</p>`).join('');
@@ -1870,7 +1874,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     // pagehide also fires when the document enters the back/forward cache.
     // Cancel current CPU work without permanently disposing the channels so
     // the restored page can run fresh calculations after pageshow.
-    synAstroRunner.cancel('page-hidden');
+    relClient.cancel('page-hidden');
     ephemerisRunner.cancel('page-hidden');
   });
 })();

@@ -138,7 +138,9 @@ function person(P, input, config) {
     t, facts, pillar, dayMaster, favourable, sign, lons, ming, zw, mansion,
     modules: {
       bazi: { status: baziStatus, reasonKeys: baziReasons },
-      western: { status: t.points.length === 1 ? 'ready' : 'partial', reasonKeys: t.points.length === 1 ? [] : [hourKnown ? 'time_window' : 'time_unknown'] },
+      // A time window is only 'partial' once a western fact actually differs
+      // inside it (checked in computeRelationshipReport).
+      western: { status: hourKnown ? 'ready' : 'partial', reasonKeys: hourKnown ? [] : ['time_unknown'] },
       ziwei: { status: ziweiStatus, reasonKeys: ziweiReasons },
       xiu: { status: mansion == null ? 'failed' : 'unverified', reasonKeys: ['table_unverified'] },
     },
@@ -221,7 +223,9 @@ export function computeRelationshipReport(request) {
       modules[sys] = { status: w.status, reasonKeys: [...new Set([...A.modules[sys].reasonKeys, ...B.modules[sys].reasonKeys])] };
     }
     const facts = [...A.facts, ...B.facts, ...pairFacts(A, B, request.config)];
-    if (facts.some((f) => f.system === 'western' && f.basis === 'conflicted') && modules.western.status === 'ready') modules.western.status = 'partial';
+    if (facts.some((f) => f.system === 'western' && f.basis === 'conflicted') && modules.western.status === 'ready') {
+      modules.western = { status: 'partial', reasonKeys: [...modules.western.reasonKeys, 'differs_within_time_window'] };
+    }
     const core = ['bazi', 'western', 'ziwei'];
     const status = MODULE_ORDER.every((s) => modules[s].status === 'failed') ? 'failed'
       : core.every((s) => modules[s].status === 'ready') ? 'ready' : 'partial';
