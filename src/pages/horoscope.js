@@ -5,7 +5,9 @@
    daily check-in streak), data-free page links and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
-import { parseBirthDetails, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
+import { parseBirthForm, birthInputFromSaved, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
+import { clockHour } from '../lib/bazi.js';
+import { resolveBirthTime, jdOf } from '../lib/relationships/time.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
 import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&url';
 
@@ -153,6 +155,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       o.value = String(hour); o.dataset.en = en; o.dataset.zh = zh; o.textContent = T(en, zh);
       sel.appendChild(o);
     });
+    // REL-020: an exact clock time (minutes) as a fourth precision level.
+    const exact = document.createElement('option');
+    exact.value = 'exact'; exact.dataset.en = 'Exact time (HH:MM)…'; exact.dataset.zh = '精确时间（到分钟）…';
+    exact.textContent = T(exact.dataset.en, exact.dataset.zh);
+    sel.appendChild(exact);
+    const prefix = sel.id[0];
+    sel.addEventListener('change', () => { $(prefix + 'ExactWrap').hidden = sel.value !== 'exact'; });
   }
 
   // ---- birth-timezone selects (optional accuracy correction) --------------
@@ -180,12 +189,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!sel) continue;
     TZ_OPTIONS.forEach(([v, label]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = label; sel.appendChild(o); });
   }
-  for (const [tzSel, dstBox] of [[$('bTz'), $('bDst')], [$('sTz'), $('sDst')]]) {
+  for (const [tzSel, dstBox, ianaField] of [[$('bTz'), $('bDst'), $('bIana')], [$('sTz'), $('sDst'), $('sIana')]]) {
     if (!tzSel || !dstBox) continue;
     tzSel.addEventListener('change', () => {
-      const known = tzSel.value !== '';
-      dstBox.disabled = !known;
-      if (!known) dstBox.checked = false;
+      // A city's IANA zone resolves daylight saving itself (REL-020), so
+      // the manual box only applies to a bare manual offset.
+      const manual = tzSel.value !== '' && !ianaField?.value;
+      dstBox.disabled = !manual;
+      if (!manual) dstBox.checked = false;
     });
   }
 
@@ -203,7 +214,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   //
   // Selecting a city fills the EXISTING hidden bTz/bLat/bLon (or sTz) form
   // fields and dispatches a real 'change' event on the tz <select> so the
-  // dst-enable/disable listener above still runs — this file's parseBirth()
+  // dst-enable/disable listener above still runs — this file's parseBirthForm()
   // and normalizeBirthToCST() (bazi.js) are completely unchanged, the
   // picker is purely a friendlier way to fill the same fields.
   //
@@ -238,6 +249,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!region) {
         citySel.disabled = true;
         tzSel.value = '';
+        $(tzSelId[0] + 'Iana').value = '';
         if (latId) $(latId).value = '';
         if (lonId) $(lonId).value = '';
         $(tzSelId[0] + 'Dst').checked = false;
@@ -260,6 +272,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (lonId && $(lonId)) $(lonId).value = String(city.lon);
       delete tzSel.dataset.restored;
       $(tzSelId[0] + 'Dst').checked = false;
+      $(tzSelId[0] + 'Iana').value = city.iana || '';
       tzSel.value = city.isChina ? '' : String(city.utcOffset);
       tzSel.dispatchEvent(new Event('change'));
     });
@@ -294,9 +307,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   function upsertBook(name, other) {
     if (!name) return;
     const list = loadBook();
-    const sameBirth = (e) => e.y === other.y && e.m === other.m && e.d === other.d && e.hour === other.hour;
+    const sameBirth = (e) => e.y === other.y && e.m === other.m && e.d === other.d && e.hour === other.hour && (e.minute ?? null) === (other.minute ?? null);
     const idx = list.findIndex(sameBirth);
-    const entry = { name: String(name).slice(0, 12), y: other.y, m: other.m, d: other.d, hour: other.hour };
+    const entry = { name: String(name).slice(0, 12), y: other.y, m: other.m, d: other.d, hour: other.hour, ...(other.minute != null ? { minute: other.minute } : {}) };
     if (idx >= 0) list[idx] = entry; else list.unshift(entry);
     saveBook(list);
     renderBook();
@@ -315,7 +328,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     wrap.hidden = false;
     wrap.innerHTML = `<div class="syn-book-h">${T('SAVED · TAP TO RE-CAST', '关系册 · 点击重新出盘')}</div>` +
       list.map((e, i) => {
-        const label = e.hour == null ? `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}` : `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')} · ${e.hour}h`;
+        const date = `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}`;
+        const label = e.hour == null ? date : e.minute != null ? `${date} · ${String(e.hour).padStart(2, '0')}:${String(e.minute).padStart(2, '0')}` : `${date} · ${e.hour}h`;
         return `<span class="syn-book-chip"><button type="button" class="syn-book-load" data-i="${i}">${attr(e.name)}<small>${label}</small></button><button type="button" class="syn-book-del" data-i="${i}" aria-label="${T('remove', '删除')}">×</button></span>`;
       }).join('');
     wrap.querySelectorAll('.syn-book-load').forEach((btn) => btn.addEventListener('click', () => {
@@ -323,12 +337,12 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!e) return;
       fillForm('s', e);
       $('sName').value = e.name;
-      castSynastry({ y: e.y, m: e.m, d: e.d, hour: e.hour });
+      const b = { y: e.y, m: e.m, d: e.d, hour: e.hour, ...(e.minute != null ? { minute: e.minute } : {}) };
+      castSynastry(b, birthInputFromSaved(b));
     }));
     wrap.querySelectorAll('.syn-book-del').forEach((btn) => btn.addEventListener('click', () => removeFromBook(+btn.dataset.i)));
   }
 
-  const parseBirth = parseBirthDetails;
 
   // ---- render: my daily reading -------------------------------------------
   const PILLAR_T = [['YEAR', '年柱'], ['MONTH', '月柱'], ['DAY', '日柱'], ['HOUR', '时柱']];
@@ -564,19 +578,25 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // expand, per the roadmap's dynamic-import discipline.
   const PLANET_ZH = { Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星', Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星' };
 
-  function l1HTML(me, sun, moon, ascDeg) {
+  // asc: {deg, sign, varies} — a time slot shows the rising sign only when
+  // it holds for the whole slot, and never a degree (REL-020).
+  function l1HTML(me, sun, moon, asc) {
     const hourMissing = me.hour == null;
     let risingHTML;
     if (hourMissing) {
       risingHTML = `<span class="l1-miss">${T('needs birth hour', '需填时辰')}</span>`;
-    } else if (ascDeg == null) {
+    } else if (asc.varies) {
+      risingHTML = `<span class="l1-miss">${T('changes within this time slot — needs an exact time', '在所选时段内会变化——需填精确时间')}</span>`;
+    } else if (asc.sign == null) {
       risingHTML = `<span class="l1-miss">${T('needs birthplace lat/lon above', '需在上方填出生地经纬度')}</span>`;
+    } else if (asc.deg == null) {
+      risingHTML = `${T(ZODIAC_EN[asc.sign], ZODIAC_ZH[asc.sign] + '座')}<small>${T('degree needs an exact time', '度数需精确时间')}</small>`;
     } else {
-      risingHTML = signLabel(ascDeg);
+      risingHTML = signLabel(asc.deg);
     }
     const tags = personalityTags({
       sunSign: signOf(sun), moonSign: signOf(moon),
-      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      ascSign: asc.sign,
       elements: state.mineChart ? state.mineChart.elements : null,
     });
     return `<div class="l1-big3">
@@ -588,10 +608,10 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       <p class="bz-caveat">${T('Tropical zodiac, whole-sign display — entertainment read from Sun/Moon/Rising. Tap PRO below for the full planetary chart.', '回归黄道、整宫制显示——基于日月升的娱乐向解读。完整行星星盘见下方 PRO 展开。')}</p>`;
   }
 
-  function l2HTML(sun, moon, ascDeg) {
+  function l2HTML(sun, moon, asc) {
     const dims = dimensionScores({
       sunSign: signOf(sun), moonSign: signOf(moon),
-      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      ascSign: asc.sign,
       elements: state.mineChart ? state.mineChart.elements : null,
     });
     const radar = renderRadar(
@@ -621,7 +641,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const termsHTML = terms.map((k) => `<div class="l3-term"><b>${T(ASPECT_T[k].en, ASPECT_T[k].zh)}</b> — ${T(ASPECT_T[k].dEn, ASPECT_T[k].dZh)}</div>`).join('')
       || `<div class="l3-term">${T('No major aspects within orb right now.', '当前无明显相位。')}</div>`;
     $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all, language: state.lang })}<div class="l3-legend">${legend}</div></div>`
-      + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant unknown (need birth hour + lat/lon above) — houses shown from 0° Aries.', '上升未知（需时辰+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
+      + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant degree unknown (needs an exact birth time + lat/lon above) — houses shown from 0° Aries.', '上升度数未知（需精确出生时间+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
       + `<div class="l3-grid-wrap">${renderAspectGrid(all, { language: state.lang })}</div>`
       + `<div class="l3-terms">${termsHTML}</div>`;
   }
@@ -759,12 +779,18 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
     // V23 Phase 1: single-chart L1/L2/L3 progressive disclosure
     {
-      const jd = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
+      const jd = cstToJD(state.me.y, state.me.m, state.me.d, clockHour(state.me));
       const sun = sunLongitude(jd), moon = moonLongitude(jd);
-      const ascDeg = (state.me.hour == null || state.me.lat == null || state.me.lon == null) ? null : ascendant(jd, state.me.lat, state.me.lon);
+      const asc = { deg: null, sign: null, varies: false };
+      if (state.me.hour != null && state.me.lat != null && state.me.lon != null) {
+        const degs = resolveBirthTime(state.meInput).points.map((u) => ascendant(jdOf(u), state.me.lat, state.me.lon));
+        if (degs.some((d) => signOf(d) !== signOf(degs[0]))) asc.varies = true;
+        else { asc.sign = signOf(degs[0]); if (degs.length === 1) asc.deg = degs[0]; }
+      }
+      const ascDeg = asc.deg;
       state.l1Sun = sun; state.l1Moon = moon;
-      $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, ascDeg);
-      $('l2Wrap').innerHTML = l2HTML(sun, moon, ascDeg);
+      $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, asc);
+      $('l2Wrap').innerHTML = l2HTML(sun, moon, asc);
       if (state.l3JD != null && state.l3JD !== jd) {
         ephemerisRunner.cancel('chart-changed');
         l3RequestEpoch++;
@@ -1276,8 +1302,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       $('synXiu').innerHTML = '';
     }
     // 日月相位 (V21 Phase 5): sun/moon cross-aspects between the two charts.
-    const jdA = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
-    const jdB = cstToJD(state.other.y, state.other.m, state.other.d, state.other.hour);
+    const jdA = cstToJD(state.me.y, state.me.m, state.me.d, clockHour(state.me));
+    const jdB = cstToJD(state.other.y, state.other.m, state.other.d, clockHour(state.other));
     const bodies = [
       ['☉', T('Sun', '太阳'), sunLongitude(jdA), sunLongitude(jdB)],
     ];
@@ -1712,8 +1738,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const resultInputs = {};
   function assumptionInput(prefix) {
     return {
-      hour: $(prefix + 'Hour').value, timezone: $(prefix + 'Tz').value,
-      dst: $(prefix + 'Dst').checked, restored: !!$(prefix + 'Tz').dataset.restored,
+      date: $(prefix + 'Date').value, hour: $(prefix + 'Hour').value, exactTime: $(prefix + 'ExactTime').value,
+      timezone: $(prefix + 'Tz').value, dst: $(prefix + 'Dst').checked,
+      iana: $(prefix + 'Iana').value, restored: !!$(prefix + 'Tz').dataset.restored,
     };
   }
   function updateAssumptions(prefix) {
@@ -1735,21 +1762,24 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
     updateAssumptions(prefix);
   }
+  // → { birth (CST, for the pre-v2 engines), input (v2 BirthInput), flags } or null
   function readBirth(prefix) {
     const date = $(prefix + 'Date');
-    const b = parseBirth(date.value, $(prefix + 'Hour').value, $(prefix + 'Tz').value, $(prefix + 'Dst').checked);
-    if (!b) formError(prefix, T('Enter a valid birth date from 1900 to 2100.', '请输入 1900 至 2100 年之间的有效出生日期。'), date);
-    else { $(prefix + 'Error').textContent = ''; date.removeAttribute('aria-invalid'); }
-    return b;
+    const r = parseBirthForm(assumptionInput(prefix));
+    if (r.error === 'time') { formError(prefix, T('Enter the birth time as HH:MM, or choose a time slot or Unknown.', '请按“时：分”填写出生时间，或改选时段或“不知道”。'), $(prefix + 'ExactTime')); return null; }
+    if (r.error) { formError(prefix, T('Enter a valid birth date from 1900 to 2100.', '请输入 1900 至 2100 年之间的有效出生日期。'), date); return null; }
+    $(prefix + 'Error').textContent = ''; date.removeAttribute('aria-invalid');
+    return r;
   }
-  function resultAssumptions(prefix) {
-    resultInputs[prefix] = assumptionInput(prefix);
+  function resultAssumptions(prefix, flags = []) {
+    resultInputs[prefix] = { ...assumptionInput(prefix), flags };
     $(prefix + 'ResultAssumptions').textContent = birthAssumptions(resultInputs[prefix], state.lang);
   }
   $('birthForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const b = readBirth('b');
-    if (!b) return;
+    const r = readBirth('b');
+    if (!r) return;
+    const b = r.birth;
     b.gender = $('bGender').value || null;
     b.lat = $('bLat').value === '' ? null : Math.max(-90, Math.min(90, +$('bLat').value));
     b.lon = $('bLon').value === '' ? null : Math.max(-180, Math.min(180, +$('bLon').value));
@@ -1757,30 +1787,34 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     button.disabled = true;
     $('birthForm').setAttribute('aria-busy', 'true');
     state.me = b;
+    state.meInput = { ...r.input, ...(b.lat != null && b.lon != null ? { place: { latitude: b.lat, longitude: b.lon, precision: 'city' } } : {}) };
     $('synHint').hidden = true;
     const saved = saveProfile(b);
     $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
-    resultAssumptions('b');
+    resultAssumptions('b', r.flags);
     try { await renderMine(); await renderSyn(); document.dispatchEvent(new CustomEvent('afflatus-chart-created')); }
     catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
     finally { button.disabled = false; $('birthForm').removeAttribute('aria-busy'); }
   });
   // Shared by the form-submit path and the relationship-book quick-load path.
-  function castSynastry(b) {
+  function castSynastry(b, input) {
     state.other = b;
+    state.otherInput = input;
     renderSyn();
   }
   $('synForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!state.me) { formError('s', T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。')); return; }
-    const b = readBirth('s');
-    if (!b) return;
+    const r = readBirth('s');
+    if (!r) return;
+    const b = r.birth;
     const button = $('synForm').querySelector('[type=submit]');
     button.disabled = true;
     const name = $('sName').value.trim();
     if (name) upsertBook(name, b);
     state.other = b;
-    resultAssumptions('s');
+    state.otherInput = r.input;
+    resultAssumptions('s', r.flags);
     try { await renderSyn(); }
     catch { formError('s', T('The comparison could not load. Reload the page and try again.', '合盘未能加载，请刷新页面后重试。')); }
     finally { button.disabled = false; }
@@ -1792,11 +1826,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     // Persisted profiles already use CST, including even hours after conversion.
     const hourSelect = $(prefix + 'Hour');
     hourSelect.querySelectorAll('[data-restored-hour]').forEach(option => option.remove());
-    if (b.hour != null && !Array.from(hourSelect.options).some(option => option.value === String(b.hour))) {
+    if (b.hour != null && b.minute == null && !Array.from(hourSelect.options).some(option => option.value === String(b.hour))) {
       const option = new Option(`${String(b.hour).padStart(2, '0')}:00 · UTC+8`, String(b.hour));
       option.dataset.restoredHour = 'true'; hourSelect.add(option);
     }
-    hourSelect.value = b.hour == null ? '' : String(b.hour);
+    hourSelect.value = b.hour == null ? '' : b.minute != null ? 'exact' : String(b.hour);
+    $(prefix + 'ExactTime').value = b.minute != null ? `${p(b.hour)}:${p(b.minute)}` : '';
+    $(prefix + 'ExactWrap').hidden = b.minute == null;
+    $(prefix + 'Iana').value = '';
     $(prefix + 'RegionSel').value = '';
     $(prefix + 'CitySel').innerHTML = '';
     $(prefix + 'CitySel').disabled = true;
@@ -1814,8 +1851,11 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   renderBook();
   {
     const saved = loadProfile();
-    if (saved && parseBirth(`${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, saved.hour == null ? '' : String(saved.hour))) {
-      state.me = saved; $('synHint').hidden = true; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
+    const savedOk = saved && !parseBirthForm({ date: `${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, hour: saved.hour == null ? '' : String(saved.hour), restored: true }).error
+      && (saved.minute == null || (Number.isInteger(saved.minute) && saved.minute >= 0 && saved.minute < 60));
+    if (savedOk) {
+      state.me = saved; state.meInput = { ...birthInputFromSaved(saved), ...(saved.lat != null && saved.lon != null ? { place: { latitude: saved.lat, longitude: saved.lon, precision: 'city' } } : {}) };
+      $('synHint').hidden = true; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
     }
   }
 

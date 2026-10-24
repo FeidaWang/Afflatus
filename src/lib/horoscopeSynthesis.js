@@ -4,7 +4,7 @@ import {
   moonLongitude,
   sunLongitude,
 } from './astro.js';
-import { julianDayUTC } from './bazi.js';
+import { julianDayUTC, clockHour } from './bazi.js';
 import {
   attractionLines,
   crossAspects,
@@ -19,8 +19,8 @@ import {
 } from './astroPlanets.ts';
 
 export function computeSynastryAstro({ me, other, baziBase }) {
-  const jdMe = cstToJD(me.y, me.m, me.d, me.hour);
-  const jdThem = cstToJD(other.y, other.m, other.d, other.hour);
+  const jdMe = cstToJD(me.y, me.m, me.d, clockHour(me));
+  const jdThem = cstToJD(other.y, other.m, other.d, clockHour(other));
   const meLons = { Sun: sunLongitude(jdMe), Moon: moonLongitude(jdMe) };
   const themLons = { Sun: sunLongitude(jdThem), Moon: moonLongitude(jdThem) };
   for (const body of ['Mercury', 'Venus', 'Mars']) {

@@ -18,7 +18,7 @@
    ============================================================ */
 /* afflatus-i18n allow-monolingual: derived mainland-China region/city
    option records intentionally use the official Chinese label in EN too. */
-import { CHINA_CITIES, GLOBAL_CITIES } from './cities.js';
+import { CHINA_CITIES, GLOBAL_CITIES, GLOBAL_CITY_IANA, PROVINCE_IANA, CHINA_DEFAULT_IANA } from './cities.js';
 
 /**
  * @returns {{provinces:Array<{key:string,zh:string,isChina:true}>,
@@ -45,15 +45,16 @@ export function allRegions() {
 /**
  * Cities inside one chosen region (a province key from the `provinces`
  * list, or a country key from the `countries` list above).
- * @returns {Array<{label:string, zh:string, en?:string, lat:number, lon:number, isChina:boolean, utcOffset?:number}>}
+ * `iana` (REL-020) is the city's IANA zone name.
+ * @returns {Array<{label:string, zh:string, en?:string, lat:number, lon:number, isChina:boolean, utcOffset?:number, iana:string}>}
  */
 export function citiesInRegion(regionKey, isChina) {
   if (isChina) {
     return CHINA_CITIES.filter((c) => c.province === regionKey)
-      .map((c) => ({ label: c.zh, zh: c.zh, lat: c.lat, lon: c.lon, isChina: true }));
+      .map((c) => ({ label: c.zh, zh: c.zh, lat: c.lat, lon: c.lon, isChina: true, iana: PROVINCE_IANA[c.province] || CHINA_DEFAULT_IANA }));
   }
   return GLOBAL_CITIES.filter((c) => c.country === regionKey)
-    .map((c) => ({ label: `${c.zh} ${c.en}`, zh: c.zh, en: c.en, lat: c.lat, lon: c.lon, isChina: false, utcOffset: c.utcOffset }));
+    .map((c) => ({ label: `${c.zh} ${c.en}`, zh: c.zh, en: c.en, lat: c.lat, lon: c.lon, isChina: false, utcOffset: c.utcOffset, iana: GLOBAL_CITY_IANA[c.en] }));
 }
 
 /** Look up one city by its zh name inside an already-resolved region's city list. */

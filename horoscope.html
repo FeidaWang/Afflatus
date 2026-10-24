@@ -240,6 +240,8 @@
         <details class="chart-details" id="birthDetails"><summary data-en="Add details" data-zh="补充信息">Add details</summary><p class="form-note" data-en="Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated." data-zh="选填：时辰和地点用于细化星图。不确定时请保留“不知道”；下方会说明计算采用的假设。">Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated.</p><div class="chart-fields">
         <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
           <select id="bHour" aria-describedby="bAssumptions"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld" id="bExactWrap" hidden><label for="bExactTime" data-en="Birth time (local clock, HH:MM)" data-zh="出生时间（当地钟点，精确到分钟）">Birth time (local clock, HH:MM)</label>
+          <input type="time" id="bExactTime" step="60" aria-describedby="bAssumptions"></div>
         <div class="fld"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
           <select id="bGender">
             <option value="" data-en="Prefer not to say" data-zh="不填">Prefer not to say</option>
@@ -254,7 +256,7 @@
           <input type="checkbox" id="bDst" aria-describedby="bAssumptions" disabled></div>
         <div class="fld-manual" id="bManualWrap" hidden>
           <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
-            <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+            <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div><input type="hidden" id="bIana">
           <div class="fld"><label for="bLat" data-en="Birthplace latitude (optional, rising sign)" data-zh="出生地纬度（可不填，升星座用）">Birthplace latitude (optional, rising sign)</label>
             <input type="number" id="bLat" step="0.01" min="-90" max="90" placeholder="31.23"></div>
           <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
@@ -366,6 +368,8 @@
           <input type="date" id="sDate" aria-describedby="sError" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
           <select id="sHour" aria-describedby="sAssumptions"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld" id="sExactWrap" hidden><label for="sExactTime" data-en="Their birth time (local clock, HH:MM)" data-zh="对方出生时间（当地钟点，精确到分钟）">Their birth time (local clock, HH:MM)</label>
+          <input type="time" id="sExactTime" step="60" aria-describedby="sAssumptions"></div>
         <div class="fld fld--city"><label for="sRegionSel" data-en="Their birth region (optional)" data-zh="对方出生地区（可不填）">Their birth region (optional)</label>
           <select id="sRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
         <div class="fld fld--city"><label for="sCitySel" data-en="Their birth city" data-zh="对方出生城市">Their birth city</label>
@@ -374,7 +378,7 @@
           <input type="checkbox" id="sDst" aria-describedby="sAssumptions" disabled></div>
         <div class="fld-manual" id="sManualWrap" hidden>
           <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
-            <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+            <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div><input type="hidden" id="sIana">
         </div>
         <p id="sAssumptions" class="form-assumptions" aria-live="polite"></p>
         <p id="sError" class="form-feedback" role="alert" tabindex="-1"></p>

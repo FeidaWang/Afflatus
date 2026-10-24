@@ -21,7 +21,7 @@
    Aspects: conjunction 0°±8, sextile 60°±4, square 90°±6, trine 120°±6,
    opposition 180°±8 (common orb choices; documented, not universal).
    ============================================================ */
-import { julianDayUTC, sunApparentLongitude } from './bazi.js';
+import { julianDayUTC, sunApparentLongitude, clockHour } from './bazi.js';
 
 const DEG = Math.PI / 180;
 const mod = (n, m) => ((n % m) + m) % m;
@@ -84,8 +84,8 @@ export const signOf = (lonDeg) => Math.floor(mod(lonDeg, 360) / 30); // 0 = Arie
 
 // Sun sign from the real solar longitude (Q3c), not a month/day table.
 // Unknown hour: the noon sign, `stable` only if 00:00 and 23:59 CST agree.
-export function sunSignOf({ y, m, d, hour }) {
-  const sign = signOf(sunLongitude(cstToJD(y, m, d, hour)));
+export function sunSignOf({ y, m, d, hour, minute }) {
+  const sign = signOf(sunLongitude(cstToJD(y, m, d, clockHour({ hour, minute }))));
   if (hour != null) return { sign, stable: true };
   const first = signOf(sunLongitude(julianDayUTC(y, m, d, -8)));
   const last = signOf(sunLongitude(julianDayUTC(y, m, d, 23 + 59 / 60 - 8)));

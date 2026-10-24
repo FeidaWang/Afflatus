@@ -1,5 +1,7 @@
 /* ============================================================
    RELATIONSHIPS v2 · time adapter (REL-010 base, REL-020).
+   Daylight-saving folds and gaps (named zones) return two candidate
+   instants with a `dst_fold` / `dst_gap` flag.
    BirthInput (local civil date + exact / range / unknown time + zone)
    → real UTC instants. One conversion; system day boundaries (晚子 etc.)
    are applied later by each system and never move the UTC instant.
@@ -64,8 +66,17 @@ function wallToUtc(b, zone, wallMs) {
     const dst = inCnDstWindow(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
     return { candidates: [wallMs - (dst ? 9 : 8) * 3600000], flag: null };
   }
-  const off = zoneOffsetMs(zone.id, wallMs - 12 * 3600000);
-  return { candidates: [wallMs - off], flag: null };
+  // Offsets a day either side bracket any transition near this wall time.
+  // A candidate is real only if the zone's offset at it is the one assumed.
+  const before = zoneOffsetMs(zone.id, wallMs - DAY);
+  const after = zoneOffsetMs(zone.id, wallMs + DAY);
+  const tries = [...new Set([before, after])].map((o) => wallMs - o).sort((a, b) => a - b);
+  const valid = tries.filter((u) => zoneOffsetMs(zone.id, u) === wallMs - u);
+  if (valid.length === 1) return { candidates: valid, flag: null };
+  // Two readings: the clock went back and showed this time twice (fold).
+  // None: the clock jumped over it (gap); both offsets are kept so callers
+  // see the time as uncertain rather than silently moved.
+  return { candidates: valid.length ? valid : tries, flag: valid.length ? 'dst_fold' : 'dst_gap' };
 }
 
 export function cstOf(utcMs) {
