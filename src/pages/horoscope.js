@@ -1,12 +1,18 @@
 /* ============================================================
    HOROSCOPE page (V20) — 观星台. Fetch-free and server-free: all math in
    src/lib/bazi.js + src/lib/horoscopeEngine.js (pure, vitest-covered);
-   this file only handles the form, localStorage persistence (profile +
-   daily check-in streak), data-free page links and DOM rendering.
+   this file only handles the form, opt-in localStorage persistence
+   (profile + contacts), data-free page links and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
-import { parseBirthDetails, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
+import { parseBirthForm, birthInputFromSaved, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
+import { clockHour } from '../lib/bazi.js';
+import { escapeIcsText } from '../lib/icsText.js';
+import * as profileStore from '../horoscope/profileStore.js';
+import { resolveBirthTime, jdOf } from '../lib/relationships/time.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
+import { createRelationshipsClient, newRequestId } from '../lib/relationships/client.js';
+import { DEFAULT_CONFIG, DIMENSION_IDS, SCHEMA_VERSION } from '../lib/relationships/contract.js';
 import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&url';
 
 (async () => {
@@ -28,7 +34,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace;
   let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
   let mingzaoRank, percentileOf, MINGZAO_DIST;
-  let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei;
+  let dailyPull, dailyCoupleWeather, transitsAreCurrent, ruleLine, DIMENSION_COPY, THEME_COPY, QUESTION_COPY;
   let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
   let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
 
@@ -60,7 +66,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   let synastryFeaturePromise;
   const loadSynastryFeature = () => synastryFeaturePromise || (synastryFeaturePromise = import('../horoscope/synastryFeature.js').then((feature) => {
-    ({ synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei } = feature);
+    ({ dailyPull, dailyCoupleWeather, transitsAreCurrent, ruleLine, DIMENSION_COPY, THEME_COPY, QUESTION_COPY } = feature);
     return feature;
   }));
 
@@ -80,14 +86,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     return downloadShareCard(kind, data, filename);
   };
 
-  const synAstroRunner = createLatestWorkerTask(synthesisWorkerUrl);
+  // REL-070: every pair number comes from the Relationships kernel's report
+  // (Worker, main-thread fallback); this page only renders it.
+  const relClient = createRelationshipsClient({ workerUrl: synthesisWorkerUrl });
   const ephemerisRunner = createLatestWorkerTask(synthesisWorkerUrl);
   let mineRenderEpoch = 0;
   let synRenderEpoch = 0;
   await loadBirthFeature();
 
-  const PROFILE_KEY = 'afflatus-horo:me';
-  const STREAK_KEY = 'afflatus-horo:streak';
   // V23 Phase 2: 关系册 — named "other" profiles saved locally, so a return
   // visit is one click instead of retyping a birthday. Scope decision (see
   // roadmap.md): every book entry pairs against 'me' — this single-page tool
@@ -95,7 +101,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // "select two from the book" would need a whole new UI concept; saving +
   // quick-reloading "the other person" covers the actual retention need
   // (re-visiting a synastry you've already cast) without that added surface.
-  const BOOK_KEY = 'afflatus-horo:book';
+  // Q10: birth data is kept for this visit only unless "Save on this
+  // device" is ticked; a refused or missing storage never blocks a chart.
+  const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
     me: null, other: null,
@@ -153,6 +161,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       o.value = String(hour); o.dataset.en = en; o.dataset.zh = zh; o.textContent = T(en, zh);
       sel.appendChild(o);
     });
+    // REL-020: an exact clock time (minutes) as a fourth precision level.
+    const exact = document.createElement('option');
+    exact.value = 'exact'; exact.dataset.en = 'Exact time (HH:MM)…'; exact.dataset.zh = '精确时间（到分钟）…';
+    exact.textContent = T(exact.dataset.en, exact.dataset.zh);
+    sel.appendChild(exact);
+    const prefix = sel.id[0];
+    sel.addEventListener('change', () => { $(prefix + 'ExactWrap').hidden = sel.value !== 'exact'; });
   }
 
   // ---- birth-timezone selects (optional accuracy correction) --------------
@@ -180,12 +195,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!sel) continue;
     TZ_OPTIONS.forEach(([v, label]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = label; sel.appendChild(o); });
   }
-  for (const [tzSel, dstBox] of [[$('bTz'), $('bDst')], [$('sTz'), $('sDst')]]) {
+  for (const [tzSel, dstBox, ianaField] of [[$('bTz'), $('bDst'), $('bIana')], [$('sTz'), $('sDst'), $('sIana')]]) {
     if (!tzSel || !dstBox) continue;
     tzSel.addEventListener('change', () => {
-      const known = tzSel.value !== '';
-      dstBox.disabled = !known;
-      if (!known) dstBox.checked = false;
+      // A city's IANA zone resolves daylight saving itself (REL-020), so
+      // the manual box only applies to a bare manual offset.
+      const manual = tzSel.value !== '' && !ianaField?.value;
+      dstBox.disabled = !manual;
+      if (!manual) dstBox.checked = false;
     });
   }
 
@@ -203,7 +220,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   //
   // Selecting a city fills the EXISTING hidden bTz/bLat/bLon (or sTz) form
   // fields and dispatches a real 'change' event on the tz <select> so the
-  // dst-enable/disable listener above still runs — this file's parseBirth()
+  // dst-enable/disable listener above still runs — this file's parseBirthForm()
   // and normalizeBirthToCST() (bazi.js) are completely unchanged, the
   // picker is purely a friendlier way to fill the same fields.
   //
@@ -238,6 +255,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!region) {
         citySel.disabled = true;
         tzSel.value = '';
+        $(tzSelId[0] + 'Iana').value = '';
         if (latId) $(latId).value = '';
         if (lonId) $(lonId).value = '';
         $(tzSelId[0] + 'Dst').checked = false;
@@ -260,6 +278,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (lonId && $(lonId)) $(lonId).value = String(city.lon);
       delete tzSel.dataset.restored;
       $(tzSelId[0] + 'Dst').checked = false;
+      $(tzSelId[0] + 'Iana').value = city.iana || '';
       tzSel.value = city.isChina ? '' : String(city.utcOffset);
       tzSel.dispatchEvent(new Event('change'));
     });
@@ -270,52 +289,21 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Restored profiles explicitly use their already-normalized CST values.
 
   // ---- persistence ---------------------------------------------------------
-  const loadProfile = () => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch { return null; } };
-  const saveProfile = (p) => {
-    try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); return true; } catch { return false; }
-  };
-  function bumpStreak() {
-    let s = { last: null, n: 0 };
-    try { s = JSON.parse(localStorage.getItem(STREAK_KEY)) || s; } catch {}
-    const today = todayStr();
-    if (s.last === today) return s.n;
-    const y = new Date(); y.setDate(y.getDate() - 1);
-    const p = (x) => String(x).padStart(2, '0');
-    const yStr = `${y.getFullYear()}-${p(y.getMonth() + 1)}-${p(y.getDate())}`;
-    s = { last: today, n: s.last === yStr ? s.n + 1 : 1 };
-    try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)); } catch {}
-    return s.n;
-  }
-
   // ---- 关系册 (V23 Phase 2) --------------------------------------------------
-  const loadBook = () => { try { return JSON.parse(localStorage.getItem(BOOK_KEY)) || []; } catch { return []; } };
-  const saveBook = (list) => { try { localStorage.setItem(BOOK_KEY, JSON.stringify(list.slice(0, 20))); } catch {} };
-  // upsert by (y,m,d,hour) identity — re-saving the same birthday just renames/updates it
-  function upsertBook(name, other) {
-    if (!name) return;
-    const list = loadBook();
-    const sameBirth = (e) => e.y === other.y && e.m === other.m && e.d === other.d && e.hour === other.hour;
-    const idx = list.findIndex(sameBirth);
-    const entry = { name: String(name).slice(0, 12), y: other.y, m: other.m, d: other.d, hour: other.hour };
-    if (idx >= 0) list[idx] = entry; else list.unshift(entry);
-    saveBook(list);
-    renderBook();
-  }
   function removeFromBook(i) {
-    const list = loadBook();
-    list.splice(i, 1);
-    saveBook(list);
+    profileStore.removeFromBook(store, i);
     renderBook();
   }
   function renderBook() {
     const wrap = $('synBook');
     if (!wrap) return;
-    const list = loadBook();
+    const list = profileStore.loadBook(store);
     if (!list.length) { wrap.hidden = true; wrap.innerHTML = ''; return; }
     wrap.hidden = false;
     wrap.innerHTML = `<div class="syn-book-h">${T('SAVED · TAP TO RE-CAST', '关系册 · 点击重新出盘')}</div>` +
       list.map((e, i) => {
-        const label = e.hour == null ? `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}` : `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')} · ${e.hour}h`;
+        const date = `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}`;
+        const label = e.hour == null ? date : e.minute != null ? `${date} · ${String(e.hour).padStart(2, '0')}:${String(e.minute).padStart(2, '0')}` : `${date} · ${e.hour}h`;
         return `<span class="syn-book-chip"><button type="button" class="syn-book-load" data-i="${i}">${attr(e.name)}<small>${label}</small></button><button type="button" class="syn-book-del" data-i="${i}" aria-label="${T('remove', '删除')}">×</button></span>`;
       }).join('');
     wrap.querySelectorAll('.syn-book-load').forEach((btn) => btn.addEventListener('click', () => {
@@ -323,12 +311,12 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!e) return;
       fillForm('s', e);
       $('sName').value = e.name;
-      castSynastry({ y: e.y, m: e.m, d: e.d, hour: e.hour });
+      const b = { y: e.y, m: e.m, d: e.d, hour: e.hour, ...(e.minute != null ? { minute: e.minute } : {}) };
+      castSynastry(b, birthInputFromSaved(b));
     }));
     wrap.querySelectorAll('.syn-book-del').forEach((btn) => btn.addEventListener('click', () => removeFromBook(+btn.dataset.i)));
   }
 
-  const parseBirth = parseBirthDetails;
 
   // ---- render: my daily reading -------------------------------------------
   const PILLAR_T = [['YEAR', '年柱'], ['MONTH', '月柱'], ['DAY', '日柱'], ['HOUR', '时柱']];
@@ -564,19 +552,25 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // expand, per the roadmap's dynamic-import discipline.
   const PLANET_ZH = { Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星', Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星' };
 
-  function l1HTML(me, sun, moon, ascDeg) {
+  // asc: {deg, sign, varies} — a time slot shows the rising sign only when
+  // it holds for the whole slot, and never a degree (REL-020).
+  function l1HTML(me, sun, moon, asc) {
     const hourMissing = me.hour == null;
     let risingHTML;
     if (hourMissing) {
       risingHTML = `<span class="l1-miss">${T('needs birth hour', '需填时辰')}</span>`;
-    } else if (ascDeg == null) {
+    } else if (asc.varies) {
+      risingHTML = `<span class="l1-miss">${T('changes within this time slot — needs an exact time', '在所选时段内会变化——需填精确时间')}</span>`;
+    } else if (asc.sign == null) {
       risingHTML = `<span class="l1-miss">${T('needs birthplace lat/lon above', '需在上方填出生地经纬度')}</span>`;
+    } else if (asc.deg == null) {
+      risingHTML = `${T(ZODIAC_EN[asc.sign], ZODIAC_ZH[asc.sign] + '座')}<small>${T('degree needs an exact time', '度数需精确时间')}</small>`;
     } else {
-      risingHTML = signLabel(ascDeg);
+      risingHTML = signLabel(asc.deg);
     }
     const tags = personalityTags({
       sunSign: signOf(sun), moonSign: signOf(moon),
-      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      ascSign: asc.sign,
       elements: state.mineChart ? state.mineChart.elements : null,
     });
     return `<div class="l1-big3">
@@ -588,10 +582,10 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       <p class="bz-caveat">${T('Tropical zodiac, whole-sign display — entertainment read from Sun/Moon/Rising. Tap PRO below for the full planetary chart.', '回归黄道、整宫制显示——基于日月升的娱乐向解读。完整行星星盘见下方 PRO 展开。')}</p>`;
   }
 
-  function l2HTML(sun, moon, ascDeg) {
+  function l2HTML(sun, moon, asc) {
     const dims = dimensionScores({
       sunSign: signOf(sun), moonSign: signOf(moon),
-      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      ascSign: asc.sign,
       elements: state.mineChart ? state.mineChart.elements : null,
     });
     const radar = renderRadar(
@@ -621,7 +615,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const termsHTML = terms.map((k) => `<div class="l3-term"><b>${T(ASPECT_T[k].en, ASPECT_T[k].zh)}</b> — ${T(ASPECT_T[k].dEn, ASPECT_T[k].dZh)}</div>`).join('')
       || `<div class="l3-term">${T('No major aspects within orb right now.', '当前无明显相位。')}</div>`;
     $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all, language: state.lang })}<div class="l3-legend">${legend}</div></div>`
-      + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant unknown (need birth hour + lat/lon above) — houses shown from 0° Aries.', '上升未知（需时辰+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
+      + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant degree unknown (needs an exact birth time + lat/lon above) — houses shown from 0° Aries.', '上升度数未知（需精确出生时间+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
       + `<div class="l3-grid-wrap">${renderAspectGrid(all, { language: state.lang })}</div>`
       + `<div class="l3-terms">${termsHTML}</div>`;
   }
@@ -714,28 +708,17 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]])
       + ' · ' + T(`mansion of the day: ${tx}`, `值日宿：${tx}宿`);
     $('todayDetailWrap').innerHTML = todayDetailHTML(f);
-    const n = bumpStreak();
-    track('streak_day', { streak: n }); // guardrail metric: streak>=3 share (roadmap module 2)
-    const sc = $('streakChip'); sc.hidden = false;
-    sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
-
-    // 每日星语签 (V23 Phase 3): deterministic daily card draw, reuses the
-    // streak counter above (7+ days unlocks a shot at the hidden pool).
+    // 每日星语签 (V23 Phase 3): deterministic daily card draw. No streak is
+    // kept (design.md §5: no check-in streaks), so the streak-gated hidden
+    // pool is never offered; an old afflatus-horo:streak key is only
+    // removed by "Delete this page's saved data".
     const birthKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour ?? 'x'}`;
-    const draw = dailyDraw({ dateStr: todayStr(), birthKey, streak: n });
-    // V23 Phase 4: streak loss-aversion microcopy (roadmap Tier 0 recall) —
-    // only shown while it's still true (a real countdown, not evergreen
-    // nagging): counts down to the hidden-card unlock at streak 7.
-    const streakHint = draw.hidden
-      ? '' : n < 7
-        ? `<p class="sd-streak-hint">${T(`${n}-day streak — ${7 - n} more to unlock a hidden card`, `连续 ${n} 天，还差 ${7 - n} 天解锁隐藏签面`)}</p>`
-        : `<p class="sd-streak-hint">${T('Hidden cards unlocked — keep the streak for another shot', '隐藏签面已解锁——继续保持连续签到，还有机会再抽到')}</p>`;
+    const draw = dailyDraw({ dateStr: todayStr(), birthKey });
     $('starDrawWrap').innerHTML = `<div class="sd-card${draw.hidden ? ' sd-hidden' : ''}">
       <span class="sd-glyph" aria-hidden="true">${draw.card.glyph}</span>
       <div class="sd-body">
         <div class="sd-name">${T(draw.card.en, draw.card.zh)}${draw.hidden ? `<em class="sd-badge">${T('HIDDEN', '隐藏签')}</em>` : ''}</div>
         <p class="sd-advice">${T(draw.advice.en, draw.advice.zh)}</p>
-        ${streakHint}
       </div>
     </div>`;
 
@@ -759,12 +742,18 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
     // V23 Phase 1: single-chart L1/L2/L3 progressive disclosure
     {
-      const jd = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
+      const jd = cstToJD(state.me.y, state.me.m, state.me.d, clockHour(state.me));
       const sun = sunLongitude(jd), moon = moonLongitude(jd);
-      const ascDeg = (state.me.hour == null || state.me.lat == null || state.me.lon == null) ? null : ascendant(jd, state.me.lat, state.me.lon);
+      const asc = { deg: null, sign: null, varies: false };
+      if (state.me.hour != null && state.me.lat != null && state.me.lon != null) {
+        const degs = resolveBirthTime(state.meInput).points.map((u) => ascendant(jdOf(u), state.me.lat, state.me.lon));
+        if (degs.some((d) => signOf(d) !== signOf(degs[0]))) asc.varies = true;
+        else { asc.sign = signOf(degs[0]); if (degs.length === 1) asc.deg = degs[0]; }
+      }
+      const ascDeg = asc.deg;
       state.l1Sun = sun; state.l1Moon = moon;
-      $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, ascDeg);
-      $('l2Wrap').innerHTML = l2HTML(sun, moon, ascDeg);
+      $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, asc);
+      $('l2Wrap').innerHTML = l2HTML(sun, moon, asc);
       if (state.l3JD != null && state.l3JD !== jd) {
         ephemerisRunner.cancel('chart-changed');
         l3RequestEpoch++;
@@ -970,29 +959,20 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   // ---- render: synastry -----------------------------------------------------
 
-  // The full planet layer runs off-main-thread. A new pair terminates the
-  // previous Worker, so obsolete charts stop consuming CPU rather than merely
-  // having their eventual response ignored.
-  async function computeSynAstroLayer(me, other, baziBase) {
-    try {
-      return await synAstroRunner.run('synastry-astro', { me, other, baziBase });
-    } catch (error) {
-      if (error?.name === 'AbortError') throw error;
-      // Workers can be disabled by privacy tooling or older embedded
-      // browsers. Keep the feature available through a lazy main-thread
-      // fallback without putting the ephemeris back in the initial bundle.
-      const { computeSynastryAstro } = await import('../lib/horoscopeSynthesis.js');
-      return computeSynastryAstro({ me, other, baziBase });
-    }
-  }
+  // The report runs off-main-thread. A new pair terminates the previous
+  // Worker, so obsolete charts stop consuming CPU rather than merely having
+  // their eventual response ignored. Nicknames and places never enter it.
+  const pairKeyOf = () => JSON.stringify([state.meInput?.localDate, state.meInput?.time, state.meInput?.timezone, state.meInput?.fixedOffset, state.otherInput]);
+  const relationshipsRequest = () => {
+    const { place, ...A } = state.meInput;
+    return { schemaVersion: SCHEMA_VERSION, requestId: newRequestId(), A, B: state.otherInput, config: DEFAULT_CONFIG, scoreModelId: 'rel-six-dim' };
+  };
 
-  // U2: five relationship lenses (朋友/同事/暧昧/情侣/夫妻) — same signals,
-  // different weights per relationship type. Renders immediately from the
-  // bazi layer (aspects=[]) and re-renders richer once the astro layer lands.
-  function renderSynModes(aspects) {
+  // U2: five relationship lenses (朋友/同事/暧昧/情侣/夫妻), legacy model,
+  // read from the report.
+  function renderSynModes(modes) {
     const wrap = $('synModes');
-    if (!wrap || !state.synData) return;
-    const modes = relationshipScores(state.synData, aspects || []);
+    if (!wrap) return;
     wrap.innerHTML = `<div class="xiu-h">${T('AS FRIENDS / COLLEAGUES / MORE · 分关系评分', '分关系评分 · 朋友到夫妻')}</div>
       <div class="syn-mode-grid">${modes.map((m) => `
         <div class="syn-mode">
@@ -1000,13 +980,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
           <div class="sm-bar"><i style="width:${m.score ?? 0}%"></i></div>
           ${m.line ? `<p class="sm-line">${T(m.line.en, m.line.zh)}</p>` : ''}
         </div>`).join('')}</div>
-      ${aspects ? '' : `<p class="bz-caveat">${T('Waiting for the planet aspects — these lenses need them, so no number is shown yet.', '等待星盘相位——这五个视角需要相位才能计算，暂不显示分数。')}</p>`}`;
+      <p class="bz-caveat">${T('Earlier model (legacy-resonance · r0), kept while the six-dimension scale is in draft.', '旧模型（legacy-resonance · r0），六维量表定稿前保留。')}</p>`;
   }
 
   // U2: ziwei life-palace comparison — needs both birth hours.
   const zwStars = (m) => m.stars !== '命无正曜' ? m.stars
     : m.borrowed ? T(`No major star — read from the opposite palace (${m.borrowed})`, `命无正曜，借对宫（${m.borrowed}）参看`) : T('No major star', '命无正曜');
-  function renderSynZiwei() {
+  function renderSynZiwei(s) {
     const wrap = $('synZiwei');
     if (!wrap) return;
     if (state.me.hour == null || state.other.hour == null) {
@@ -1014,9 +994,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         <p class="form-note">${T('Needs both birth hours — the hour branch places each life palace.', '需要双方时辰——时支决定各自命宫位置。')}</p>`;
       return;
     }
-    const zA = computeZiwei(state.me), zB = computeZiwei(state.other);
-    if (!zA || !zB) { wrap.innerHTML = ''; return; }
-    const s = synastryZiwei(zA, zB);
+    if (!s) { wrap.innerHTML = ''; return; }
     wrap.innerHTML = `<div class="xiu-h">${T('ZIWEI LIFE PALACES · 紫微合参', '紫微合参 · 命宫对照')}</div>
       <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${s.mingA.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingA)}</span></div>
       <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${s.mingB.branch}${T('', '宫')}</span><span class="xiu-d">${zwStars(s.mingB)}</span></div>
@@ -1026,7 +1004,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   function renderSynAstroSections(data) {
     state.synAstroCard = data; // kept for the share-card button
-    renderSynModes(data.aspects); // U2: re-render the five lenses with real aspects
     $('synTitle').innerHTML = `<b>${T(data.title.en, data.title.zh)}</b>`;
     const C = 2 * Math.PI * 58;
     $('sRing').style.strokeDashoffset = (C * (1 - data.score / 100)).toFixed(1);
@@ -1091,7 +1068,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const nextDay = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
     const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     const uid = `afflatus-${ymd}-${Math.random().toString(36).slice(2)}@feida.au`;
-    const esc = (s) => String(s).replace(/([,;])/g, '\\$1');
+    const esc = escapeIcsText;
     const ics = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Afflatus//Horoscope//EN',
       'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${stamp}`,
@@ -1130,8 +1107,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const BM_PLABEL = { year: ['YR', '年'], month: ['MO', '月'], day: ['DAY', '日'], hour: ['HR', '时'] };
   const bmCellClass = (types) => (!types.length ? 'neutral' : types.some((t) => t === 'liuhe' || t === 'banhe' || t === 'sanhe') ? 'harmony' : 'clash');
 
-  function synBaziMatrixHTML(chartA, chartB) {
-    const m = crossBranchMatrix(chartA, chartB);
+  function synBaziMatrixHTML(chartA, chartB, m) {
     const pillarCard = (chart, id, side) => {
       const p = chart[id]; const el = STEM_ELEMENT[p.stem];
       return `<div class="pillar pillar--sm" data-side="${side}" data-pid="${id}"><div class="t">${T(...BM_PLABEL[id])}</div><span class="gz e-${el}">${pillarName(p)}</span></div>`;
@@ -1189,142 +1165,157 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
   }
 
+  // REL-070 six-dimension entertainment index + evidence ledger + two-way themes,
+  // rendered from the report. Null stays "Pending", never a number.
+  function renderSynScale(report) {
+    const wrap = $('synPillars');
+    if (!wrap) return;
+    const facts = new Map(report.facts.map((f) => [f.id, f]));
+    const matched = report.rules.filter((r) => r.state === 'matched');
+    const unknown = report.rules.filter((r) => r.state === 'unknown').length;
+    const lines = (kind) => {
+      const out = [];
+      for (const r of matched) {
+        const dims = DIMENSION_IDS.filter((d) => r.effects[d]?.[kind] > 0);
+        if (!dims.length) continue;
+        const l = ruleLine(r, facts);
+        out.push(`<p class="syn-line syn-line--${kind === 'support' ? 'pos' : 'neg'}">${T(l.en, l.zh)} <small>· ${dims.map((d) => T(DIMENSION_COPY[d].en, DIMENSION_COPY[d].zh)).join(' / ')}</small></p>`);
+      }
+      return out.join('') || `<p class="form-note">${T('None found.', '未找到。')}</p>`;
+    };
+    const dimRows = DIMENSION_IDS.map((d) => {
+      const s = report.dimensions[d];
+      return `<div class="syn-mode"><div class="sm-h"><span class="sm-n">${T(DIMENSION_COPY[d].en, DIMENSION_COPY[d].zh)}</span><b class="sm-v">${s.value == null ? T('Pending', '待补充') : s.value}</b></div>
+        <div class="sm-bar"><i style="width:${s.value ?? 0}%"></i></div>
+        <p class="sm-line">${T(`support ${Math.round(s.support * 100)}% · friction ${Math.round(s.friction * 100)}%`, `支持 ${Math.round(s.support * 100)}% · 磨合 ${Math.round(s.friction * 100)}%`)}${s.reasonKeys.includes('rule_coverage_low') ? ` · ${T('few rules — low coverage', '规则覆盖不足')}` : ''}</p></div>`;
+    }).join('');
+    const theme = (a, who) => `<div class="xiu-row"><span class="xiu-n">${who}</span><span class="xiu-d">${a.themeIds.length
+      ? a.themeIds.map((id, i) => `${T(THEME_COPY[id].en, THEME_COPY[id].zh)}<br><small>${T(QUESTION_COPY[a.questionIds[i]].en, QUESTION_COPY[a.questionIds[i]].zh)}</small>`).join('<br>')
+      : T('No theme stands out from the facts that are known.', '已知事实里没有突出的主题。')}</span></div>`;
+    const o = report.overall;
+    wrap.innerHTML = `<div class="xiu-h">${T('SIX DIMENSIONS · ENTERTAINMENT INDEX', '六维 · 娱乐指数')}</div>
+      <div class="syn-mode-grid">${dimRows}</div>
+      <p class="form-note">${o.value == null
+        ? T('Overall: pending — this scale needs both birth times (bazi, planets and Ziwei all settled). Known facts are listed below.', '综合：待补充——本量表需要双方出生时间（八字、行星与紫微都能确定）。已知事实见下。')
+        : T(`Overall ${o.value}. An entertainment index, not a forecast: every rule family weighs the same, and 50 is the median of 100,000 synthetic birth pairs.`, `综合 ${o.value}。这是娱乐指数，不是预测：各规则族等权，50 是 10 万对合成出生样本的中位数。`)}</p>
+      <div class="xiu-h">${T('WHAT SUPPORTS', '支持')}</div>${lines('support')}
+      <div class="xiu-h">${T('WHAT TAKES WORK', '磨合')}</div>${lines('friction')}
+      ${unknown ? `<p class="bz-caveat">${T(`${unknown} check${unknown === 1 ? ' depends' : 's depend'} on a birth time that isn't settled, so they are left out rather than guessed.`, `有 ${unknown} 项检查取决于尚未确定的出生时间，不作猜测，暂不计入。`)}</p>` : ''}
+      <div class="xiu-h">${T('TWO-WAY THEMES', '双向主题')}</div>
+      ${theme(report.archetypes.A_to_B, T('What I meet in them', '我在 TA 身上遇到的'))}
+      ${theme(report.archetypes.B_to_A, T('What they meet in me', 'TA 在我身上遇到的'))}
+      <p class="bz-caveat">${T(`Themes are traditional symbols read as stories — not facts about either of you, and not a forecast. The resonance ring above is the earlier model (legacy-resonance · r0); these dimensions are a separate scale (${o.modelId} · ${o.modelVersion}) and the two should not be compared. Entertainment only.`, `主题是传统取象，当作故事读——不是对你们任何一方的判断，也不是预测。上方共鸣指数用的是旧模型（legacy-resonance · r0）；六维是另一套量表（${o.modelId} · ${o.modelVersion}），两者不可直接比较。仅供娱乐。`)}</p>`;
+  }
+
   async function renderSyn() {
     const me = state.me;
     const other = state.other;
     if (!me || !other) return;
     const epoch = ++synRenderEpoch;
-    synAstroRunner.cancel('pair-changed');
     await Promise.all([loadMineFeature(), loadSynastryFeature()]);
     if (epoch !== synRenderEpoch || state.me !== me || state.other !== other) return;
-    const s = synastry(state.me, state.other);
-    state.synData = s; // kept for the share-card button
-    const pull = dailyPull(state.me, state.other, todayStr());
     $('synResult').hidden = false;
     $('synHint').hidden = true;
+
+    const key = pairKeyOf();
+    let report = state.synReport?.key === key ? state.synReport.report : null;
+    if (!report) {
+      $('synTitle').textContent = T('Reading the sky…', '正在解读星盘……');
+      $('sScore').textContent = '—';
+      for (const id of ['synAttractWrap', 'synFlagsWrap', 'synDavisonSec', 'synBaziMatrixWrap']) $(id).hidden = true;
+      try {
+        report = await relClient.compute(relationshipsRequest());
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        if (epoch === synRenderEpoch) $('synTitle').textContent = T('Could not read these two charts — reload the page and try again.', '未能读取这两张盘——请刷新页面后重试。');
+        return;
+      }
+      if (epoch !== synRenderEpoch || state.me !== me || state.other !== other) return;
+      state.synReport = { key, report };
+    }
+    const L = report.legacy;
+    state.synData = L; // kept for the share-card button
+    const facts = new Map(report.facts.map((f) => [f.id, f]));
 
     // two charts, side by side (left = me, right = them)
     $('synCharts').innerHTML = `
       <div class="syn-chart">
         <div class="syn-chart-h">${T('ME', '我')}</div>
-        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartA, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartA, state.me)}</div>${boundaryNoteHTML(s.chartA)}
+        <div class="pillars pillars--sm">${pillarCardsHTML(L.chartA, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(L.chartA, state.me)}</div>${boundaryNoteHTML(L.chartA)}
       </div>
       <div class="syn-divider" aria-hidden="true">❖</div>
       <div class="syn-chart">
         <div class="syn-chart-h">${T('THEM', '对方')}</div>
-        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartB, state.other)}</div>${boundaryNoteHTML(s.chartB)}
+        <div class="pillars pillars--sm">${pillarCardsHTML(L.chartB, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(L.chartB, state.other)}</div>${boundaryNoteHTML(L.chartB)}
       </div>`;
 
     // 合盘 branch matrix (V25 Part 5 §24.2) — dual charts + 4×4 combo/clash grid
     $('synBaziMatrixWrap').hidden = false;
-    $('synbmWrap').innerHTML = synBaziMatrixHTML(s.chartA, s.chartB);
+    $('synbmWrap').innerHTML = synBaziMatrixHTML(L.chartA, L.chartB, L.matrix);
     wireSynBaziMatrix();
 
     const C = 2 * Math.PI * 58;
     const ring = $('sRing');
     ring.style.strokeDasharray = C.toFixed(1);
     ring.style.strokeDashoffset = C.toFixed(1);
-    requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = (C * (1 - s.base / 100)).toFixed(1); }));
-    $('sScore').textContent = s.base;
+    renderSynAstroSections(L.astro);
 
-    // V23 Phase 2: astro synastry layer — title/resonance/attraction/red-flags/
-    // composite. Dynamically imports astroPlanets.ts only now, when a synastry
-    // is actually cast (same lazy-load discipline as the L3 PRO natal chart).
-    // Cached per (me,other) pair so a language toggle just re-paints instead
-    // of re-fetching the ephemeris.
-    const pairKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
-    if (state.synAstro && state.synAstro.key === pairKey) {
-      renderSynAstroSections(state.synAstro.data);
-    } else {
-      $('synTitle').textContent = T('Reading the sky…', '正在解读星盘……');
-      $('synAttractWrap').hidden = true;
-      $('synFlagsWrap').hidden = true;
-      $('synDavisonSec').hidden = true;
-      computeSynAstroLayer(state.me, state.other, s.base).then((data) => {
-        state.synAstro = { key: pairKey, data };
-        const curKey = state.me && state.other ? `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}` : null;
-        if (curKey === pairKey) renderSynAstroSections(data);
-        track('synastry_cast', { score: data.score }); // north-star metric (roadmap module 2)
-      }).catch((error) => {
-        if (error?.name === 'AbortError') return;
-        $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。');
-      });
-    }
-
-    $('synParts').innerHTML = s.parts.map((p) =>
+    $('synParts').innerHTML = L.parts.map((p) =>
       `<div class="sp ${p.pts > 0 ? 'pos' : p.pts < 0 ? 'neg' : ''}"><span>${T(p.en, p.zh)}</span><b>${p.pts > 0 ? '+' : ''}${p.pts}</b></div>`).join('');
 
-    // U2: five relationship lenses (bazi-only first paint; the astro layer
-    // above re-paints with aspects when it resolves) + ziwei comparison.
-    renderSynModes(state.synAstro && state.synAstro.key === pairKey ? state.synAstro.data.aspects : null);
-    renderSynZiwei();
+    renderSynScale(report);
+    renderSynModes(L.lenses);
+    renderSynZiwei(L.ziwei);
 
     // 双人宿曜关系 (V21 Phase 3): natal mansions + both directions of the
-    // 三九秘法 relation (it's directional by design).
-    const xa = natalXiuOf(state.me.y, state.me.m, state.me.d);
-    const xb = natalXiuOf(state.other.y, state.other.m, state.other.d);
-    if (xa != null && xb != null) {
-      const rab = XIU_REL[xiuRelation(xa, xb)], rba = XIU_REL[xiuRelation(xb, xa)];
+    // 三九秘法 relation (it's directional by design). Tables checked against
+    // T1299; only a leap-month birth (site convention) carries a caveat.
+    const xa = facts.get('A.xiu.natal').value, xb = facts.get('B.xiu.natal').value;
+    const leapXiu = ['A.xiu.natal', 'B.xiu.natal'].some((id) => facts.get(id).limitationKeys.includes('leap_month_site_convention'));
+    const relAB = facts.get('pair.xiu.A_to_B').value, relBA = facts.get('pair.xiu.B_to_A').value;
+    if (xa != null && xb != null && relAB && relBA) {
+      const rab = XIU_REL[relAB], rba = XIU_REL[relBA];
       $('synXiu').innerHTML = `
         <div class="xiu-h">${T('LUNAR MANSIONS · 宿曜', '宿曜缘分 · 三九秘法')}</div>
         <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${XIU27_ZH[xa]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rab.en, rab.zh)}</b><span class="xiu-d">${T(rab.descEn, rab.descZh)}</span></div>
         <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${XIU27_ZH[xb]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rba.en, rba.zh)}</b><span class="xiu-d">${T(rba.descEn, rba.descZh)}</span></div>
-        <p class="bz-caveat">${T('Mansion tables follow the Xiuyao-jing convention but have not been independently verified against a full published table. Not scored.', '宿曜表按《宿曜经》惯例排出，尚未与完整的公开表独立核对；只作分类，不计分。')}</p>`;
+        <p class="bz-caveat">${T('Following the Xiuyao-jing (Taishō No. 1299). Classification only — not scored.', '按《宿曜经》（大正藏 No. 1299）排出；只作分类，不计分。')}${leapXiu ? T(' Born in a leap lunar month: the scripture gives no rule for this, so the site uses the host month — a convention that has not been verified.', '出生在农历闰月：经文对此没有规定，本站按本月处理，这是本站的约定，未经核验。') : ''}</p>`;
     } else {
       $('synXiu').innerHTML = '';
     }
-    // 日月相位 (V21 Phase 5): sun/moon cross-aspects between the two charts.
-    const jdA = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
-    const jdB = cstToJD(state.other.y, state.other.m, state.other.d, state.other.hour);
-    const bodies = [
-      ['☉', T('Sun', '太阳'), sunLongitude(jdA), sunLongitude(jdB)],
-    ];
-    const moonA = moonLongitude(jdA), moonB = moonLongitude(jdB);
+    // 日月相位 (V21 Phase 5): read from the report — a pair whose aspect
+    // differs within an unsettled birth time is shown as unsettled.
     const pairs = [
-      [T('Sun–Sun', '太阳–太阳'), bodies[0][2], bodies[0][3]],
-      [T('Sun–Moon', '太阳–月亮'), bodies[0][2], moonB],
-      [T('Moon–Sun', '月亮–太阳'), moonA, bodies[0][3]],
-      [T('Moon–Moon', '月亮–月亮'), moonA, moonB],
+      [T('Sun–Sun', '太阳–太阳'), 'Sun.Sun'], [T('Sun–Moon', '太阳–月亮'), 'Sun.Moon'],
+      [T('Moon–Sun', '月亮–太阳'), 'Moon.Sun'], [T('Moon–Moon', '月亮–月亮'), 'Moon.Moon'],
     ];
     const hourMissing = state.me.hour == null || state.other.hour == null;
-    // Unknown hour: a pair involving that person's Moon is shown only if the
-    // aspect is the same at the day's first and last minute (CST).
-    const moonDay = (b) => [0, 23 + 59 / 60].map((h) => moonLongitude(cstToJD(b.y, b.m, b.d, h)));
-    const moonVaries = (b, otherLon, key) => b.hour == null && moonDay(b).some((lon) => aspectBetween(lon, otherLon)?.key !== key);
-    const unsettled = [
-      () => false,
-      (key) => moonVaries(state.other, bodies[0][2], key),
-      (key) => moonVaries(state.me, bodies[0][3], key),
-      (key) => moonVaries(state.me, moonB, key) || moonVaries(state.other, moonA, key),
-    ];
-    const aspRows = pairs.map(([label, la, lb], i) => {
-      const a = aspectBetween(la, lb);
-      if (unsettled[i](a?.key)) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('depends on the unknown birth hour', '随未知时辰而变，未定')}</span></div>`;
-      if (!a) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
-      const t = ASPECT_T[a.key];
+    const aspRows = pairs.map(([label, k]) => {
+      const key = facts.get(`pair.western.aspect.${k}`).value;
+      if (key == null) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('depends on the unsettled birth time', '随未定的出生时间而变，未定')}</span></div>`;
+      if (key === 'none') return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
+      const t = ASPECT_T[key];
       return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-arrow">∠</span><b>${T(t.en, t.zh)}</b><span class="xiu-d">${T(t.dEn, t.dZh)}</span></div>`;
     }).join('');
     $('synAstro').innerHTML = `
       <div class="xiu-h">${T('SUN/MOON ASPECTS · 日月相位', '日月相位')}</div>${aspRows}
       ${hourMissing ? `<p class="bz-caveat">${T('One or both hours unknown — a Moon aspect is shown only if it holds all day; the resonance score uses the same rule.', '有一方未填时辰——月亮相位只在全天都成立时显示，共鸣指数也按同一规则计算。')}</p>` : ''}`;
 
+    const pull = dailyPull(state.me, state.other, todayStr());
     $('pullScore').textContent = T(...PULL_TONE[pull.tone]);
     $('pullTxt').textContent = T(
       `Today (${pull.gz}): ${pull.why.en}. Read from the two day pillars only.`,
       `今日${pull.gz}：${pull.why.zh}。只看双方日柱。`);
 
     // V23 Phase 3: today's real transit-to-natal weather (module 2 point 1)
-    // + 7-day fate calendar (module 2 point 3). The calendar is cheap and
-    // synchronous (reuses dailyPull, no fetch); the weather needs the
-    // precomputed transits JSON, fetched once and cached.
+    // + 7-day calendar. Daily content stays outside the static report.
     renderSynCalendar();
-    const weatherPairKey = pairKey;
+    const sunMoon = (b) => { const jd = cstToJD(b.y, b.m, b.d, clockHour(b)); return { Sun: sunLongitude(jd), Moon: moonLongitude(jd) }; };
+    const natalA = sunMoon(state.me), natalB = sunMoon(state.other);
     ensureTransits().then((transits) => {
-      if (!transits || !state.me || !state.other) return;
-      const curKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
-      if (curKey !== weatherPairKey) return; // pair changed while the fetch was in flight
+      if (!transits || !state.me || !state.other || pairKeyOf() !== key) return; // pair changed while the fetch was in flight
       const wWrap = $('synWeatherWrap');
       if (!transitsAreCurrent(transits.date)) {
         wWrap.hidden = false;
@@ -1334,7 +1325,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         );
         return;
       }
-      const weather = dailyCoupleWeather(transits.planets, { Sun: bodies[0][2], Moon: moonA }, { Sun: bodies[0][3], Moon: moonB });
+      const weather = dailyCoupleWeather(transits.planets, natalA, natalB);
       if (weather.lines.length) {
         wWrap.hidden = false;
         $('synWeather').innerHTML = weather.lines.map((l) => `<p class="syn-line syn-line--pos">${T(l.en, l.zh)}</p>`).join('');
@@ -1696,10 +1687,16 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const clearBtn = $('clearDataBtn');
   if (clearBtn) clearBtn.addEventListener('click', () => {
     const ok = window.confirm(T(
-      'Delete this page’s chart, streak, daily draws, journal, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
-      '删除此浏览器中本页保存的命盘、连续签到、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
+      'Delete this page’s chart, daily draws, journal, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
+      '删除此浏览器中本页保存的命盘、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
+    // Stop in-flight calculations first and drop in-memory charts, so no
+    // late result can re-render or re-save anything (REL-080).
+    relClient.clearPrivateState();
+    ephemerisRunner.cancel('cleared');
+    synRenderEpoch++; mineRenderEpoch++;
+    Object.assign(state, { me: null, other: null, meInput: null, otherInput: null, synReport: null, synData: null, synAstroCard: null });
     try { clearHoroscopeStorage(localStorage); } catch {
       $('privacyStatus').textContent = T('Could not delete all saved data. Browser storage is blocked; use browser site-data settings to finish deleting it.', '未能删除全部保存数据。浏览器存储受限，请通过浏览器的网站数据设置完成删除。');
       $('privacyStatus').focus();
@@ -1712,8 +1709,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const resultInputs = {};
   function assumptionInput(prefix) {
     return {
-      hour: $(prefix + 'Hour').value, timezone: $(prefix + 'Tz').value,
-      dst: $(prefix + 'Dst').checked, restored: !!$(prefix + 'Tz').dataset.restored,
+      date: $(prefix + 'Date').value, hour: $(prefix + 'Hour').value, exactTime: $(prefix + 'ExactTime').value,
+      timezone: $(prefix + 'Tz').value, dst: $(prefix + 'Dst').checked,
+      iana: $(prefix + 'Iana').value, restored: !!$(prefix + 'Tz').dataset.restored,
     };
   }
   function updateAssumptions(prefix) {
@@ -1735,21 +1733,24 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
     updateAssumptions(prefix);
   }
+  // → { birth (CST, for the pre-v2 engines), input (v2 BirthInput), flags } or null
   function readBirth(prefix) {
     const date = $(prefix + 'Date');
-    const b = parseBirth(date.value, $(prefix + 'Hour').value, $(prefix + 'Tz').value, $(prefix + 'Dst').checked);
-    if (!b) formError(prefix, T('Enter a valid birth date from 1900 to 2100.', '请输入 1900 至 2100 年之间的有效出生日期。'), date);
-    else { $(prefix + 'Error').textContent = ''; date.removeAttribute('aria-invalid'); }
-    return b;
+    const r = parseBirthForm(assumptionInput(prefix));
+    if (r.error === 'time') { formError(prefix, T('Enter the birth time as HH:MM, or choose a time slot or Unknown.', '请按“时：分”填写出生时间，或改选时段或“不知道”。'), $(prefix + 'ExactTime')); return null; }
+    if (r.error) { formError(prefix, T('Enter a valid birth date from 1900 to 2100.', '请输入 1900 至 2100 年之间的有效出生日期。'), date); return null; }
+    $(prefix + 'Error').textContent = ''; date.removeAttribute('aria-invalid');
+    return r;
   }
-  function resultAssumptions(prefix) {
-    resultInputs[prefix] = assumptionInput(prefix);
+  function resultAssumptions(prefix, flags = []) {
+    resultInputs[prefix] = { ...assumptionInput(prefix), flags };
     $(prefix + 'ResultAssumptions').textContent = birthAssumptions(resultInputs[prefix], state.lang);
   }
   $('birthForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const b = readBirth('b');
-    if (!b) return;
+    const r = readBirth('b');
+    if (!r) return;
+    const b = r.birth;
     b.gender = $('bGender').value || null;
     b.lat = $('bLat').value === '' ? null : Math.max(-90, Math.min(90, +$('bLat').value));
     b.lon = $('bLon').value === '' ? null : Math.max(-180, Math.min(180, +$('bLon').value));
@@ -1757,30 +1758,48 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     button.disabled = true;
     $('birthForm').setAttribute('aria-busy', 'true');
     state.me = b;
+    state.meInput = { ...r.input, ...(b.lat != null && b.lon != null ? { place: { latitude: b.lat, longitude: b.lon, precision: 'city' } } : {}) };
     $('synHint').hidden = true;
-    const saved = saveProfile(b);
-    $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
-    resultAssumptions('b');
+    if ($('bSave').checked) {
+      $('bSaveStatus').textContent = profileStore.saveProfile(store, b)
+        ? T('Saved in this browser.', '已保存在此浏览器。')
+        : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
+    } else {
+      // Unticking is a choice too: an earlier saved profile is removed.
+      const had = !!profileStore.loadProfile(store);
+      profileStore.forgetProfile(store);
+      $('bSaveStatus').textContent = had
+        ? T('For this visit only — the profile saved earlier has been removed from this browser.', '仅用于本次——之前保存的资料已从此浏览器移除。')
+        : T('For this visit only — nothing was saved.', '仅用于本次——没有保存任何资料。');
+    }
+    resultAssumptions('b', r.flags);
     try { await renderMine(); await renderSyn(); document.dispatchEvent(new CustomEvent('afflatus-chart-created')); }
     catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
     finally { button.disabled = false; $('birthForm').removeAttribute('aria-busy'); }
   });
   // Shared by the form-submit path and the relationship-book quick-load path.
-  function castSynastry(b) {
+  function castSynastry(b, input) {
     state.other = b;
+    state.otherInput = input;
     renderSyn();
   }
   $('synForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!state.me) { formError('s', T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。')); return; }
-    const b = readBirth('s');
-    if (!b) return;
+    const r = readBirth('s');
+    if (!r) return;
+    const b = r.birth;
     const button = $('synForm').querySelector('[type=submit]');
     button.disabled = true;
     const name = $('sName').value.trim();
-    if (name) upsertBook(name, b);
+    if ($('sSave').checked) {
+      const saved = profileStore.upsertBook(store, name || T('Them', 'TA'), b);
+      $('sSaveStatus').textContent = saved ? T('Saved to contacts in this browser.', '已存入此浏览器的关系册。') : T('Not saved: browser storage is unavailable.', '未保存：浏览器存储不可用。');
+      renderBook();
+    } else $('sSaveStatus').textContent = T('For this visit only — not added to contacts.', '仅用于本次——未存入关系册。');
     state.other = b;
-    resultAssumptions('s');
+    state.otherInput = r.input;
+    resultAssumptions('s', r.flags);
     try { await renderSyn(); }
     catch { formError('s', T('The comparison could not load. Reload the page and try again.', '合盘未能加载，请刷新页面后重试。')); }
     finally { button.disabled = false; }
@@ -1792,11 +1811,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     // Persisted profiles already use CST, including even hours after conversion.
     const hourSelect = $(prefix + 'Hour');
     hourSelect.querySelectorAll('[data-restored-hour]').forEach(option => option.remove());
-    if (b.hour != null && !Array.from(hourSelect.options).some(option => option.value === String(b.hour))) {
+    if (b.hour != null && b.minute == null && !Array.from(hourSelect.options).some(option => option.value === String(b.hour))) {
       const option = new Option(`${String(b.hour).padStart(2, '0')}:00 · UTC+8`, String(b.hour));
       option.dataset.restoredHour = 'true'; hourSelect.add(option);
     }
-    hourSelect.value = b.hour == null ? '' : String(b.hour);
+    hourSelect.value = b.hour == null ? '' : b.minute != null ? 'exact' : String(b.hour);
+    $(prefix + 'ExactTime').value = b.minute != null ? `${p(b.hour)}:${p(b.minute)}` : '';
+    $(prefix + 'ExactWrap').hidden = b.minute == null;
+    $(prefix + 'Iana').value = '';
     $(prefix + 'RegionSel').value = '';
     $(prefix + 'CitySel').innerHTML = '';
     $(prefix + 'CitySel').disabled = true;
@@ -1813,9 +1835,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Restore local data only. Birth profiles never enter or come from URLs.
   renderBook();
   {
-    const saved = loadProfile();
-    if (saved && parseBirth(`${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, saved.hour == null ? '' : String(saved.hour))) {
-      state.me = saved; $('synHint').hidden = true; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
+    const saved = profileStore.loadProfile(store);
+    if ($('bSave')) $('bSave').checked = !!saved; // returning visitors chose to save before
+    const savedOk = saved && !parseBirthForm({ date: `${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, hour: saved.hour == null ? '' : String(saved.hour), restored: true }).error
+      && (saved.minute == null || (Number.isInteger(saved.minute) && saved.minute >= 0 && saved.minute < 60));
+    if (savedOk) {
+      state.me = saved; state.meInput = { ...birthInputFromSaved(saved), ...(saved.lat != null && saved.lon != null ? { place: { latitude: saved.lat, longitude: saved.lon, precision: 'city' } } : {}) };
+      $('synHint').hidden = true; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
     }
   }
 
@@ -1830,7 +1856,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     // pagehide also fires when the document enters the back/forward cache.
     // Cancel current CPU work without permanently disposing the channels so
     // the restored page can run fresh calculations after pageshow.
-    synAstroRunner.cancel('page-hidden');
+    relClient.cancel('page-hidden');
     ephemerisRunner.cancel('page-hidden');
   });
 })();

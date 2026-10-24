@@ -1,6 +1,6 @@
 # 趣味占星重设计 · 执行路线图
 
-2026 年 10 月 23 日。依据：[DESIGN.md](DESIGN.md)（方向 A「掌上星历仪」）。原型：[prototype.html](prototype.html)。状态：**计划，尚未开工**；10-23 新增引擎线 R（R0 进行中）。
+2026 年 10 月 23 日。依据：[DESIGN.md](DESIGN.md)（方向 A「掌上星历仪」）。原型：[prototype.html](prototype.html)。状态：波次 0–1 已开 PR（#25 M0、#26 M1、#27 M2）；引擎线 R0–R4 与 C 的引擎部分已在 `claude/horoscope-engine-r-10805d` 完成（2026-10-24，待审，未合并）。
 
 ## 怎么用这份路线图
 
@@ -63,6 +63,8 @@
   - 站主审过 `design.md` 的 diff。
 
 ### C · 内容整改（M，Opus · high；可与 M0 并行，持续到 M5）
+
+> 状态 2026-10-24：C1、C2、C2b 随 R0 完成；C3 `headline` 与 `passportCopy.js` 完成（`e9cf1744`）。「站主抽查 20 条」未做；前台显示 `headline`、隐藏分数属于 M5。
 
 - **目标**：前台每一句话都可追溯，并且不越红线。
 - **改动**：
@@ -245,7 +247,7 @@
 
 ### R0 · 排盘与合盘规则校正（M，Opus · high）
 
-> 状态 2026-10-23：代码与单测已在本分支完成（未提交）；本地浏览器已核对中英文与手机宽度。
+> 状态 2026-10-24：已提交（`da6ff8be`），随 #25 的基底一起审。
 
 - **依赖**：无（可与 M0、C 并行）。
 - **改动**：
@@ -258,11 +260,15 @@
 
 ### R1 · 契约与纯函数内核（L，Opus · high）
 
+> 状态 2026-10-24：完成（`9599cce8`）。`src/lib/relationships/` 下的 contract / time / kernel / client；Worker 复用 `horoscopeSynthesis.worker.js`。
+
 - **依赖**：R0。
 - **改动**：按 v2 `contracts/relationships.types.ts`，在 `src/lib/relationships/` 下建运行时 schema、带版本号的 `RelationshipReport`、模块状态（ready/partial/unverified/unsupported/failed），以及 Worker 消息协议，复用 `latestWorkerTask.js`。
 - **验收**：内核不碰 DOM、网络、存储或当前时间；同一输入得到同一输出；非法输入有错误码。
 
 ### R2 · 时刻、区间与 IANA 时区（M，Opus · high）
+
+> 状态 2026-10-24：完成（`ab1dc7dc`）。中国大陆仍用仓库自带的 1986–1991 夏令时表；1988 年开始日与 tzdata 不一致，待站主核对（SOURCES_AND_LICENSES S1）。
 
 - **依赖**：R1。
 - **改动**：Q6、Q7：时辰分 exact / range / unknown 三档，增加分钟输入；城市表补 IANA 名，用 `Intl` 换算，覆盖夏令时的重复时刻和不存在时刻。
@@ -270,11 +276,15 @@
 
 ### R3 · 六维量表与证据账单（L，Opus · high）
 
+> 状态 2026-10-24：完成（`8241011a`），模型 `rel-six-dim 0.1.0-draft`，权重未签署（标 unverified）；页面合盘区全部由报告驱动，旧量表以 `legacy-resonance` 并存。G2 中「黄金案例 100 例」未做。
+
 - **依赖**：R1、R2。
 - **改动**：v2 REL-070。支持和磨合两个分量，规则族封顶，缺模块时总分为 null，A→B 与 B→A 各一套双向原型。
 - **验收**：v2 ACCEPTANCE G2 全部通过。
 
 ### R4 · 隐私与存储（M，Sonnet · high）
+
+> 状态 2026-10-24：完成（`cf0483b5`）。CSP 只写了评估说明（CSP_ASSESSMENT），没有改 `vercel.json`。
 
 - **依赖**：R1。
 - **改动**：Q10：默认临时保存，主动选择才写入本机；老资料原地兼容。删除时取消在途计算。

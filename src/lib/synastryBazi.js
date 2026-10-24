@@ -49,7 +49,7 @@ const inCycle = (cyc, a, b) => cyc.some(([x, y]) => x === a && y === b); // dire
 // Mirrors ziping.branchRelations()'s table set but pairwise (two branches
 // from two DIFFERENT charts — 自刑/same-branch has no cross-chart meaning,
 // so it's intentionally not checked here).
-function branchPairRelations(a, b) {
+export function branchPairRelations(a, b) {
   const out = [];
   if (inPair(BRANCH_LIUHE, a, b)) out.push({ type: 'liuhe', text: BRANCHES[a] + BRANCHES[b] + '合' });
   if (inPair(BRANCH_LIUCHONG, a, b)) out.push({ type: 'chong', text: BRANCHES[a] + BRANCHES[b] + '相冲' });

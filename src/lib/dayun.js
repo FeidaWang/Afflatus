@@ -21,7 +21,7 @@
    pin the rule-level invariants (direction flips, sequence stepping,
    3-days-per-year conversion against hand-checked solar-term gaps).
    ============================================================ */
-import { STEMS, BRANCHES, adjacentSolarTerms, computeBazi } from './bazi.js';
+import { STEMS, BRANCHES, adjacentSolarTerms, computeBazi, clockHour } from './bazi.js';
 import { branchRelations } from './ziping.js';
 
 const mod = (n, m) => ((n % m) + m) % m;
@@ -47,7 +47,7 @@ export function computeDayun(birth, gender, count = 8) {
   if (gender !== 'M' && gender !== 'F') return null;
   const chart = computeBazi(birth);
   const dir = dayunDirection(chart.year.stem, gender);
-  const { birthJD, prevJD, nextJD } = adjacentSolarTerms(birth.y, birth.m, birth.d, birth.hour);
+  const { birthJD, prevJD, nextJD } = adjacentSolarTerms(birth.y, birth.m, birth.d, clockHour(birth));
   const gapDays = dir === 1 ? nextJD - birthJD : birthJD - prevJD;
   const ageYearsFloat = gapDays / 3; // 3 days = 1 year
   const years = Math.floor(ageYearsFloat);

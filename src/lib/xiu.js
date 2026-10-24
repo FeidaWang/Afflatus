@@ -12,15 +12,23 @@
       the Xiuyao-jing convention — each LUNAR month assigns a mansion to
       day 1 (正月=室, 二月=奎, 三月=胃, 四月=毕, 五月=参, 六月=鬼,
       七月=张, 八月=角, 九月=氐, 十月=心, 十一月=斗, 十二月=虚), then
-      count forward (lunar day − 1) through the 27 cycle. A leap month is
-      treated as its host month (documented convention choice; schools
-      differ and no independent cross-check was available in this
-      environment — stated honestly here and in the page caveat).
+      count forward (lunar day − 1) through the 27 cycle. CHECKED: the
+      owner's third-party check of the Taishō text (T21 No.1299) confirms
+      these twelve day-1 mansions under the 27-mansion method, and the
+      scripture's own example at p.391b11 (二月五日 → 畢) is locked in
+      tests/xiu.test.js. The printed table in the scripture's first
+      fascicle has column misalignments and mixes in the 28-mansion cycle,
+      so the values rest on the 27-mansion method, not on that layout.
+      A leap month is treated as its host month: No.1299 states no rule,
+      so this is a site convention and stays unverified (the page says so
+      only for leap-month births).
 
    3. 双人宿曜关系 (三九秘法): the distance d from mansion A to mansion B
       (forward in the 27 cycle) maps to 命(0) / 業(9) / 胎(18), otherwise
       d%9 → 1栄 2衰 3安 4危 5成 6壊 7友 8親. Directional; the standard
-      reading combines both directions.
+      reading combines both directions. CHECKED against T1299's 三九祕宿品
+      and its p.391b11 example (畢 命, 觜 栄, 参 衰 … 軫 業, 女 胎).
+      Classification only — never scored (DECISIONS).
    ============================================================ */
 import { jdn } from './bazi.js';
 
@@ -47,12 +55,12 @@ export function natalXiu(lMonth, lDay) {
 // -- 三九秘法 two-person relation --------------------------------------------
 export const XIU_REL = {
   ming: { zh: '命', en: 'Destiny', descZh: '同宿而生，镜像般的缘分——彼此像看见另一个自己', descEn: 'Born under the same mansion — a mirror-like bond' },
-  ye: { zh: '业', en: 'Karma', descZh: '前世业缘之说——相处有宿命感，牵绊深', descEn: 'A karmic tie — the bond feels fated and deep' },
+  ye: { zh: '业', en: 'Karma', descZh: '传统称「业」——读作牵绊深、有共同功课的关系', descEn: 'Traditionally "karma" — read as a deep tie with lessons to share' },
   tai: { zh: '胎', en: 'Origin', descZh: '胎缘——像家人一样天然亲近', descEn: 'An origin tie — naturally close, like family' },
   rong: { zh: '荣', en: 'Flourish', descZh: '荣缘——同行则旺，彼此成就', descEn: 'You flourish in each other\'s company' },
   shuai: { zh: '衰', en: 'Wane', descZh: '衰缘——容易消耗对方的气，相处宜留白', descEn: 'Energy drains easily — leave each other room' },
   an: { zh: '安', en: 'Calm', descZh: '安缘——安稳踏实，是能安心相处的关系', descEn: 'A calm, steady, reassuring bond' },
-  wei: { zh: '危', en: 'Peril', descZh: '危缘——刺激而不稳定，起伏大', descEn: 'Thrilling but unstable — expect swings' },
+  wei: { zh: '危', en: 'Peril', descZh: '危缘——新鲜感强、起伏也大，多沟通', descEn: 'Lively and changeable — talk things through' },
   cheng: { zh: '成', en: 'Achieve', descZh: '成缘——一起做事容易成，是好搭档', descEn: 'Things get done together — good partners' },
   huai: { zh: '坏', en: 'Break', descZh: '坏缘——容易互相打破对方的节奏，需经营', descEn: 'You disrupt each other\'s rhythm — needs care' },
   you: { zh: '友', en: 'Friend', descZh: '友缘——自然的朋友缘，轻松合拍', descEn: 'A natural, easy friendship' },

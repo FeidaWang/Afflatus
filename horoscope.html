@@ -240,6 +240,8 @@
         <details class="chart-details" id="birthDetails"><summary data-en="Add details" data-zh="补充信息">Add details</summary><p class="form-note" data-en="Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated." data-zh="选填：时辰和地点用于细化星图。不确定时请保留“不知道”；下方会说明计算采用的假设。">Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated.</p><div class="chart-fields">
         <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
           <select id="bHour" aria-describedby="bAssumptions"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld" id="bExactWrap" hidden><label for="bExactTime" data-en="Birth time (local clock, HH:MM)" data-zh="出生时间（当地钟点，精确到分钟）">Birth time (local clock, HH:MM)</label>
+          <input type="time" id="bExactTime" step="60" aria-describedby="bAssumptions"></div>
         <div class="fld"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
           <select id="bGender">
             <option value="" data-en="Prefer not to say" data-zh="不填">Prefer not to say</option>
@@ -254,19 +256,21 @@
           <input type="checkbox" id="bDst" aria-describedby="bAssumptions" disabled></div>
         <div class="fld-manual" id="bManualWrap" hidden>
           <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
-            <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+            <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div><input type="hidden" id="bIana">
           <div class="fld"><label for="bLat" data-en="Birthplace latitude (optional, rising sign)" data-zh="出生地纬度（可不填，升星座用）">Birthplace latitude (optional, rising sign)</label>
             <input type="number" id="bLat" step="0.01" min="-90" max="90" placeholder="31.23"></div>
           <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
             <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
         </div>
         </div></details>
+        <div class="fld fld--check"><label for="bSave" data-en="Save on this device" data-zh="保存到本机">Save on this device</label>
+          <input type="checkbox" id="bSave"></div>
         <details class="assumption-details"><summary data-en="Calculation assumptions" data-zh="查看计算假设">查看计算假设</summary><p id="bAssumptions" class="form-assumptions" aria-live="polite"></p></details>
         <p id="bError" class="form-feedback" role="alert" tabindex="-1"></p>
         <button class="btn" type="submit" data-en="Create my chart ↗" data-zh="生成我的星图 ↗">Create my chart ↗</button>
       </form>
       <p id="bSaveStatus" class="form-note" role="status"></p>
-      <p class="form-note" data-en="Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only." data-zh="出生资料仅保存在此浏览器。页面链接不含出生资料；下载卡片可能包含个人结果。仅供娱乐。">Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only.</p>
+      <p class="form-note" data-en="Details are used for this visit only unless you tick “Save on this device”; a saved profile stays in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only." data-zh="除非勾选“保存到本机”，资料只用于本次；保存的资料只留在此浏览器。页面链接不含出生资料；下载卡片可能包含个人结果。仅供娱乐。">Details are used for this visit only unless you tick “Save on this device”; a saved profile stays in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only.</p>
       <noscript><p class="form-note">启用 JavaScript 后可在本地起盘；表单资料不会发送到服务器。 Enable JavaScript to calculate locally; no form data is sent to a server.</p></noscript>
     </div>
   </section>
@@ -274,7 +278,7 @@
   <details class="privacy-settings obs-self"><summary data-en="Saved data & privacy" data-zh="本地数据与隐私">Saved data & privacy</summary>
     <div class="privacy-clear">
       <button type="button" class="privacy-clear-btn" id="clearDataBtn" data-en="⌫ Delete this page’s saved data" data-zh="⌫ 删除本页保存的数据">⌫ Delete this page’s saved data</button>
-      <span class="privacy-clear-note" data-en="Deletes this page’s charts, streak, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、签到、每日签、手记和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s charts, streak, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
+      <span class="privacy-clear-note" data-en="Deletes this page’s charts, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、每日签、手记和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s charts, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
       <p id="privacyStatus" class="form-feedback" role="alert" tabindex="-1"></p>
     </div>
   </details>
@@ -288,7 +292,6 @@
       <div class="today-head">
         <span class="today-gz" id="todayGz">—</span>
         <span class="today-rel" id="todayRel"></span>
-        <span class="streak" id="streakChip" hidden></span>
       </div>
       <div class="today-detail" id="todayDetailWrap"></div>
       <div class="star-draw" id="starDrawWrap"></div>
@@ -360,12 +363,14 @@
       <div class="syn-book" id="synBook" hidden></div>
 
       <form class="syn-form" id="synForm" aria-describedby="sAssumptions">
-        <div class="fld"><label for="sName" data-en="Their name (optional, saved on this device only)" data-zh="对方称呼（可不填，仅存本机）">Their name (optional, saved on this device only)</label>
+        <div class="fld"><label for="sName" data-en="Their name (optional, shown on this page)" data-zh="对方称呼（可不填，只在本页显示）">Their name (optional, shown on this page)</label>
           <input type="text" id="sName" maxlength="12" placeholder="TA"></div>
         <div class="fld"><label for="sDate" data-en="Their birth date" data-zh="对方出生日期">Their birth date</label>
           <input type="date" id="sDate" aria-describedby="sError" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
           <select id="sHour" aria-describedby="sAssumptions"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld" id="sExactWrap" hidden><label for="sExactTime" data-en="Their birth time (local clock, HH:MM)" data-zh="对方出生时间（当地钟点，精确到分钟）">Their birth time (local clock, HH:MM)</label>
+          <input type="time" id="sExactTime" step="60" aria-describedby="sAssumptions"></div>
         <div class="fld fld--city"><label for="sRegionSel" data-en="Their birth region (optional)" data-zh="对方出生地区（可不填）">Their birth region (optional)</label>
           <select id="sRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
         <div class="fld fld--city"><label for="sCitySel" data-en="Their birth city" data-zh="对方出生城市">Their birth city</label>
@@ -374,12 +379,15 @@
           <input type="checkbox" id="sDst" aria-describedby="sAssumptions" disabled></div>
         <div class="fld-manual" id="sManualWrap" hidden>
           <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
-            <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+            <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div><input type="hidden" id="sIana">
         </div>
+        <div class="fld fld--check"><label for="sSave" data-en="Save to contacts on this device" data-zh="存入本机关系册">Save to contacts on this device</label>
+          <input type="checkbox" id="sSave"></div>
         <p id="sAssumptions" class="form-assumptions" aria-live="polite"></p>
         <p id="sError" class="form-feedback" role="alert" tabindex="-1"></p>
         <button class="btn btn--seal" type="submit" data-en="Interlock ❖" data-zh="合盘 ❖">Interlock ❖</button>
       </form>
+      <p id="sSaveStatus" class="form-note" role="status"></p>
       <p class="form-note" id="synHint" data-en="Cast your own chart above first — synastry needs both." data-zh="先在上方立好自己的盘——合盘需要两个人。">Cast your own chart above first — synastry needs both.</p>
 
       <div class="syn-result" id="synResult" hidden>

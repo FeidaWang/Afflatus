@@ -26,3 +26,42 @@
 | 原型 | `prototype-data.js` 用新引擎重新生成（样例四柱不变，合盘 base 由 73 变为 79，月亮相位按全天规则变为 0 条）；`prototype.html` 去掉 C1、C2、C2b 的「待修」标注 |
 | 未做 | Q6、Q7（REL-020）· Q10（REL-080）· M0 · 宿曜表来源核验 · `.ics` 下载的实机点击测试 |
 | 部署 | 没有提交，没有推送，没有部署 |
+
+# HANDOVER · 引擎线 R1–R4、C3 与零散修正（2026-10-24）
+
+| 项 | 内容 |
+|---|---|
+| 分支 | `claude/horoscope-engine-r-10805d`，基底 `claude/horoscope-m0-21cac4`（#25）。**不合并**，与 #25、#26、#27 一起审 |
+| 实际模型 | Claude Opus 5.5（Claude Code 桌面版）。v2 包推荐的 GPT 模型**没有**使用 |
+| 完成到第几项 | 简报 1–8 项全部做了，每项单独提交：R1 `9599cce8` · R2 `ab1dc7dc` · R3 `8241011a` · R4 `cf0483b5` · C3 `e9cf1744` · 零散修正 `f9e95577` · 来源与许可 `551629be` · 本文档 |
+| 新增源码 | `src/lib/relationships/`：`contract.js`（运行时 schema、错误码、能力声明）· `time.js`（exact/range/unknown、IANA、DST fold/gap）· `kernel.js`（报告）· `scale.js`（rel-six-dim）· `client.js`（Worker 协议、generation 计数）· `copy.js`（显示文案）；`src/horoscope/profileStore.js`；`src/lib/passportCopy.js`；`src/lib/icsText.js` |
+| 修改的源码 | `bazi.js`（可选分钟、`clockHour`、导出 `inCnDstWindow`）· `astro.js` / `dayun.js` / `horoscopeSynthesis.js`（分钟传进星历）· `cities.js` / `cityPicker.js`（IANA）· `horoscopeEngine.js`（`headline`，导出 `dayStemRelation`）· `synastryBazi.js`（导出 `branchPairRelations`）· `xiu.js`（E3 措辞）· `formDetails.js` · `synastryFeature.js` · `horoscope.js` · `horoscopeSynthesis.worker.js` · `horoscope.html`（精确时间、IANA 隐藏字段、两个保存勾选、文案）· `public/styles/horoscope.css`（删掉连签提示样式） |
+| 新增测试 | `tests/relationshipsKernel` · `relationshipsTime` · `relationshipsScale` · `relationshipsPrivacy` · `passportCopy` · `icsText`；`horoscopeEngine` 加 headline；`e2e/horoscope-privacy.spec.js` |
+| 命令与结果 | `npx vitest run`：136 个文件、1542 项通过，1 项跳过（开工时 130 个文件、1470 项，全部通过，没有新增失败）· `npm run lint:i18n` 通过 · `npx vite build` 通过（**跳过了 prebuild**，原因是 `site:check` 的 sitemap 日期问题在 HEAD 上就存在；没有运行 `site:generate`）· `node scripts/check-bundle-budget.mjs` 全部 OK · Playwright `horoscope-privacy` 与 `horoscope-m0` 在 desktop-chromium 和 iphone-16-pro-max-webkit 上 16 项全部通过 · `quality-gates` 的「keyboard entry and route navigation」**8 条路由全部失败**（同一个 404），horoscope 以外的页面也一样，判断是跳过 prebuild 的构建缺页面，与本分支无关，但没有在基底分支上复现确认 |
+| 浏览器实测 | 本地 Vite（内置浏览器）：精确时间立盘、恢复已存的精确分钟、合盘六维与证据账单、时辰未知时显示「待补充」、中文文案。**没测**：真实 Safari/iOS、Android 真机、读屏、`.ics` 实机导入、`?fx=almanac` 开关下的新视图（M10 尚未接入新报告） |
+| 会改变的结果（都在裁定范围内） | ① 港澳台和海外城市改用 IANA 时区（Q7）：以前港澳台走「按中国处理」并套用中国 1986–1991 夏令时，海外夏令时要手动勾选，现在由时区库判断。② 时段按区间处理（Q6）：自我页的上升星座只在整个时段内不变时显示，并且不显示度数；合盘的日月相位在时段内有变化时显示「未定」。③ 每日签不再有连签解锁的隐藏签池（design.md §5，不做连签）。④ 页面不再自动保存出生资料（Q10）；已有资料照常读取，这类回访者的「保存到本机」默认勾上 |
+| 没有改变结果的 | 中国大陆出生、手动时区的 CST 换算与旧版逐一一致（200 组属性测试）；`dailyFortune()` 加 `headline` 后，其余字段与旧版 500 组完全一致；旧共鸣指数、五种关系、地支矩阵、紫微分数仍是原值，只是改由报告提供 |
+| 新量表 | `rel-six-dim 0.1.0-draft`：草案权重，状态 `unverified`。三大模块（八字、行星、紫微）对双方都必须是 ready，否则总分和六维为 null。分布与敏感性见 `SCALE_SENSITIVITY.zh-CN.md`。「成长」维的下限偏高，留给站主决定 |
+| 来源 | astronomy-engine 2.1.19 MIT；**构建产物没有带 MIT 声明**（缺口已记录，未修）。宿曜：经文例子与三九映射一致；月首宿表七至十一月与经文转录有矛盾，**保持 unverified**。详见 `SOURCES_AND_LICENSES.zh-CN.md` |
+| 待站主决定 | S1 1988 年中国夏令时开始日（仓库 4 月 10 日，tzdata 4 月 17 日）· S2 宿曜月首宿表 · S3 MIT 声明分发 · rel-six-dim 权重签署 · 「成长」维补规则 · C 的 20 条抽查 |
+| 留给前端线 | M10 改为消费 `RelationshipReport`（`report.dimensions` / `overall` / `archetypes` / 证据账单 / `legacy`），不要再调 `synastry()`；M5 显示 `headline`；`starDraw.js` 的隐藏签池与 `streak` 参数现在没有调用方，没删 |
+| 部署 | 没有部署；分支已推送，PR 见 PR 描述 |
+
+# HANDOVER · 站主对 #28 的裁定落实（2026-10-24）
+
+| 项 | 内容 |
+|---|---|
+| 1 权重 | `rel-six-dim` 升到 **0.2.0**（`4d599022`）。取消全部手设分值、格权重和相位强弱，只保留「哪一维、支持还是磨合」这张分类表。同一维内各规则族等权。分数按分段线性标定：理论最小值对应 0，10 万对合成样本的中位数对应 50，理论最大值对应 100。样本按 1900–2100 年均匀抽取，mulberry32，种子 20261024，可用 99,770 对。参数写在 `scale.js` 的 `CALIBRATION` 和 `SCALE_SENSITIVITY.zh-CN.md`。「成长」维的下限问题已消除（p5 由 50 降到 6）。「吸引」维是单边的，约 25% 的对子得 0 分，已标注 `rule_coverage_low`，没有补权重。量表仍标为娱乐指数、`unverified` |
+| 2 S1 | 1988 年中国夏令时按 4 月 10 日，大陆出生沿用仓库表；加了单测锁定，SOURCES 已注明（`7e7dbeea`） |
+| 3 S3 | astronomy-engine 的 MIT 声明随构建分发（`8840a096`）：用 Rolldown 的 `postBanner` 给 `vendor-astronomy-*.js` 和 Worker 分块加声明，另随构建分发 `dist/THIRD_PARTY_NOTICES.md`（附 MIT 全文）。`vite build` 后已逐一确认 |
+| 4 S2 | 保持 unverified，代码没改，只在 SOURCES 里记下裁定 |
+| 命令与结果 | `npx vitest run`：136 个文件、1548 项通过，1 项跳过 · `npm run lint:i18n` 通过 · `npx vite build`（仍跳过 prebuild）通过 · Playwright `horoscope-privacy` 与 `horoscope-m0` 在 Chromium 和 WebKit 上 16 项全部通过 · 标定脚本约 21 秒 |
+| 仍未做 | 分类表 `FAMILY_TABLE` 没有外部验证；没有黄金案例对照；没有真机测试 |
+
+# HANDOVER · S2 宿曜核对结果落实（2026-10-24）
+
+| 项 | 内容 |
+|---|---|
+| 依据 | 站主委托第三方依据大正藏 T1299 核对：二十七宿法下的月首宿表、三九秘法映射与仓库一致；p.391b11 明确记载「二月五日 → 毕宿」；原表排版有对位矛盾，数值按二十七宿法确认；闰月经文没有规定 |
+| 改动 | `kernel.js`：宿曜事实非闰月为 `computed`，模块 `ready`；闰月出生为 `unverified`，并带 `leap_month_site_convention` · `contract.js`：来源 id 改为 `src.xiuyao-jing-t1299` · `xiu.js`：头注释写明核对依据 · 页面：只有闰月出生的人才显示未核验提示 · 宿曜仍不计分 |
+| 测试 | `tests/xiu.test.js` 锁住二月五日为毕、十二个月初一、毕宿起算的三九角色；`relationshipsKernel` 加了闰月和非闰月两例。`npx vitest run`：1552 项通过，1 项跳过；`lint:i18n` 通过；本地浏览器核对过非闰月和闰月（2023-03-25）两种提示 |

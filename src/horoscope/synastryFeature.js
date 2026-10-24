@@ -1,4 +1,3 @@
-export { synastry, dailyPull } from '../lib/horoscopeEngine.js';
-export { crossBranchMatrix } from '../lib/synastryBazi.js';
+export { dailyPull } from '../lib/horoscopeEngine.js';
 export { dailyCoupleWeather, transitsAreCurrent } from '../lib/dailyTransits.js';
-export { relationshipScores, synastryZiwei } from '../lib/synastryModes.js';
+export { ruleLine, DIMENSION_COPY, THEME_COPY, QUESTION_COPY } from '../lib/relationships/copy.js';

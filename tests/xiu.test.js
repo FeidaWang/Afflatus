@@ -60,3 +60,25 @@ describe('xiuRelation (三九秘法)', () => {
     }
   });
 });
+
+describe('Xiuyao-jing check (T1299, p.391b11)', () => {
+  const at = (name) => XIU27_ZH.indexOf(name);
+  it('二月五日 is 畢 (毕) — the scripture’s own worked example', () => {
+    expect(XIU27_ZH[natalXiu(2, 5)]).toBe('毕');
+  });
+
+  it('month day-1 mansions under the 27-mansion method: 室 奎 胃 毕 参 鬼 张 角 氐 心 斗 虚', () => {
+    expect(Array.from({ length: 12 }, (_, i) => XIU27_ZH[natalXiu(i + 1, 1)]).join('')).toBe('室奎胃毕参鬼张角氐心斗虚');
+  });
+
+  it('the same example’s three-nine roles from 畢: 觜 荣, 参 衰, 轸 业, 角 荣, 女 胎, 虚 荣', () => {
+    const from = at('毕');
+    expect(xiuRelation(from, from)).toBe('ming');
+    expect(xiuRelation(from, at('觜'))).toBe('rong');
+    expect(xiuRelation(from, at('参'))).toBe('shuai');
+    expect(xiuRelation(from, at('轸'))).toBe('ye');
+    expect(xiuRelation(from, at('角'))).toBe('rong');
+    expect(xiuRelation(from, at('女'))).toBe('tai');
+    expect(xiuRelation(from, at('虚'))).toBe('rong');
+  });
+});
