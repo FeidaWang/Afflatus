@@ -315,7 +315,7 @@ const XIYONG_NOTE = {
 
 // Traditional categories (天干五合 / 四冲 / 生 / 比和 / 克 by polarity),
 // original point values — see docs/relationships-v2-2026-10-23/DECISIONS.
-function dayStemRelation(a, b) {
+export function dayStemRelation(a, b) {
   const rel = stemRelations([a, b])[0];
   if (rel?.type === 'combo') return 'combo';
   if (rel?.type === 'clash') return 'clash';

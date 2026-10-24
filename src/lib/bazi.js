@@ -193,12 +193,14 @@ function pillarsAtInstant(y, jd) {
 // The input hour is the START of a time slot (1 h for 早子/晚子, else 2 h).
 // A 节 inside [start − 15 min, slot end) means the pillar can't be settled
 // from the slot alone (15 min covers this solver's few-minute error).
+// An exact minute (REL-020) narrows the slot to ±15 min around the instant.
 // Unknown hour: any 节 on that CST date is unstable.
-function boundaryFlag(y, m, d, hour, jd) {
+function boundaryFlag(y, m, d, hour, jd, exact) {
   for (const { jd: tj, t } of termsAround(y)) {
     const hit = hour == null
       ? (() => { const c = calendarFromJD(tj + 8 / 24); return c.month === m && Math.floor(c.day) === d; })()
-      : tj >= jd - 0.25 / 24 && tj < jd + (hour === 0 || hour === 23 ? 1 : 2) / 24;
+      : exact ? Math.abs(tj - jd) < 0.25 / 24
+        : tj >= jd - 0.25 / 24 && tj < jd + (hour === 0 || hour === 23 ? 1 : 2) / 24;
     if (hit) return { pillar: t.lon === 315 ? 'year' : 'month', termLon: t.lon };
   }
   return null;
@@ -236,7 +238,7 @@ const CN_DST_WINDOWS = {
   1986: [5, 4, 9, 14], 1987: [4, 12, 9, 13], 1988: [4, 10, 9, 11],
   1989: [4, 16, 9, 17], 1990: [4, 15, 9, 16], 1991: [4, 14, 9, 15],
 };
-function inCnDstWindow(y, m, d) {
+export function inCnDstWindow(y, m, d) {
   const w = CN_DST_WINDOWS[y];
   if (!w) return false;
   const [sm, sd, em, ed] = w;
@@ -245,10 +247,14 @@ function inCnDstWindow(y, m, d) {
 // Shift {y,m,d,hour} by deltaHours (possibly fractional, e.g. a half-hour
 // timezone), rolling the calendar date forward/back as needed. Uses Date's
 // UTC methods purely as calendar arithmetic (no host-timezone dependency).
-function shiftHours(y, m, d, hour, deltaHours) {
-  const dt = new Date(Date.UTC(y, m - 1, d, hour));
+// A minute (REL-020 exact time) is carried through; without one the result
+// keeps the old whole-hour shape.
+function shiftHours(y, m, d, hour, deltaHours, minute) {
+  const dt = new Date(Date.UTC(y, m - 1, d, hour, minute ?? 0));
   dt.setTime(dt.getTime() + deltaHours * 3600000);
-  return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate(), hour: dt.getUTCHours() };
+  const out = { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate(), hour: dt.getUTCHours() };
+  if (minute != null) out.minute = dt.getUTCMinutes();
+  return out;
 }
 // Normalize a birth {y,m,d,hour} into the CST frame this module assumes.
 // tz is optional: { utcOffset, dst }. utcOffset is the birth location's
@@ -259,14 +265,19 @@ function shiftHours(y, m, d, hour, deltaHours) {
 // (unknown time) is returned unchanged — there's no clock reading to
 // correct, and the date alone is never far enough from a boundary for a
 // few hours' timezone difference to matter at day granularity in practice.
-export function normalizeBirthToCST({ y, m, d, hour }, tz) {
+export function normalizeBirthToCST({ y, m, d, hour, minute }, tz) {
   if (hour == null) return { y, m, d, hour: null };
+  const same = minute == null ? { y, m, d, hour } : { y, m, d, hour, minute };
   if (!tz || tz.utcOffset == null) {
-    return inCnDstWindow(y, m, d) ? shiftHours(y, m, d, hour, -1) : { y, m, d, hour };
+    return inCnDstWindow(y, m, d) ? shiftHours(y, m, d, hour, -1, minute) : same;
   }
   const delta = (tz.dst ? -1 : 0) + (8 - tz.utcOffset);
-  return delta === 0 ? { y, m, d, hour } : shiftHours(y, m, d, hour, delta);
+  return delta === 0 ? same : shiftHours(y, m, d, hour, delta, minute);
 }
+
+// Decimal CST clock hour for ephemeris calls: the slot start, or the exact
+// minute when one was entered (REL-020). null stays null (hour unknown).
+export const clockHour = ({ hour, minute }) => (hour == null ? null : hour + (minute ?? 0) / 60);
 
 // ---- hour pillar (五鼠遁) -------------------------------------------------
 export function hourBranchOf(hour) {
@@ -289,12 +300,12 @@ export function hourPillar(dayStemIdx, hour) {
 // output for a real 23:26 birth in tests/bazi.test.js); the alternative
 // "unified zi" convention (no day change at 23:00) also has practitioners,
 // but isn't what a serious cross-check would expect by default.
-export function computeBazi({ y, m, d, hour }) {
+export function computeBazi({ y, m, d, hour, minute }) {
   let py = y, pm = m, pd = d;
   if (hour === 23) { const s = shiftHours(y, m, d, 23, 1); py = s.y; pm = s.m; pd = s.d; }
   // Year/month follow the real birth instant (Q1); only the day/hour pillars
   // take the 晚子 next-day date.
-  const jd = hour == null ? null : julianDayUTC(y, m, d, hour - 8);
+  const jd = hour == null ? null : julianDayUTC(y, m, d, clockHour({ hour, minute }) - 8);
   const { yp, mp } = jd == null ? { yp: yearPillar(y, m, d), mp: monthPillar(y, m, d) } : pillarsAtInstant(y, jd);
   const dp = dayPillar(py, pm, pd);
   const hp = (hour == null) ? null : hourPillar(dp.stem, hour);
@@ -307,7 +318,7 @@ export function computeBazi({ y, m, d, hour }) {
     dayMasterElement: STEM_ELEMENT[dp.stem],
     animal: yp.branch,
     elements,
-    boundaryUnstable: boundaryFlag(y, m, d, hour ?? null, jd),
+    boundaryUnstable: boundaryFlag(y, m, d, hour ?? null, jd, minute != null),
   };
 }
 
