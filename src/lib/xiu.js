@@ -47,12 +47,12 @@ export function natalXiu(lMonth, lDay) {
 // -- 三九秘法 two-person relation --------------------------------------------
 export const XIU_REL = {
   ming: { zh: '命', en: 'Destiny', descZh: '同宿而生，镜像般的缘分——彼此像看见另一个自己', descEn: 'Born under the same mansion — a mirror-like bond' },
-  ye: { zh: '业', en: 'Karma', descZh: '前世业缘之说——相处有宿命感，牵绊深', descEn: 'A karmic tie — the bond feels fated and deep' },
+  ye: { zh: '业', en: 'Karma', descZh: '传统称「业」——读作牵绊深、有共同功课的关系', descEn: 'Traditionally "karma" — read as a deep tie with lessons to share' },
   tai: { zh: '胎', en: 'Origin', descZh: '胎缘——像家人一样天然亲近', descEn: 'An origin tie — naturally close, like family' },
   rong: { zh: '荣', en: 'Flourish', descZh: '荣缘——同行则旺，彼此成就', descEn: 'You flourish in each other\'s company' },
   shuai: { zh: '衰', en: 'Wane', descZh: '衰缘——容易消耗对方的气，相处宜留白', descEn: 'Energy drains easily — leave each other room' },
   an: { zh: '安', en: 'Calm', descZh: '安缘——安稳踏实，是能安心相处的关系', descEn: 'A calm, steady, reassuring bond' },
-  wei: { zh: '危', en: 'Peril', descZh: '危缘——刺激而不稳定，起伏大', descEn: 'Thrilling but unstable — expect swings' },
+  wei: { zh: '危', en: 'Peril', descZh: '危缘——新鲜感强、起伏也大，多沟通', descEn: 'Lively and changeable — talk things through' },
   cheng: { zh: '成', en: 'Achieve', descZh: '成缘——一起做事容易成，是好搭档', descEn: 'Things get done together — good partners' },
   huai: { zh: '坏', en: 'Break', descZh: '坏缘——容易互相打破对方的节奏，需经营', descEn: 'You disrupt each other\'s rhythm — needs care' },
   you: { zh: '友', en: 'Friend', descZh: '友缘——自然的朋友缘，轻松合拍', descEn: 'A natural, easy friendship' },

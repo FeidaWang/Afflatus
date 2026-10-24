@@ -1,12 +1,13 @@
 /* ============================================================
    HOROSCOPE page (V20) — 观星台. Fetch-free and server-free: all math in
    src/lib/bazi.js + src/lib/horoscopeEngine.js (pure, vitest-covered);
-   this file only handles the form, localStorage persistence (profile +
-   daily check-in streak), data-free page links and DOM rendering.
+   this file only handles the form, opt-in localStorage persistence
+   (profile + contacts), data-free page links and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
 import { parseBirthForm, birthInputFromSaved, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
 import { clockHour } from '../lib/bazi.js';
+import { escapeIcsText } from '../lib/icsText.js';
 import * as profileStore from '../horoscope/profileStore.js';
 import { resolveBirthTime, jdOf } from '../lib/relationships/time.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
@@ -93,7 +94,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let synRenderEpoch = 0;
   await loadBirthFeature();
 
-  const STREAK_KEY = 'afflatus-horo:streak';
   // V23 Phase 2: 关系册 — named "other" profiles saved locally, so a return
   // visit is one click instead of retyping a birthday. Scope decision (see
   // roadmap.md): every book entry pairs against 'me' — this single-page tool
@@ -289,19 +289,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Restored profiles explicitly use their already-normalized CST values.
 
   // ---- persistence ---------------------------------------------------------
-  function bumpStreak() {
-    let s = { last: null, n: 0 };
-    try { s = JSON.parse(localStorage.getItem(STREAK_KEY)) || s; } catch {}
-    const today = todayStr();
-    if (s.last === today) return s.n;
-    const y = new Date(); y.setDate(y.getDate() - 1);
-    const p = (x) => String(x).padStart(2, '0');
-    const yStr = `${y.getFullYear()}-${p(y.getMonth() + 1)}-${p(y.getDate())}`;
-    s = { last: today, n: s.last === yStr ? s.n + 1 : 1 };
-    try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)); } catch {}
-    return s.n;
-  }
-
   // ---- 关系册 (V23 Phase 2) --------------------------------------------------
   function removeFromBook(i) {
     profileStore.removeFromBook(store, i);
@@ -721,28 +708,17 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]])
       + ' · ' + T(`mansion of the day: ${tx}`, `值日宿：${tx}宿`);
     $('todayDetailWrap').innerHTML = todayDetailHTML(f);
-    const n = bumpStreak();
-    track('streak_day', { streak: n }); // guardrail metric: streak>=3 share (roadmap module 2)
-    const sc = $('streakChip'); sc.hidden = false;
-    sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
-
-    // 每日星语签 (V23 Phase 3): deterministic daily card draw, reuses the
-    // streak counter above (7+ days unlocks a shot at the hidden pool).
+    // 每日星语签 (V23 Phase 3): deterministic daily card draw. No streak is
+    // kept (design.md §5: no check-in streaks), so the streak-gated hidden
+    // pool is never offered; an old afflatus-horo:streak key is only
+    // removed by "Delete this page's saved data".
     const birthKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour ?? 'x'}`;
-    const draw = dailyDraw({ dateStr: todayStr(), birthKey, streak: n });
-    // V23 Phase 4: streak loss-aversion microcopy (roadmap Tier 0 recall) —
-    // only shown while it's still true (a real countdown, not evergreen
-    // nagging): counts down to the hidden-card unlock at streak 7.
-    const streakHint = draw.hidden
-      ? '' : n < 7
-        ? `<p class="sd-streak-hint">${T(`${n}-day streak — ${7 - n} more to unlock a hidden card`, `连续 ${n} 天，还差 ${7 - n} 天解锁隐藏签面`)}</p>`
-        : `<p class="sd-streak-hint">${T('Hidden cards unlocked — keep the streak for another shot', '隐藏签面已解锁——继续保持连续签到，还有机会再抽到')}</p>`;
+    const draw = dailyDraw({ dateStr: todayStr(), birthKey });
     $('starDrawWrap').innerHTML = `<div class="sd-card${draw.hidden ? ' sd-hidden' : ''}">
       <span class="sd-glyph" aria-hidden="true">${draw.card.glyph}</span>
       <div class="sd-body">
         <div class="sd-name">${T(draw.card.en, draw.card.zh)}${draw.hidden ? `<em class="sd-badge">${T('HIDDEN', '隐藏签')}</em>` : ''}</div>
         <p class="sd-advice">${T(draw.advice.en, draw.advice.zh)}</p>
-        ${streakHint}
       </div>
     </div>`;
 
@@ -1092,7 +1068,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const nextDay = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
     const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     const uid = `afflatus-${ymd}-${Math.random().toString(36).slice(2)}@feida.au`;
-    const esc = (s) => String(s).replace(/([,;])/g, '\\$1');
+    const esc = escapeIcsText;
     const ics = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Afflatus//Horoscope//EN',
       'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${stamp}`,
@@ -1709,8 +1685,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const clearBtn = $('clearDataBtn');
   if (clearBtn) clearBtn.addEventListener('click', () => {
     const ok = window.confirm(T(
-      'Delete this page’s chart, streak, daily draws, journal, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
-      '删除此浏览器中本页保存的命盘、连续签到、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
+      'Delete this page’s chart, daily draws, journal, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
+      '删除此浏览器中本页保存的命盘、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
     // Stop in-flight calculations first and drop in-memory charts, so no
