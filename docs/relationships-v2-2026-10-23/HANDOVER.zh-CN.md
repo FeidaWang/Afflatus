@@ -46,3 +46,14 @@
 | 待站主决定 | S1 1988 年中国夏令时开始日（仓库 4 月 10 日，tzdata 4 月 17 日）· S2 宿曜月首宿表 · S3 MIT 声明分发 · rel-six-dim 权重签署 · 「成长」维补规则 · C 的 20 条抽查 |
 | 留给前端线 | M10 改为消费 `RelationshipReport`（`report.dimensions` / `overall` / `archetypes` / 证据账单 / `legacy`），不要再调 `synastry()`；M5 显示 `headline`；`starDraw.js` 的隐藏签池与 `streak` 参数现在没有调用方，没删 |
 | 部署 | 没有部署；分支已推送，PR 见 PR 描述 |
+
+# HANDOVER · 站主对 #28 的裁定落实（2026-10-24）
+
+| 项 | 内容 |
+|---|---|
+| 1 权重 | `rel-six-dim` 升到 **0.2.0**（`4d599022`）。取消全部手设分值、格权重和相位强弱，只保留「哪一维、支持还是磨合」这张分类表。同一维内各规则族等权。分数按分段线性标定：理论最小值对应 0，10 万对合成样本的中位数对应 50，理论最大值对应 100。样本按 1900–2100 年均匀抽取，mulberry32，种子 20261024，可用 99,770 对。参数写在 `scale.js` 的 `CALIBRATION` 和 `SCALE_SENSITIVITY.zh-CN.md`。「成长」维的下限问题已消除（p5 由 50 降到 6）。「吸引」维是单边的，约 25% 的对子得 0 分，已标注 `rule_coverage_low`，没有补权重。量表仍标为娱乐指数、`unverified` |
+| 2 S1 | 1988 年中国夏令时按 4 月 10 日，大陆出生沿用仓库表；加了单测锁定，SOURCES 已注明（`7e7dbeea`） |
+| 3 S3 | astronomy-engine 的 MIT 声明随构建分发（`8840a096`）：用 Rolldown 的 `postBanner` 给 `vendor-astronomy-*.js` 和 Worker 分块加声明，另随构建分发 `dist/THIRD_PARTY_NOTICES.md`（附 MIT 全文）。`vite build` 后已逐一确认 |
+| 4 S2 | 保持 unverified，代码没改，只在 SOURCES 里记下裁定 |
+| 命令与结果 | `npx vitest run`：136 个文件、1548 项通过，1 项跳过 · `npm run lint:i18n` 通过 · `npx vite build`（仍跳过 prebuild）通过 · Playwright `horoscope-privacy` 与 `horoscope-m0` 在 Chromium 和 WebKit 上 16 项全部通过 · 标定脚本约 21 秒 |
+| 仍未做 | 分类表 `FAMILY_TABLE` 没有外部验证；没有黄金案例对照；没有真机测试 |
