@@ -1165,7 +1165,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
   }
 
-  // REL-070 six-dimension scale (draft) + evidence ledger + two-way themes,
+  // REL-070 six-dimension entertainment index + evidence ledger + two-way themes,
   // rendered from the report. Null stays "Pending", never a number.
   function renderSynScale(report) {
     const wrap = $('synPillars');
@@ -1187,17 +1187,17 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       const s = report.dimensions[d];
       return `<div class="syn-mode"><div class="sm-h"><span class="sm-n">${T(DIMENSION_COPY[d].en, DIMENSION_COPY[d].zh)}</span><b class="sm-v">${s.value == null ? T('Pending', '待补充') : s.value}</b></div>
         <div class="sm-bar"><i style="width:${s.value ?? 0}%"></i></div>
-        <p class="sm-line">${T(`support ${+s.support.toFixed(1)} · friction ${+s.friction.toFixed(1)}`, `支持 ${+s.support.toFixed(1)} · 磨合 ${+s.friction.toFixed(1)}`)}</p></div>`;
+        <p class="sm-line">${T(`support ${Math.round(s.support * 100)}% · friction ${Math.round(s.friction * 100)}%`, `支持 ${Math.round(s.support * 100)}% · 磨合 ${Math.round(s.friction * 100)}%`)}${s.reasonKeys.includes('rule_coverage_low') ? ` · ${T('few rules — low coverage', '规则覆盖不足')}` : ''}</p></div>`;
     }).join('');
     const theme = (a, who) => `<div class="xiu-row"><span class="xiu-n">${who}</span><span class="xiu-d">${a.themeIds.length
       ? a.themeIds.map((id, i) => `${T(THEME_COPY[id].en, THEME_COPY[id].zh)}<br><small>${T(QUESTION_COPY[a.questionIds[i]].en, QUESTION_COPY[a.questionIds[i]].zh)}</small>`).join('<br>')
       : T('No theme stands out from the facts that are known.', '已知事实里没有突出的主题。')}</span></div>`;
     const o = report.overall;
-    wrap.innerHTML = `<div class="xiu-h">${T('SIX DIMENSIONS · DRAFT SCALE', '六维量表 · 草案')}</div>
+    wrap.innerHTML = `<div class="xiu-h">${T('SIX DIMENSIONS · ENTERTAINMENT INDEX', '六维 · 娱乐指数')}</div>
       <div class="syn-mode-grid">${dimRows}</div>
       <p class="form-note">${o.value == null
         ? T('Overall: pending — this scale needs both birth times (bazi, planets and Ziwei all settled). Known facts are listed below.', '综合：待补充——本量表需要双方出生时间（八字、行星与紫微都能确定）。已知事实见下。')
-        : T(`Overall ${o.value} (draft, unverified weights).`, `综合 ${o.value}（草案，权重未核验）。`)}</p>
+        : T(`Overall ${o.value}. An entertainment index, not a forecast: every rule family weighs the same, and 50 is the median of 100,000 synthetic birth pairs.`, `综合 ${o.value}。这是娱乐指数，不是预测：各规则族等权，50 是 10 万对合成出生样本的中位数。`)}</p>
       <div class="xiu-h">${T('WHAT SUPPORTS', '支持')}</div>${lines('support')}
       <div class="xiu-h">${T('WHAT TAKES WORK', '磨合')}</div>${lines('friction')}
       ${unknown ? `<p class="bz-caveat">${T(`${unknown} check${unknown === 1 ? ' depends' : 's depend'} on a birth time that isn't settled, so they are left out rather than guessed.`, `有 ${unknown} 项检查取决于尚未确定的出生时间，不作猜测，暂不计入。`)}</p>` : ''}
