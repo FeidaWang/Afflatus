@@ -177,6 +177,38 @@ const DOMAIN_TXT = {
            { zh: '情绪耗损大于体力，给自己留一段无人打扰的时间。', en: 'The drain is emotional more than physical — reserve an hour that belongs to no one else.' }],
   },
 };
+// C3 headline: one short line per (relation × tone), ≤32 English characters
+// and ≤16 Chinese characters (tests/horoscopeEngine.test.js). Two variants
+// each; the pick hashes the date separately so the seeded draws below (and
+// so every existing score and fragment) stay exactly as they were.
+export const HEADLINE_BANK = {
+  feeds: {
+    up: [{ en: 'A day that carries you', zh: '顺水推舟的一天' }, { en: 'Lean into the current', zh: '借势而行，宜进不宜疑' }],
+    flat: [{ en: 'Quiet support underfoot', zh: '脚下有人默默托底' }, { en: 'Easy does it, help is near', zh: '慢慢来，援手就在近处' }],
+    down: [{ en: 'Help is near; ask for it', zh: '援手就在身边，开口即得' }, { en: 'Lean on someone today', zh: '今天可以靠一靠别人' }],
+  },
+  same: {
+    up: [{ en: 'Steady ground, good footing', zh: '脚下踏实，稳中有进' }, { en: 'Your own pace wins today', zh: '按自己的步子就能赢' }],
+    flat: [{ en: 'Hold your line today', zh: '守住节奏即是赢' }, { en: 'Familiar work, done well', zh: '熟悉的事，做好就好' }],
+    down: [{ en: 'Familiar ground, slow pace', zh: '熟路慢走，不必求快' }, { en: 'Keep it simple today', zh: '今天一切从简' }],
+  },
+  drains: {
+    up: [{ en: 'Say the thing, and say it well', zh: '想说的话，好好说出来' }, { en: 'Make something today', zh: '今天适合动手做点什么' }],
+    flat: [{ en: 'Show a third, rest the rest', zh: '锋芒露三分，留七分' }, { en: 'Express a little, rest a lot', zh: '少表达，多休息' }],
+    down: [{ en: 'Spend words sparingly', zh: '话少一点，省些力气' }, { en: 'Save your voice for later', zh: '把话留到改天说' }],
+  },
+  prize: {
+    up: [{ en: 'Reach, and it is within reach', zh: '伸手就够得着的一天' }, { en: 'A good day to ask for more', zh: '适合开口争取的一天' }],
+    flat: [{ en: 'A fair day to ask', zh: '开口争取正当时' }, { en: 'Name your price calmly', zh: '心平气和地报价' }],
+    down: [{ en: 'Pick one thing to win', zh: '只争一件事' }, { en: 'Count before you reach', zh: '先盘算，再出手' }],
+  },
+  presses: {
+    up: [{ en: 'Pressure, handled well', zh: '压力在，接得住' }, { en: 'Rise to what is asked', zh: '担得起今天的要求' }],
+    flat: [{ en: 'Let others move first', zh: '让别人先出牌' }, { en: 'Steady, not hurried', zh: '稳住，不必赶' }],
+    down: [{ en: 'Defend, do not push', zh: '宜守不宜攻' }, { en: 'Slow the tempo today', zh: '今天把节奏放慢' }],
+  },
+};
+
 const YI_BANK = [
   { zh: '静坐片刻', en: 'Sit in stillness' }, { zh: '整理案头', en: 'Clear your desk' },
   { zh: '拜访长辈', en: 'Visit an elder' }, { zh: '早睡', en: 'Sleep early' },
@@ -233,8 +265,12 @@ export function dailyFortune(birth, dateStr) {
   const yiPool = YI_BANK.slice(); const jiPool = JI_BANK.slice();
   for (let i = 0; i < 2; i++) { yi.push(yiPool.splice(Math.floor(rnd() * yiPool.length), 1)[0]); ji.push(jiPool.splice(Math.floor(rnd() * jiPool.length), 1)[0]); }
 
+  const headlines = HEADLINE_BANK[rel][toneOf(overall)];
+  const headline = headlines[strHash(`${dateStr}|headline|${birth.y}-${birth.m}-${birth.d}`) % headlines.length];
+
   return {
     chart, todayPillar: today, relation: rel,
+    headline: { en: headline.en, zh: headline.zh, ruleId: `daily.headline.${rel}.${toneOf(overall)}` },
     overall: { score: overall, tone: toneOf(overall), zh: OVERALL_TXT[rel].zh, en: OVERALL_TXT[rel].en },
     domains,
     tenGod: { idx: stem.god, zh: TEN_GOD_ZH[stem.god], en: TEN_GOD_EN[stem.god], domain: stem.domain, note: TEN_GOD_NOTE[stem.god] },

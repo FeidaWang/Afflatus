@@ -194,3 +194,27 @@ describe('share codec', () => {
     expect(decodeShare(btoa(JSON.stringify([1700, 1, 1, null, 1990, 1, 1, null])))).toBeNull();
   });
 });
+
+describe('dailyFortune headline (C3)', () => {
+  it('every relation × tone has headlines within 32 English / 16 Chinese characters', async () => {
+    const { HEADLINE_BANK } = await import('../src/lib/horoscopeEngine.js');
+    for (const rel of ['feeds', 'same', 'drains', 'prize', 'presses']) {
+      for (const tone of ['up', 'flat', 'down']) {
+        expect(HEADLINE_BANK[rel][tone].length).toBeGreaterThan(0);
+        for (const h of HEADLINE_BANK[rel][tone]) {
+          expect(h.en.length).toBeLessThanOrEqual(32);
+          expect([...h.zh].length).toBeLessThanOrEqual(16);
+        }
+      }
+    }
+  });
+
+  it('matches the day’s relation and tone, is deterministic, and carries a ruleId', () => {
+    for (let i = 1; i <= 28; i++) {
+      const dateStr = `2026-03-${String(i).padStart(2, '0')}`;
+      const f = dailyFortune(P1, dateStr);
+      expect(f.headline.ruleId).toBe(`daily.headline.${f.relation}.${f.overall.tone}`);
+      expect(dailyFortune(P1, dateStr).headline).toEqual(f.headline);
+    }
+  });
+});
