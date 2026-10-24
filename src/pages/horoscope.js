@@ -7,6 +7,7 @@
    ============================================================ */
 import { parseBirthForm, birthInputFromSaved, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
 import { clockHour } from '../lib/bazi.js';
+import * as profileStore from '../horoscope/profileStore.js';
 import { resolveBirthTime, jdOf } from '../lib/relationships/time.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
 import { createRelationshipsClient, newRequestId } from '../lib/relationships/client.js';
@@ -92,7 +93,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let synRenderEpoch = 0;
   await loadBirthFeature();
 
-  const PROFILE_KEY = 'afflatus-horo:me';
   const STREAK_KEY = 'afflatus-horo:streak';
   // V23 Phase 2: 关系册 — named "other" profiles saved locally, so a return
   // visit is one click instead of retyping a birthday. Scope decision (see
@@ -101,7 +101,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // "select two from the book" would need a whole new UI concept; saving +
   // quick-reloading "the other person" covers the actual retention need
   // (re-visiting a synastry you've already cast) without that added surface.
-  const BOOK_KEY = 'afflatus-horo:book';
+  // Q10: birth data is kept for this visit only unless "Save on this
+  // device" is ticked; a refused or missing storage never blocks a chart.
+  const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
     me: null, other: null,
@@ -287,10 +289,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Restored profiles explicitly use their already-normalized CST values.
 
   // ---- persistence ---------------------------------------------------------
-  const loadProfile = () => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch { return null; } };
-  const saveProfile = (p) => {
-    try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); return true; } catch { return false; }
-  };
   function bumpStreak() {
     let s = { last: null, n: 0 };
     try { s = JSON.parse(localStorage.getItem(STREAK_KEY)) || s; } catch {}
@@ -305,29 +303,14 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   }
 
   // ---- 关系册 (V23 Phase 2) --------------------------------------------------
-  const loadBook = () => { try { return JSON.parse(localStorage.getItem(BOOK_KEY)) || []; } catch { return []; } };
-  const saveBook = (list) => { try { localStorage.setItem(BOOK_KEY, JSON.stringify(list.slice(0, 20))); } catch {} };
-  // upsert by (y,m,d,hour) identity — re-saving the same birthday just renames/updates it
-  function upsertBook(name, other) {
-    if (!name) return;
-    const list = loadBook();
-    const sameBirth = (e) => e.y === other.y && e.m === other.m && e.d === other.d && e.hour === other.hour && (e.minute ?? null) === (other.minute ?? null);
-    const idx = list.findIndex(sameBirth);
-    const entry = { name: String(name).slice(0, 12), y: other.y, m: other.m, d: other.d, hour: other.hour, ...(other.minute != null ? { minute: other.minute } : {}) };
-    if (idx >= 0) list[idx] = entry; else list.unshift(entry);
-    saveBook(list);
-    renderBook();
-  }
   function removeFromBook(i) {
-    const list = loadBook();
-    list.splice(i, 1);
-    saveBook(list);
+    profileStore.removeFromBook(store, i);
     renderBook();
   }
   function renderBook() {
     const wrap = $('synBook');
     if (!wrap) return;
-    const list = loadBook();
+    const list = profileStore.loadBook(store);
     if (!list.length) { wrap.hidden = true; wrap.innerHTML = ''; return; }
     wrap.hidden = false;
     wrap.innerHTML = `<div class="syn-book-h">${T('SAVED · TAP TO RE-CAST', '关系册 · 点击重新出盘')}</div>` +
@@ -1730,6 +1713,12 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       '删除此浏览器中本页保存的命盘、连续签到、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
+    // Stop in-flight calculations first and drop in-memory charts, so no
+    // late result can re-render or re-save anything (REL-080).
+    relClient.clearPrivateState();
+    ephemerisRunner.cancel('cleared');
+    synRenderEpoch++; mineRenderEpoch++;
+    Object.assign(state, { me: null, other: null, meInput: null, otherInput: null, synReport: null, synData: null, synAstroCard: null });
     try { clearHoroscopeStorage(localStorage); } catch {
       $('privacyStatus').textContent = T('Could not delete all saved data. Browser storage is blocked; use browser site-data settings to finish deleting it.', '未能删除全部保存数据。浏览器存储受限，请通过浏览器的网站数据设置完成删除。');
       $('privacyStatus').focus();
@@ -1793,8 +1782,18 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     state.me = b;
     state.meInput = { ...r.input, ...(b.lat != null && b.lon != null ? { place: { latitude: b.lat, longitude: b.lon, precision: 'city' } } : {}) };
     $('synHint').hidden = true;
-    const saved = saveProfile(b);
-    $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
+    if ($('bSave').checked) {
+      $('bSaveStatus').textContent = profileStore.saveProfile(store, b)
+        ? T('Saved in this browser.', '已保存在此浏览器。')
+        : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
+    } else {
+      // Unticking is a choice too: an earlier saved profile is removed.
+      const had = !!profileStore.loadProfile(store);
+      profileStore.forgetProfile(store);
+      $('bSaveStatus').textContent = had
+        ? T('For this visit only — the profile saved earlier has been removed from this browser.', '仅用于本次——之前保存的资料已从此浏览器移除。')
+        : T('For this visit only — nothing was saved.', '仅用于本次——没有保存任何资料。');
+    }
     resultAssumptions('b', r.flags);
     try { await renderMine(); await renderSyn(); document.dispatchEvent(new CustomEvent('afflatus-chart-created')); }
     catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
@@ -1815,7 +1814,11 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const button = $('synForm').querySelector('[type=submit]');
     button.disabled = true;
     const name = $('sName').value.trim();
-    if (name) upsertBook(name, b);
+    if ($('sSave').checked) {
+      const saved = profileStore.upsertBook(store, name || T('Them', 'TA'), b);
+      $('sSaveStatus').textContent = saved ? T('Saved to contacts in this browser.', '已存入此浏览器的关系册。') : T('Not saved: browser storage is unavailable.', '未保存：浏览器存储不可用。');
+      renderBook();
+    } else $('sSaveStatus').textContent = T('For this visit only — not added to contacts.', '仅用于本次——未存入关系册。');
     state.other = b;
     state.otherInput = r.input;
     resultAssumptions('s', r.flags);
@@ -1854,7 +1857,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Restore local data only. Birth profiles never enter or come from URLs.
   renderBook();
   {
-    const saved = loadProfile();
+    const saved = profileStore.loadProfile(store);
+    if ($('bSave')) $('bSave').checked = !!saved; // returning visitors chose to save before
     const savedOk = saved && !parseBirthForm({ date: `${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, hour: saved.hour == null ? '' : String(saved.hour), restored: true }).error
       && (saved.minute == null || (Number.isInteger(saved.minute) && saved.minute >= 0 && saved.minute < 60));
     if (savedOk) {

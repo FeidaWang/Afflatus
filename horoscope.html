@@ -263,12 +263,14 @@
             <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
         </div>
         </div></details>
+        <div class="fld fld--check"><label for="bSave" data-en="Save on this device" data-zh="保存到本机">Save on this device</label>
+          <input type="checkbox" id="bSave"></div>
         <details class="assumption-details"><summary data-en="Calculation assumptions" data-zh="查看计算假设">查看计算假设</summary><p id="bAssumptions" class="form-assumptions" aria-live="polite"></p></details>
         <p id="bError" class="form-feedback" role="alert" tabindex="-1"></p>
         <button class="btn" type="submit" data-en="Create my chart ↗" data-zh="生成我的星图 ↗">Create my chart ↗</button>
       </form>
       <p id="bSaveStatus" class="form-note" role="status"></p>
-      <p class="form-note" data-en="Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only." data-zh="出生资料仅保存在此浏览器。页面链接不含出生资料；下载卡片可能包含个人结果。仅供娱乐。">Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only.</p>
+      <p class="form-note" data-en="Details are used for this visit only unless you tick “Save on this device”; a saved profile stays in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only." data-zh="除非勾选“保存到本机”，资料只用于本次；保存的资料只留在此浏览器。页面链接不含出生资料；下载卡片可能包含个人结果。仅供娱乐。">Details are used for this visit only unless you tick “Save on this device”; a saved profile stays in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only.</p>
       <noscript><p class="form-note">启用 JavaScript 后可在本地起盘；表单资料不会发送到服务器。 Enable JavaScript to calculate locally; no form data is sent to a server.</p></noscript>
     </div>
   </section>
@@ -362,7 +364,7 @@
       <div class="syn-book" id="synBook" hidden></div>
 
       <form class="syn-form" id="synForm" aria-describedby="sAssumptions">
-        <div class="fld"><label for="sName" data-en="Their name (optional, saved on this device only)" data-zh="对方称呼（可不填，仅存本机）">Their name (optional, saved on this device only)</label>
+        <div class="fld"><label for="sName" data-en="Their name (optional, shown on this page)" data-zh="对方称呼（可不填，只在本页显示）">Their name (optional, shown on this page)</label>
           <input type="text" id="sName" maxlength="12" placeholder="TA"></div>
         <div class="fld"><label for="sDate" data-en="Their birth date" data-zh="对方出生日期">Their birth date</label>
           <input type="date" id="sDate" aria-describedby="sError" required min="1900-01-01" max="2100-12-31"></div>
@@ -380,10 +382,13 @@
           <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
             <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div><input type="hidden" id="sIana">
         </div>
+        <div class="fld fld--check"><label for="sSave" data-en="Save to contacts on this device" data-zh="存入本机关系册">Save to contacts on this device</label>
+          <input type="checkbox" id="sSave"></div>
         <p id="sAssumptions" class="form-assumptions" aria-live="polite"></p>
         <p id="sError" class="form-feedback" role="alert" tabindex="-1"></p>
         <button class="btn btn--seal" type="submit" data-en="Interlock ❖" data-zh="合盘 ❖">Interlock ❖</button>
       </form>
+      <p id="sSaveStatus" class="form-note" role="status"></p>
       <p class="form-note" id="synHint" data-en="Cast your own chart above first — synastry needs both." data-zh="先在上方立好自己的盘——合盘需要两个人。">Cast your own chart above first — synastry needs both.</p>
 
       <div class="syn-result" id="synResult" hidden>
