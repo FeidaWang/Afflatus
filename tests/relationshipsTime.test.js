@@ -183,3 +183,20 @@ describe('city table carries IANA zones', () => {
     expect(GLOBAL_CITIES.length).toBe(170);
   });
 });
+
+describe('China 1988 DST start (owner ruling S1)', () => {
+  // The repo table starts 1988 DST on 10 April; tzdata says 17 April. The
+  // owner ruled to keep 10 April for mainland births, with or without the
+  // explicit Asia/Shanghai zone a city pick writes.
+  it.each([undefined, 'Asia/Shanghai'])('timezone %s: 1988-04-10 is already on DST, 04-09 is not', (timezone) => {
+    const at = (date) => iso(resolveBirthTime(birth(date, exact('12:00'), timezone ? { timezone } : {})).points[0]);
+    expect(at('1988-04-09')).toBe('1988-04-09T04:00:00.000Z');
+    expect(at('1988-04-10')).toBe('1988-04-10T03:00:00.000Z');
+    expect(at('1988-04-16')).toBe('1988-04-16T03:00:00.000Z'); // tzdata would still read +8 here
+  });
+
+  it('the legacy CST conversion agrees', () => {
+    expect(normalizeBirthToCST({ y: 1988, m: 4, d: 10, hour: 12 })).toEqual({ y: 1988, m: 4, d: 10, hour: 11 });
+    expect(normalizeBirthToCST({ y: 1988, m: 4, d: 9, hour: 12 })).toEqual({ y: 1988, m: 4, d: 9, hour: 12 });
+  });
+});
