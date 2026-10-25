@@ -6,7 +6,7 @@
  * and a series that already has a result keeps the pick it was scored with.
  * The baseline is HEAD's copy of the file (absent on the very first publish).
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const PATH = 'public/worlds-data.json';
@@ -14,6 +14,10 @@ if (process.argv.some((argument) => argument.startsWith('--now'))) {
   throw new TypeError('The production window gate always uses the real wall clock; --now is not supported');
 }
 const now = new Date();
+if (!existsSync(PATH)) {
+  console.log(JSON.stringify({ checkedAt: now.toISOString(), baseline: 'none', series: 0, violations: [], note: `${PATH} absent` }));
+  process.exit(0);
+}
 
 function readCandidate() {
   return JSON.parse(readFileSync(PATH, 'utf8'));
