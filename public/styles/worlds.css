@@ -80,6 +80,7 @@
 .scrubHandle.hL{left:-1px;border-radius:16px 0 0 16px}
 .scrubHandle.hR{right:-1px;border-radius:0 16px 16px 0}
 .scrubHandle::before{content:"";position:absolute;inset:0 -10px} /* 44 px hit target, 24 px visual */
+.scrubWin.solo .scrubHandle{opacity:0;cursor:grab} /* one-cell thumb on phones: whole thumb pans */
 
 /* ═══ Cards area ═══ */
 .w-btn{appearance:none;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid rgba(62,198,255,.5);background:transparent;color:var(--ink);font:700 13px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background .2s,border-color .2s}

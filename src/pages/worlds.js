@@ -247,6 +247,9 @@ function wireCards() {
 
 /* ---------- scrubber (wiring copied from the retired games.js) ---------- */
 let track, win, labelSpans, cellSpans;
+// A one-cell window narrower than two 44 px handles (phones) has no middle to
+// grab, so the whole thumb pans like Apple Sports; widen it by pinch/wheel/keys.
+const solo = () => range[0] === range[1] && track.getBoundingClientRect().width / N < 88;
 function buildScrub() {
   const host = $('scrubHost');
   const cols = `repeat(${N},1fr)`;
@@ -262,7 +265,11 @@ function buildScrub() {
   let pinch0 = null, pinchR0 = null;
   const cellW = () => track.getBoundingClientRect().width / N;
   const dxToCells = (px) => Math.round(px / cellW());
-  const roleAt = (e) => (e.target.closest('.hL') ? 'L' : e.target.closest('.hR') ? 'R' : e.target.closest('.scrubWin') ? 'PAN' : null);
+  const roleAt = (e) => {
+    if (!e.target.closest('.scrubWin')) return null;
+    if (solo()) return 'PAN';
+    return e.target.closest('.hL') ? 'L' : e.target.closest('.hR') ? 'R' : 'PAN';
+  };
   // ±6 px rubber band when a drag pushes past either edge; reset on release.
   const overshoot = (p, d) => {
     const [s0, e0] = p.r0;
@@ -322,6 +329,7 @@ function paint() {
   const [s, e] = range;
   win.style.setProperty('--l', `${(s / N) * 100}%`);
   win.style.setProperty('--w', `${((e - s + 1) / N) * 100}%`);
+  win.classList.toggle('solo', solo());
   track.setAttribute('aria-label', T('Stage range', '轮次区间'));
   track.setAttribute('aria-valuenow', String(s));
   const L = (i) => T(STAGES[i].long_en, STAGES[i].long_zh);
