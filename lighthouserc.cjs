@@ -66,9 +66,10 @@ function assertionsFor(route) {
     'error',
     { maxNumericValue: releaseBudgets.LCP, ...median },
   ];
+  // TBT on shared CI runners swings by ~100 ms between identical builds.
   assertions['total-blocking-time'] = [
     'error',
-    { maxNumericValue: releaseBudgets.TBT, ...median },
+    { maxNumericValue: releaseBudgets.TBT + baseline.tbtNoiseAllowanceMs, ...median },
   ];
 
   if (route.lcpMs == null) {

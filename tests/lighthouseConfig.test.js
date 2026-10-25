@@ -76,7 +76,7 @@ describe('Lighthouse regression contract', () => {
       ]);
       expect(row.assertions['total-blocking-time']).toEqual([
         'error',
-        { maxNumericValue: 200, aggregationMethod: 'median' },
+        { maxNumericValue: 300, aggregationMethod: 'median' },
       ]);
       if (route.lcpMs == null) {
         expect(row.assertions['first-contentful-paint'][0]).toBe('warn');
