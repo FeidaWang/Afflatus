@@ -148,6 +148,23 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'horoscope' },
   },
+  worlds: {
+    social: {
+      background: 'assets/og-backgrounds/worlds.jpg',
+      eyebrow: { en: 'WORLDS 2026 · FABLE CALLS', zh: 'WORLDS 2026 · FABLE 研判' },
+      title: { en: 'Worlds 2026 odds & picks', zh: '2026 全球总决赛赔率与竞猜' },
+      subtitle: {
+        en: 'Pre-match win probabilities, champion odds and Fearless Draft pools. Entertainment only.',
+        zh: '赛前胜率、夺冠概率与无畏征召英雄池。仅供娱乐。',
+      },
+      alt: {
+        en: 'Worlds 2026 odds and picks on an obsidian and aurora backdrop',
+        zh: '曜石黑与极光蓝背景上的 2026 全球总决赛赔率与竞猜',
+      },
+      images: { en: routeOgImage('worlds', 'en'), zh: routeOgImage('worlds', 'zh') },
+    },
+    structuredData: { kind: 'worlds' },
+  },
   serial: {
     social: {
       background: 'assets/og-backgrounds/serial.jpg',
@@ -362,6 +379,32 @@ export const SITE_MANIFEST = Object.freeze([
     },
   },
   {
+    id: 'worlds',
+    file: 'worlds.html',
+    path: '/worlds.html',
+    status: 'active',
+    build: true,
+    sitemap: true,
+    defaultLocale: 'en',
+    nav: { order: 65, group: 'labs', en: 'Worlds 2026', zh: '全球总决赛' },
+    themeColor: '#05070c',
+    schema: ['WebApplication'],
+    seo: ROUTE_SEO.worlds,
+    capabilities: ['live-data', 'local-state'],
+    metadata: {
+      title: "Worlds 2026 odds & picks — Fable calls · AFFLATUS",
+      description: "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+      canonical: 'https://feida.au/en/worlds.html',
+      ogTitle: "Worlds 2026 odds & picks — Fable calls · AFFLATUS",
+      ogDescription: "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+      ogImage: ROUTE_SEO.worlds.social.images.en,
+    },
+    locales: {
+      en: {"title": "Worlds 2026 odds & picks — Fable calls · AFFLATUS", "description": "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice."},
+      zh: {"title": "2026 全球总决赛赔率与竞猜 — Fable 研判 · AFFLATUS", "description": "2026 英雄联盟全球总决赛每场赛前胜率、隐含赔率、夺冠概率与无畏征召英雄池深度。仅供娱乐，不构成博彩建议。"},
+    },
+  },
+  {
     id: 'serial',
     file: 'serial.html',
     path: '/serial.html',
@@ -496,6 +539,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
     { routeId: 'arena' },
     { routeId: 'sectors' },
     { routeId: 'horoscope' },
+    { routeId: 'worlds' },
   ] },
   { id: 'writing', label: { en: 'Writing', zh: '写作' }, items: [
     { routeId: 'course' },

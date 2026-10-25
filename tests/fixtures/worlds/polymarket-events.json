@@ -1,0 +1,741 @@
+[
+  {
+    "id": "1249645",
+    "slug": "lol-tl2-al-2026-10-26",
+    "title": "LoL: Team Liquid vs Anyone's Legend (BO3) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:35Z",
+    "endDate": "2026-10-27T04:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 135457.9682,
+    "volume": 8971.980194,
+    "startTime": "2026-10-26T22:00:00Z",
+    "eventDate": "2026-10-26",
+    "markets": [
+      {
+        "id": "6168205",
+        "question": "LoL: Team Liquid vs Anyone's Legend - Game 1 Winner",
+        "slug": "lol-tl2-al-2026-10-26-game1",
+        "outcomes": "[\"Team Liquid\", \"Anyone's Legend\"]",
+        "outcomePrices": "[\"0.36\", \"0.64\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "21424.084",
+        "liquidityNum": 21424.084,
+        "gameStartTime": "2026-10-26 22:00:00+00",
+        "startDate": "2026-10-25T01:30:37Z",
+        "endDate": "2026-10-27T02:00:00Z"
+      },
+      {
+        "id": "6168207",
+        "question": "LoL: Team Liquid vs Anyone's Legend (BO3) - Worlds Group Stage",
+        "slug": "lol-tl2-al-2026-10-26",
+        "outcomes": "[\"Team Liquid\", \"Anyone's Legend\"]",
+        "outcomePrices": "[\"0.305\", \"0.695\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "80124.0455",
+        "liquidityNum": 80124.0455,
+        "gameStartTime": "2026-10-26 22:00:00+00",
+        "startDate": "2026-10-25T01:30:37Z",
+        "endDate": "2026-10-27T04:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249644",
+    "slug": "lol-los-tsw-2026-10-26",
+    "title": "LoL: LOS vs Team Secret Whales (BO3) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:29Z",
+    "endDate": "2026-10-27T01:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 112753.4188,
+    "volume": 10156.393294,
+    "startTime": "2026-10-26T19:00:00Z",
+    "eventDate": "2026-10-26",
+    "markets": [
+      {
+        "id": "6168186",
+        "question": "LoL: LOS vs Team Secret Whales - Game 1 Winner",
+        "slug": "lol-los-tsw-2026-10-26-game1",
+        "outcomes": "[\"LOS\", \"Team Secret Whales\"]",
+        "outcomePrices": "[\"0.405\", \"0.595\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "16519.3208",
+        "liquidityNum": 16519.3208,
+        "gameStartTime": "2026-10-26 19:00:00+00",
+        "startDate": "2026-10-25T01:30:30Z",
+        "endDate": "2026-10-26T23:00:00Z"
+      },
+      {
+        "id": "6168188",
+        "question": "LoL: LOS vs Team Secret Whales (BO3) - Worlds Group Stage",
+        "slug": "lol-los-tsw-2026-10-26",
+        "outcomes": "[\"LOS\", \"Team Secret Whales\"]",
+        "outcomePrices": "[\"0.345\", \"0.655\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "65053.074",
+        "liquidityNum": 65053.074,
+        "gameStartTime": "2026-10-26 19:00:00+00",
+        "startDate": "2026-10-25T01:30:30Z",
+        "endDate": "2026-10-27T01:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249643",
+    "slug": "lol-t1-cfo-2026-10-26",
+    "title": "LoL: T1 vs CTBC Flying Oyster (BO1) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:28Z",
+    "endDate": "2026-10-27T00:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 200453.5903,
+    "volume": 97320.949444,
+    "startTime": "2026-10-26T18:00:00Z",
+    "eventDate": "2026-10-26",
+    "markets": [
+      {
+        "id": "6168180",
+        "question": "LoL: T1 vs CTBC Flying Oyster (BO1) - Worlds Group Stage",
+        "slug": "lol-t1-cfo-2026-10-26",
+        "outcomes": "[\"T1\", \"CTBC Flying Oyster\"]",
+        "outcomePrices": "[\"0.885\", \"0.115\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "198088.8703",
+        "liquidityNum": 198088.8703,
+        "gameStartTime": "2026-10-26 18:00:00+00",
+        "startDate": "2026-10-25T01:30:28Z",
+        "endDate": "2026-10-27T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249642",
+    "slug": "lol-kc-blg-2026-10-26",
+    "title": "LoL: Karmine Corp vs Bilibili Gaming (BO1) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:25Z",
+    "endDate": "2026-10-26T23:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 134138.1562,
+    "volume": 11780.071291999999,
+    "startTime": "2026-10-26T17:00:00Z",
+    "eventDate": "2026-10-26",
+    "markets": [
+      {
+        "id": "6168174",
+        "question": "LoL: Karmine Corp vs Bilibili Gaming (BO1) - Worlds Group Stage",
+        "slug": "lol-kc-blg-2026-10-26",
+        "outcomes": "[\"Karmine Corp\", \"Bilibili Gaming\"]",
+        "outcomePrices": "[\"0.295\", \"0.705\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "134136.8702",
+        "liquidityNum": 134136.8702,
+        "gameStartTime": "2026-10-26 17:00:00+00",
+        "startDate": "2026-10-25T01:30:25Z",
+        "endDate": "2026-10-26T23:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249639",
+    "slug": "lol-dk-mkoi-2026-10-25",
+    "title": "LoL: Dplus KIA vs Movistar KOI (BO3) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:22Z",
+    "endDate": "2026-10-26T01:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1034890.2186,
+    "volume": 208729.374652,
+    "startTime": "2026-10-25T19:00:00Z",
+    "eventDate": "2026-10-25",
+    "markets": [
+      {
+        "id": "6168153",
+        "question": "LoL: Dplus KIA vs Movistar KOI - Game 1 Winner",
+        "slug": "lol-dk-mkoi-2026-10-25-game1",
+        "outcomes": "[\"Dplus KIA\", \"Movistar KOI\"]",
+        "outcomePrices": "[\"0.715\", \"0.285\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "78100.4176",
+        "liquidityNum": 78100.4176,
+        "gameStartTime": "2026-10-25 19:00:00+00",
+        "startDate": "2026-10-25T01:30:22Z",
+        "endDate": "2026-10-26T01:00:00Z"
+      },
+      {
+        "id": "6168155",
+        "question": "LoL: Dplus KIA vs Movistar KOI (BO3) - Worlds Group Stage",
+        "slug": "lol-dk-mkoi-2026-10-25",
+        "outcomes": "[\"Dplus KIA\", \"Movistar KOI\"]",
+        "outcomePrices": "[\"0.785\", \"0.215\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "493755.9376",
+        "liquidityNum": 493755.9376,
+        "gameStartTime": "2026-10-25 19:00:00+00",
+        "startDate": "2026-10-25T01:30:23Z",
+        "endDate": "2026-10-26T01:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249638",
+    "slug": "lol-gen-ly-2026-10-25",
+    "title": "LoL: Gen.G vs LYON (BO3) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:17Z",
+    "endDate": "2026-10-26T04:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1057730.4044,
+    "volume": 281203.01348799997,
+    "startTime": "2026-10-25T22:00:00Z",
+    "eventDate": "2026-10-25",
+    "markets": [
+      {
+        "id": "6168134",
+        "question": "LoL: Gen.G vs LYON - Game 1 Winner",
+        "slug": "lol-gen-ly-2026-10-25-game1",
+        "outcomes": "[\"Gen.G\", \"LYON\"]",
+        "outcomePrices": "[\"0.835\", \"0.165\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "84760.9739",
+        "liquidityNum": 84760.9739,
+        "gameStartTime": "2026-10-25 22:00:00+00",
+        "startDate": "2026-10-25T01:30:18Z",
+        "endDate": "2026-10-26T04:00:00Z"
+      },
+      {
+        "id": "6168136",
+        "question": "LoL: Gen.G vs LYON (BO3) - Worlds Group Stage",
+        "slug": "lol-gen-ly-2026-10-25",
+        "outcomes": "[\"Gen.G\", \"LYON\"]",
+        "outcomePrices": "[\"0.905\", \"0.095\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "453129.5803",
+        "liquidityNum": 453129.5803,
+        "gameStartTime": "2026-10-25 22:00:00+00",
+        "startDate": "2026-10-25T01:30:18Z",
+        "endDate": "2026-10-26T04:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249637",
+    "slug": "lol-hle1-ig1-2026-10-25",
+    "title": "LoL: Hanwha Life Esports vs Invictus Gaming (BO1) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:16Z",
+    "endDate": "2026-10-25T23:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 454623.6164,
+    "volume": 219976.12891699997,
+    "startTime": "2026-10-25T17:00:00Z",
+    "eventDate": "2026-10-25",
+    "markets": [
+      {
+        "id": "6168128",
+        "question": "LoL: Hanwha Life Esports vs Invictus Gaming (BO1) - Worlds Group Stage",
+        "slug": "lol-hle1-ig1-2026-10-25",
+        "outcomes": "[\"Hanwha Life Esports\", \"Invictus Gaming\"]",
+        "outcomePrices": "[\"0.725\", \"0.275\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "416966.059",
+        "liquidityNum": 416966.059,
+        "gameStartTime": "2026-10-25 17:00:00+00",
+        "startDate": "2026-10-25T01:30:16Z",
+        "endDate": "2026-10-25T23:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1249636",
+    "slug": "lol-tes-g2-2026-10-25",
+    "title": "LoL: Top Esports vs G2 Esports (BO1) - Worlds Group Stage",
+    "startDate": "2026-10-25T01:30:12Z",
+    "endDate": "2026-10-26T00:00:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 603068.6653,
+    "volume": 165647.862261,
+    "startTime": "2026-10-25T18:00:00Z",
+    "eventDate": "2026-10-25",
+    "markets": [
+      {
+        "id": "6168122",
+        "question": "LoL: Top Esports vs G2 Esports (BO1) - Worlds Group Stage",
+        "slug": "lol-tes-g2-2026-10-25",
+        "outcomes": "[\"Top Esports\", \"G2 Esports\"]",
+        "outcomePrices": "[\"0.475\", \"0.525\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "572786.1949",
+        "liquidityNum": 572786.1949,
+        "gameStartTime": "2026-10-25 18:00:00+00",
+        "startDate": "2026-10-25T01:30:12Z",
+        "endDate": "2026-10-26T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1195015",
+    "slug": "most-banned-champion-at-worlds-2026",
+    "title": "Most Banned Champion at Worlds 2026",
+    "startDate": "2026-10-15T16:37:46Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 16298.00562,
+    "volume": 2285.17,
+    "markets": []
+  },
+  {
+    "id": "1186059",
+    "slug": "will-any-game-at-worlds-2026-last-50-minutes-or-more",
+    "title": "Will any game at Worlds 2026 last 50 minutes or more?",
+    "startDate": "2026-10-14T02:20:32Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 83.224,
+    "volume": 374.125675,
+    "markets": [
+      {
+        "id": "5676984",
+        "question": "Will any game at Worlds 2026 last 50 minutes or more?",
+        "slug": "will-any-game-at-worlds-2026-last-50-minutes-or-more",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.355\", \"0.645\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "86.424",
+        "liquidityNum": 86.424,
+        "startDate": "2026-10-14T02:20:32Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1186058",
+    "slug": "will-t1-win-a-fourth-straight-worlds-title",
+    "title": "Will T1 win a fourth straight Worlds title?",
+    "startDate": "2026-10-14T02:20:20Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1473.7039,
+    "volume": 20.632104,
+    "markets": [
+      {
+        "id": "5676983",
+        "question": "Will T1 win a fourth straight Worlds title?",
+        "slug": "will-t1-win-a-fourth-straight-worlds-title",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.185\", \"0.815\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "1473.7039",
+        "liquidityNum": 1473.7039,
+        "startDate": "2026-10-14T02:20:20Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1186057",
+    "slug": "will-the-worlds-2026-champion-be-a-first-time-worlds-winner",
+    "title": "Will the Worlds 2026 champion be a first-time Worlds winner?",
+    "startDate": "2026-10-14T02:20:08Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 533.6939,
+    "volume": 610.996667,
+    "markets": [
+      {
+        "id": "5676982",
+        "question": "Will the Worlds 2026 champion be a first-time Worlds winner?",
+        "slug": "will-the-worlds-2026-champion-be-a-first-time-worlds-winner",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.69\", \"0.31\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "533.6939",
+        "liquidityNum": 533.6939,
+        "startDate": "2026-10-14T02:20:08Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1186056",
+    "slug": "worlds-2026-grand-final-series-score",
+    "title": "Worlds 2026: Grand Final Series Score",
+    "startDate": "2026-10-14T02:19:37Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 365.3113,
+    "markets": []
+  },
+  {
+    "id": "1186055",
+    "slug": "worlds-2026-grand-final-region-matchup",
+    "title": "Worlds 2026: Grand Final Region Matchup",
+    "startDate": "2026-10-14T02:19:30Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 299.7354,
+    "volume": 15.349529,
+    "markets": []
+  },
+  {
+    "id": "1184488",
+    "slug": "will-a-european-team-reach-the-worlds-2026-knockout-stage",
+    "title": "Will a European team reach the Worlds 2026 Knockout Stage?",
+    "startDate": "2026-10-13T19:30:01Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 657.99355,
+    "volume": 2586.847554,
+    "markets": [
+      {
+        "id": "5670037",
+        "question": "Will a European team reach the Worlds 2026 Knockout Stage?",
+        "slug": "will-a-european-team-reach-the-worlds-2026-knockout-stage",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.9645\", \"0.0355\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "660.0246",
+        "liquidityNum": 660.0246,
+        "startDate": "2026-10-13T19:30:01Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1184479",
+    "slug": "will-a-north-american-team-reach-the-worlds-2026-knockout-stage",
+    "title": "Will a North American team reach the Worlds 2026 Knockout Stage?",
+    "startDate": "2026-10-13T19:28:50Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 720.829,
+    "volume": 4526.7194150000005,
+    "markets": [
+      {
+        "id": "5669909",
+        "question": "Will a North American team reach the Worlds 2026 Knockout Stage?",
+        "slug": "will-a-north-american-team-reach-the-worlds-2026-knockout-stage",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.7\", \"0.3\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "720.829",
+        "liquidityNum": 720.829,
+        "startDate": "2026-10-13T19:28:50Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1154306",
+    "slug": "worlds-2026-teams-to-go-0-3-in-swiss-stage",
+    "title": "Worlds 2026: Teams to Go 0-3 in Swiss Stage",
+    "startDate": "2026-10-08T16:14:22Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1399.15043,
+    "volume": 28205.033767,
+    "markets": []
+  },
+  {
+    "id": "1154305",
+    "slug": "worlds-2026-teams-to-go-3-0-in-swiss-stage",
+    "title": "Worlds 2026: Teams to Go 3-0 in Swiss Stage",
+    "startDate": "2026-10-08T16:12:38Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 3853.05368,
+    "volume": 25196.821893,
+    "markets": []
+  },
+  {
+    "id": "1154301",
+    "slug": "worlds-2026-team-to-reach-knockout-stage",
+    "title": "Worlds 2026: Team to Reach Knockout Stage",
+    "startDate": "2026-10-08T16:10:22Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 26532.54465,
+    "volume": 33797.413743,
+    "markets": []
+  },
+  {
+    "id": "1120941",
+    "slug": "region-with-the-most-teams-in-the-worlds-2026-knockout-stage",
+    "title": "Region with the Most Teams in the Worlds 2026 Knockout Stage",
+    "startDate": "2026-10-02T20:20:32Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 11374.67769,
+    "volume": 6318.754869,
+    "markets": []
+  },
+  {
+    "id": "1120926",
+    "slug": "most-played-champion-at-worlds-2026",
+    "title": "Most Played Champion at Worlds 2026",
+    "startDate": "2026-10-02T20:19:38Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 10394.04352,
+    "volume": 9835.95963,
+    "markets": []
+  },
+  {
+    "id": "1120940",
+    "slug": "will-gen-g-and-t1-meet-in-the-worlds-2026-grand-final",
+    "title": "Will Gen.G and T1 meet in the Worlds 2026 Grand Final?",
+    "startDate": "2026-10-02T20:19:18Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 762.8417,
+    "volume": 6605.108473999999,
+    "markets": [
+      {
+        "id": "5216653",
+        "question": "Will Gen.G and T1 meet in the Worlds 2026 Grand Final?",
+        "slug": "will-gen-g-and-t1-meet-in-the-worlds-2026-grand-final",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.19\", \"0.81\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "813.0947",
+        "liquidityNum": 813.0947,
+        "startDate": "2026-10-02T20:19:18Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1120939",
+    "slug": "will-a-western-team-reach-the-worlds-2026-grand-final",
+    "title": "Will a Western team reach the Worlds 2026 Grand Final?",
+    "startDate": "2026-10-02T20:18:47Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 14047.1193,
+    "volume": 5729.428073,
+    "markets": [
+      {
+        "id": "5216652",
+        "question": "Will a Western team reach the Worlds 2026 Grand Final?",
+        "slug": "will-a-western-team-reach-the-worlds-2026-grand-final",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.19\", \"0.81\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "14395.8421",
+        "liquidityNum": 14395.8421,
+        "startDate": "2026-10-02T20:18:47Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1120918",
+    "slug": "most-kills-at-worlds-2026",
+    "title": "Most Kills at Worlds 2026",
+    "startDate": "2026-10-02T20:17:43Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 24319.09709,
+    "volume": 19840.565704,
+    "markets": []
+  },
+  {
+    "id": "1120930",
+    "slug": "will-more-than-one-western-team-reach-the-worlds-2026-knockout-stage",
+    "title": "Will more than one Western team reach the Worlds 2026 Knockout Stage?",
+    "startDate": "2026-10-02T20:16:37Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 144.4039,
+    "volume": 125.64692400000001,
+    "markets": [
+      {
+        "id": "5216643",
+        "question": "Will more than one Western team reach the Worlds 2026 Knockout Stage?",
+        "slug": "will-more-than-one-western-team-reach-the-worlds-2026-knockout-stage",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.67\", \"0.33\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "144.4039",
+        "liquidityNum": 144.4039,
+        "startDate": "2026-10-02T20:16:37Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1120927",
+    "slug": "will-a-western-team-reach-the-worlds-2026-knockout-stage",
+    "title": "Will a Western team reach the Worlds 2026 Knockout Stage?",
+    "startDate": "2026-10-02T20:15:54Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 4164.80515,
+    "volume": 5104.939628,
+    "markets": [
+      {
+        "id": "5216567",
+        "question": "Will a Western team reach the Worlds 2026 Knockout Stage?",
+        "slug": "will-a-western-team-reach-the-worlds-2026-knockout-stage",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.9435\", \"0.0565\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "4057.24911",
+        "liquidityNum": 4057.24911,
+        "startDate": "2026-10-02T20:15:54Z",
+        "endDate": "2026-12-15T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "1120919",
+    "slug": "how-many-pentakills-will-there-be-at-worlds-2026",
+    "title": "How many Pentakills will there be at Worlds 2026?",
+    "startDate": "2026-10-02T20:14:46Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1790.0084,
+    "volume": 2009.001992,
+    "markets": []
+  },
+  {
+    "id": "1070134",
+    "slug": "total-unique-champions-played-at-worlds-2026",
+    "title": "Total Unique Champions Played at Worlds 2026",
+    "startDate": "2026-09-23T17:55:16Z",
+    "endDate": "2026-12-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 2087.94802,
+    "volume": 6160.649773,
+    "markets": []
+  },
+  {
+    "id": "1001461",
+    "slug": "will-a-western-team-win-worlds-2026",
+    "title": "Will a Western team win Worlds 2026?",
+    "startDate": "2026-09-10T22:37:32Z",
+    "endDate": "2026-11-29T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 8058.9465,
+    "volume": 10683.931021999999,
+    "markets": [
+      {
+        "id": "4456783",
+        "question": "Will a Western team win Worlds 2026?",
+        "slug": "will-a-western-team-win-worlds-2026",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.06\", \"0.94\"]",
+        "active": true,
+        "closed": false,
+        "liquidity": "8104.9465",
+        "liquidityNum": 8104.9465,
+        "startDate": "2026-09-10T22:37:32Z",
+        "endDate": "2026-11-29T04:59:00Z"
+      }
+    ]
+  },
+  {
+    "id": "991832",
+    "slug": "worlds-2026-team-to-make-grand-finals",
+    "title": "Worlds 2026: Team to Make Grand Finals",
+    "startDate": "2026-09-09T02:48:13Z",
+    "endDate": "2026-11-29T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 122044.99171,
+    "volume": 51508.841014,
+    "markets": []
+  },
+  {
+    "id": "991821",
+    "slug": "worlds-2026-finals-mvp",
+    "title": "Worlds 2026: Finals MVP",
+    "startDate": "2026-09-09T02:45:19Z",
+    "endDate": "2026-11-29T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 78641.12491,
+    "volume": 88062.993145,
+    "markets": []
+  },
+  {
+    "id": "991810",
+    "slug": "worlds-2026-winner",
+    "title": "Worlds 2026: Winner",
+    "startDate": "2026-09-09T02:42:46Z",
+    "endDate": "2026-11-29T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1828795.69213,
+    "volume": 4178517.62983,
+    "markets": []
+  },
+  {
+    "id": "775290",
+    "slug": "league-of-legends-global-power-rankings-post-worlds-rank-1-20260729165154424",
+    "title": "League of Legends Global Power Rankings Post Worlds: Rank 1",
+    "startDate": "2026-07-31T03:43:15.638659Z",
+    "endDate": "2027-01-15T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 46449.21189,
+    "volume": 180723.921992,
+    "markets": []
+  },
+  {
+    "id": "131447",
+    "slug": "lol-worlds-2026-winning-region-226",
+    "title": "Worlds 2026 Winning Region",
+    "startDate": "2025-12-30T15:15:49.335Z",
+    "endDate": "2027-01-01T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 300739.51202,
+    "volume": 1150994.037669,
+    "markets": []
+  }
+]

@@ -27,6 +27,10 @@ export const PERFORMANCE_ROUTES = Object.freeze([
     "path": "/horoscope.html"
   },
   {
+    "id": "worlds",
+    "path": "/worlds.html"
+  },
+  {
     "id": "serial",
     "path": "/serial.html"
   },

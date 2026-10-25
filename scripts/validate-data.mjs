@@ -12,6 +12,7 @@ import { validateObservatory } from '../src/sectors/observatory/validate.js';
 import { validateIndustry } from '../src/sectors/industry/industry-core.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
+import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
 import { validateArenaUniverse, validateArenaUniverseArchive } from '../src/lib/validateArenaUniverse.js';
@@ -86,6 +87,7 @@ const CHECKS = [
   { path: 'public/arena-ledger-s1.json', validate: validateArenaLedgerArchive },
   { path: 'public/arena-predlog.json', validate: validateArenaPredlog },
   { path: 'public/transits-daily.json', validate: validateDailyTransits },
+  { path: 'public/worlds-data.json', validate: validateWorldsData },
   { path: 'public/audio/playlist.json', validate: validateAudioPlaylist },
   { path: 'public/nyse-holidays-2026.json', validate: validateNyseCalendar },
   { path: 'public/signal-release-dates-2026.json', validate: validateSignalReleaseDates },

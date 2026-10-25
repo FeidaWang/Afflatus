@@ -255,6 +255,36 @@ function buildArenaGraph(route, locale, facts, url) {
   ];
 }
 
+function buildWorldsGraph(route, locale, facts, url) {
+  const key = localeKey(route, locale);
+  const appId = `${url}#application`;
+  // Entertainment-only prediction cards: the page displays Fable's
+  // pre-match calls plus public prediction-market prices fetched at view time.
+  const app = {
+    '@type': 'WebApplication',
+    '@id': appId,
+    name: route.locales[key].title,
+    description: route.locales[key].description,
+    url,
+    applicationCategory: 'EntertainmentApplication',
+    operatingSystem: 'Any',
+    browserRequirements: 'Requires JavaScript',
+    inLanguage: languageValue(route, locale),
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: 0, priceCurrency: 'AUD' },
+  };
+  const page = basePageNode(route, locale, facts, url);
+  page.mainEntity = { '@id': appId };
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    page,
+    app,
+    breadcrumbNode(route, locale, url),
+  ];
+}
+
 function buildSectorsGraph(route, locale, facts, url) {
   const key = localeKey(route, locale);
   const itemListId = `${url}#ecosystem-list`;
@@ -445,6 +475,7 @@ const BUILDERS = Object.freeze({
   sectors: buildSectorsGraph,
   signal: buildSignalGraph,
   horoscope: buildHoroscopeGraph,
+  worlds: buildWorldsGraph,
   serial: buildSerialGraph,
   course: buildCourseGraph,
 });

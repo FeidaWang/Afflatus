@@ -274,6 +274,9 @@ export function validateBilingualTree(value, options = {}, path = options.path |
       typeof value[enKey] === 'string' ||
       typeof value[zhKey] === 'string'
     )) {
+      // Same rule as nested {en, zh} pairs: an explanation slot that is still
+      // empty on both sides is not a parity problem.
+      if (options.allowEmptyPair && !String(value[enKey] || '').trim() && !String(value[zhKey] || '').trim()) continue;
       issues.push(...validateBilingualPair(
         { en: value[enKey], zh: value[zhKey] },
         { ...options, path: `${path}.${base}` },

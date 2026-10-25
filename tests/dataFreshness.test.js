@@ -14,6 +14,14 @@ describe('dataFreshness', () => {
     expect(result).toMatchObject({ stale: false, state: 'fresh', expectedDate: '2026-08-06' });
   });
 
+  it('treats a calendar-day pipeline as fresh once its activeUntil date has passed', () => {
+    const pipeline = { kind: 'calendar-day', timeZone: 'America/Chicago', activeUntil: '2026-11-15' };
+    expect(assessPipelineOutput(pipeline, {}, '2026-11-14', new Date('2026-12-01T12:00:00Z')))
+      .toMatchObject({ stale: false, state: 'fresh' });
+    expect(assessPipelineOutput(pipeline, {}, '2026-11-13', new Date('2026-11-14T20:00:00Z')))
+      .toMatchObject({ stale: true, expectedDate: '2026-11-14' });
+  });
+
   it('does not accept an invalid max-age timestamp', () => {
     const result = assessPipelineOutput(
       { kind: 'max-age', maxAgeHours: 24 },

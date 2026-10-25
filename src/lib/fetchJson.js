@@ -49,6 +49,7 @@ const validators = {
   arenaQuantModel: lazyValidator(async () => (await import('./validateArenaQuantModel.js')).validateArenaQuantModel),
   arenaDigest: lazyValidator(async () => (await import('./validateArenaDigest.js')).validateArenaDigest),
   arenaNews: lazyValidator(async () => (await import('./validateArenaNews.js')).validateArenaNews),
+  worlds: lazyValidator(async () => (await import('./validateWorldsData.js')).validateWorldsData),
 };
 
 const validateHistory = (data) => ({
@@ -83,6 +84,9 @@ const STATIC_RESOURCES = Object.freeze({
   'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: validators.arenaNews, networkFirst: true },
   'arena-ledger': { url: '/arena-ledger.json', freshness: 5 * 60_000, validate: objectWith('season', 'models', 'bench'), networkFirst: true },
   transits: { url: '/transits-daily.json', freshness: 6 * 60 * 60_000, validate: objectWith('date', 'planets'), networkFirst: true },
+  // Worlds 2026 predictions are sealed before kickoff by a daily publication;
+  // revalidate so a stale pick never sits in front of a published update.
+  worlds: { url: '/worlds-data.json', freshness: 5 * 60_000, validate: validators.worlds, networkFirst: true },
 });
 
 const memory = new Map();

@@ -28,6 +28,9 @@ export function assessPipelineOutput(pipeline, output, artifactValue, value = ne
 
   if (pipeline.kind === 'calendar-day') {
     const expectedDate = zonedDate(value, pipeline.timeZone);
+    if (pipeline.activeUntil && expectedDate > pipeline.activeUntil) {
+      return { state: 'fresh', stale: false, expectedDate, detail: `pipeline inactive after ${pipeline.activeUntil}` };
+    }
     const stale = artifactValue !== expectedDate;
     return {
       state: stale ? 'stale' : 'fresh',
