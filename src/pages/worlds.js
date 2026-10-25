@@ -353,12 +353,8 @@ function renderHero() {
     prov.className = `w-prov prov-${badge.tier}`;
     prov.textContent = badge.text;
   }
-  const note = $('gnote');
-  if (note && data.note_en && data.note_zh) {
-    note.setAttribute('data-en', data.note_en);
-    note.setAttribute('data-zh', data.note_zh);
-    note.textContent = T(data.note_en, data.note_zh);
-  }
+  // The hero note stays the static one-liner: swapping in the longer data
+  // note after load reflowed the whole hero (CLS budget).
 }
 
 function tick() {
