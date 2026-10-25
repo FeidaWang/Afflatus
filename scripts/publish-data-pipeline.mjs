@@ -22,6 +22,7 @@ import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsEcosystem } from '../src/lib/validateSectorsEcosystem.js';
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
+import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
 import { SITE_GENERATE_COMMAND, SITE_PUBLISH_ARTIFACTS } from './lib/site-publish-artifacts.mjs';
 
@@ -38,6 +39,7 @@ const validators = new Map([
   ['sectors-ecosystem', validateSectorsEcosystem],
   ['sectors-rivalry', validateSectorsRivalry],
   ['transits', validateDailyTransits],
+  ['worlds', validateWorldsData],
 ]);
 
 function fail(message) {
@@ -56,6 +58,12 @@ function arenaPreCommitCommands(pipelineId) {
     return [{
       phase: 'earnings-digest-commit-window',
       command: ['node', 'scripts/check-arena-earnings-window.mjs'],
+    }];
+  }
+  if (pipelineId === 'worlds-daily') {
+    return [{
+      phase: 'worlds-commit-window',
+      command: ['node', 'scripts/check-worlds-window.mjs'],
     }];
   }
   const window = new Map([

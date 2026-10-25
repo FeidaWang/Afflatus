@@ -137,6 +137,18 @@ export const DATA_PIPELINES = Object.freeze([
     sourceMode: 'deterministic-generator',
     outputs: [{ resource: 'transits', path: 'public/transits-daily.json', dateField: 'date' }],
   },
+  {
+    // Worlds 2026 pre-match predictions: one publication per North-American
+    // match day. The tournament ends 2026-11-14; after activeUntil the output
+    // is permanently considered fresh instead of alarming forever.
+    id: 'worlds-daily',
+    kind: 'calendar-day',
+    timeZone: 'America/Chicago',
+    activeUntil: '2026-11-15',
+    owner: 'data-orchestrator',
+    publishMode: 'recoverable-build-commit-transaction',
+    outputs: [{ resource: 'worlds', path: 'public/worlds-data.json', dateField: 'updated' }],
+  },
 ]);
 
 /**
@@ -154,6 +166,7 @@ export const DATA_PIPELINE_PROFILES = Object.freeze({
   'open-execution': Object.freeze(['arena-open']),
   'late-execution': Object.freeze(['arena-late']),
   'postmarket-settlement': Object.freeze(['arena-postmarket', 'arena-earnings-digest']),
+  'worlds-daily': Object.freeze(['worlds-daily']),
 });
 
 /** Resolve the value that represents one output's publication date/time. */
