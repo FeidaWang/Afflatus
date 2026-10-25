@@ -60,18 +60,30 @@ const sources = [];
 mkdirSync(join(outputDir, 'raw'), { recursive: true });
 
 /* ---------- source access: live (with raw copies) or offline fixtures ---------- */
+const SOURCE_LABELS = {
+  'matchlist-main.html': 'gol.gg · Worlds 2026 Main Event schedule',
+  'matchlist-playin.html': 'gol.gg · Worlds 2026 Play-In schedule',
+  'champions.html': 'gol.gg · champion statistics',
+  'players.html': 'gol.gg · player statistics',
+  'polymarket.json': 'Polymarket · series markets',
+  'polymarket-winner.json': 'Polymarket · Worlds 2026 winner',
+  'kalshi.json': 'Kalshi · KXLOL-WORLDS26',
+};
+const sourceLabel = (name) => SOURCE_LABELS[name]
+  || (name.startsWith('game-') ? `gol.gg · game ${name.slice(5, -5)} draft` : name.startsWith('team-') ? `gol.gg · team ${name.slice(5, -5)} season pool` : name);
+
 async function source(name, url, kind) {
   const rawPath = join(fixturesDir || join(outputDir, 'raw'), name);
   if (fixturesDir) {
     if (!existsSync(rawPath)) return null;
     const text = readFileSync(rawPath, 'utf8');
-    sources.push({ label: name, url, fetchedAt: now.toISOString() });
+    sources.push({ label: sourceLabel(name), url, fetchedAt: now.toISOString() });
     return kind === 'json' ? JSON.parse(text) : text;
   }
   try {
     const value = kind === 'json' ? await fetchJsonUrl(url) : await fetchText(url);
     writeFileSync(rawPath, kind === 'json' ? JSON.stringify(value) : value);
-    sources.push({ label: name, url, fetchedAt: new Date().toISOString() });
+    sources.push({ label: sourceLabel(name), url, fetchedAt: new Date().toISOString() });
     return value;
   } catch (error) {
     notes.push(`fetch failed: ${name} (${error.message})`);

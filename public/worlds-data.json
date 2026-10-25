@@ -4,7 +4,7 @@
   "version": 1,
   "mode": "live",
   "patch": "26.20",
-  "decidedAt": "2026-10-25T12:52:46.025Z",
+  "decidedAt": "2026-10-25T12:57:42.250Z",
   "note_en": "Fable pre-match calls for Worlds 2026, sealed before each kickoff. Numbers come from code (Elo + prediction-market blend + Fearless Draft depth); the model only adds bounded adjustments and explanations. Entertainment only, not betting advice.",
   "note_zh": "Fable 对 Worlds 2026 每场系列赛的赛前研判，开赛前封存。数字由代码计算（Elo + 预测市场融合 + 无畏征召英雄池深度），模型只做有界修正与解释。仅供娱乐，不构成博彩建议。",
   "archiveSource": {
@@ -1398,7 +1398,7 @@
           8.03
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1444,7 +1444,7 @@
           3.88
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1490,7 +1490,7 @@
           2.18
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1536,7 +1536,7 @@
           2.99
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1582,7 +1582,7 @@
           1.53
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1628,7 +1628,7 @@
           1.59
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1674,7 +1674,7 @@
           4.11
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1720,7 +1720,7 @@
           1.4
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:52:46.025Z"
+        "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
       "market": {
@@ -1750,7 +1750,7 @@
     {
       "team": "GEN",
       "prob": 44.8,
-      "market": 35.1,
+      "market": 34.9,
       "reason_en": "",
       "reason_zh": ""
     },
@@ -1764,14 +1764,14 @@
     {
       "team": "HLE",
       "prob": 10.1,
-      "market": 15.9,
+      "market": 15.8,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "DK",
       "prob": 9.4,
-      "market": 11.8,
+      "market": 12.2,
       "reason_en": "",
       "reason_zh": ""
     },
@@ -1785,14 +1785,14 @@
     {
       "team": "IG",
       "prob": 2.8,
-      "market": 1.8,
+      "market": 1.7,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "T1",
       "prob": 2.7,
-      "market": 15,
+      "market": 14.9,
       "reason_en": "",
       "reason_zh": ""
     },
@@ -2749,199 +2749,199 @@
   },
   "sources": [
     {
-      "label": "matchlist-main.html",
+      "label": "gol.gg · Worlds 2026 Main Event schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:52:47.504Z"
+      "fetchedAt": "2026-10-25T12:57:43.842Z"
     },
     {
-      "label": "matchlist-playin.html",
+      "label": "gol.gg · Worlds 2026 Play-In schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Play-In/",
-      "fetchedAt": "2026-10-25T12:52:48.021Z"
+      "fetchedAt": "2026-10-25T12:57:44.414Z"
     },
     {
-      "label": "polymarket.json",
+      "label": "Polymarket · series markets",
       "url": "https://gamma-api.polymarket.com/events?tag_slug=league-of-legends&active=true&closed=false&limit=100&order=startDate&ascending=false",
-      "fetchedAt": "2026-10-25T12:52:49.544Z"
+      "fetchedAt": "2026-10-25T12:57:45.625Z"
     },
     {
-      "label": "polymarket-winner.json",
+      "label": "Polymarket · Worlds 2026 winner",
       "url": "https://gamma-api.polymarket.com/events?slug=worlds-2026-winner",
-      "fetchedAt": "2026-10-25T12:52:49.719Z"
+      "fetchedAt": "2026-10-25T12:57:45.800Z"
     },
     {
-      "label": "kalshi.json",
+      "label": "Kalshi · KXLOL-WORLDS26",
       "url": "https://api.elections.kalshi.com/trade-api/v2/markets?event_ticker=KXLOL-WORLDS26&limit=100",
-      "fetchedAt": "2026-10-25T12:52:50.321Z"
+      "fetchedAt": "2026-10-25T12:57:46.415Z"
     },
     {
-      "label": "game-83645.html",
+      "label": "gol.gg · game 83645 draft",
       "url": "https://gol.gg/game/stats/83645/page-game/",
-      "fetchedAt": "2026-10-25T12:52:52.209Z"
+      "fetchedAt": "2026-10-25T12:57:48.170Z"
     },
     {
-      "label": "game-83644.html",
+      "label": "gol.gg · game 83644 draft",
       "url": "https://gol.gg/game/stats/83644/page-game/",
-      "fetchedAt": "2026-10-25T12:52:52.561Z"
+      "fetchedAt": "2026-10-25T12:57:48.522Z"
     },
     {
-      "label": "game-83643.html",
+      "label": "gol.gg · game 83643 draft",
       "url": "https://gol.gg/game/stats/83643/page-game/",
-      "fetchedAt": "2026-10-25T12:52:52.918Z"
+      "fetchedAt": "2026-10-25T12:57:48.937Z"
     },
     {
-      "label": "game-83642.html",
+      "label": "gol.gg · game 83642 draft",
       "url": "https://gol.gg/game/stats/83642/page-game/",
-      "fetchedAt": "2026-10-25T12:52:53.269Z"
+      "fetchedAt": "2026-10-25T12:57:49.317Z"
     },
     {
-      "label": "game-83641.html",
+      "label": "gol.gg · game 83641 draft",
       "url": "https://gol.gg/game/stats/83641/page-game/",
-      "fetchedAt": "2026-10-25T12:52:53.618Z"
+      "fetchedAt": "2026-10-25T12:57:49.732Z"
     },
     {
-      "label": "game-83640.html",
+      "label": "gol.gg · game 83640 draft",
       "url": "https://gol.gg/game/stats/83640/page-game/",
-      "fetchedAt": "2026-10-25T12:52:54.042Z"
+      "fetchedAt": "2026-10-25T12:57:50.083Z"
     },
     {
-      "label": "game-83639.html",
+      "label": "gol.gg · game 83639 draft",
       "url": "https://gol.gg/game/stats/83639/page-game/",
-      "fetchedAt": "2026-10-25T12:52:54.398Z"
+      "fetchedAt": "2026-10-25T12:57:50.437Z"
     },
     {
-      "label": "game-83638.html",
+      "label": "gol.gg · game 83638 draft",
       "url": "https://gol.gg/game/stats/83638/page-game/",
-      "fetchedAt": "2026-10-25T12:52:54.776Z"
+      "fetchedAt": "2026-10-25T12:57:50.787Z"
     },
     {
-      "label": "game-83653.html",
+      "label": "gol.gg · game 83653 draft",
       "url": "https://gol.gg/game/stats/83653/page-game/",
-      "fetchedAt": "2026-10-25T12:52:55.132Z"
+      "fetchedAt": "2026-10-25T12:57:51.175Z"
     },
     {
-      "label": "game-83652.html",
+      "label": "gol.gg · game 83652 draft",
       "url": "https://gol.gg/game/stats/83652/page-game/",
-      "fetchedAt": "2026-10-25T12:52:55.502Z"
+      "fetchedAt": "2026-10-25T12:57:51.531Z"
     },
     {
-      "label": "game-83651.html",
+      "label": "gol.gg · game 83651 draft",
       "url": "https://gol.gg/game/stats/83651/page-game/",
-      "fetchedAt": "2026-10-25T12:52:55.918Z"
+      "fetchedAt": "2026-10-25T12:57:51.901Z"
     },
     {
-      "label": "game-83650.html",
+      "label": "gol.gg · game 83650 draft",
       "url": "https://gol.gg/game/stats/83650/page-game/",
-      "fetchedAt": "2026-10-25T12:52:56.330Z"
+      "fetchedAt": "2026-10-25T12:57:52.307Z"
     },
     {
-      "label": "game-83649.html",
+      "label": "gol.gg · game 83649 draft",
       "url": "https://gol.gg/game/stats/83649/page-game/",
-      "fetchedAt": "2026-10-25T12:52:56.728Z"
+      "fetchedAt": "2026-10-25T12:57:52.676Z"
     },
     {
-      "label": "game-83648.html",
+      "label": "gol.gg · game 83648 draft",
       "url": "https://gol.gg/game/stats/83648/page-game/",
-      "fetchedAt": "2026-10-25T12:52:57.106Z"
+      "fetchedAt": "2026-10-25T12:57:53.088Z"
     },
     {
-      "label": "game-83647.html",
+      "label": "gol.gg · game 83647 draft",
       "url": "https://gol.gg/game/stats/83647/page-game/",
-      "fetchedAt": "2026-10-25T12:52:57.485Z"
+      "fetchedAt": "2026-10-25T12:57:53.449Z"
     },
     {
-      "label": "game-83646.html",
+      "label": "gol.gg · game 83646 draft",
       "url": "https://gol.gg/game/stats/83646/page-game/",
-      "fetchedAt": "2026-10-25T12:52:57.837Z"
+      "fetchedAt": "2026-10-25T12:57:53.802Z"
     },
     {
-      "label": "team-2848.html",
+      "label": "gol.gg · team 2848 season pool",
       "url": "https://gol.gg/teams/team-stats/2848/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:52:58.659Z"
+      "fetchedAt": "2026-10-25T12:57:54.653Z"
     },
     {
-      "label": "team-2849.html",
+      "label": "gol.gg · team 2849 season pool",
       "url": "https://gol.gg/teams/team-stats/2849/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:52:59.607Z"
+      "fetchedAt": "2026-10-25T12:57:55.512Z"
     },
     {
-      "label": "team-2880.html",
+      "label": "gol.gg · team 2880 season pool",
       "url": "https://gol.gg/teams/team-stats/2880/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:00.425Z"
+      "fetchedAt": "2026-10-25T12:57:56.465Z"
     },
     {
-      "label": "team-2802.html",
+      "label": "gol.gg · team 2802 season pool",
       "url": "https://gol.gg/teams/team-stats/2802/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:01.486Z"
+      "fetchedAt": "2026-10-25T12:57:57.447Z"
     },
     {
-      "label": "team-2897.html",
+      "label": "gol.gg · team 2897 season pool",
       "url": "https://gol.gg/teams/team-stats/2897/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:02.301Z"
+      "fetchedAt": "2026-10-25T12:57:58.225Z"
     },
     {
-      "label": "team-2804.html",
+      "label": "gol.gg · team 2804 season pool",
       "url": "https://gol.gg/teams/team-stats/2804/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:04.189Z"
+      "fetchedAt": "2026-10-25T12:57:59.165Z"
     },
     {
-      "label": "team-2805.html",
+      "label": "gol.gg · team 2805 season pool",
       "url": "https://gol.gg/teams/team-stats/2805/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:05.348Z"
+      "fetchedAt": "2026-10-25T12:58:00.048Z"
     },
     {
-      "label": "team-2850.html",
+      "label": "gol.gg · team 2850 season pool",
       "url": "https://gol.gg/teams/team-stats/2850/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:06.194Z"
+      "fetchedAt": "2026-10-25T12:58:00.887Z"
     },
     {
-      "label": "team-2899.html",
+      "label": "gol.gg · team 2899 season pool",
       "url": "https://gol.gg/teams/team-stats/2899/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:06.956Z"
+      "fetchedAt": "2026-10-25T12:58:01.648Z"
     },
     {
-      "label": "team-2895.html",
+      "label": "gol.gg · team 2895 season pool",
       "url": "https://gol.gg/teams/team-stats/2895/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:07.796Z"
+      "fetchedAt": "2026-10-25T12:58:02.406Z"
     },
     {
-      "label": "team-2954.html",
+      "label": "gol.gg · team 2954 season pool",
       "url": "https://gol.gg/teams/team-stats/2954/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:08.575Z"
+      "fetchedAt": "2026-10-25T12:58:03.223Z"
     },
     {
-      "label": "team-2900.html",
+      "label": "gol.gg · team 2900 season pool",
       "url": "https://gol.gg/teams/team-stats/2900/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:09.318Z"
+      "fetchedAt": "2026-10-25T12:58:03.997Z"
     },
     {
-      "label": "team-2809.html",
+      "label": "gol.gg · team 2809 season pool",
       "url": "https://gol.gg/teams/team-stats/2809/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:10.209Z"
+      "fetchedAt": "2026-10-25T12:58:04.934Z"
     },
     {
-      "label": "team-2813.html",
+      "label": "gol.gg · team 2813 season pool",
       "url": "https://gol.gg/teams/team-stats/2813/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:11.178Z"
+      "fetchedAt": "2026-10-25T12:58:05.775Z"
     },
     {
-      "label": "team-2887.html",
+      "label": "gol.gg · team 2887 season pool",
       "url": "https://gol.gg/teams/team-stats/2887/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:11.990Z"
+      "fetchedAt": "2026-10-25T12:58:06.540Z"
     },
     {
-      "label": "team-2852.html",
+      "label": "gol.gg · team 2852 season pool",
       "url": "https://gol.gg/teams/team-stats/2852/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:53:12.841Z"
+      "fetchedAt": "2026-10-25T12:58:07.688Z"
     },
     {
-      "label": "players.html",
+      "label": "gol.gg · player statistics",
       "url": "https://gol.gg/players/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:53:13.228Z"
+      "fetchedAt": "2026-10-25T12:58:08.140Z"
     },
     {
-      "label": "champions.html",
+      "label": "gol.gg · champion statistics",
       "url": "https://gol.gg/champion/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:53:13.532Z"
+      "fetchedAt": "2026-10-25T12:58:08.511Z"
     }
   ],
   "notes": []
