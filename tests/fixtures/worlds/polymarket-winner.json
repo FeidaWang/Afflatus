@@ -1,0 +1,195 @@
+[
+  {
+    "id": "991810",
+    "slug": "worlds-2026-winner",
+    "title": "Worlds 2026: Winner",
+    "startDate": "2026-09-09T02:42:46Z",
+    "endDate": "2026-11-29T04:59:00Z",
+    "active": true,
+    "closed": false,
+    "liquidity": 1828795.69213,
+    "volume": 4178517.62983,
+    "markets": [
+      {
+        "id": "4397022",
+        "question": "Will Gen.G win Worlds 2026?",
+        "groupItemTitle": "Gen.G",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.375\", \"0.625\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397025",
+        "question": "Will T1 win Worlds 2026?",
+        "groupItemTitle": "T1",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.155\", \"0.845\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397027",
+        "question": "Will Hanwha Life Esports win Worlds 2026?",
+        "groupItemTitle": "Hanwha Life Esports",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.165\", \"0.835\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397030",
+        "question": "Will Dplus KIA win Worlds 2026?",
+        "groupItemTitle": "Dplus KIA",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.1275\", \"0.8725\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397033",
+        "question": "Will Bilibili Gaming win Worlds 2026?",
+        "groupItemTitle": "Bilibili Gaming",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.115\", \"0.885\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397035",
+        "question": "Will G2 Esports win Worlds 2026?",
+        "groupItemTitle": "G2 Esports",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0265\", \"0.9735\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397037",
+        "question": "Will Karmine Corp win Worlds 2026?",
+        "groupItemTitle": "Karmine Corp",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0065\", \"0.9935\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397040",
+        "question": "Will Team Secret Whales win Worlds 2026?",
+        "groupItemTitle": "Team Secret Whales",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0005\", \"0.9995\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397042",
+        "question": "Will CTBC Flying Oyster win Worlds 2026?",
+        "groupItemTitle": "CTBC Flying Oyster",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0005\", \"0.9995\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397045",
+        "question": "Will MVK Esports win Worlds 2026?",
+        "groupItemTitle": "MVK Esports",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0\", \"1\"]",
+        "active": true,
+        "closed": true
+      },
+      {
+        "id": "4397046",
+        "question": "Will Anyone's Legend win Worlds 2026?",
+        "groupItemTitle": "Anyone's Legend",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0135\", \"0.9865\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397048",
+        "question": "Will Top Esports win Worlds 2026?",
+        "groupItemTitle": "Top Esports",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.011\", \"0.989\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397050",
+        "question": "Will Invictus Gaming win Worlds 2026?",
+        "groupItemTitle": "Invictus Gaming",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0225\", \"0.9775\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397052",
+        "question": "Will Movistar KOI win Worlds 2026?",
+        "groupItemTitle": "Movistar KOI",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0145\", \"0.9855\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397055",
+        "question": "Will Cloud9 win Worlds 2026?",
+        "groupItemTitle": "Cloud9",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0\", \"1\"]",
+        "active": true,
+        "closed": true
+      },
+      {
+        "id": "4397056",
+        "question": "Will Team Liquid win Worlds 2026?",
+        "groupItemTitle": "Team Liquid",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0005\", \"0.9995\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397058",
+        "question": "Will LYON win Worlds 2026?",
+        "groupItemTitle": "LYON",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0055\", \"0.9945\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397060",
+        "question": "Will LOS win Worlds 2026?",
+        "groupItemTitle": "LOS",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.0005\", \"0.9995\"]",
+        "active": true,
+        "closed": false
+      },
+      {
+        "id": "4397061",
+        "question": "Will Team I win Worlds 2026?",
+        "groupItemTitle": "Team I",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.5\", \"0.5\"]",
+        "active": false,
+        "closed": false
+      },
+      {
+        "id": "4397062",
+        "question": "Will another team win Worlds 2026?",
+        "groupItemTitle": "Other",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "outcomePrices": "[\"0.5\", \"0.5\"]",
+        "active": false,
+        "closed": false
+      }
+    ]
+  }
+]

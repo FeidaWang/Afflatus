@@ -1,0 +1,205 @@
+{
+  "cursor": "",
+  "markets": [
+    {
+      "ticker": "KXLOL-WORLDS26-GEN",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Gen.G win League of Legends Worlds?",
+      "yes_sub_title": "Gen.G",
+      "status": "active",
+      "yes_bid_dollars": "0.3700",
+      "yes_ask_dollars": "0.3800",
+      "last_price_dollars": "0.3800"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-DK",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Dplus KIA win League of Legends Worlds?",
+      "yes_sub_title": "Dplus KIA",
+      "status": "active",
+      "yes_bid_dollars": "0.1200",
+      "yes_ask_dollars": "0.1300",
+      "last_price_dollars": "0.1300"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-HLE",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Hanwha Life Esports win League of Legends Worlds?",
+      "yes_sub_title": "Hanwha Life Esports",
+      "status": "active",
+      "yes_bid_dollars": "0.1700",
+      "yes_ask_dollars": "0.1800",
+      "last_price_dollars": "0.1800"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-T1",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will T1 win League of Legends Worlds?",
+      "yes_sub_title": "T1",
+      "status": "active",
+      "yes_bid_dollars": "0.1600",
+      "yes_ask_dollars": "0.1700",
+      "last_price_dollars": "0.1700"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-BLG",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Bilibili Gaming win League of Legends Worlds?",
+      "yes_sub_title": "Bilibili Gaming",
+      "status": "active",
+      "yes_bid_dollars": "0.1200",
+      "yes_ask_dollars": "0.1300",
+      "last_price_dollars": "0.1200"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-LY",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will LYON win League of Legends Worlds?",
+      "yes_sub_title": "LYON",
+      "status": "active",
+      "yes_bid_dollars": "0.0200",
+      "yes_ask_dollars": "0.0300",
+      "last_price_dollars": "0.0200"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-G2",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will G2 Esports win League of Legends Worlds?",
+      "yes_sub_title": "G2 Esports",
+      "status": "active",
+      "yes_bid_dollars": "0.0300",
+      "yes_ask_dollars": "0.0400",
+      "last_price_dollars": "0.0300"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-IG",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Invictus Gaming win League of Legends Worlds?",
+      "yes_sub_title": "Invictus Gaming",
+      "status": "active",
+      "yes_bid_dollars": "0.0100",
+      "yes_ask_dollars": "0.0200",
+      "last_price_dollars": "0.0200"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-C9",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Cloud9 win League of Legends Worlds?",
+      "yes_sub_title": "Cloud9",
+      "status": "finalized",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "1.0000",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-FUR",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will FURIA Esports win League of Legends Worlds?",
+      "yes_sub_title": "FURIA Esports",
+      "status": "finalized",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "1.0000",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-TL",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Team Liquid win League of Legends Worlds?",
+      "yes_sub_title": "Team Liquid",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-TES",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Top Esports win League of Legends Worlds?",
+      "yes_sub_title": "Top Esports",
+      "status": "active",
+      "yes_bid_dollars": "0.0100",
+      "yes_ask_dollars": "0.0200",
+      "last_price_dollars": "0.0200"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-MVK",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will MVK Esports win League of Legends Worlds?",
+      "yes_sub_title": "MVK Esports",
+      "status": "finalized",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "1.0000",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-LLL",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will LOUD win League of Legends Worlds?",
+      "yes_sub_title": "LOUD",
+      "status": "finalized",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "1.0000",
+      "last_price_dollars": "0.0000"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-LOS",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will LOS win League of Legends Worlds?",
+      "yes_sub_title": "LOS",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-CFO",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will CTBC Flying Oyster win League of Legends Worlds?",
+      "yes_sub_title": "CTBC Flying Oyster",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-MKOI",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Movistar KOI win League of Legends Worlds?",
+      "yes_sub_title": "Movistar KOI",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-KC",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Karmine Corp win League of Legends Worlds?",
+      "yes_sub_title": "Karmine Corp",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-TSW",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Team Secret Whales win League of Legends Worlds?",
+      "yes_sub_title": "Team Secret Whales",
+      "status": "active",
+      "yes_bid_dollars": "0.0000",
+      "yes_ask_dollars": "0.0100",
+      "last_price_dollars": "0.0100"
+    },
+    {
+      "ticker": "KXLOL-WORLDS26-AL",
+      "event_ticker": "KXLOL-WORLDS26",
+      "title": "Will Anyone's Legend win League of Legends Worlds?",
+      "yes_sub_title": "Anyone's Legend",
+      "status": "active",
+      "yes_bid_dollars": "0.0100",
+      "yes_ask_dollars": "0.0200",
+      "last_price_dollars": "0.0200"
+    }
+  ]
+}
