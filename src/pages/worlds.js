@@ -343,6 +343,19 @@ function paint() {
   if (!lastPaint || lastPaint[0] !== s || lastPaint[1] !== e) { renderCardsView(); lastPaint = [s, e]; }
 }
 
+/* ---------- display font (non-blocking) ----------
+   Rajdhani is decorative: attach its stylesheet after parse with
+   font-display optional, so the first paint never waits on Google Fonts. */
+function loadDisplayFont() {
+  if (document.querySelector('link[data-worlds-font]')) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=optional';
+  link.dataset.worldsFont = '1';
+  document.head.appendChild(link);
+}
+loadDisplayFont();
+
 /* ---------- hero / countdown ---------- */
 function renderHero() {
   const patch = $('patch');

@@ -103,14 +103,14 @@
     {
       "id": "worlds",
       "path": "/worlds.html",
-      "performanceScore": 0.75,
-      "lcpMs": 4200,
-      "tbtMs": 150,
-      "cls": 0.05,
-      "clsBudgetBase": 0.12,
-      "speedIndexMs": 4200,
-      "scriptBytes": 130000,
-      "totalBytes": 950000
+      "performanceScore": 0.99,
+      "lcpMs": 1652,
+      "tbtMs": 0,
+      "cls": 0.011,
+      "clsBudgetBase": 0.1,
+      "speedIndexMs": 1502,
+      "scriptBytes": 23699,
+      "totalBytes": 305341
     },
     {
       "id": "serial",
