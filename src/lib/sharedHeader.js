@@ -15,6 +15,7 @@ export function renderSharedHeader() {
       ${link('/course.html')}
       ${link('/serial.html', 'title="Original stories in Chinese / 原创中文小说"')}
       ${link('/horoscope.html')}
+      ${link('/worlds.html')}
       ${link('/about.html')}
     </nav>
     <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>

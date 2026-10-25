@@ -101,6 +101,18 @@
       "totalBytes": 1020613
     },
     {
+      "id": "worlds",
+      "path": "/worlds.html",
+      "performanceScore": 0.75,
+      "lcpMs": 4200,
+      "tbtMs": 150,
+      "cls": 0.05,
+      "clsBudgetBase": 0.12,
+      "speedIndexMs": 4200,
+      "scriptBytes": 130000,
+      "totalBytes": 950000
+    },
+    {
       "id": "serial",
       "path": "/serial.html",
       "performanceScore": 0.46,

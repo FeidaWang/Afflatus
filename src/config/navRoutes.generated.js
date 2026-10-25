@@ -40,6 +40,13 @@ export const NAV_ROUTES = Object.freeze([
     "group": "labs"
   },
   {
+    "id": "worlds",
+    "path": "/worlds.html",
+    "en": "Worlds 2026",
+    "zh": "全球总决赛",
+    "group": "labs"
+  },
+  {
     "id": "serial",
     "path": "/serial.html",
     "en": "Stories",
@@ -131,6 +138,14 @@ export const HOME_NAV_GROUPS = Object.freeze([
           "zh": "趣味占星"
         },
         "href": "/horoscope.html"
+      },
+      {
+        "routeId": "worlds",
+        "label": {
+          "en": "Worlds 2026",
+          "zh": "全球总决赛"
+        },
+        "href": "/worlds.html"
       }
     ]
   },

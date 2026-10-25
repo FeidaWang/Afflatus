@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://feida.au/en/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/"/>
   </url>
   <url>
     <loc>https://feida.au/zh/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/"/>
   </url>
   <url>
     <loc>https://feida.au/en/portfolio.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/portfolio.html"/>
   </url>
   <url>
     <loc>https://feida.au/zh/portfolio.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/portfolio.html"/>
   </url>
   <url>
     <loc>https://feida.au/en/arena.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/arena.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/arena.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/arena.html"/>
   </url>
   <url>
     <loc>https://feida.au/zh/arena.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/arena.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/arena.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/arena.html"/>
@@ -72,48 +72,62 @@
   </url>
   <url>
     <loc>https://feida.au/en/horoscope.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/horoscope.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/horoscope.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/horoscope.html"/>
   </url>
   <url>
     <loc>https://feida.au/zh/horoscope.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/horoscope.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/horoscope.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/horoscope.html"/>
   </url>
   <url>
+    <loc>https://feida.au/en/worlds.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/worlds.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/worlds.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/worlds.html"/>
+  </url>
+  <url>
+    <loc>https://feida.au/zh/worlds.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/worlds.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/worlds.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/worlds.html"/>
+  </url>
+  <url>
     <loc>https://feida.au/zh/serial.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/serial.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/zh/serial.html"/>
   </url>
   <url>
     <loc>https://feida.au/en/course.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/course.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/course.html"/>
   </url>
   <url>
     <loc>https://feida.au/zh/course.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/course.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/course.html"/>
   </url>
   <url>
     <loc>https://feida.au/en/about.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/about.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/about.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/about.html"/>
   </url>
   <url>
     <loc>https://feida.au/zh/about.html</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/about.html"/>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/about.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/en/about.html"/>
