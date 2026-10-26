@@ -298,7 +298,8 @@ const round3 = (v) => Math.round(v * 1000) / 1000;
 /** Scoreline map rounded to 3 dp (residual folded into the likeliest score) plus,
  *  for Bo3/Bo5, pDecider = P(the series goes the full distance). */
 export function seriesDistribution(scores, bo) {
-  const entries = Object.entries(scores).map(([k, v]) => [k, round3(v)]);
+  // Scorelines that round to 0 are dropped: the contract requires every value in (0,1].
+  const entries = Object.entries(scores).map(([k, v]) => [k, round3(v)]).filter(([, v]) => v > 0);
   const top = entries.reduce((best, e, i) => (e[1] > entries[best][1] ? i : best), 0);
   entries[top][1] = round3(entries[top][1] + 1 - entries.reduce((sum, [, v]) => sum + v, 0));
   const out = { scores: Object.fromEntries(entries) };

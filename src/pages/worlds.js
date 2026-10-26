@@ -135,7 +135,8 @@ function extremesHTML(s) {
 
 function cardHTML(s, entry = picks[s.id]) {
   const state = cardState(s, entry, Date.now());
-  const flipped = state === 'revealed' || state === 'result';
+  // Missed series show Fable's sealed call straight away (spec 2026-10-26 §5).
+  const flipped = state === 'revealed' || state === 'result' || state === 'locked-missed';
   const rare = s.pick ? rarity(s.pick.pWin[pickIdx(s.pick)]) : 'teal';
   const pickable = state === 'pick' || state === 'ready';
   const side = (key) => `<button type="button" class="side${entry?.side === key ? ' on' : ''}" data-side="${key}" aria-pressed="${entry?.side === key}"${pickable ? '' : ' disabled'} aria-label="${T('Pick', '选')} ${esc(s[key])}">${logo(s[key])}<span class="code">${esc(s[key])}</span></button>`;
@@ -254,6 +255,9 @@ function runDeck() {
   };
   deck.raf = requestAnimationFrame(frame);
 }
+function resumeDeck() {
+  if (deck.state.phase !== 'idle') runDeck();
+}
 function spinTo(index) {
   deck.state = reducedMotion() ? { ...deck.state, pos: index, target: index, vel: 0, phase: 'idle' } : goTo(deck.state, index);
   if (deck.state.phase === 'idle') applyDeck(); else runDeck();
@@ -281,7 +285,7 @@ function wireDeck(el) {
     if (!g || e.pointerId !== g.id) return;
     if (!g.dragging) {
       const dx = e.clientX - g.x, dy = e.clientY - g.y;
-      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g = null; return; } // vertical: let the page scroll
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g = null; resumeDeck(); return; } // vertical: let the page scroll
       if (Math.abs(dx) < 10) return;
       g.dragging = true;
       try { el.setPointerCapture(e.pointerId); } catch { /* pointer already released (e.g. cancelled touch) */ }
@@ -299,6 +303,7 @@ function wireDeck(el) {
     const was = g;
     g = null;
     el.classList.remove('dragging');
+    if (!was.dragging) resumeDeck(); // a caught spin must still finish on a whole card
     if (was.dragging) {
       const stale = performance.now() - was.lastT > 80; // finger rested before lifting: no fling
       deck.state = release(deck.state, stale ? 0 : was.vel, { reduced: reducedMotion() });
@@ -437,12 +442,8 @@ function wireCards() {
   view.addEventListener('keydown', (e) => {
     const art = e.target.closest('article.card');
     if (!art || e.target !== art) return;
-    const state = art.dataset.state;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      if (state === 'pick' || state === 'ready') { chooseSide(art, e.key === 'ArrowLeft' ? 'home' : 'away'); e.preventDefault(); }
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      if (state === 'ready') { flipCard(art); e.preventDefault(); }
-    }
+    // Picking now seals the card at once, so arrows no longer pick (use the side buttons).
+    if ((e.key === 'Enter' || e.key === ' ') && art.dataset.state === 'ready') { flipCard(art); e.preventDefault(); }
   });
   // Horizontal swipe (≥48 px, more horizontal than vertical) pans the window one cell.
   let sw = null;

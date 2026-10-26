@@ -305,3 +305,13 @@ describe('oddsFromPct', () => {
     expect(oddsFromPct(0)).toBeNull();
   });
 });
+
+describe('seriesDistribution at lopsided odds', () => {
+  it('never emits a zero scoreline (the validator requires (0,1])', () => {
+    for (const [p, bo, delta] of [[0.93, 5, 0], [0.9, 5, 0.05], [0.96, 3, 0.05], [0.07, 5, -0.05]]) {
+      const { scores } = seriesDistribution(enumerateSeries(p, bo, delta).scores, bo);
+      for (const v of Object.values(scores)) expect(v).toBeGreaterThan(0);
+      expect(Object.values(scores).reduce((a, b) => a + b, 0)).toBeCloseTo(1, 9);
+    }
+  });
+});

@@ -213,12 +213,13 @@ export function parseTeamTable(html) {
   const match = [...html.matchAll(/<table\b[^>]*>([\s\S]*?)<\/table>/g)].find((m) => /GD@15/.test(m[1]));
   if (!match) return [];
   const headers = matchAll(match[1], /<th\b[^>]*>([\s\S]*?)<\/th>/g).map((h) => text(h).toLowerCase());
-  const table = { headers, rows: tableRows(match[1]).map(rowCells).filter((cells) => cells.length >= headers.indexOf('gd@15') + 1) };
+  const table = { headers, rows: tableRows(match[1]).map(rowCells).filter((cells) => cells.length > headers.indexOf('name')) };
   const iName = table.headers.indexOf('name');
+  if (iName < 0) return [];
   return table.rows.map((cells) => ({
     team: teamCode(text(cells[iName])),
     values: Object.fromEntries(Object.entries(TACTIC_COLUMNS)
-      .filter(([header]) => table.headers.includes(header))
+      .filter(([header]) => table.headers.indexOf(header) >= 0 && table.headers.indexOf(header) < cells.length)
       .map(([header, key]) => {
         const display = text(cells[table.headers.indexOf(header)]);
         return [key, { raw: number(display), display }];

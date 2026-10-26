@@ -266,3 +266,18 @@ describe('Data Dragon', () => {
     expect(DDRAGON.champions('16.21.1')).toBe('https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion.json');
   });
 });
+
+describe('parseTeamTable on a drifted page', () => {
+  it('returns [] when the Name header is gone', () => {
+    const html = read('teams-table.html').replace(/>Name</, '>Team<');
+    expect(parseTeamTable(html)).toEqual([]);
+  });
+
+  it('skips metrics a short row does not have instead of throwing', () => {
+    const html = '<table><tr><th>Name</th><th>GD@15</th><th>NASH%</th></tr><tr><td>Gen.G</td><td>812</td></tr></table>';
+    const [gen] = parseTeamTable(html);
+    expect(gen.team).toBe('GEN');
+    expect(gen.values['GD@15'].raw).toBe(812);
+    expect(gen.values).not.toHaveProperty('NASH%');
+  });
+});
