@@ -7,6 +7,8 @@
    kickoff is a "missed" series, not a pick), and record.* aggregates
    match what series[] itself says. */
 
+import { TACTIC_KEYS } from './worldsModel.js';
+
 function isNonEmptyString(v) { return typeof v === 'string' && v.trim().length > 0; }
 function isInt(v) { return Number.isInteger(v); }
 function isIso(v) { return typeof v === 'string' && Number.isFinite(Date.parse(v)); }
@@ -31,8 +33,25 @@ function validatePick(p, kickoff, tag, errors) {
     pushErr(errors, `${tag}.oddsImplied: must be [home, away] each >= 1, got ${JSON.stringify(p.oddsImplied)}`);
   }
   if (typeof p.adj !== 'number' || !(Math.abs(p.adj) <= 0.05)) pushErr(errors, `${tag}.adj: must be a number with |adj| <= 0.05, got ${JSON.stringify(p.adj)}`);
+  if (p.scores != null) validateScores(p.scores, `${tag}.scores`, errors);
+  if (p.pDecider != null && !(typeof p.pDecider === 'number' && p.pDecider >= 0 && p.pDecider <= 1)) pushErr(errors, `${tag}.pDecider: must be in [0,1], got ${JSON.stringify(p.pDecider)}`);
   if (!isIso(p.decidedAt)) pushErr(errors, `${tag}.decidedAt: must be a parseable ISO timestamp`);
   else if (isIso(kickoff) && Date.parse(p.decidedAt) >= Date.parse(kickoff)) pushErr(errors, `${tag}.decidedAt: ${p.decidedAt} must be before kickoff ${kickoff}`);
+}
+
+function validateScores(scores, tag, errors) {
+  if (!isObj(scores)) { pushErr(errors, `${tag}: must be an object`); return; }
+  let sum = 0;
+  for (const [k, v] of Object.entries(scores)) {
+    if (!/^\d-\d$/.test(k)) pushErr(errors, `${tag}: key ${JSON.stringify(k)} must match /^\\d-\\d$/`);
+    if (typeof v !== 'number' || !(v > 0 && v <= 1)) pushErr(errors, `${tag}: value for ${JSON.stringify(k)} must be in (0,1], got ${JSON.stringify(v)}`);
+    else sum += v;
+  }
+  if (Math.abs(sum - 1) > 0.01) pushErr(errors, `${tag}: must sum to 1, got ${sum}`);
+}
+
+function validateOdds(v, tag, errors) {
+  if (v != null && !(typeof v === 'number' && v >= 1)) pushErr(errors, `${tag}: must be null or a number >= 1, got ${JSON.stringify(v)}`);
 }
 
 function validateMarket(m, tag, errors) {
@@ -97,6 +116,7 @@ function validateProbBoard(board, path, nameKeys, errors) {
     const tag = `${path}[${i}]`;
     if (!isObj(c)) { pushErr(errors, `${tag}: not an object`); continue; }
     for (const k of nameKeys) if (!isNonEmptyString(c[k])) pushErr(errors, `${tag}.${k}: missing or empty`);
+    validateOdds(c.oddsImplied, `${tag}.oddsImplied`, errors);
     if (typeof c.prob !== 'number' || c.prob < 0 || c.prob > 100) pushErr(errors, `${tag}.prob: must be 0-100, got ${JSON.stringify(c.prob)}`);
     else sum += c.prob;
   }
@@ -120,7 +140,25 @@ function validateMeta(list, errors) {
     const tag = `meta[${i}]`;
     if (!isObj(m)) { pushErr(errors, `${tag}: not an object`); continue; }
     if (!isNonEmptyString(m.champ)) pushErr(errors, `${tag}.champ: missing or empty`);
+    if (m.key != null && !(typeof m.key === 'string' && /^[A-Za-z]+$/.test(m.key))) pushErr(errors, `${tag}.key: must be a Data Dragon id (letters only), got ${JSON.stringify(m.key)}`);
     for (const k of ['picks', 'bans', 'presence', 'winrate']) if (typeof m[k] !== 'number') pushErr(errors, `${tag}.${k}: must be a number`);
+  }
+}
+
+function validateTeams(list, errors) {
+  if (!Array.isArray(list)) { pushErr(errors, 'teams: must be an array'); return; }
+  for (const [i, t] of list.entries()) {
+    const tag = `teams[${i}]`;
+    if (!isObj(t)) { pushErr(errors, `${tag}: not an object`); continue; }
+    if (!isNonEmptyString(t.team)) pushErr(errors, `${tag}.team: missing or empty`);
+    for (const end of ['best', 'worst']) {
+      const p = t.players?.[end];
+      if (p != null && !isNonEmptyString(p.player)) pushErr(errors, `${tag}.players.${end}.player: missing or empty`);
+      const x = t.tactics?.[end];
+      if (x == null) continue;
+      if (!TACTIC_KEYS.includes(x.key)) pushErr(errors, `${tag}.tactics.${end}.key: must be one of ${TACTIC_KEYS.join(', ')}, got ${JSON.stringify(x.key)}`);
+      if (!(typeof x.pct === 'number' && x.pct >= 0 && x.pct <= 1)) pushErr(errors, `${tag}.tactics.${end}.pct: must be in [0,1], got ${JSON.stringify(x.pct)}`);
+    }
   }
 }
 
@@ -186,5 +224,7 @@ export function validateWorldsData(data) {
   validateMeta(data.meta, errors);
   validateRecord(data.record, data.series, errors);
   validateSources(data.sources, errors);
+  if (data.teams != null) validateTeams(data.teams, errors);
+  if (data.ddragon != null && !(typeof data.ddragon === 'string' && /^\d+\.\d+\.\d+$/.test(data.ddragon))) pushErr(errors, `ddragon: must be a Data Dragon version like 16.21.1, got ${JSON.stringify(data.ddragon)}`);
   return { ok: errors.length === 0, errors };
 }
