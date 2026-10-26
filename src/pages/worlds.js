@@ -15,7 +15,6 @@ import { agreement, cardState, chooseAndReveal, fableRecord, loadPicks, needsAut
 import { createCarousel, drag, goTo, indexAt, release, step } from '../lib/worldsCarousel.js';
 import { getLocale } from '../lib/localeStore.js';
 import { championKey } from '../lib/worldsChampionKey.js';
-import { photoFor } from '../lib/worldsPlayerPhotos.js';
 
 const $ = (id) => document.getElementById(id);
 const N = STAGES.length;
@@ -577,13 +576,20 @@ function paint() {
    Stand-ins for Riot's unlicensable Beaufort / Spiegel (spec 2026-10-26 §3):
    attach the stylesheet after parse with font-display optional, so the
    first paint never waits on Google Fonts. */
-function loadDisplayFont() {
-  if (document.querySelector('link[data-worlds-font]')) return;
+const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Sans:wght@400;600&display=optional';
+const FONT_CSS_ZH = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&display=optional';
+function attachFont(key, href) {
+  if (document.querySelector(`link[data-worlds-font="${key}"]`)) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Sans:wght@400;600&family=Noto+Serif+SC:wght@600&display=optional';
-  link.dataset.worldsFont = '1';
+  link.href = href;
+  link.dataset.worldsFont = key;
   document.head.appendChild(link);
+}
+// The CJK serif is only fetched for Chinese readers (it is ~140 KB with its slice list).
+function loadDisplayFont() {
+  attachFont('latin', FONT_CSS);
+  if (lang === 'zh') attachFont('zh', FONT_CSS_ZH);
 }
 loadDisplayFont();
 
@@ -635,6 +641,7 @@ function setPanel(id, { focus = false } = {}) {
     $(key).hidden = !on;
     if (on && focus) tab.focus();
   }
+  if (panel === 'mvp') loadPhotos();
   if (location.hash.slice(1) !== panel) history.replaceState(null, '', `#${panel}`);
 }
 function wirePanels() {
@@ -693,8 +700,15 @@ function renderChampion() {
 
 const oddsHTML = (odds) => (Number.isFinite(odds) ? `<span class="odds">${odds.toFixed(2)}× <i>${T('implied', '隐含')}</i></span>` : '');
 const initials = (name) => String(name || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || '?';
+// The photo manifest only matters on the MVP panel (hidden on load), so it is
+// fetched the first time that panel opens; until then rows show initials.
+let photoFor = null;
+function loadPhotos() {
+  if (photoFor) return;
+  import('../lib/worldsPlayerPhotos.js').then((m) => { photoFor = m.photoFor; if (data) renderMvp(); });
+}
 function photoHTML(player) {
-  const ph = photoFor(player);
+  const ph = photoFor?.(player);
   return ph
     ? `<img class="mvp-ph" src="${esc(ph.src)}" alt="" width="48" height="48" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-fallback="${esc(initials(player))}">`
     : `<span class="mvp-ph ph" aria-hidden="true">${esc(initials(player))}</span>`;
@@ -771,5 +785,6 @@ load();
 setInterval(tick, 1000);
 window.addEventListener('afflatus-lang', (e) => {
   lang = e.detail || getLocale('en');
+  loadDisplayFont();
   if (data) renderAll(); else paint();
 });
