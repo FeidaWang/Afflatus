@@ -176,60 +176,76 @@
 <!-- shared-header:end -->
 <a class="w-skip" href="#hero" data-en="Skip to content" data-zh="跳至主要内容">Skip to content</a>
 <main class="w-page">
-
+<div class="w-shell">
   <section class="w-hero" id="hero" aria-labelledby="w-title">
     <p class="w-eyebrow" data-en="LEAGUE OF LEGENDS WORLD CHAMPIONSHIP · FABLE CALLS" data-zh="英雄联盟全球总决赛 · FABLE 研判">LEAGUE OF LEGENDS WORLD CHAMPIONSHIP · FABLE CALLS</p>
     <h1 id="w-title">WORLDS 2026</h1>
     <p class="w-sub" data-en="THIS IS OUR MOMENT" data-zh="风起今朝">THIS IS OUR MOMENT</p>
-    <div class="w-count">
-      <span class="w-count-l" data-en="NEXT SERIES" data-zh="下一场">NEXT SERIES</span>
-      <span id="countdown" class="w-count-v" aria-live="polite">—</span>
-    </div>
     <div class="w-badges">
       <span class="w-patch" id="patch" title="Patch">26.20</span>
       <span class="w-prov" id="prov"></span>
     </div>
-    <p class="w-note" id="gnote" data-en="Fable's pre-match calls are sealed before each kickoff. Pick your winner, flip the card, then compare. Entertainment only." data-zh="Fable 的研判在每场开赛前封存。先选你的胜方，再翻牌对照。仅供娱乐。">Fable's pre-match calls are sealed before each kickoff. Pick your winner, flip the card, then compare. Entertainment only.</p>
+    <p class="w-note" id="gnote" data-en="Fable's pre-match calls are sealed before each kickoff. Spin the deck, draw a card, pick your winner and it flips. Entertainment only." data-zh="Fable 的研判在每场开赛前封存。转动牌组、抽一张卡、选出你的胜方，卡牌即翻开。仅供娱乐。">Fable's pre-match calls are sealed before each kickoff. Spin the deck, draw a card, pick your winner and it flips. Entertainment only.</p>
   </section>
 
-  <section class="w-sec" id="scrub" aria-labelledby="scrub-title">
-    <h2 id="scrub-title" class="w-h2" data-en="STAGE" data-zh="赛段">STAGE</h2>
-    <p class="w-help" data-en="Drag the window, pinch or scroll to widen it, arrow keys to move. One stage shows the cards, two or three show mid cards, four or more show the compact tree." data-zh="拖动窗口，捏合或滚轮调宽度，方向键平移。一格显示整张牌面，两到三格显示中卡，四格以上显示紧凑树。">Drag the window, pinch or scroll to widen it, arrow keys to move. One stage shows the cards, two or three show mid cards, four or more show the compact tree.</p>
-    <div id="scrubHost" class="scrub"></div>
-  </section>
-
-  <section class="w-sec" id="cards" aria-labelledby="cards-title">
-    <div class="w-sec-h">
-      <h2 id="cards-title" class="w-h2" data-en="PICK · THEN FLIP" data-zh="先选边 · 再翻牌">PICK · THEN FLIP</h2>
-      <button type="button" id="openPack" class="w-btn" data-en="Open the pack" data-zh="开整包">Open the pack</button>
+  <aside class="w-side stitch" aria-label="Worlds 2026" data-aria-en="Worlds 2026" data-aria-zh="全球总决赛 2026">
+    <p class="w-side-brand" aria-hidden="true">WORLDS 26</p>
+    <div class="w-nav" role="tablist" aria-label="Panels" data-aria-en="Panels" data-aria-zh="面板">
+        <button type="button" role="tab" id="tab-cards" class="w-tab" aria-controls="cards" aria-selected="true" tabindex="0" data-panel="cards" data-en="CARDS" data-zh="抽卡">CARDS</button>
+        <button type="button" role="tab" id="tab-odds" class="w-tab" aria-controls="odds" aria-selected="false" tabindex="-1" data-panel="odds" data-en="CHAMPION ODDS" data-zh="夺冠概率">CHAMPION ODDS</button>
+        <button type="button" role="tab" id="tab-mvp" class="w-tab" aria-controls="mvp" aria-selected="false" tabindex="-1" data-panel="mvp" data-en="FINALS MVP" data-zh="决赛 MVP">FINALS MVP</button>
+        <button type="button" role="tab" id="tab-swiss" class="w-tab" aria-controls="swiss" aria-selected="false" tabindex="-1" data-panel="swiss" data-en="SWISS" data-zh="瑞士轮">SWISS</button>
+        <button type="button" role="tab" id="tab-meta" class="w-tab" aria-controls="meta" aria-selected="false" tabindex="-1" data-panel="meta" data-en="META" data-zh="META">META</button>
     </div>
-    <div id="cardsView" class="cardsView" aria-live="polite"></div>
+    <div class="zip" aria-hidden="true"></div>
+    <div class="w-mini" id="mini">
+      <div class="mk"><span class="mk-l" data-en="NEXT SERIES" data-zh="下一场">NEXT SERIES</span><span id="countdown" class="mk-v">—</span></div>
+      <div class="mk"><span class="mk-l" data-en="YOU vs FABLE" data-zh="你 vs Fable">YOU vs FABLE</span><span id="miniRec" class="mk-v">—</span></div>
+      <div class="mk mk-top"><span class="mk-l" data-en="TITLE ODDS" data-zh="夺冠赔率">TITLE ODDS</span><ol id="miniTop" class="mk-list"></ol></div>
+    </div>
+  </aside>
+
+  <div class="w-panels">
+  <section class="w-panel" id="cards" role="tabpanel" aria-labelledby="tab-cards">
+    <section class="w-sec" id="s-scrub" aria-labelledby="scrub-title">
+      <h2 id="scrub-title" class="w-h2" data-en="STAGE" data-zh="赛段">STAGE</h2>
+      <p class="w-help" data-en="Drag the window, pinch or scroll to widen it, arrow keys to move. One stage shows the card deck, two or three show mid cards, four or more show the compact tree." data-zh="拖动窗口，捏合或滚轮调宽度，方向键平移。一格显示牌组转盘，两到三格显示中卡，四格以上显示紧凑树。">Drag the window, pinch or scroll to widen it, arrow keys to move. One stage shows the card deck, two or three show mid cards, four or more show the compact tree.</p>
+      <div id="scrubHost" class="scrub"></div>
+    </section>
+
+    <section class="w-sec" id="s-draw" aria-labelledby="cards-title">
+      <div class="w-sec-h">
+        <h2 id="cards-title" class="w-h2" data-en="SPIN · DRAW · PICK" data-zh="转动 · 抽卡 · 选边">SPIN · DRAW · PICK</h2>
+        <button type="button" id="openPack" class="w-btn" data-en="Open the pack" data-zh="开整包">Open the pack</button>
+      </div>
+      <div id="cardsView" class="cardsView" aria-live="polite"></div>
+    </section>
+
+    <section class="w-sec" id="s-record" aria-labelledby="record-title">
+      <h2 id="record-title" class="w-h2" data-en="YOU vs FABLE" data-zh="你 vs Fable">YOU vs FABLE</h2>
+      <div id="recordCols" class="rec2"></div>
+      <div id="recordLog" class="rec-widget"></div>
+    </section>
   </section>
 
-  <section class="w-sec" id="record" aria-labelledby="record-title">
-    <h2 id="record-title" class="w-h2" data-en="YOU vs FABLE" data-zh="你 vs Fable">YOU vs FABLE</h2>
-    <div id="recordCols" class="rec2"></div>
-    <div id="recordLog" class="rec-widget"></div>
-  </section>
-
-  <section class="w-sec" id="champion" aria-labelledby="champion-title">
-    <h2 id="champion-title" class="w-h2" data-en="CHAMPION ODDS" data-zh="夺冠概率">CHAMPION ODDS</h2>
-    <p class="w-help" data-en="Fable's Monte Carlo probability per team, market average in small print, and each team's Fearless Draft pool so far." data-zh="Fable 对每队的蒙特卡洛夺冠概率，小字为市场均价，并附各队本届已用的无畏征召英雄池。">Fable's Monte Carlo probability per team, market average in small print, and each team's Fearless Draft pool so far.</p>
+  <section class="w-panel" id="odds" role="tabpanel" aria-labelledby="tab-odds" hidden>
+    <h2 class="w-h2" data-en="CHAMPION ODDS" data-zh="夺冠概率">CHAMPION ODDS</h2>
+    <p class="w-help" data-en="Fable's Monte Carlo probability and implied odds per team, market average in small print, and each team's Fearless Draft pool so far." data-zh="Fable 对每队的蒙特卡洛夺冠概率与隐含赔率，小字为市场均价，并附各队本届已用的无畏征召英雄池。">Fable's Monte Carlo probability and implied odds per team, market average in small print, and each team's Fearless Draft pool so far.</p>
     <div id="championList" class="plist"></div>
   </section>
 
-  <section class="w-sec" id="mvp" aria-labelledby="mvp-title">
-    <h2 id="mvp-title" class="w-h2" data-en="FINALS MVP" data-zh="决赛 MVP">FINALS MVP</h2>
+  <section class="w-panel" id="mvp" role="tabpanel" aria-labelledby="tab-mvp" hidden>
+    <h2 class="w-h2" data-en="FINALS MVP" data-zh="决赛 MVP">FINALS MVP</h2>
     <div id="mvpList" class="plist"></div>
   </section>
 
-  <section class="w-sec" id="swiss" aria-labelledby="swiss-title">
-    <h2 id="swiss-title" class="w-h2" data-en="SWISS STANDINGS" data-zh="瑞士轮积分">SWISS STANDINGS</h2>
+  <section class="w-panel" id="swiss" role="tabpanel" aria-labelledby="tab-swiss" hidden>
+    <h2 class="w-h2" data-en="SWISS STANDINGS" data-zh="瑞士轮积分">SWISS STANDINGS</h2>
     <div id="swissGroups" class="swiss"></div>
   </section>
 
-  <section class="w-sec" id="meta" aria-labelledby="meta-title">
-    <h2 id="meta-title" class="w-h2" data-en="PATCH 26.20 META" data-zh="26.20 实战 META">PATCH 26.20 META</h2>
+  <section class="w-panel" id="meta" role="tabpanel" aria-labelledby="tab-meta" hidden>
+    <h2 class="w-h2" data-en="PATCH 26.20 META" data-zh="26.20 实战 META">PATCH 26.20 META</h2>
     <div class="tscroll"><table class="meta" id="metaTable">
       <thead><tr>
         <th scope="col" data-en="Champion" data-zh="英雄">Champion</th>
@@ -241,7 +257,8 @@
       <tbody id="metaBody"></tbody>
     </table></div>
   </section>
-
+  </div>
+</div>
   <footer class="w-foot">
     <p data-en="For entertainment only. Nothing here is betting advice. “market” figures are public prediction-market prices (Polymarket, Kalshi), not bookmaker odds." data-zh="仅供娱乐，不构成任何博彩建议。「market」为预测市场（Polymarket、Kalshi）的公开价格，并非博彩商盘口。">For entertainment only. Nothing here is betting advice. “market” figures are public prediction-market prices (Polymarket, Kalshi), not bookmaker odds.</p>
     <p data-en="AFFLATUS Worlds 2026 was created under Riot Games' “Legal Jibber Jabber” policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project. Team logos, champion art and player photos © Riot Games; player photos via Leaguepedia." data-zh="AFFLATUS Worlds 2026 依据 Riot Games「Legal Jibber Jabber」政策制作，使用了 Riot Games 拥有的素材。Riot Games 未认可或赞助本项目。队徽、英雄头像与选手照片 © Riot Games；选手照片取自 Leaguepedia。">AFFLATUS Worlds 2026 was created under Riot Games' “Legal Jibber Jabber” policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project. Team logos, champion art and player photos © Riot Games; player photos via Leaguepedia.</p>

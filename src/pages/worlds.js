@@ -389,9 +389,47 @@ function tick() {
   });
 }
 
+/* ---------- panels (layout A, spec 2026-10-26 §4) ---------- */
+const PANELS = ['cards', 'odds', 'mvp', 'swiss', 'meta'];
+function setPanel(id, { focus = false } = {}) {
+  const panel = PANELS.includes(id) ? id : 'cards';
+  for (const key of PANELS) {
+    const tab = $(`tab-${key}`);
+    const on = key === panel;
+    tab.setAttribute('aria-selected', String(on));
+    tab.tabIndex = on ? 0 : -1;
+    $(key).hidden = !on;
+    if (on && focus) tab.focus();
+  }
+  if (location.hash.slice(1) !== panel) history.replaceState(null, '', `#${panel}`);
+}
+function wirePanels() {
+  const nav = document.querySelector('.w-nav');
+  nav.addEventListener('click', (e) => { const tab = e.target.closest('[role="tab"]'); if (tab) setPanel(tab.dataset.panel); });
+  nav.addEventListener('keydown', (e) => {
+    const i = PANELS.indexOf(document.activeElement?.dataset?.panel);
+    if (i < 0) return;
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (step) { setPanel(PANELS[(i + step + PANELS.length) % PANELS.length], { focus: true }); e.preventDefault(); }
+    else if (e.key === 'Home' || e.key === 'End') { setPanel(PANELS[e.key === 'Home' ? 0 : PANELS.length - 1], { focus: true }); e.preventDefault(); }
+  });
+  window.addEventListener('hashchange', () => setPanel(location.hash.slice(1)));
+  if (location.hash) setPanel(location.hash.slice(1));
+}
+
+function renderMini() {
+  if (!data) return;
+  const you = userRecord(data.series, picks);
+  const fab = fableRecord(data.series);
+  $('miniRec').textContent = `${you.hits}/${you.judged} · ${fab.hits}/${fab.judged}`;
+  const top = (data.champion || []).slice().sort((a, b) => b.prob - a.prob).slice(0, 3);
+  $('miniTop').innerHTML = top.map((c) => `<li><span>${esc(c.team)}</span><span>${pct1(c.prob)}${Number.isFinite(c.oddsImplied) ? ` · <b>${c.oddsImplied.toFixed(2)}×</b>` : ''}</span></li>`).join('');
+}
+
 /* ---------- record / champion / mvp / swiss / meta ---------- */
 function renderRecord() {
   if (!data) return;
+  renderMini();
   const you = userRecord(data.series, picks);
   const fab = fableRecord(data.series);
   const brier = Number.isFinite(data.record?.brier) ? data.record.brier : fab.brier;
@@ -453,6 +491,7 @@ function renderAll() {
   renderMvp();
   renderSwiss();
   renderMeta();
+  renderMini();
   tick();
 }
 
@@ -471,6 +510,7 @@ async function load() {
 }
 
 buildScrub();
+wirePanels();
 wireCards();
 paint();
 load();
