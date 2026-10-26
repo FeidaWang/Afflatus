@@ -190,6 +190,7 @@ export function parsePlayerTable(html) {
   const iKda = col('kda');
   const iKp = col('kp%', 'kp');
   const iDpm = col('dpm');
+  const iGd15 = col('gd@15');
   const cell = (cells, i) => (i >= 0 ? text(cells[i]) : null);
   return table.rows.map((cells) => ({
     player: cell(cells, iPlayer),
@@ -199,7 +200,30 @@ export function parsePlayerTable(html) {
     kda: iKda >= 0 ? number(cell(cells, iKda)) : null,
     kp: iKp >= 0 ? number(cell(cells, iKp)) : null,
     dpm: iDpm >= 0 ? number(cell(cells, iDpm)) : null,
+    gd15: iGd15 >= 0 ? number(cell(cells, iGd15)) : null,
   }));
+}
+
+const TACTIC_COLUMNS = { 'gd@15': 'GD@15', 'fb%': 'FB%', 'ft%': 'FT%', 'dra%': 'DRA%', vgpg: 'VGPG', 'nash%': 'NASH%' };
+
+// gol.gg tournament team list → [{ team, values: { [TACTIC_KEY]: { raw, display } } }].
+// The live page has one more <th> (WC%) than each row has cells, so rows are
+// read positionally instead of through statsTable's equal-length filter.
+export function parseTeamTable(html) {
+  const match = [...html.matchAll(/<table\b[^>]*>([\s\S]*?)<\/table>/g)].find((m) => /GD@15/.test(m[1]));
+  if (!match) return [];
+  const headers = matchAll(match[1], /<th\b[^>]*>([\s\S]*?)<\/th>/g).map((h) => text(h).toLowerCase());
+  const table = { headers, rows: tableRows(match[1]).map(rowCells).filter((cells) => cells.length >= headers.indexOf('gd@15') + 1) };
+  const iName = table.headers.indexOf('name');
+  return table.rows.map((cells) => ({
+    team: teamCode(text(cells[iName])),
+    values: Object.fromEntries(Object.entries(TACTIC_COLUMNS)
+      .filter(([header]) => table.headers.includes(header))
+      .map(([header, key]) => {
+        const display = text(cells[table.headers.indexOf(header)]);
+        return [key, { raw: number(display), display }];
+      })),
+  })).filter((row) => row.team);
 }
 
 // ---------------------------------------------------------------------------
@@ -327,4 +351,26 @@ export const GOLGG = {
   players: (tournament) =>
     `https://gol.gg/players/list/season-S16/split-ALL/tournament-${encodeURIComponent(tournament)}/`,
   team: (id) => `https://gol.gg/teams/team-stats/${id}/split-ALL/tournament-ALL/`,
+  teams: (tournament) =>
+    `https://gol.gg/teams/list/season-S16/split-ALL/tournament-${encodeURIComponent(tournament)}/`,
 };
+
+// ---------------------------------------------------------------------------
+// Riot Data Dragon
+
+export { championKey } from '../../src/lib/worldsChampionKey.js';
+
+export const DDRAGON = {
+  versions: 'https://ddragon.leagueoflegends.com/api/versions.json',
+  champions: (version) => `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`,
+};
+
+// champion.json → Map of display name and id → Data Dragon id.
+export function championKeyMap(json) {
+  const map = new Map();
+  for (const c of Object.values(json?.data || {})) {
+    map.set(c.name, c.id);
+    map.set(c.id, c.id);
+  }
+  return map;
+}
