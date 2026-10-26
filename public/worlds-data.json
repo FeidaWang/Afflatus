@@ -1,12 +1,12 @@
 {
   "tournament": "Worlds 2026",
-  "updated": "2026-10-25",
-  "version": 1,
+  "updated": "2026-10-26",
+  "version": 2,
   "mode": "live",
   "patch": "26.20",
-  "decidedAt": "2026-10-25T12:57:42.250Z",
-  "note_en": "Fable pre-match calls for Worlds 2026, sealed before each kickoff. Numbers come from code (Elo + prediction-market blend + Fearless Draft depth); the model only adds bounded adjustments and explanations. Entertainment only, not betting advice.",
-  "note_zh": "Fable 对 Worlds 2026 每场系列赛的赛前研判，开赛前封存。数字由代码计算（Elo + 预测市场融合 + 无畏征召英雄池深度），模型只做有界修正与解释。仅供娱乐，不构成博彩建议。",
+  "decidedAt": "2026-10-26T10:28:10.831Z",
+  "note_en": "Round 3 continues with two 0-2 elimination Bo3s and two 1-1 Bo1s. TES and IG moved to 2-1. GEN–LYON and DK–MKOI were still in progress when this was built. The model is 1/1 on settled calls (TES 1-0 G2, exact). For entertainment only.",
+  "note_zh": "第三轮继续：两场 0-2 淘汰 Bo3 与两场 1-1 Bo1。TES、IG 升至 2-1。GEN–LYON、DK–MKOI 在数据生成时仍在进行。已结算预测 1/1 命中（TES 1-0 G2，比分精确）。仅供娱乐。",
   "archiveSource": {
     "label_en": "gol.gg Worlds 2026 schedule",
     "label_zh": "gol.gg Worlds 2026 赛程",
@@ -56,6 +56,18 @@
       "status": "active"
     },
     {
+      "team": "IG",
+      "w": 2,
+      "l": 1,
+      "status": "active"
+    },
+    {
+      "team": "TES",
+      "w": 2,
+      "l": 1,
+      "status": "active"
+    },
+    {
       "team": "BLG",
       "w": 1,
       "l": 1,
@@ -63,24 +75,6 @@
     },
     {
       "team": "CFO",
-      "w": 1,
-      "l": 1,
-      "status": "active"
-    },
-    {
-      "team": "G2",
-      "w": 1,
-      "l": 1,
-      "status": "active"
-    },
-    {
-      "team": "HLE",
-      "w": 1,
-      "l": 1,
-      "status": "active"
-    },
-    {
-      "team": "IG",
       "w": 1,
       "l": 1,
       "status": "active"
@@ -98,9 +92,15 @@
       "status": "active"
     },
     {
-      "team": "TES",
+      "team": "G2",
       "w": 1,
-      "l": 1,
+      "l": 2,
+      "status": "active"
+    },
+    {
+      "team": "HLE",
+      "w": 1,
+      "l": 2,
       "status": "active"
     },
     {
@@ -135,7 +135,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "MKOI",
       "away": "BLG",
       "pick": null,
@@ -155,7 +154,7 @@
           "Ambessa"
         ],
         "depth": [
-          30,
+          32,
           30
         ],
         "delta": 0
@@ -213,7 +212,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LYON",
       "away": "TSW",
       "pick": null,
@@ -233,7 +231,7 @@
           "Rumble"
         ],
         "depth": [
-          30,
+          35,
           30
         ],
         "delta": 0
@@ -291,7 +289,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LOS",
       "away": "T1",
       "pick": null,
@@ -369,7 +366,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "TES",
       "away": "HLE",
       "pick": null,
@@ -389,8 +385,8 @@
           "Ambessa"
         ],
         "depth": [
-          30,
-          28
+          32,
+          33
         ],
         "delta": 0
       },
@@ -447,7 +443,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "DK",
       "away": "G2",
       "pick": null,
@@ -467,8 +462,8 @@
           "KSante"
         ],
         "depth": [
-          30,
-          29
+          35,
+          32
         ],
         "delta": 0
       },
@@ -525,7 +520,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "KC",
       "away": "AL",
       "pick": null,
@@ -603,7 +597,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "TL",
       "away": "CFO",
       "pick": null,
@@ -681,7 +674,6 @@
       "round": 1,
       "bo": 1,
       "kickoff": "2026-10-23T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "IG",
       "away": "GEN",
       "pick": null,
@@ -701,8 +693,8 @@
           "Nautilus"
         ],
         "depth": [
-          30,
-          29
+          34,
+          32
         ],
         "delta": 0
       },
@@ -759,7 +751,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "TL",
       "away": "BLG",
       "pick": null,
@@ -837,7 +828,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "DK",
       "away": "T1",
       "pick": null,
@@ -857,7 +847,7 @@
           "Jayce"
         ],
         "depth": [
-          30,
+          35,
           29
         ],
         "delta": 0
@@ -915,7 +905,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "HLE",
       "away": "GEN",
       "pick": null,
@@ -935,8 +924,8 @@
           "Leona"
         ],
         "depth": [
-          28,
-          29
+          33,
+          32
         ],
         "delta": 0
       },
@@ -993,7 +982,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "TSW",
       "away": "IG",
       "pick": null,
@@ -1014,7 +1002,7 @@
         ],
         "depth": [
           30,
-          30
+          34
         ],
         "delta": 0
       },
@@ -1071,7 +1059,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "KC",
       "away": "LYON",
       "pick": null,
@@ -1092,7 +1079,7 @@
         ],
         "depth": [
           28,
-          30
+          35
         ],
         "delta": 0
       },
@@ -1149,7 +1136,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LOS",
       "away": "G2",
       "pick": null,
@@ -1170,7 +1156,7 @@
         ],
         "depth": [
           30,
-          29
+          32
         ],
         "delta": 0
       },
@@ -1227,7 +1213,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "MKOI",
       "away": "CFO",
       "pick": null,
@@ -1247,7 +1232,7 @@
           "Tristana"
         ],
         "depth": [
-          30,
+          32,
           30
         ],
         "delta": 0
@@ -1305,7 +1290,6 @@
       "round": 2,
       "bo": 1,
       "kickoff": "2026-10-24T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "TES",
       "away": "AL",
       "pick": null,
@@ -1325,7 +1309,7 @@
           "Milio"
         ],
         "depth": [
-          30,
+          32,
           30
         ],
         "delta": 0
@@ -1378,44 +1362,35 @@
       "factors_zh": []
     },
     {
-      "id": "r3-gen-lyon",
+      "id": "r3-lyon-gen",
       "stage": "swiss",
       "round": 3,
       "bo": 3,
-      "kickoff": "2026-10-25T22:00:00.000Z",
-      "home": "GEN",
-      "away": "LYON",
-      "pick": {
-        "side": "home",
-        "pWin": [
-          0.875,
-          0.125
-        ],
-        "score": "2-0",
-        "pScore": 0.61,
-        "oddsImplied": [
-          1.14,
-          8.03
-        ],
-        "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
-      },
-      "missed": false,
-      "market": {
-        "pWin": [
-          0.905,
-          0.095
-        ],
-        "src": "polymarket",
-        "liquidity": 445387
-      },
+      "kickoff": "2026-10-25T17:00:00.000Z",
+      "kickoffEstimated": true,
+      "home": "LYON",
+      "away": "GEN",
+      "pick": null,
+      "missed": true,
+      "market": null,
       "fearless": {
-        "consumed": [],
-        "depth": [
-          29,
-          30
+        "consumed": [
+          "Kalista",
+          "Renata Glasc",
+          "Olaf",
+          "Xin Zhao",
+          "Ahri",
+          "Qiyana",
+          "Jhin",
+          "Alistar",
+          "Anivia",
+          "Rumble"
         ],
-        "delta": -0.01
+        "depth": [
+          35,
+          32
+        ],
+        "delta": 0.03
       },
       "result": null,
       "reason_en": "",
@@ -1424,44 +1399,35 @@
       "factors_zh": []
     },
     {
-      "id": "r3-dk-mkoi",
+      "id": "r3-mkoi-dk",
       "stage": "swiss",
       "round": 3,
       "bo": 3,
-      "kickoff": "2026-10-25T19:00:00.000Z",
-      "home": "DK",
-      "away": "MKOI",
-      "pick": {
-        "side": "home",
-        "pWin": [
-          0.743,
-          0.257
-        ],
-        "score": "2-0",
-        "pScore": 0.446,
-        "oddsImplied": [
-          1.35,
-          3.88
-        ],
-        "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
-      },
-      "missed": false,
-      "market": {
-        "pWin": [
-          0.785,
-          0.215
-        ],
-        "src": "polymarket",
-        "liquidity": 490853
-      },
+      "kickoff": "2026-10-25T17:00:00.000Z",
+      "kickoffEstimated": true,
+      "home": "MKOI",
+      "away": "DK",
+      "pick": null,
+      "missed": true,
+      "market": null,
       "fearless": {
-        "consumed": [],
-        "depth": [
-          30,
-          30
+        "consumed": [
+          "Ezreal",
+          "Karma",
+          "Anivia",
+          "Jayce",
+          "Trundle",
+          "Cassiopeia",
+          "Lee Sin",
+          "Nautilus",
+          "Ornn",
+          "Kaisa"
         ],
-        "delta": 0
+        "depth": [
+          32,
+          35
+        ],
+        "delta": -0.03
       },
       "result": null,
       "reason_en": "",
@@ -1493,69 +1459,146 @@
         "decidedAt": "2026-10-25T12:57:42.250Z"
       },
       "missed": false,
-      "market": {
-        "pWin": [
-          0.475,
-          0.525
-        ],
-        "src": "polymarket",
-        "liquidity": 555756
-      },
+      "market": null,
       "fearless": {
-        "consumed": [],
+        "consumed": [
+          "Nocturne",
+          "Orianna",
+          "Nautilus",
+          "Varus",
+          "Ambessa",
+          "Ezreal",
+          "Karma",
+          "Akali",
+          "Wukong",
+          "Shen"
+        ],
         "depth": [
-          30,
-          29
+          32,
+          32
         ],
         "delta": 0
       },
-      "result": null,
+      "result": {
+        "home": 1,
+        "away": 0,
+        "games": [
+          {
+            "gameId": "83655",
+            "winner": "home",
+            "picks": {
+              "home": [
+                "Nocturne",
+                "Orianna",
+                "Nautilus",
+                "Varus",
+                "Ambessa"
+              ],
+              "away": [
+                "Ezreal",
+                "Karma",
+                "Akali",
+                "Wukong",
+                "Shen"
+              ]
+            },
+            "players": {
+              "home": [
+                "369",
+                "Tian",
+                "Creme",
+                "JackeyLove",
+                "Zhuo"
+              ],
+              "away": [
+                "BrokenBlade",
+                "SkewMond",
+                "Caps",
+                "Hans Sama",
+                "Labrov"
+              ]
+            }
+          }
+        ]
+      },
       "reason_en": "",
       "reason_zh": "",
       "factors_en": [],
       "factors_zh": []
     },
     {
-      "id": "r3-hle-ig",
+      "id": "r3-ig-hle",
       "stage": "swiss",
       "round": 3,
       "bo": 1,
       "kickoff": "2026-10-25T17:00:00.000Z",
-      "home": "HLE",
-      "away": "IG",
-      "pick": {
-        "side": "home",
-        "pWin": [
-          0.665,
-          0.335
-        ],
-        "score": "1-0",
-        "pScore": 0.665,
-        "oddsImplied": [
-          1.5,
-          2.99
-        ],
-        "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
-      },
-      "missed": false,
-      "market": {
-        "pWin": [
-          0.725,
-          0.275
-        ],
-        "src": "polymarket",
-        "liquidity": 420553
-      },
+      "kickoffEstimated": true,
+      "home": "IG",
+      "away": "HLE",
+      "pick": null,
+      "missed": true,
+      "market": null,
       "fearless": {
-        "consumed": [],
+        "consumed": [
+          "Yunara",
+          "Lulu",
+          "Nocturne",
+          "Annie",
+          "Kled",
+          "Qiyana",
+          "Kalista",
+          "Renata Glasc",
+          "Olaf",
+          "Lissandra"
+        ],
         "depth": [
-          28,
-          30
+          34,
+          33
         ],
         "delta": 0
       },
-      "result": null,
+      "result": {
+        "home": 1,
+        "away": 0,
+        "games": [
+          {
+            "gameId": "83654",
+            "winner": "home",
+            "picks": {
+              "home": [
+                "Yunara",
+                "Lulu",
+                "Nocturne",
+                "Annie",
+                "Kled"
+              ],
+              "away": [
+                "Qiyana",
+                "Kalista",
+                "Renata Glasc",
+                "Olaf",
+                "Lissandra"
+              ]
+            },
+            "players": {
+              "home": [
+                "TheShy",
+                "Wei",
+                "RooKie",
+                "JiaQi",
+                "meiko"
+              ],
+              "away": [
+                "Zeus",
+                "Kanavi",
+                "Zeka",
+                "Gumayusi",
+                "Delight"
+              ]
+            }
+          }
+        ]
+      },
       "reason_en": "",
       "reason_zh": "",
       "factors_en": [],
@@ -1572,26 +1615,26 @@
       "pick": {
         "side": "away",
         "pWin": [
-          0.348,
-          0.652
+          0.329,
+          0.671
         ],
         "score": "0-2",
-        "pScore": 0.363,
+        "pScore": 0.379,
         "oddsImplied": [
-          2.87,
-          1.53
+          3.04,
+          1.49
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
+        "decidedAt": "2026-10-26T10:28:10.831Z"
       },
       "missed": false,
       "market": {
         "pWin": [
-          0.305,
-          0.695
+          0.275,
+          0.725
         ],
         "src": "polymarket",
-        "liquidity": 83429
+        "liquidity": 468116
       },
       "fearless": {
         "consumed": [],
@@ -1602,10 +1645,18 @@
         "delta": 0
       },
       "result": null,
-      "reason_en": "",
-      "reason_zh": "",
-      "factors_en": [],
-      "factors_zh": []
+      "reason_en": "Elimination Bo3 between two 0-2 sides. The model and Polymarket (72.5%) both favour AL; no roster news changes the read.",
+      "reason_zh": "两支 0-2 队伍的淘汰 Bo3。模型与 Polymarket（72.5%）都看好 AL，暂无影响判断的阵容消息。",
+      "factors_en": [
+        "Fearless: both pools sit at depth 30; AL's Nocturne (89% presence, 78% win rate) will likely be banned or burned early.",
+        "Market prices AL at 72.5% versus the model's 67.1%, so the blend leans away from TL.",
+        "Both teams are 0-2, so the loser is out of Worlds."
+      ],
+      "factors_zh": [
+        "无畏征召：双方英雄池深度均为 30；AL 的梦魇登场率 89%、胜率 78%，大概率被早禁或早用。",
+        "市场给 AL 72.5%，高于模型 67.1%，融合后更偏离 TL。",
+        "双方均 0-2，败者直接出局。"
+      ]
     },
     {
       "id": "r3-los-tsw",
@@ -1628,7 +1679,7 @@
           1.59
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
+        "decidedAt": "2026-10-26T10:28:10.831Z"
       },
       "missed": false,
       "market": {
@@ -1637,7 +1688,7 @@
           0.655
         ],
         "src": "polymarket",
-        "liquidity": 64301
+        "liquidity": 247306
       },
       "fearless": {
         "consumed": [],
@@ -1648,17 +1699,25 @@
         "delta": 0
       },
       "result": null,
-      "reason_en": "",
-      "reason_zh": "",
-      "factors_en": [],
-      "factors_zh": []
+      "reason_en": "Another 0-2 elimination Bo3. TSW is favoured at 63% (market 65.5%), with a 0-2 sweep the single most likely scoreline.",
+      "reason_zh": "又一场 0-2 淘汰 Bo3。TSW 胜率 63%（市场 65.5%），最可能比分为 0-2。",
+      "factors_en": [
+        "Fearless: TSW has shown Ezreal, Qiyana and Rumble, all top-12 meta picks, giving it more flex options in games 2-3.",
+        "LOS's played pool leans on Syndra, Nocturne and Orianna, which are heavily contested and often banned.",
+        "The market (65.5%) and the model (63%) agree within three points."
+      ],
+      "factors_zh": [
+        "无畏征召：TSW 已用过伊泽瑞尔、奇亚娜、兰博等 meta 前 12 英雄，第二、三局可选面更宽。",
+        "LOS 已用英雄集中在辛德拉、梦魇、奥莉安娜，均为高争夺、常被禁用的位置。",
+        "市场 65.5% 与模型 63% 相差不足 3 个百分点。"
+      ]
     },
     {
       "id": "r3-t1-cfo",
       "stage": "swiss",
       "round": 3,
       "bo": 1,
-      "kickoff": "2026-10-26T18:00:00.000Z",
+      "kickoff": "2026-10-26T17:00:00.000Z",
       "home": "T1",
       "away": "CFO",
       "pick": {
@@ -1674,7 +1733,7 @@
           4.11
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
+        "decidedAt": "2026-10-26T10:28:10.831Z"
       },
       "missed": false,
       "market": {
@@ -1683,7 +1742,7 @@
           0.115
         ],
         "src": "polymarket",
-        "liquidity": 198296
+        "liquidity": 606960
       },
       "fearless": {
         "consumed": [],
@@ -1694,17 +1753,25 @@
         "delta": 0
       },
       "result": null,
-      "reason_en": "",
-      "reason_zh": "",
-      "factors_en": [],
-      "factors_zh": []
+      "reason_en": "Bo1 at 1-1. The model has T1 at 75.6%; the market is more confident at 88.5%. One game means high variance.",
+      "reason_zh": "1-1 组的 Bo1。模型给 T1 75.6%，市场更乐观（88.5%）。单局定胜负，波动大。",
+      "factors_en": [
+        "Fearless: in a Bo1 nothing carries over, so T1's depth of 29 versus CFO's 30 matters little; only bans shape the draft.",
+        "Vi, which T1 has played, has 91% presence but a 25% win rate. Whether T1 picks it again is a draft tell.",
+        "Market and model differ by 13 points, the widest gap among today's open series."
+      ],
+      "factors_zh": [
+        "无畏征召：Bo1 不存在跨局消耗，T1 深度 29 与 CFO 30 差异不大，仅禁用影响选人。",
+        "T1 用过的蔚登场率 91% 但胜率仅 25%，是否再拿是征召看点。",
+        "市场与模型相差 13 个百分点，为今日未开赛场次中分歧最大。"
+      ]
     },
     {
       "id": "r3-kc-blg",
       "stage": "swiss",
       "round": 3,
       "bo": 1,
-      "kickoff": "2026-10-26T17:00:00.000Z",
+      "kickoff": "2026-10-26T18:00:00.000Z",
       "home": "KC",
       "away": "BLG",
       "pick": {
@@ -1720,7 +1787,7 @@
           1.4
         ],
         "adj": 0,
-        "decidedAt": "2026-10-25T12:57:42.250Z"
+        "decidedAt": "2026-10-26T10:28:10.831Z"
       },
       "missed": false,
       "market": {
@@ -1729,7 +1796,7 @@
           0.705
         ],
         "src": "polymarket",
-        "liquidity": 133983
+        "liquidity": 780798
       },
       "fearless": {
         "consumed": [],
@@ -1740,86 +1807,87 @@
         "delta": 0
       },
       "result": null,
-      "reason_en": "",
-      "reason_zh": "",
-      "factors_en": [],
-      "factors_zh": []
+      "reason_en": "Bo1 at 1-1. BLG is favoured at 71.7%, and the market (70.5%) almost exactly agrees.",
+      "reason_zh": "1-1 组的 Bo1。BLG 胜率 71.7%，市场 70.5%，几乎一致。",
+      "factors_en": [
+        "Fearless: KC has the shallowest pool at the event (depth 28) and leans on Kalista/Renata and Cassiopeia.",
+        "BLG's played pool (Akali, Orianna, Lee Sin, Nautilus) overlaps with high-presence meta picks.",
+        "Model and market are within 1.2 points, so the line is stable."
+      ],
+      "factors_zh": [
+        "无畏征召：KC 英雄池深度 28，全场最浅，依赖卡莉丝塔/芮娜塔与卡西奥佩娅。",
+        "BLG 已用阿卡丽、奥莉安娜、李青、诺提勒斯，与高登场率 meta 重合。",
+        "模型与市场相差仅 1.2 个百分点，盘面稳定。"
+      ]
     }
   ],
   "champion": [
     {
       "team": "GEN",
-      "prob": 44.8,
-      "market": 34.9,
-      "reason_en": "",
-      "reason_zh": ""
+      "prob": 46.2,
+      "market": 37.7,
+      "reason_en": "2-0 in Swiss and in its Round 3 Bo3 against LYON at build time; the model (46.2%) is above the market (37.7%).",
+      "reason_zh": "瑞士轮 2-0，生成数据时正与 LYON 进行第三轮 Bo3；模型 46.2% 高于市场 37.7%。"
     },
     {
       "team": "BLG",
-      "prob": 17.5,
-      "market": 11.2,
+      "prob": 16.1,
+      "market": 11,
+      "reason_en": "1-1 with a Bo1 against KC next; the model gives 16.1% versus the market's 11%.",
+      "reason_zh": "1-1，下一场 Bo1 对 KC；模型 16.1%，市场 11%。"
+    },
+    {
+      "team": "TES",
+      "prob": 12.5,
+      "market": 1.3,
+      "reason_en": "Beat G2 1-0 to reach 2-1; the model's 12.5% is far above the market's 1.3%, a gap worth noting.",
+      "reason_zh": "1-0 击败 G2 升至 2-1；模型 12.5% 远高于市场 1.3%，分歧值得关注。"
+    },
+    {
+      "team": "DK",
+      "prob": 11.9,
+      "market": 12.1,
+      "reason_en": "2-0 with the deepest Fearless pool (35); model 11.9% and market 12.1% nearly agree.",
+      "reason_zh": "2-0，无畏征召英雄池最深（35）；模型 11.9% 与市场 12.1% 几乎一致。"
+    },
+    {
+      "team": "IG",
+      "prob": 5.4,
+      "market": 4.4,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "HLE",
-      "prob": 10.1,
-      "market": 15.8,
-      "reason_en": "",
-      "reason_zh": ""
-    },
-    {
-      "team": "DK",
-      "prob": 9.4,
-      "market": 12.2,
-      "reason_en": "",
-      "reason_zh": ""
-    },
-    {
-      "team": "TES",
-      "prob": 7.9,
-      "market": 1.2,
-      "reason_en": "",
-      "reason_zh": ""
-    },
-    {
-      "team": "IG",
-      "prob": 2.8,
-      "market": 1.7,
+      "prob": 2.7,
+      "market": 10,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "T1",
-      "prob": 2.7,
-      "market": 14.9,
-      "reason_en": "",
-      "reason_zh": ""
+      "prob": 2.6,
+      "market": 16.2,
+      "reason_en": "1-1; the model has only 2.6% against the market's 16.2%, the largest under-model gap.",
+      "reason_zh": "1-1；模型仅 2.6%，市场 16.2%，为模型低于市场最多的队伍。"
     },
     {
       "team": "MKOI",
-      "prob": 1.6,
-      "market": 0.9,
+      "prob": 0.9,
+      "market": 0.6,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "LYON",
-      "prob": 1.1,
-      "market": 1.4,
-      "reason_en": "",
-      "reason_zh": ""
-    },
-    {
-      "team": "G2",
-      "prob": 0.8,
-      "market": 2.9,
+      "prob": 0.6,
+      "market": 2.2,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "CFO",
-      "prob": 0.7,
+      "prob": 0.6,
       "market": 0.3,
       "reason_en": "",
       "reason_zh": ""
@@ -1827,26 +1895,33 @@
     {
       "team": "AL",
       "prob": 0.3,
-      "market": 1.3,
+      "market": 1.5,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "KC",
-      "prob": 0.2,
-      "market": 0.5,
+      "prob": 0.1,
+      "market": 1.2,
       "reason_en": "",
       "reason_zh": ""
     },
     {
-      "team": "TL",
+      "team": "G2",
       "prob": 0.1,
-      "market": 0.3,
+      "market": 0.6,
       "reason_en": "",
       "reason_zh": ""
     },
     {
       "team": "LOS",
+      "prob": 0,
+      "market": 0.3,
+      "reason_en": "",
+      "reason_zh": ""
+    },
+    {
+      "team": "TL",
       "prob": 0,
       "market": 0.3,
       "reason_en": "",
@@ -1862,25 +1937,33 @@
   ],
   "mvp": [
     {
-      "player": "Chovy",
-      "teamCode": "GEN",
-      "prob": 28.5,
-      "market": null,
-      "basis_en": "",
-      "basis_zh": ""
-    },
-    {
       "player": "Ruler",
       "teamCode": "GEN",
-      "prob": 22.9,
+      "prob": 24.1,
       "market": null,
-      "basis_en": "",
-      "basis_zh": ""
+      "basis_en": "Tops the MVP board at 24.1%, driven by GEN's 46.2% title odds.",
+      "basis_zh": "以 24.1% 居 MVP 榜首，源于 GEN 46.2% 的夺冠概率。"
     },
     {
       "player": "Canyon",
       "teamCode": "GEN",
-      "prob": 17.9,
+      "prob": 21.4,
+      "market": null,
+      "basis_en": "21.4%: GEN's jungler, sharing in the team's title odds.",
+      "basis_zh": "21.4%，GEN 打野，分享队伍夺冠概率。"
+    },
+    {
+      "player": "Chovy",
+      "teamCode": "GEN",
+      "prob": 21,
+      "market": null,
+      "basis_en": "21.0%: nearly level with Canyon among GEN's core.",
+      "basis_zh": "21.0%，与 Canyon 并列 GEN 核心。"
+    },
+    {
+      "player": "Kiin",
+      "teamCode": "GEN",
+      "prob": 13.4,
       "market": null,
       "basis_en": "",
       "basis_zh": ""
@@ -1888,32 +1971,24 @@
     {
       "player": "Knight",
       "teamCode": "BLG",
-      "prob": 12.9,
+      "prob": 11.6,
       "market": null,
-      "basis_en": "",
-      "basis_zh": ""
+      "basis_en": "11.6%: the top non-GEN candidate, tied to BLG's 16.1% title odds.",
+      "basis_zh": "11.6%，非 GEN 选手中最高，对应 BLG 16.1% 夺冠概率。"
     },
     {
-      "player": "Kiin",
-      "teamCode": "GEN",
-      "prob": 10.4,
+      "player": "Creme",
+      "teamCode": "TES",
+      "prob": 8.5,
       "market": null,
-      "basis_en": "",
-      "basis_zh": ""
-    },
-    {
-      "player": "Viper",
-      "teamCode": "BLG",
-      "prob": 7.5,
-      "market": null,
-      "basis_en": "",
-      "basis_zh": ""
+      "basis_en": "8.5%: TES mid, who started in the 1-0 win over G2.",
+      "basis_zh": "8.5%，TES 中单，1-0 击败 G2 一役首发。"
     }
   ],
   "fearless": [
     {
       "team": "DK",
-      "depth": 30,
+      "depth": 35,
       "champs": [
         {
           "name": "Vi",
@@ -1954,14 +2029,34 @@
         {
           "name": "KSante",
           "slug": "KSante"
+        },
+        {
+          "name": "Cassiopeia",
+          "slug": "Cassiopeia"
+        },
+        {
+          "name": "Lee Sin",
+          "slug": "LeeSin"
+        },
+        {
+          "name": "Nautilus",
+          "slug": "Nautilus"
+        },
+        {
+          "name": "Ornn",
+          "slug": "Ornn"
+        },
+        {
+          "name": "Kaisa",
+          "slug": "Kaisa"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 35 is joint-highest; it has shown Vi, Syndra and Cassiopeia, three of the top-4 presence picks.",
+      "note_zh": "深度 35 并列最高，已用蔚、辛德拉、卡西奥佩娅三个登场率前四英雄。"
     },
     {
       "team": "GEN",
-      "depth": 29,
+      "depth": 32,
       "champs": [
         {
           "name": "Qiyana",
@@ -1998,6 +2093,18 @@
         {
           "name": "Leona",
           "slug": "Leona"
+        },
+        {
+          "name": "Jhin",
+          "slug": "Jhin"
+        },
+        {
+          "name": "Alistar",
+          "slug": "Alistar"
+        },
+        {
+          "name": "Anivia",
+          "slug": "Anivia"
         }
       ],
       "note_en": "",
@@ -2005,7 +2112,7 @@
     },
     {
       "team": "LYON",
-      "depth": 30,
+      "depth": 35,
       "champs": [
         {
           "name": "Ezreal",
@@ -2046,14 +2153,34 @@
         {
           "name": "Lulu",
           "slug": "Lulu"
+        },
+        {
+          "name": "Kalista",
+          "slug": "Kalista"
+        },
+        {
+          "name": "Renata Glasc",
+          "slug": "RenataGlasc"
+        },
+        {
+          "name": "Olaf",
+          "slug": "Olaf"
+        },
+        {
+          "name": "Xin Zhao",
+          "slug": "XinZhao"
+        },
+        {
+          "name": "Ahri",
+          "slug": "Ahri"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 35 is joint-highest, though Kalista, Renata, Olaf, Xin Zhao and Ahri were consumed against GEN.",
+      "note_zh": "深度 35 并列最高，但对 GEN 一役已消耗卡莉丝塔、芮娜塔、奥拉夫、赵信、阿狸。"
     },
     {
       "team": "MKOI",
-      "depth": 30,
+      "depth": 32,
       "champs": [
         {
           "name": "Jarvan IV",
@@ -2094,6 +2221,134 @@
         {
           "name": "Qiyana",
           "slug": "Qiyana"
+        },
+        {
+          "name": "Anivia",
+          "slug": "Anivia"
+        },
+        {
+          "name": "Jayce",
+          "slug": "Jayce"
+        }
+      ],
+      "note_en": "",
+      "note_zh": ""
+    },
+    {
+      "team": "IG",
+      "depth": 34,
+      "champs": [
+        {
+          "name": "Jarvan IV",
+          "slug": "JarvanIV"
+        },
+        {
+          "name": "Rumble",
+          "slug": "Rumble"
+        },
+        {
+          "name": "Aurora",
+          "slug": "Aurora"
+        },
+        {
+          "name": "Jhin",
+          "slug": "Jhin"
+        },
+        {
+          "name": "Alistar",
+          "slug": "Alistar"
+        },
+        {
+          "name": "Nocturne",
+          "slug": "Nocturne"
+        },
+        {
+          "name": "Orianna",
+          "slug": "Orianna"
+        },
+        {
+          "name": "KSante",
+          "slug": "KSante"
+        },
+        {
+          "name": "Ashe",
+          "slug": "Ashe"
+        },
+        {
+          "name": "Seraphine",
+          "slug": "Seraphine"
+        },
+        {
+          "name": "Yunara",
+          "slug": "Yunara"
+        },
+        {
+          "name": "Lulu",
+          "slug": "Lulu"
+        },
+        {
+          "name": "Annie",
+          "slug": "Annie"
+        },
+        {
+          "name": "Kled",
+          "slug": "Kled"
+        }
+      ],
+      "note_en": "Depth 34, and it won its Bo1 against HLE on Yunara/Lulu/Nocturne/Annie/Kled.",
+      "note_zh": "深度 34，以云娜拉/璐璐/梦魇/安妮/克烈 Bo1 击败 HLE。"
+    },
+    {
+      "team": "TES",
+      "depth": 32,
+      "champs": [
+        {
+          "name": "Orianna",
+          "slug": "Orianna"
+        },
+        {
+          "name": "Lee Sin",
+          "slug": "LeeSin"
+        },
+        {
+          "name": "Alistar",
+          "slug": "Alistar"
+        },
+        {
+          "name": "Ezreal",
+          "slug": "Ezreal"
+        },
+        {
+          "name": "KSante",
+          "slug": "KSante"
+        },
+        {
+          "name": "Nocturne",
+          "slug": "Nocturne"
+        },
+        {
+          "name": "Renata Glasc",
+          "slug": "RenataGlasc"
+        },
+        {
+          "name": "Kalista",
+          "slug": "Kalista"
+        },
+        {
+          "name": "Locke",
+          "slug": "Locke"
+        },
+        {
+          "name": "Ambessa",
+          "slug": "Ambessa"
+        },
+        {
+          "name": "Nautilus",
+          "slug": "Nautilus"
+        },
+        {
+          "name": "Varus",
+          "slug": "Varus"
         }
       ],
       "note_en": "",
@@ -2196,138 +2451,6 @@
       "note_zh": ""
     },
     {
-      "team": "G2",
-      "depth": 29,
-      "champs": [
-        {
-          "name": "Kalista",
-          "slug": "Kalista"
-        },
-        {
-          "name": "Renata Glasc",
-          "slug": "RenataGlasc"
-        },
-        {
-          "name": "Jarvan IV",
-          "slug": "JarvanIV"
-        },
-        {
-          "name": "Viktor",
-          "slug": "Viktor"
-        },
-        {
-          "name": "KSante",
-          "slug": "KSante"
-        },
-        {
-          "name": "Ezreal",
-          "slug": "Ezreal"
-        },
-        {
-          "name": "Karma",
-          "slug": "Karma"
-        },
-        {
-          "name": "Locke",
-          "slug": "Locke"
-        },
-        {
-          "name": "Lee Sin",
-          "slug": "LeeSin"
-        }
-      ],
-      "note_en": "",
-      "note_zh": ""
-    },
-    {
-      "team": "HLE",
-      "depth": 28,
-      "champs": [
-        {
-          "name": "Nocturne",
-          "slug": "Nocturne"
-        },
-        {
-          "name": "Locke",
-          "slug": "Locke"
-        },
-        {
-          "name": "Jhin",
-          "slug": "Jhin"
-        },
-        {
-          "name": "Shen",
-          "slug": "Shen"
-        },
-        {
-          "name": "Ambessa",
-          "slug": "Ambessa"
-        },
-        {
-          "name": "Pantheon",
-          "slug": "Pantheon"
-        },
-        {
-          "name": "Alistar",
-          "slug": "Alistar"
-        },
-        {
-          "name": "Taliyah",
-          "slug": "Taliyah"
-        }
-      ],
-      "note_en": "",
-      "note_zh": ""
-    },
-    {
-      "team": "IG",
-      "depth": 30,
-      "champs": [
-        {
-          "name": "Jarvan IV",
-          "slug": "JarvanIV"
-        },
-        {
-          "name": "Rumble",
-          "slug": "Rumble"
-        },
-        {
-          "name": "Aurora",
-          "slug": "Aurora"
-        },
-        {
-          "name": "Jhin",
-          "slug": "Jhin"
-        },
-        {
-          "name": "Alistar",
-          "slug": "Alistar"
-        },
-        {
-          "name": "Nocturne",
-          "slug": "Nocturne"
-        },
-        {
-          "name": "Orianna",
-          "slug": "Orianna"
-        },
-        {
-          "name": "KSante",
-          "slug": "KSante"
-        },
-        {
-          "name": "Ashe",
-          "slug": "Ashe"
-        },
-        {
-          "name": "Seraphine",
-          "slug": "Seraphine"
-        }
-      ],
-      "note_en": "",
-      "note_zh": ""
-    },
-    {
       "team": "KC",
       "depth": 28,
       "champs": [
@@ -2364,8 +2487,8 @@
           "slug": "Cassiopeia"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 28 is the shallowest in the field, a risk in any later Bo3.",
+      "note_zh": "深度 28 全场最浅，后续若进 Bo3 存在风险。"
     },
     {
       "team": "T1",
@@ -2412,48 +2535,116 @@
       "note_zh": ""
     },
     {
-      "team": "TES",
-      "depth": 30,
+      "team": "G2",
+      "depth": 32,
       "champs": [
         {
-          "name": "Orianna",
-          "slug": "Orianna"
-        },
-        {
-          "name": "Lee Sin",
-          "slug": "LeeSin"
-        },
-        {
-          "name": "Alistar",
-          "slug": "Alistar"
-        },
-        {
-          "name": "Ezreal",
-          "slug": "Ezreal"
-        },
-        {
-          "name": "KSante",
-          "slug": "KSante"
-        },
-        {
-          "name": "Nocturne",
-          "slug": "Nocturne"
+          "name": "Kalista",
+          "slug": "Kalista"
         },
         {
           "name": "Renata Glasc",
           "slug": "RenataGlasc"
         },
         {
-          "name": "Kalista",
-          "slug": "Kalista"
+          "name": "Jarvan IV",
+          "slug": "JarvanIV"
+        },
+        {
+          "name": "Viktor",
+          "slug": "Viktor"
+        },
+        {
+          "name": "KSante",
+          "slug": "KSante"
+        },
+        {
+          "name": "Ezreal",
+          "slug": "Ezreal"
+        },
+        {
+          "name": "Karma",
+          "slug": "Karma"
         },
         {
           "name": "Locke",
           "slug": "Locke"
         },
         {
+          "name": "Lee Sin",
+          "slug": "LeeSin"
+        },
+        {
+          "name": "Akali",
+          "slug": "Akali"
+        },
+        {
+          "name": "Wukong",
+          "slug": "Wukong"
+        },
+        {
+          "name": "Shen",
+          "slug": "Shen"
+        }
+      ],
+      "note_en": "",
+      "note_zh": ""
+    },
+    {
+      "team": "HLE",
+      "depth": 33,
+      "champs": [
+        {
+          "name": "Nocturne",
+          "slug": "Nocturne"
+        },
+        {
+          "name": "Locke",
+          "slug": "Locke"
+        },
+        {
+          "name": "Jhin",
+          "slug": "Jhin"
+        },
+        {
+          "name": "Shen",
+          "slug": "Shen"
+        },
+        {
           "name": "Ambessa",
           "slug": "Ambessa"
+        },
+        {
+          "name": "Pantheon",
+          "slug": "Pantheon"
+        },
+        {
+          "name": "Alistar",
+          "slug": "Alistar"
+        },
+        {
+          "name": "Taliyah",
+          "slug": "Taliyah"
+        },
+        {
+          "name": "Qiyana",
+          "slug": "Qiyana"
+        },
+        {
+          "name": "Kalista",
+          "slug": "Kalista"
+        },
+        {
+          "name": "Renata Glasc",
+          "slug": "RenataGlasc"
+        },
+        {
+          "name": "Olaf",
+          "slug": "Olaf"
+        },
+        {
+          "name": "Lissandra",
+          "slug": "Lissandra"
         }
       ],
       "note_en": "",
@@ -2655,294 +2846,249 @@
   "meta": [
     {
       "champ": "Vi",
-      "picks": 2,
-      "bans": 14,
-      "presence": 100,
-      "winrate": 50
-    },
-    {
-      "champ": "Nocturne",
-      "picks": 6,
-      "bans": 9,
-      "presence": 94,
-      "winrate": 67
-    },
-    {
-      "champ": "Qiyana",
-      "picks": 5,
-      "bans": 9,
-      "presence": 88,
-      "winrate": 80
-    },
-    {
-      "champ": "Ezreal",
-      "picks": 7,
-      "bans": 6,
-      "presence": 81,
-      "winrate": 57
-    },
-    {
-      "champ": "Cassiopeia",
-      "picks": 2,
-      "bans": 11,
-      "presence": 81,
-      "winrate": 50
-    },
-    {
-      "champ": "Renata Glasc",
-      "picks": 7,
-      "bans": 5,
-      "presence": 75,
-      "winrate": 57
-    },
-    {
-      "champ": "Syndra",
-      "picks": 5,
-      "bans": 7,
-      "presence": 75,
-      "winrate": 60
-    },
-    {
-      "champ": "Olaf",
-      "picks": 3,
-      "bans": 9,
-      "presence": 75,
-      "winrate": 33
-    },
-    {
-      "champ": "Rumble",
-      "picks": 6,
-      "bans": 5,
-      "presence": 69,
-      "winrate": 33
-    },
-    {
-      "champ": "Akali",
       "picks": 4,
-      "bans": 7,
-      "presence": 69,
+      "bans": 18,
+      "presence": 91,
       "winrate": 25
     },
     {
-      "champ": "Lee Sin",
-      "picks": 8,
-      "bans": 2,
-      "presence": 63,
-      "winrate": 38
+      "champ": "Nocturne",
+      "picks": 9,
+      "bans": 12,
+      "presence": 89,
+      "winrate": 78
     },
     {
-      "champ": "KSante",
-      "picks": 8,
-      "bans": 2,
-      "presence": 63,
+      "champ": "Cassiopeia",
+      "picks": 3,
+      "bans": 15,
+      "presence": 78,
+      "winrate": 67
+    },
+    {
+      "champ": "Syndra",
+      "picks": 6,
+      "bans": 12,
+      "presence": 76,
+      "winrate": 67
+    },
+    {
+      "champ": "Ezreal",
+      "picks": 10,
+      "bans": 8,
+      "presence": 75,
       "winrate": 50
+    },
+    {
+      "champ": "Qiyana",
+      "picks": 7,
+      "bans": 10,
+      "presence": 74,
+      "winrate": 57
+    },
+    {
+      "champ": "Olaf",
+      "picks": 5,
+      "bans": 12,
+      "presence": 74,
+      "winrate": 40
+    },
+    {
+      "champ": "Renata Glasc",
+      "picks": 9,
+      "bans": 7,
+      "presence": 70,
+      "winrate": 56
+    },
+    {
+      "champ": "Akali",
+      "picks": 6,
+      "bans": 9,
+      "presence": 63,
+      "winrate": 17
+    },
+    {
+      "champ": "Lee Sin",
+      "picks": 9,
+      "bans": 5,
+      "presence": 61,
+      "winrate": 44
+    },
+    {
+      "champ": "Orianna",
+      "picks": 7,
+      "bans": 7,
+      "presence": 61,
+      "winrate": 57
+    },
+    {
+      "champ": "Rumble",
+      "picks": 7,
+      "bans": 7,
+      "presence": 61,
+      "winrate": 29
     }
   ],
   "record": {
     "since": "2026-10-25",
-    "resolved": 0,
-    "correctOutcome": 0,
-    "exactScore": 0,
-    "winRate": 0,
-    "brier": 0,
-    "log": []
+    "resolved": 1,
+    "correctOutcome": 1,
+    "exactScore": 1,
+    "winRate": 100,
+    "brier": 0.211,
+    "log": [
+      {
+        "id": "r3-tes-g2",
+        "label_en": "TES 1-0 G2",
+        "label_zh": "TES 1-0 G2",
+        "pick_en": "TES win",
+        "pick_zh": "TES 胜",
+        "ok": true,
+        "exact": true
+      }
+    ]
   },
   "sources": [
     {
       "label": "gol.gg · Worlds 2026 Main Event schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:57:43.842Z"
+      "fetchedAt": "2026-10-26T10:28:12.297Z"
     },
     {
       "label": "gol.gg · Worlds 2026 Play-In schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Play-In/",
-      "fetchedAt": "2026-10-25T12:57:44.414Z"
+      "fetchedAt": "2026-10-26T10:28:12.798Z"
     },
     {
       "label": "Polymarket · series markets",
       "url": "https://gamma-api.polymarket.com/events?tag_slug=league-of-legends&active=true&closed=false&limit=100&order=startDate&ascending=false",
-      "fetchedAt": "2026-10-25T12:57:45.625Z"
+      "fetchedAt": "2026-10-26T10:28:14.168Z"
     },
     {
       "label": "Polymarket · Worlds 2026 winner",
       "url": "https://gamma-api.polymarket.com/events?slug=worlds-2026-winner",
-      "fetchedAt": "2026-10-25T12:57:45.800Z"
+      "fetchedAt": "2026-10-26T10:28:14.341Z"
     },
     {
       "label": "Kalshi · KXLOL-WORLDS26",
       "url": "https://api.elections.kalshi.com/trade-api/v2/markets?event_ticker=KXLOL-WORLDS26&limit=100",
-      "fetchedAt": "2026-10-25T12:57:46.415Z"
+      "fetchedAt": "2026-10-26T10:28:14.944Z"
     },
     {
-      "label": "gol.gg · game 83645 draft",
-      "url": "https://gol.gg/game/stats/83645/page-game/",
-      "fetchedAt": "2026-10-25T12:57:48.170Z"
+      "label": "gol.gg · game 83659 draft",
+      "url": "https://gol.gg/game/stats/83659/page-game/",
+      "fetchedAt": "2026-10-26T10:28:16.633Z"
     },
     {
-      "label": "gol.gg · game 83644 draft",
-      "url": "https://gol.gg/game/stats/83644/page-game/",
-      "fetchedAt": "2026-10-25T12:57:48.522Z"
+      "label": "gol.gg · game 83656 draft",
+      "url": "https://gol.gg/game/stats/83656/page-game/",
+      "fetchedAt": "2026-10-26T10:28:16.979Z"
     },
     {
-      "label": "gol.gg · game 83643 draft",
-      "url": "https://gol.gg/game/stats/83643/page-game/",
-      "fetchedAt": "2026-10-25T12:57:48.937Z"
+      "label": "gol.gg · game 83655 draft",
+      "url": "https://gol.gg/game/stats/83655/page-game/",
+      "fetchedAt": "2026-10-26T10:28:17.329Z"
     },
     {
-      "label": "gol.gg · game 83642 draft",
-      "url": "https://gol.gg/game/stats/83642/page-game/",
-      "fetchedAt": "2026-10-25T12:57:49.317Z"
-    },
-    {
-      "label": "gol.gg · game 83641 draft",
-      "url": "https://gol.gg/game/stats/83641/page-game/",
-      "fetchedAt": "2026-10-25T12:57:49.732Z"
-    },
-    {
-      "label": "gol.gg · game 83640 draft",
-      "url": "https://gol.gg/game/stats/83640/page-game/",
-      "fetchedAt": "2026-10-25T12:57:50.083Z"
-    },
-    {
-      "label": "gol.gg · game 83639 draft",
-      "url": "https://gol.gg/game/stats/83639/page-game/",
-      "fetchedAt": "2026-10-25T12:57:50.437Z"
-    },
-    {
-      "label": "gol.gg · game 83638 draft",
-      "url": "https://gol.gg/game/stats/83638/page-game/",
-      "fetchedAt": "2026-10-25T12:57:50.787Z"
-    },
-    {
-      "label": "gol.gg · game 83653 draft",
-      "url": "https://gol.gg/game/stats/83653/page-game/",
-      "fetchedAt": "2026-10-25T12:57:51.175Z"
-    },
-    {
-      "label": "gol.gg · game 83652 draft",
-      "url": "https://gol.gg/game/stats/83652/page-game/",
-      "fetchedAt": "2026-10-25T12:57:51.531Z"
-    },
-    {
-      "label": "gol.gg · game 83651 draft",
-      "url": "https://gol.gg/game/stats/83651/page-game/",
-      "fetchedAt": "2026-10-25T12:57:51.901Z"
-    },
-    {
-      "label": "gol.gg · game 83650 draft",
-      "url": "https://gol.gg/game/stats/83650/page-game/",
-      "fetchedAt": "2026-10-25T12:57:52.307Z"
-    },
-    {
-      "label": "gol.gg · game 83649 draft",
-      "url": "https://gol.gg/game/stats/83649/page-game/",
-      "fetchedAt": "2026-10-25T12:57:52.676Z"
-    },
-    {
-      "label": "gol.gg · game 83648 draft",
-      "url": "https://gol.gg/game/stats/83648/page-game/",
-      "fetchedAt": "2026-10-25T12:57:53.088Z"
-    },
-    {
-      "label": "gol.gg · game 83647 draft",
-      "url": "https://gol.gg/game/stats/83647/page-game/",
-      "fetchedAt": "2026-10-25T12:57:53.449Z"
-    },
-    {
-      "label": "gol.gg · game 83646 draft",
-      "url": "https://gol.gg/game/stats/83646/page-game/",
-      "fetchedAt": "2026-10-25T12:57:53.802Z"
+      "label": "gol.gg · game 83654 draft",
+      "url": "https://gol.gg/game/stats/83654/page-game/",
+      "fetchedAt": "2026-10-26T10:28:17.682Z"
     },
     {
       "label": "gol.gg · team 2848 season pool",
       "url": "https://gol.gg/teams/team-stats/2848/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:54.653Z"
+      "fetchedAt": "2026-10-26T10:28:18.547Z"
     },
     {
       "label": "gol.gg · team 2849 season pool",
       "url": "https://gol.gg/teams/team-stats/2849/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:55.512Z"
+      "fetchedAt": "2026-10-26T10:28:19.378Z"
     },
     {
       "label": "gol.gg · team 2880 season pool",
       "url": "https://gol.gg/teams/team-stats/2880/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:56.465Z"
+      "fetchedAt": "2026-10-26T10:28:20.188Z"
     },
     {
       "label": "gol.gg · team 2802 season pool",
       "url": "https://gol.gg/teams/team-stats/2802/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:57.447Z"
+      "fetchedAt": "2026-10-26T10:28:21.151Z"
     },
     {
       "label": "gol.gg · team 2897 season pool",
       "url": "https://gol.gg/teams/team-stats/2897/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:58.225Z"
+      "fetchedAt": "2026-10-26T10:28:21.943Z"
     },
     {
       "label": "gol.gg · team 2804 season pool",
       "url": "https://gol.gg/teams/team-stats/2804/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:57:59.165Z"
+      "fetchedAt": "2026-10-26T10:28:22.852Z"
     },
     {
       "label": "gol.gg · team 2805 season pool",
       "url": "https://gol.gg/teams/team-stats/2805/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:00.048Z"
+      "fetchedAt": "2026-10-26T10:28:23.693Z"
     },
     {
       "label": "gol.gg · team 2850 season pool",
       "url": "https://gol.gg/teams/team-stats/2850/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:00.887Z"
+      "fetchedAt": "2026-10-26T10:28:24.619Z"
     },
     {
       "label": "gol.gg · team 2899 season pool",
       "url": "https://gol.gg/teams/team-stats/2899/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:01.648Z"
+      "fetchedAt": "2026-10-26T10:28:25.389Z"
     },
     {
       "label": "gol.gg · team 2895 season pool",
       "url": "https://gol.gg/teams/team-stats/2895/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:02.406Z"
+      "fetchedAt": "2026-10-26T10:28:26.129Z"
     },
     {
       "label": "gol.gg · team 2954 season pool",
       "url": "https://gol.gg/teams/team-stats/2954/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:03.223Z"
+      "fetchedAt": "2026-10-26T10:28:26.855Z"
     },
     {
       "label": "gol.gg · team 2900 season pool",
       "url": "https://gol.gg/teams/team-stats/2900/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:03.997Z"
+      "fetchedAt": "2026-10-26T10:28:27.593Z"
     },
     {
       "label": "gol.gg · team 2809 season pool",
       "url": "https://gol.gg/teams/team-stats/2809/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:04.934Z"
+      "fetchedAt": "2026-10-26T10:28:28.442Z"
     },
     {
       "label": "gol.gg · team 2813 season pool",
       "url": "https://gol.gg/teams/team-stats/2813/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:05.775Z"
+      "fetchedAt": "2026-10-26T10:28:29.226Z"
     },
     {
       "label": "gol.gg · team 2887 season pool",
       "url": "https://gol.gg/teams/team-stats/2887/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:06.540Z"
+      "fetchedAt": "2026-10-26T10:28:29.970Z"
     },
     {
       "label": "gol.gg · team 2852 season pool",
       "url": "https://gol.gg/teams/team-stats/2852/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-10-25T12:58:07.688Z"
+      "fetchedAt": "2026-10-26T10:28:30.814Z"
     },
     {
       "label": "gol.gg · player statistics",
       "url": "https://gol.gg/players/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:58:08.140Z"
+      "fetchedAt": "2026-10-26T10:28:31.160Z"
     },
     {
       "label": "gol.gg · champion statistics",
       "url": "https://gol.gg/champion/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-10-25T12:58:08.511Z"
+      "fetchedAt": "2026-10-26T10:28:31.466Z"
     }
   ],
-  "notes": []
+  "notes": [
+    "model: r3-lyon-gen and r3-mkoi-dk were in progress at build time (no model or result in the payload); their outcomes are not used here.",
+    "model: r3-ig-hle (IG 1-0 HLE) settled, but the payload record counts only r3-tes-g2 as resolved; the reason is not shown in the payload.",
+    "model: No confirmed substitute or roster change for TL/AL/LOS/TSW/T1/CFO/KC/BLG, so all adj values are 0.",
+    "model: The payload news[] is empty; news came from this session's WebSearch and was used only for context."
+  ]
 }
