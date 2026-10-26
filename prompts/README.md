@@ -33,4 +33,4 @@ Fable 只做决策推理，不做数据搬运。注入前由脚本完成：指�
 | `sectors-watch.md` | Sectors 中美 AI 对比（V11） | 每周 |
 | `postmemory-top10.md` | Sectors 后内存专题（V11，与上共跑） | 每周（论点卡逐月深审） |
 | `leagues-msi.md` | Leagues MSI 竞猜（V1） | MSI 期间每日，7/12 止 |
-| `leagues-worlds.md` | Worlds 2026 赔率页（有界修正 + 解释） | 每日 20:00 墨尔本，11/14 决赛后自停 |
+| `leagues-worlds.md` | Worlds 2026 赔率页 V2（有界修正 + 解释 + 队伍极值理由） | 每日 20:00 墨尔本，11/14 决赛后自停 |

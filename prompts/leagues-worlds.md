@@ -1,8 +1,8 @@
-# Leagues — Worlds 2026 赔率页提示词（V1）
+# Leagues — Worlds 2026 赔率页提示词（V2）
 
 状态：活跃（2026-10-25 起，11-14 决赛后转 `mode:"archive"` 并停用任务）。
-用途：每日 20:00（Australia/Melbourne）由 Claude Code 本地 scheduled task `worlds-2026-daily` 调用一次。**数字由脚本算**（`scripts/build-worlds-candidate.mjs`：Elo + 预测市场融合 + Fearless 修正 + Monte Carlo），模型只做两件事：① 对任一未开系列赛的 P(win) 给出 `adj ∈ [−0.05, +0.05]` 的有界修正并附理由与来源 URL；② 写中英解释（系列赛三因素、夺冠/MVP/Fearless 一句依据、当日说明）。`scripts/finalize-worlds-candidate.mjs` 校验修正范围、合并解释、重算、校验合同。
-对应规格：`docs/superpowers/specs/2026-10-25-worlds-2026-odds-design.md` §5–§7。遵守 `prompts/README.md` 五条硬规则。
+用途：每日 20:00（Australia/Melbourne）由 Claude Code 本地 scheduled task `worlds-2026-daily` 调用一次。**数字由脚本算**（`scripts/build-worlds-candidate.mjs`：Elo + 预测市场融合 + Fearless 修正 + Monte Carlo），模型只做两件事：① 对任一未开系列赛的 P(win) 给出 `adj ∈ [−0.05, +0.05]` 的有界修正并附理由与来源 URL；② 写中英解释（系列赛三因素、夺冠/MVP 的赔率理由、Fearless 一句依据、每队最强/最弱选手与战术点的理由、当日说明）。V2（2026-10-26）：新增 `teams[]` 理由；夺冠/MVP 理由放宽并须对照 implied 赔率与 market。`scripts/finalize-worlds-candidate.mjs` 校验修正范围、合并解释、重算、校验合同。
+对应规格：`docs/superpowers/specs/2026-10-25-worlds-2026-odds-design.md` §5–§7、`docs/superpowers/specs/2026-10-26-worlds-r2-polish-design.md` §6。遵守 `prompts/README.md` 五条硬规则。
 
 ---
 
@@ -33,8 +33,19 @@ Explanations:
   three `factors_en` / `factors_zh` (<=40 words / <=40 字 each); at least one
   factor must be Fearless-related (pool depth, champions already consumed,
   flex picks) and grounded in the payload's pick data.
-- `champion[]`, `mvp[]`, `fearless[]`: one sentence each, bilingual, citing a
-  payload fact (record, series MVP award, statline, unique-champion count).
+- `champion[]`, `mvp[]`: why the code's probability and its implied odds
+  (`oddsImplied` = 100/prob) are fair, and how they differ from `market`
+  when a market exists; <=80 words / <=160 字 each, citing payload facts
+  (record, remaining path, series results, statline).
+- `fearless[]`: one sentence each, bilingual, citing a payload fact
+  (unique-champion count, champions consumed).
+- `teams[]`: the code has already chosen each team's best and worst player
+  (`players.best/worst`, by in-role z-score of KDA, DPM, KP%, GD@15) and best
+  and worst tactic (`tactics.best/worst`, by percentile among all teams on
+  GD@15, FB%, FT%, DRA%, VGPG, NASH%). Do NOT re-pick them. Explain each in
+  <=40 words / <=60 字 using only the numbers in that payload entry
+  (`stats`, `value`, `pct`); news may add context but never a new number.
+  Skip a key when the payload entry is null.
 - `note_en` / `note_zh`: <=60 words / <=150 字 daily take.
 
 Output exactly ONE JSON object, no markdown fences:
@@ -45,6 +56,9 @@ Output exactly ONE JSON object, no markdown fences:
   "champion": [{ "team": "GEN", "reason_en": "", "reason_zh": "" }],
   "mvp": [{ "player": "Chovy", "basis_en": "", "basis_zh": "" }],
   "fearless": [{ "team": "GEN", "note_en": "", "note_zh": "" }],
+  "teams": [{ "team": "GEN",
+              "best_player_en": "", "best_player_zh": "", "worst_player_en": "", "worst_player_zh": "",
+              "best_tactic_en": "", "best_tactic_zh": "", "worst_tactic_en": "", "worst_tactic_zh": "" }],
   "note_en": "", "note_zh": "",
   "notes": ["<missing-data declarations, one per line>"]
 }
@@ -65,8 +79,13 @@ payload are public market quotes, not bookmaker odds.
     "swissRecord": { "home": "2-0", "away": "2-0" } }],
   "swiss": [{ "team": "GEN", "w": 2, "l": 0, "status": "active" }],
   "completed_since_baseline": [{ "id": "r2-hle-gen", "result": { "home": 0, "away": 1 }, "games": [{ "winner": "away", "picks": { "home": ["…"], "away": ["…"] } }] }],
-  "champion": [{ "team": "GEN", "prob": 31.2, "market": 37.4 }],
-  "mvp": [{ "player": "Chovy", "teamCode": "GEN", "prob": 14.1 }],
+  "champion": [{ "team": "GEN", "prob": 31.2, "oddsImplied": 3.21, "market": 37.4 }],
+  "mvp": [{ "player": "Chovy", "teamCode": "GEN", "prob": 14.1, "oddsImplied": 7.09 }],
+  "teams": [{ "team": "GEN",
+    "players": { "best": { "player": "Chovy", "role": "mid", "score": 1.21, "stats": { "kda": 7.2, "dpm": 712, "kp": 71.4, "gd15": 512 } },
+                 "worst": { "player": "Duro", "role": "sup", "score": -0.38, "stats": { "kda": 3.1, "dpm": 160, "kp": 62.0, "gd15": -40 } } },
+    "tactics": { "best": { "key": "GD@15", "value": "1204", "pct": 1 },
+                 "worst": { "key": "DRA%", "value": "41.7", "pct": 0.2 } } }],
   "fearless": [{ "team": "GEN", "depth": 11.5, "champs": [{ "name": "Azir", "slug": "Azir" }] }],
   "meta_top12": [{ "champ": "Vi", "picks": 2, "bans": 14, "presence": 100, "winrate": 50 }],
   "record": { "resolved": 0, "correctOutcome": 0, "exactScore": 0, "brier": 0 },
@@ -79,4 +98,4 @@ payload are public market quotes, not bookmaker odds.
 ## 中文对照要点
 
 角色：Worlds 2026 赔率页分析师。赛制：16 队瑞士轮（3 胜晋级 / 3 负出局）→ 八强单败 Bo5；版本 26.20；Bo3/Bo5 全程无畏征召。
-纪律：无状态、只引用 payload；数字由脚本算，模型只给 `adj ∈ [−0.05, +0.05]` 且必须附 ≤40 字理由和 https 来源，否则脚本丢弃；每场三条因素（≥1 条无畏征召相关且引用实际 pick 数据）；解释限长（系列赛 ≤120 字、因素 ≤40 字、当日说明 ≤150 字）；输出单个 JSON；仅供娱乐、非博彩建议；预测市场价格是公开市场报价而非博彩商盘口。
+纪律：无状态、只引用 payload；数字由脚本算，模型只给 `adj ∈ [−0.05, +0.05]` 且必须附 ≤40 字理由和 https 来源，否则脚本丢弃；每场三条因素（≥1 条无畏征召相关且引用实际 pick 数据）；解释限长（系列赛 ≤120 字、因素 ≤40 字、当日说明 ≤150 字、夺冠/MVP 赔率理由 ≤160 字、队伍极值每项 ≤60 字）；最强/最弱选手与战术点由代码选定，模型不得改选，只能用该条目的 stats/value/pct 解释；输出单个 JSON；仅供娱乐、非博彩建议；预测市场价格是公开市场报价而非博彩商盘口。
