@@ -15,15 +15,15 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import {
-  GOLGG, TEAM_LOGOS, teamCode,
+  DDRAGON, GOLGG, TEAM_LOGOS, championKey, championKeyMap, teamCode,
   fetchJsonUrl, fetchText,
   parseChampionTable, parseGame, parseGamePlayers, parseKalshiWinner, parseMatchlist,
-  parsePlayerTable, parsePolymarketSeries, parsePolymarketWinner,
+  parsePlayerTable, parsePolymarketSeries, parsePolymarketWinner, parseTeamTable,
 } from './lib/worlds-sources.mjs';
 import {
   TEAM_SEED_ELO, blendGameProb, buildRecord, eloExpected, enumerateSeries,
-  fearlessDelta, gameProbFromSeries, impliedOdds, mvpBoard, mvpWeights,
-  simulateChampion, updateElo,
+  fearlessDelta, gameProbFromSeries, impliedOdds, mvpBoard, mvpWeights, oddsFromPct,
+  seriesDistribution, simulateChampion, teamPlayerExtremes, teamTacticExtremes, updateElo,
 } from '../src/lib/worldsModel.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { zonedDate } from '../src/lib/dataFreshness.js';
@@ -68,6 +68,9 @@ const SOURCE_LABELS = {
   'polymarket.json': 'Polymarket · series markets',
   'polymarket-winner.json': 'Polymarket · Worlds 2026 winner',
   'kalshi.json': 'Kalshi · KXLOL-WORLDS26',
+  'teams.html': 'gol.gg · team statistics',
+  'ddragon-versions.json': 'Riot Data Dragon · versions',
+  'ddragon-champions.json': 'Riot Data Dragon · champions',
 };
 const sourceLabel = (name) => SOURCE_LABELS[name]
   || (name.startsWith('game-') ? `gol.gg · game ${name.slice(5, -5)} draft` : name.startsWith('team-') ? `gol.gg · team ${name.slice(5, -5)} season pool` : name);
@@ -302,6 +305,7 @@ const series = groups.map((group) => {
       pWin: outcome.pWin.map((p) => Math.round(p * 1000) / 1000),
       score: outcome.best.score,
       pScore: Math.round(outcome.best.p * 1000) / 1000,
+      ...seriesDistribution(outcome.scores, group.bo),
       oddsImplied: impliedOdds(outcome.pWin),
       adj: 0,
       decidedAt: now.toISOString(),
@@ -331,6 +335,7 @@ const marketSum = Object.values(marketRaw).reduce((sum, v) => sum + (v || 0), 0)
 const champion = swiss.map(({ team }) => ({
   team,
   prob: championSim[team] ?? 0,
+  oddsImplied: oddsFromPct(championSim[team] ?? 0),
   market: marketSum > 0 && marketRaw[team] != null ? Math.round((marketRaw[team] / marketSum) * 1000) / 10 : null,
   reason_en: baseline?.champion?.find((c) => c.team === team)?.reason_en || '',
   reason_zh: baseline?.champion?.find((c) => c.team === team)?.reason_zh || '',
@@ -352,7 +357,7 @@ const players = (playersHtml ? parsePlayerTable(playersHtml) : [])
   .filter((player) => player.teamCode && player.role);
 if (!players.length) notes.push('player statistics or rosters unavailable; mvp list empty');
 const mvp = players.length ? mvpBoard(championSim, mvpWeights(players)).map((entry) => ({
-  ...entry, market: null,
+  ...entry, oddsImplied: oddsFromPct(entry.prob), market: null,
   basis_en: baseline?.mvp?.find((m) => m.player === entry.player)?.basis_en || '',
   basis_zh: baseline?.mvp?.find((m) => m.player === entry.player)?.basis_zh || '',
 })) : [];
@@ -361,8 +366,14 @@ const mvp = players.length ? mvpBoard(championSim, mvpWeights(players)).map((ent
 const champsHtml = await source('champions.html', GOLGG.champions(MAIN), 'text');
 const championTable = champsHtml ? parseChampionTable(champsHtml) : [];
 const slugOf = new Map(championTable.map((row) => [row.champ, row.slug]));
+const ddragonVersions = await source('ddragon-versions.json', DDRAGON.versions, 'json');
+const ddragon = (Array.isArray(ddragonVersions) && ddragonVersions[0]) || baseline?.ddragon || null;
+if (!Array.isArray(ddragonVersions)) notes.push(`ddragon versions unavailable; ${ddragon ? `kept ${ddragon} from baseline` : 'meta avatars fall back on the page'}`);
+const ddragonChampions = ddragon ? await source('ddragon-champions.json', DDRAGON.champions(ddragon), 'json') : null;
+if (!ddragonChampions) notes.push('ddragon champion list unavailable; meta keys derived from names');
+const keyMap = ddragonChampions ? championKeyMap(ddragonChampions) : undefined;
 const meta = [...championTable].sort((a, b) => b.presence - a.presence || b.picks - a.picks).slice(0, 12)
-  .map(({ champ, picks, bans, presence, winrate }) => ({ champ, picks, bans, presence, winrate }));
+  .map(({ champ, picks, bans, presence, winrate }) => ({ champ, key: championKey(champ, keyMap), picks, bans, presence, winrate }));
 const fearless = swiss.map(({ team }) => ({
   team,
   depth: Math.round(depthOf(team) * 10) / 10,
@@ -370,6 +381,31 @@ const fearless = swiss.map(({ team }) => ({
   note_en: baseline?.fearless?.find((f) => f.team === team)?.note_en || '',
   note_zh: baseline?.fearless?.find((f) => f.team === team)?.note_zh || '',
 }));
+
+// Team extremes (spec 2026-10-26 §6): code picks, the model only explains.
+const teamsHtml = await source('teams.html', GOLGG.teams(MAIN), 'text');
+if (!teamsHtml) notes.push('teams.html unavailable; team tactics omitted');
+const tactics = teamsHtml ? teamTacticExtremes(parseTeamTable(teamsHtml)) : {};
+const playerExtremes = teamPlayerExtremes(players);
+const previousTeam = (team) => baseline?.teams?.find((t) => t.team === team);
+const keepReason = (previous, current, same) => (previous && same(previous, current)
+  ? { reason_en: previous.reason_en || '', reason_zh: previous.reason_zh || '' }
+  : { reason_en: '', reason_zh: '' });
+const teams = swiss.map(({ team }) => {
+  const prev = previousTeam(team);
+  const entry = { team };
+  if (playerExtremes[team]) {
+    entry.players = Object.fromEntries(['best', 'worst'].map((end) => [end, {
+      ...playerExtremes[team][end], ...keepReason(prev?.players?.[end], playerExtremes[team][end], (a, b) => a.player === b.player),
+    }]));
+  }
+  if (tactics[team]) {
+    entry.tactics = Object.fromEntries(['best', 'worst'].map((end) => [end, {
+      ...tactics[team][end], ...keepReason(prev?.tactics?.[end], tactics[team][end], (a, b) => a.key === b.key),
+    }]));
+  }
+  return entry;
+});
 
 const data = {
   tournament: 'Worlds 2026',
@@ -388,6 +424,8 @@ const data = {
   mvp,
   fearless,
   meta,
+  ...(ddragon ? { ddragon } : {}),
+  teams,
   record: buildRecord(series, SINCE),
   sources,
   notes,
@@ -413,8 +451,13 @@ const payload = {
   })),
   swiss,
   completed_since_baseline: series.filter((s) => s.result && !baselineById.get(s.id)?.result).map((s) => ({ id: s.id, home: s.home, away: s.away, result: s.result })),
-  champion: champion.map(({ team, prob, market }) => ({ team, prob, market })),
-  mvp: mvp.map(({ player, teamCode: code, prob }) => ({ player, teamCode: code, prob })),
+  champion: champion.map(({ team, prob, oddsImplied: odds, market }) => ({ team, prob, oddsImplied: odds, market })),
+  mvp: mvp.map(({ player, teamCode: code, prob, oddsImplied: odds }) => ({ player, teamCode: code, prob, oddsImplied: odds })),
+  teams: teams.map(({ team, players: p, tactics: t }) => ({
+    team,
+    players: p ? Object.fromEntries(Object.entries(p).map(([end, x]) => [end, { player: x.player, role: x.role, score: x.score, stats: x.stats }])) : null,
+    tactics: t ? Object.fromEntries(Object.entries(t).map(([end, x]) => [end, { key: x.key, value: x.value, pct: x.pct }])) : null,
+  })),
   fearless: fearless.map(({ team, depth, champs }) => ({ team, depth, champs })),
   meta_top12: meta,
   record: data.record,
