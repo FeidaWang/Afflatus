@@ -236,7 +236,10 @@ function applyDeck() {
     card.style.transform = state.loop
       ? `rotateY(${(d * 360) / state.n}deg) translateZ(${r}px)`
       : `translateX(${d * cw * 0.9}px) translateZ(${-ad * 60}px) rotateY(${d * -12}deg)`;
-    card.style.opacity = String(Math.max(0.15, 1 - ad * (state.loop ? 0.28 : 0.35)));
+    // Neighbours stay near-opaque so their stickers keep 4.5:1 contrast; cards
+    // further round show as blank backs instead of faded, unreadable text.
+    card.style.opacity = String(ad <= 1.2 ? 1 - Math.min(ad, 1) * 0.12 : Math.max(0.2, 0.88 - (ad - 1) * 0.4));
+    card.classList.toggle('far', ad > 1.2);
     card.style.zIndex = String(100 - Math.round(ad * 10));
     card.classList.toggle('center', i === center);
   });
