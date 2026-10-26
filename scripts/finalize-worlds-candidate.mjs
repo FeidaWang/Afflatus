@@ -12,7 +12,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { applyAdjustment, enumerateSeries, impliedOdds } from '../src/lib/worldsModel.js';
+import { applyAdjustment, enumerateSeries, impliedOdds, seriesDistribution } from '../src/lib/worldsModel.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 
 const directory = process.argv[2];
@@ -64,6 +64,7 @@ if (!model) {
           pWin: [round3(adjusted), round3(1 - adjusted)],
           score: outcome.best.score,
           pScore: round3(outcome.best.p),
+          ...seriesDistribution(outcome.scores, series.bo),
           oddsImplied: impliedOdds([adjusted, 1 - adjusted]),
           adj: round3(adj),
           adjReason: sourced,
@@ -82,11 +83,22 @@ if (!model) {
   }
   for (const entry of model.champion || []) {
     const team = data.champion.find((c) => c.team === entry.team);
-    if (team) { team.reason_en = text(entry.reason_en, 400); team.reason_zh = text(entry.reason_zh, 200); }
+    if (team) { team.reason_en = text(entry.reason_en, 600); team.reason_zh = text(entry.reason_zh, 320); }
   }
   for (const entry of model.mvp || []) {
     const player = data.mvp.find((m) => m.player === entry.player);
-    if (player) { player.basis_en = text(entry.basis_en, 400); player.basis_zh = text(entry.basis_zh, 200); }
+    if (player) { player.basis_en = text(entry.basis_en, 600); player.basis_zh = text(entry.basis_zh, 320); }
+  }
+  // Team extremes: code chose the players and tactics; the model only explains them.
+  for (const entry of model.teams || []) {
+    const team = data.teams?.find((t) => t.team === entry.team);
+    if (!team) continue;
+    for (const [group, end, key] of [['players', 'best', 'best_player'], ['players', 'worst', 'worst_player'], ['tactics', 'best', 'best_tactic'], ['tactics', 'worst', 'worst_tactic']]) {
+      const slot = team[group]?.[end];
+      if (!slot) continue;
+      slot.reason_en = text(entry[`${key}_en`], 400);
+      slot.reason_zh = text(entry[`${key}_zh`], 120);
+    }
   }
   for (const entry of model.fearless || []) {
     const team = data.fearless.find((f) => f.team === entry.team);
