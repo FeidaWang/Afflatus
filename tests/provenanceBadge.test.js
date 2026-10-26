@@ -53,13 +53,13 @@ describe('buildProvenanceBadge', () => {
   it('seed state (updatedAt null) — en', () => {
     const b = buildProvenanceBadge({ updatedAt: null, version: 1, lang: 'en' });
     expect(b.tier).toBe('seed');
-    expect(b.text).toBe('FABLE 5 MAX · no data yet · v1 · NOT ADVICE');
+    expect(b.text).toBe('Fable 5.1 Max · no data yet · v1 · NOT ADVICE');
   });
 
   it('seed state — zh', () => {
     const b = buildProvenanceBadge({ updatedAt: null, version: 1, lang: 'zh' });
     expect(b.tier).toBe('seed');
-    expect(b.text).toBe('FABLE 5 MAX · 暂无数据 · v1 · 非投资建议');
+    expect(b.text).toBe('Fable 5.1 Max · 暂无数据 · v1 · 非投资建议');
   });
 
   it('fresh state with sourceCount and version — en', () => {
