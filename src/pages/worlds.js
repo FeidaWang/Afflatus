@@ -16,7 +16,8 @@ import { getLocale } from '../lib/localeStore.js';
 
 const $ = (id) => document.getElementById(id);
 const N = STAGES.length;
-const FABLE_ICON = '<svg class="fable-ic" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="7" width="18" height="14" rx="5" fill="#3ec6ff"/><rect x="10" y="2" width="4" height="5" rx="2" fill="#3ec6ff"/><circle cx="12" cy="2" r="1.6" fill="#3ec6ff"/><circle cx="9" cy="14" r="1.8" fill="#05070c"/><circle cx="15" cy="14" r="1.8" fill="#05070c"/><path d="M8.5 17.5 Q12 20.5 15.5 17.5" stroke="#05070c" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
+// Clawd, Anthropic's Claude mascot, drawn as pixel art (Claude and Clawd are Anthropic trademarks).
+const FABLE_ICON = '<svg class="fable-ic" viewBox="0 0 14 12" width="16" height="14" aria-hidden="true" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><g fill="#D77757"><rect x="2" y="1" width="10" height="7"/><rect x="0" y="4" width="2" height="2"/><rect x="12" y="4" width="2" height="2"/><rect x="3" y="8" width="1" height="3"/><rect x="5" y="8" width="1" height="3"/><rect x="8" y="8" width="1" height="3"/><rect x="10" y="8" width="1" height="3"/></g><rect x="4" y="3" width="1" height="2" fill="#0b0b0d"/><rect x="9" y="3" width="1" height="2" fill="#0b0b0d"/></svg>';
 const CHAMP_ICON = (slug) => `https://gol.gg/_img/champions_icon/${encodeURIComponent(slug)}.png`;
 
 let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
@@ -43,11 +44,12 @@ function fmtDur(ms) {
   return `${d ? `${d}d ` : ''}${two(h)}h ${two(m)}m ${two(sec)}s`;
 }
 const fmtLocal = (iso) => new Date(iso).toLocaleString(lang === 'zh' ? 'zh-CN' : 'en-AU', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+// Logos always sit on a light plate: several are black on transparent (TSW, LOS).
 function logo(code, cls = 'logo') {
   const url = data?.teamLogos?.[code];
-  return url
+  return `<span class="plate">${url
     ? `<img class="${cls}" src="${esc(url)}" alt="" loading="lazy" decoding="async" width="40" height="40">`
-    : `<span class="${cls} logo-txt" aria-hidden="true">${esc(code)}</span>`;
+    : `<span class="${cls} logo-txt" aria-hidden="true">${esc(code)}</span>`}</span>`;
 }
 const seriesById = (id) => data?.series?.find((s) => s.id === id);
 const stageOf = (s) => STAGES.find((st) => st.stage === s.stage && (st.stage !== 'swiss' || st.round === s.round));
@@ -343,14 +345,15 @@ function paint() {
   if (!lastPaint || lastPaint[0] !== s || lastPaint[1] !== e) { renderCardsView(); lastPaint = [s, e]; }
 }
 
-/* ---------- display font (non-blocking) ----------
-   Rajdhani is decorative: attach its stylesheet after parse with
-   font-display optional, so the first paint never waits on Google Fonts. */
+/* ---------- display fonts (non-blocking) ----------
+   Stand-ins for Riot's unlicensable Beaufort / Spiegel (spec 2026-10-26 §3):
+   attach the stylesheet after parse with font-display optional, so the
+   first paint never waits on Google Fonts. */
 function loadDisplayFont() {
   if (document.querySelector('link[data-worlds-font]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=optional';
+  link.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Sans:wght@400;600&family=Noto+Serif+SC:wght@600&display=optional';
   link.dataset.worldsFont = '1';
   document.head.appendChild(link);
 }
@@ -362,7 +365,7 @@ function renderHero() {
   if (patch && data.patch) patch.textContent = String(data.patch);
   const prov = $('prov');
   if (prov) {
-    const badge = buildProvenanceBadge({ updatedAt: data.updated, version: data.version, sourceCount: Array.isArray(data.sources) ? data.sources.length : undefined, lang });
+    const badge = buildProvenanceBadge({ updatedAt: data.updated, version: data.version, lang });
     prov.className = `w-prov prov-${badge.tier}`;
     prov.textContent = badge.text;
   }
@@ -386,7 +389,7 @@ function tick() {
   });
 }
 
-/* ---------- record / champion / mvp / swiss / meta / sources ---------- */
+/* ---------- record / champion / mvp / swiss / meta ---------- */
 function renderRecord() {
   if (!data) return;
   const you = userRecord(data.series, picks);
@@ -395,7 +398,7 @@ function renderRecord() {
   const kv = (b, l) => `<div class="rkv"><b>${b}</b><i>${l}</i></div>`;
   $('recordCols').innerHTML =
     `<div class="rcol you"><h3>${T('YOU', '你')}</h3><div class="rgrid">${kv(you.judged, T('judged', '已判'))}${kv(you.hits, T('hits', '命中'))}${kv(`${you.rate}%`, T('hit rate', '命中率'))}${kv(you.streak, T('streak', '连胜'))}</div></div>` +
-    `<div class="rcol fable"><h3>${FABLE_ICON} FABLE</h3><div class="rgrid">${kv(fab.judged, T('judged', '已判'))}${kv(fab.hits, T('hits', '命中'))}${kv(`${fab.rate}%`, T('hit rate', '命中率'))}${kv(`${fab.exact} ⭐`, T('exact score', '比分全中'))}${kv(Number(brier).toFixed(3), 'Brier')}</div></div>`;
+    `<div class="rcol fable"><h3>${FABLE_ICON} Fable 5.1 Max</h3><div class="rgrid">${kv(fab.judged, T('judged', '已判'))}${kv(fab.hits, T('hits', '命中'))}${kv(`${fab.rate}%`, T('hit rate', '命中率'))}${kv(`${fab.exact} ⭐`, T('exact score', '比分全中'))}${kv(Number(brier).toFixed(3), 'Brier')}</div></div>`;
   const rec = data.record;
   const html = rec?.log?.length
     ? renderTrackRecordHTML({ ...rec, note_en: rec.note_en ?? '', note_zh: rec.note_zh ?? '' }, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact series score', zh: '比分全中' }, logLimit: 12, title: { en: 'FABLE LOG', zh: 'FABLE 记录' } })
@@ -441,12 +444,6 @@ function renderMeta() {
   ).join('') || `<tr><td colspan="5" class="empty">${T('Meta table arrives with the first data run.', 'Meta 表将随首批数据发布。')}</td></tr>`;
 }
 
-function renderSources() {
-  $('sources').innerHTML = (data.sources || []).map((s) =>
-    `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>${s.fetchedAt ? ` <time datetime="${esc(s.fetchedAt)}">${esc(String(s.fetchedAt).slice(0, 10))}</time>` : ''}</li>`,
-  ).join('');
-}
-
 function renderAll() {
   lastPaint = null;
   paint();
@@ -456,7 +453,6 @@ function renderAll() {
   renderMvp();
   renderSwiss();
   renderMeta();
-  renderSources();
   tick();
 }
 
