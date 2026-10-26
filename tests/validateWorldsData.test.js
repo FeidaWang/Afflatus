@@ -186,3 +186,90 @@ describe('validateWorldsData — sources[]', () => {
     expect(e).toContain('sources[0].fetchedAt');
   });
 });
+
+import { readFileSync } from 'node:fs';
+
+describe('round-2 optional fields', () => {
+  const live = JSON.parse(readFileSync('public/worlds-data.json', 'utf8'));
+  const extremes = () => ({
+    team: 'GEN',
+    players: {
+      best: { player: 'Chovy', role: 'mid', score: 1.2, stats: { kda: 6, dpm: 700, kp: 70, gd15: 400 }, reason_en: '', reason_zh: '' },
+      worst: { player: 'Duro', role: 'sup', score: -0.4, stats: { kda: 3, dpm: 150, kp: 60, gd15: -100 }, reason_en: '', reason_zh: '' },
+    },
+    tactics: {
+      best: { key: 'GD@15', value: '1,204', pct: 1, reason_en: '', reason_zh: '' },
+      worst: { key: 'DRA%', value: '41%', pct: 0.2, reason_en: '', reason_zh: '' },
+    },
+  });
+  function withRound2() {
+    const d = structuredClone(live);
+    const open = d.series.find((s) => s.pick && !s.result && s.bo === 3);
+    open.pick.scores = { '2-0': 0.61, '2-1': 0.265, '1-2': 0.04, '0-2': 0.085 };
+    open.pick.pDecider = 0.305;
+    d.teams = [extremes()];
+    d.champion[0].oddsImplied = 2.23;
+    d.mvp[0].oddsImplied = 3.51;
+    d.meta[0].key = 'Vi';
+    d.ddragon = '16.21.1';
+    return { d, open };
+  }
+  const errorsOf = (d) => validateWorldsData(d).errors.join('\n');
+
+  it('accepts the live round-1 file unchanged', () => {
+    expect(validateWorldsData(live)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('accepts a file carrying every new field', () => {
+    expect(validateWorldsData(withRound2().d)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('rejects scorelines that do not sum to one', () => {
+    const { d, open } = withRound2();
+    open.pick.scores = { '2-0': 0.5, '2-1': 0.2, '1-2': 0.1, '0-2': 0.1 };
+    expect(errorsOf(d)).toMatch(/pick\.scores: must sum to 1/);
+  });
+
+  it('rejects a malformed scoreline key', () => {
+    const { d, open } = withRound2();
+    open.pick.scores = { '2:0': 1 };
+    expect(errorsOf(d)).toMatch(/pick\.scores: key "2:0"/);
+  });
+
+  it('rejects pDecider outside [0,1]', () => {
+    const { d, open } = withRound2();
+    open.pick.pDecider = 1.2;
+    expect(errorsOf(d)).toMatch(/pick\.pDecider/);
+  });
+
+  it('rejects a team extreme without a player name', () => {
+    const { d } = withRound2();
+    d.teams[0].players.best.player = '';
+    expect(errorsOf(d)).toMatch(/teams\[0\]\.players\.best\.player/);
+  });
+
+  it('rejects an unknown tactic key and an out-of-range percentile', () => {
+    const { d } = withRound2();
+    d.teams[0].tactics.best.key = 'KDA';
+    d.teams[0].tactics.worst.pct = 2;
+    expect(errorsOf(d)).toMatch(/teams\[0\]\.tactics\.best\.key/);
+    expect(errorsOf(d)).toMatch(/teams\[0\]\.tactics\.worst\.pct/);
+  });
+
+  it('rejects implied odds below 1 but allows null', () => {
+    const { d } = withRound2();
+    d.champion[0].oddsImplied = 0.5;
+    d.mvp[0].oddsImplied = null;
+    const errors = errorsOf(d);
+    expect(errors).toMatch(/champion\[0\]\.oddsImplied/);
+    expect(errors).not.toMatch(/mvp\[0\]\.oddsImplied/);
+  });
+
+  it('rejects a Data Dragon key with punctuation and a non-semver ddragon', () => {
+    const { d } = withRound2();
+    d.meta[0].key = "Kai'Sa";
+    d.ddragon = 'latest';
+    expect(errorsOf(d)).toMatch(/meta\[0\]\.key/);
+    expect(errorsOf(d)).toMatch(/ddragon/);
+  });
+});

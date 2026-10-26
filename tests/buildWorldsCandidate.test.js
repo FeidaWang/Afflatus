@@ -16,11 +16,15 @@ const FILES = {
   'polymarket.json': 'polymarket-events.json',
   'polymarket-winner.json': 'polymarket-winner.json',
   'kalshi.json': 'kalshi.json',
+  'teams.html': 'teams-table.html',
+  'ddragon-versions.json': 'ddragon-versions.json',
+  'ddragon-champions.json': 'ddragon-champions.json',
 };
+const ROUND2 = ['teams.html', 'ddragon-versions.json', 'ddragon-champions.json'];
 
-function build() {
+function build({ without = [] } = {}) {
   const fixtures = mkdtempSync(join(tmpdir(), 'worlds-fixtures-'));
-  for (const [target, source] of Object.entries(FILES)) copyFileSync(join(FIXTURES, source), join(fixtures, target));
+  for (const [target, source] of Object.entries(FILES)) if (!without.includes(target)) copyFileSync(join(FIXTURES, source), join(fixtures, target));
   const output = mkdtempSync(join(tmpdir(), 'worlds-cand-'));
   execFileSync('node', ['scripts/build-worlds-candidate.mjs', `--output=${output}`, `--offline-fixtures=${fixtures}`, '--now=2026-10-25T12:30:00Z', '--baseline=/nonexistent'], { encoding: 'utf8' });
   return {
@@ -73,5 +77,47 @@ describe('build-worlds-candidate (offline fixtures)', () => {
     const tlBlg = data.series.find((s) => s.id === 'r2-tl-blg');
     expect(tlBlg.result).toMatchObject({ home: 0, away: 1 });
     expect(tlBlg.result.games[0].picks.away).toEqual(['Lee Sin', 'Orianna', 'Camille', 'Jhin', 'Nautilus']);
+  });
+});
+
+describe('build-worlds-candidate round-2 fields', () => {
+  const { data, payload } = build();
+  const open = data.series.filter((s) => s.pick && !s.result);
+
+  it('adds a scoreline distribution to every open pick and a decider to Bo3s', () => {
+    for (const s of open) {
+      expect(Object.values(s.pick.scores).reduce((a, b) => a + b, 0)).toBeCloseTo(1, 6);
+      if (s.bo === 3) expect(s.pick.pDecider).toBeGreaterThan(0);
+      else expect(s.pick).not.toHaveProperty('pDecider');
+    }
+  });
+
+  it('names team tactic extremes for all sixteen teams and player extremes where rosters exist', () => {
+    expect(data.teams).toHaveLength(16);
+    for (const t of data.teams) expect(t.tactics.best.key).toBeTruthy();
+    const withPlayers = data.teams.filter((t) => t.players);
+    expect(withPlayers.length).toBeGreaterThan(0);
+    for (const t of withPlayers) expect(t.players.best.player).toBeTruthy();
+    expect(payload.teams).toHaveLength(16);
+  });
+
+  it('prices champion and MVP boards as implied odds', () => {
+    expect(data.champion.every((c) => (c.prob === 0 ? c.oddsImplied === null : c.oddsImplied >= 1))).toBe(true);
+    expect(data.mvp.every((m) => m.oddsImplied >= 1)).toBe(true);
+    expect(payload.champion[0].oddsImplied).toBe(data.champion[0].oddsImplied);
+  });
+
+  it('tags meta champions with Data Dragon ids', () => {
+    expect(data.ddragon).toBe('16.21.1');
+    for (const m of data.meta) expect(m.key).toMatch(/^[A-Za-z]+$/);
+    expect(validateWorldsData(data)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('still builds without the round-2 sources and says so in notes', () => {
+    const bare = build({ without: ROUND2 }).data;
+    expect(validateWorldsData(bare).ok).toBe(true);
+    expect(bare.teams.every((t) => !t.tactics)).toBe(true);
+    expect(bare.notes.some((n) => /teams\.html/.test(n))).toBe(true);
+    expect(bare.notes.some((n) => /ddragon/i.test(n))).toBe(true);
   });
 });

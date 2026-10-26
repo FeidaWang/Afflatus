@@ -218,3 +218,38 @@ describe('worldsCards', () => {
     });
   });
 });
+
+import { chooseAndReveal, needsAutoReveal } from '../src/lib/worldsCards.js';
+
+describe('chooseAndReveal', () => {
+  it('picks a side and flips the card in one step before kickoff', () => {
+    const s = series();
+    const next = chooseAndReveal({}, s, 'away', BEFORE);
+    expect(next[s.id]).toMatchObject({ side: 'away', revealed: true });
+    expect(cardState(s, next[s.id], BEFORE)).toBe('revealed');
+  });
+
+  it('refuses after kickoff', () => {
+    const picks = {};
+    expect(chooseAndReveal(picks, series(), 'home', AFTER)).toBe(picks);
+  });
+
+  it('never changes a revealed side', () => {
+    const s = series();
+    const picks = chooseAndReveal({}, s, 'home', BEFORE);
+    expect(chooseAndReveal(picks, s, 'away', BEFORE)).toBe(picks);
+  });
+
+  it('rejects an unknown side', () => {
+    const picks = {};
+    expect(chooseAndReveal(picks, series(), 'draw', BEFORE)).toBe(picks);
+  });
+});
+
+describe('needsAutoReveal', () => {
+  it('flags round-1 entries that were picked but never flipped', () => {
+    expect(needsAutoReveal({ side: 'home', revealed: false })).toBe(true);
+    expect(needsAutoReveal({ side: 'home', revealed: true })).toBe(false);
+    expect(needsAutoReveal(undefined)).toBe(false);
+  });
+});

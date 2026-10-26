@@ -11,13 +11,22 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 import { densityFor, panRange, resizeLeft, resizeRight, zoomRange } from '../lib/stageRange.js';
 import { wheelScaleDelta } from '../lib/pinchZoom.js';
 import { STAGES, buildStages, currentStageIndex, nextKickoff } from '../lib/worldsStages.js';
-import { agreement, cardState, choose, fableRecord, loadPicks, rarity, reveal, savePicks, userRecord } from '../lib/worldsCards.js';
+import { agreement, cardState, chooseAndReveal, fableRecord, loadPicks, needsAutoReveal, rarity, reveal, savePicks, userRecord } from '../lib/worldsCards.js';
+import { createCarousel, drag, goTo, indexAt, release, step } from '../lib/worldsCarousel.js';
 import { getLocale } from '../lib/localeStore.js';
+import { championKey } from '../lib/worldsChampionKey.js';
 
 const $ = (id) => document.getElementById(id);
 const N = STAGES.length;
-const FABLE_ICON = '<svg class="fable-ic" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="7" width="18" height="14" rx="5" fill="#3ec6ff"/><rect x="10" y="2" width="4" height="5" rx="2" fill="#3ec6ff"/><circle cx="12" cy="2" r="1.6" fill="#3ec6ff"/><circle cx="9" cy="14" r="1.8" fill="#05070c"/><circle cx="15" cy="14" r="1.8" fill="#05070c"/><path d="M8.5 17.5 Q12 20.5 15.5 17.5" stroke="#05070c" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
+// Clawd, Anthropic's Claude mascot, drawn as pixel art (Claude and Clawd are Anthropic trademarks).
+const FABLE_ICON = '<svg class="fable-ic" viewBox="0 0 14 12" width="16" height="14" aria-hidden="true" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><g fill="#D77757"><rect x="2" y="1" width="10" height="7"/><rect x="0" y="4" width="2" height="2"/><rect x="12" y="4" width="2" height="2"/><rect x="3" y="8" width="1" height="3"/><rect x="5" y="8" width="1" height="3"/><rect x="8" y="8" width="1" height="3"/><rect x="10" y="8" width="1" height="3"/></g><rect x="4" y="3" width="1" height="2" fill="#0b0b0d"/><rect x="9" y="3" width="1" height="2" fill="#0b0b0d"/></svg>';
 const CHAMP_ICON = (slug) => `https://gol.gg/_img/champions_icon/${encodeURIComponent(slug)}.png`;
+const DDRAGON_FALLBACK = '16.21.1';
+const DDRAGON_ICON = (key) => `https://ddragon.leagueoflegends.com/cdn/${data?.ddragon || DDRAGON_FALLBACK}/img/champion/${encodeURIComponent(key)}.png`;
+const TACTIC_LABEL = {
+  'GD@15': ['Gold lead at 15', '15 分钟经济差'], 'FB%': ['First blood', '一血率'], 'FT%': ['First tower', '首塔率'],
+  'DRA%': ['Dragon control', '控龙率'], VGPG: ['Void grubs per game', '场均虚空巢虫'], 'NASH%': ['Baron control', '大龙控制率'],
+};
 
 let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
 const T = (en, zh) => (lang === 'zh' ? zh : en);
@@ -43,11 +52,12 @@ function fmtDur(ms) {
   return `${d ? `${d}d ` : ''}${two(h)}h ${two(m)}m ${two(sec)}s`;
 }
 const fmtLocal = (iso) => new Date(iso).toLocaleString(lang === 'zh' ? 'zh-CN' : 'en-AU', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+// Logos always sit on a light plate: several are black on transparent (TSW, LOS).
 function logo(code, cls = 'logo') {
   const url = data?.teamLogos?.[code];
-  return url
+  return `<span class="plate">${url
     ? `<img class="${cls}" src="${esc(url)}" alt="" loading="lazy" decoding="async" width="40" height="40">`
-    : `<span class="${cls} logo-txt" aria-hidden="true">${esc(code)}</span>`;
+    : `<span class="${cls} logo-txt" aria-hidden="true">${esc(code)}</span>`}</span>`;
 }
 const seriesById = (id) => data?.series?.find((s) => s.id === id);
 const stageOf = (s) => STAGES.find((st) => st.stage === s.stage && (st.stage !== 'swiss' || st.round === s.round));
@@ -81,19 +91,56 @@ function frontHTML(s, entry, state) {
     `<div class="fpick">${logo(win)}<div><i>${FABLE_ICON} ${T('FABLE PICK', 'FABLE 研判')}</i><b>${esc(win)}</b><span>${pct(pw)}</span></div></div>` +
     `<div class="fprob"><span>${esc(s.home)} ${pct(p.pWin[0])}</span><i class="pbar"><b style="--w:${p.pWin[0] * 100}%"></b></i><span>${pct(p.pWin[1])} ${esc(s.away)}</span></div>` +
     `<div class="fodds"><span>${T('implied', '隐含赔率')} ${Number(p.oddsImplied[0]).toFixed(2)} · ${Number(p.oddsImplied[1]).toFixed(2)}</span><span>${T('score', '比分')} <b>${esc(p.score)}</b> ${pct(p.pScore)}</span></div>` +
+    triadHTML(s, p) +
+    scoreBarHTML(s, p) +
     (factors.length ? `<ul class="ffac">${factors.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : '') +
+    extremesHTML(s) +
     mk +
     (agree ? `<div class="tag ${agree}">${T('You vs Fable', '你 vs Fable')} · ${agree === 'agree' ? T('AGREE', '一致') : T('DISAGREE', '分歧')}</div>` : '');
 }
 
-function cardHTML(s) {
-  const entry = picks[s.id];
+// Win / goes-the-distance / lose for Bo3 and Bo5 (a series has no draw).
+function triadHTML(s, p) {
+  if (!(s.bo > 1) || !Number.isFinite(p.pDecider)) return '';
+  const cell = (label, v, cls) => `<span class="${cls}"><i>${label}</i><b>${pct(v)}</b></span>`;
+  return `<div class="wdl">${cell(esc(s.home), p.pWin[0], 'h')}${cell(T('DECIDER', '打满'), p.pDecider, 'd')}${cell(esc(s.away), p.pWin[1], 'a')}</div>`;
+}
+
+function scoreBarHTML(s, p) {
+  if (!p.scores) return '';
+  const margin = (k) => { const [h, a] = k.split('-').map(Number); return h - a; };
+  const rows = Object.entries(p.scores).sort((x, y) => margin(y[0]) - margin(x[0]));
+  const label = rows.map(([k, v]) => `${k} ${pct(v)}`).join(' · ');
+  return `<div class="sbar" role="img" aria-label="${esc(`${T('Scoreline', '比分分布')} (${s.home}–${s.away}): ${label}`)}" title="${esc(label)}">${rows.map(([k, v]) =>
+    `<span class="seg ${margin(k) > 0 ? 'h' : 'a'}" style="flex:${v}">${v >= 0.1 ? `<em>${k}</em>` : ''}</span>`).join('')}</div><div class="sleg">${esc(label)}</div>`;
+}
+
+function extremesHTML(s) {
+  const teams = new Map((data?.teams || []).map((t) => [t.team, t]));
+  const side = (code) => {
+    const t = teams.get(code);
+    if (!t || !(t.players || t.tactics)) return '';
+    const why = (x) => { const r = T(x.reason_en, x.reason_zh); return r ? `<p>${esc(r)}</p>` : ''; };
+    const player = (x, up) => (x ? `<li class="${up ? 'up' : 'dn'}"><i>${up ? T('STRONGEST PLAYER', '最强选手') : T('WEAKEST PLAYER', '最弱选手')}</i><b>${esc(x.player)}</b> <small>${esc(String(x.role || '').toUpperCase())}</small>${why(x)}</li>` : '');
+    const tactic = (x, up) => {
+      if (!x) return '';
+      const [en, zh] = TACTIC_LABEL[x.key] || [x.key, x.key];
+      return `<li class="${up ? 'up' : 'dn'}"><i>${up ? T('STRONGEST TACTIC', '最强战术点') : T('WEAKEST TACTIC', '最弱战术点')}</i><b>${esc(T(en, zh))}</b> <small>${esc(x.value)}</small>${why(x)}</li>`;
+    };
+    return `<div class="ext-team"><h4>${logo(code)}${esc(code)}</h4><ul>${player(t.players?.best, true)}${player(t.players?.worst, false)}${tactic(t.tactics?.best, true)}${tactic(t.tactics?.worst, false)}</ul></div>`;
+  };
+  const body = side(s.home) + side(s.away);
+  return body ? `<details class="ext"><summary>${T('Strengths and weak spots', '双方强弱点')}</summary><div class="ext-grid">${body}</div></details>` : '';
+}
+
+function cardHTML(s, entry = picks[s.id]) {
   const state = cardState(s, entry, Date.now());
-  const flipped = state === 'revealed' || state === 'result';
+  // Missed series show Fable's sealed call straight away (spec 2026-10-26 §5).
+  const flipped = state === 'revealed' || state === 'result' || state === 'locked-missed';
   const rare = s.pick ? rarity(s.pick.pWin[pickIdx(s.pick)]) : 'teal';
   const pickable = state === 'pick' || state === 'ready';
   const side = (key) => `<button type="button" class="side${entry?.side === key ? ' on' : ''}" data-side="${key}" aria-pressed="${entry?.side === key}"${pickable ? '' : ' disabled'} aria-label="${T('Pick', '选')} ${esc(s[key])}">${logo(s[key])}<span class="code">${esc(s[key])}</span></button>`;
-  const hint = { pick: T('PICK YOUR WINNER', '先选你的胜方'), ready: T('TAP TO FLIP', '点击翻牌'), 'locked-missed': T('MISSED · LOCKED', '错过 · 已锁定') }[state] || '';
+  const hint = { pick: T('PICK YOUR WINNER · IT FLIPS', '选出你的胜方 · 即刻翻牌'), 'locked-missed': T('MISSED · LOCKED', '错过 · 已锁定') }[state] || '';
   return `<article class="card ${rare}${flipped ? ' flipped' : ''}" data-id="${esc(s.id)}" data-state="${state}" data-ko="${Date.parse(s.kickoff)}" tabindex="0" aria-label="${esc(s.home)} vs ${esc(s.away)} · BO${s.bo}">
     <div class="card-inner">
       <div class="face back"${flipped ? ' aria-hidden="true"' : ''}>
@@ -138,13 +185,185 @@ function renderCardsView() {
   }
   const col = (st, body) => `<section class="stageCol"><h3 class="stageH">${esc(T(st.long_en, st.long_zh))}</h3>${body}</section>`;
   if (density === 'detail') {
-    view.innerHTML = windowed.map((st) => col(st, `<div class="deck">${st.matches.map(cardHTML).join('')}</div>`)).join('');
+    const st = windowed[0];
+    view.innerHTML = col(st, `<div id="carousel" class="deck3d" tabindex="0" role="group" aria-roledescription="carousel" aria-label="${esc(T('Card deck — drag, scroll or use arrow keys; Enter draws the front card', '牌组：拖动、滚动或用方向键转动，回车抽出正面那张'))}"><div class="ringStage">${st.matches.map(miniCardHTML).join('')}</div></div><div id="drawn" class="drawn"><p class="drawn-empty">${T('Spin the deck and tap the front card to draw it.', '转动牌组，点正面那张卡把它抽出来。')}</p></div>`);
+    mountCarousel(st.matches);
   } else if (density === 'cards') {
     view.innerHTML = windowed.map((st, k) => col(st, `<div class="midGrid">${st.matches.map((m) => midHTML(m, s + k)).join('')}</div>`)).join('');
   } else {
     view.innerHTML = `<div class="ko-tree">${windowed.map((st, k) => `<div class="ko-tree-col"><div class="ko-tree-h">${esc(T(st.label_en, st.label_zh))}</div>${st.matches.map((m) => treeHTML(m, s + k)).join('')}</div>`).join('')}</div>`;
   }
   tick();
+}
+
+/* ---------- carousel (spec 2026-10-26 §5) ---------- */
+const STATE_LABEL = () => ({ pick: T('PICK', '待选'), ready: T('PICKED', '已选'), revealed: T('FLIPPED', '已翻'), 'locked-missed': T('MISSED', '错过'), result: T('FINAL', '完场') });
+function miniStatus(s, entry, state) {
+  if (state === 'result') return `${s.result.home}–${s.result.away}`;
+  if (state === 'revealed' && s.pick) return `${esc(s[s.pick.side])} ${pct(s.pick.pWin[pickIdx(s.pick)])}`;
+  return STATE_LABEL()[state];
+}
+function miniCardHTML(s, i) {
+  const entry = picks[s.id];
+  const state = cardState(s, entry, Date.now());
+  return `<div class="mcard" data-i="${i}" data-id="${esc(s.id)}" data-state="${state}" data-ko="${Date.parse(s.kickoff)}">
+    <span class="sticker">BO${s.bo}</span>
+    <span class="vsrow">${logo(s.home)}<i>VS</i>${logo(s.away)}</span>
+    <b class="codes">${esc(s.home)} · ${esc(s.away)}</b>
+    <span class="mst">${miniStatus(s, entry, state)}</span>
+    <span class="cd"></span>
+  </div>`;
+}
+
+// Cards per 16 ms frame, from one input delta; capped so a flick spins at most about a card a frame.
+const flingVel = (dCards, dtMs) => Math.max(-0.9, Math.min(0.9, (dCards / Math.max(8, dtMs)) * 16));
+let deck = null; // { el, cards, series, state, raf, cw }
+const cardStepPx = () => (deck.state.loop ? (2 * Math.PI * deck.r) / deck.state.n : deck.cw * 0.9);
+function layoutDeck() {
+  const { el, state } = deck;
+  deck.cw = Math.min(150, Math.max(110, el.clientWidth * 0.36));
+  deck.r = state.loop ? Math.round((deck.cw / 2) / Math.tan(Math.PI / state.n) + 12) : 0;
+  el.style.setProperty('--cw', `${deck.cw}px`);
+  el.style.setProperty('--r', `${deck.r}px`);
+}
+function applyDeck() {
+  const { cards, state, cw, r } = deck;
+  const center = indexAt(state.pos, state.n, state.loop);
+  cards.forEach((card, i) => {
+    let d = i - state.pos;
+    if (state.loop) d = ((d % state.n) + state.n * 1.5) % state.n - state.n / 2;
+    const ad = Math.abs(d);
+    card.style.transform = state.loop
+      ? `rotateY(${(d * 360) / state.n}deg) translateZ(${r}px)`
+      : `translateX(${d * cw * 0.9}px) translateZ(${-ad * 60}px) rotateY(${d * -12}deg)`;
+    // Neighbours stay near-opaque so their stickers keep 4.5:1 contrast; cards
+    // further round show as blank backs instead of faded, unreadable text.
+    card.style.opacity = String(ad <= 1.2 ? 1 - Math.min(ad, 1) * 0.12 : Math.max(0.2, 0.88 - (ad - 1) * 0.4));
+    card.classList.toggle('far', ad > 1.2);
+    card.style.zIndex = String(100 - Math.round(ad * 10));
+    card.classList.toggle('center', i === center);
+  });
+}
+function runDeck() {
+  if (deck.raf) return;
+  let last = performance.now();
+  const frame = (now) => {
+    deck.state = step(deck.state, Math.min(48, now - last));
+    last = now;
+    applyDeck();
+    deck.raf = deck.state.phase === 'idle' ? 0 : requestAnimationFrame(frame);
+  };
+  deck.raf = requestAnimationFrame(frame);
+}
+function resumeDeck() {
+  if (deck.state.phase !== 'idle') runDeck();
+}
+function spinTo(index) {
+  deck.state = reducedMotion() ? { ...deck.state, pos: index, target: index, vel: 0, phase: 'idle' } : goTo(deck.state, index);
+  if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+}
+function mountCarousel(series) {
+  if (deck?.raf) cancelAnimationFrame(deck.raf);
+  const el = $('carousel');
+  const n = series.length;
+  // Open the deck on the first card still to be picked.
+  const first = Math.max(0, series.findIndex((s) => cardState(s, picks[s.id], Date.now()) === 'pick'));
+  deck = { el, cards: [...el.querySelectorAll('.mcard')], series, state: createCarousel(n, first), raf: 0, cw: 150, r: 0 };
+  el.dataset.mode = deck.state.loop ? 'ring' : 'arc';
+  layoutDeck();
+  applyDeck();
+  wireDeck(el);
+}
+function wireDeck(el) {
+  let g = null; // gesture: { x, y, lastX, lastT, vel, dragging }
+  el.addEventListener('pointerdown', (e) => {
+    if (!e.isPrimary || deck.el !== el) return;
+    if (deck.raf) { cancelAnimationFrame(deck.raf); deck.raf = 0; }
+    g = { x: e.clientX, y: e.clientY, lastX: e.clientX, lastT: performance.now(), vel: 0, dragging: false, id: e.pointerId };
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    if (!g.dragging) {
+      const dx = e.clientX - g.x, dy = e.clientY - g.y;
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g = null; resumeDeck(); return; } // vertical: let the page scroll
+      if (Math.abs(dx) < 10) return;
+      g.dragging = true;
+      try { el.setPointerCapture(e.pointerId); } catch { /* pointer already released (e.g. cancelled touch) */ }
+      el.classList.add('dragging');
+    }
+    const now = performance.now();
+    const d = -(e.clientX - g.lastX) / cardStepPx();
+    deck.state = drag(deck.state, d);
+    g.vel = flingVel(d, now - g.lastT);
+    g.lastX = e.clientX; g.lastT = now;
+    applyDeck();
+  });
+  const end = (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    const was = g;
+    g = null;
+    el.classList.remove('dragging');
+    if (!was.dragging) resumeDeck(); // a caught spin must still finish on a whole card
+    if (was.dragging) {
+      const stale = performance.now() - was.lastT > 80; // finger rested before lifting: no fling
+      deck.state = release(deck.state, stale ? 0 : was.vel, { reduced: reducedMotion() });
+      if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+      return;
+    }
+    if (e.type !== 'pointerup') return;
+    const card = e.target.closest('.mcard');
+    if (!card) return;
+    const i = +card.dataset.i;
+    if (i === indexAt(deck.state.pos, deck.state.n, deck.state.loop)) { spinTo(i); drawCard(card.dataset.id); }
+    else spinTo(i);
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+  let wheelT = 0, wheelVel = 0, wheelLast = 0;
+  el.addEventListener('wheel', (e) => {
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!delta) return;
+    e.preventDefault();
+    if (deck.raf) { cancelAnimationFrame(deck.raf); deck.raf = 0; }
+    const now = performance.now();
+    const d = (delta * (e.deltaMode === 1 ? 16 : 1)) / cardStepPx() / 2;
+    deck.state = drag(deck.state, d);
+    wheelVel = flingVel(d, now - wheelLast);
+    wheelLast = now;
+    applyDeck();
+    clearTimeout(wheelT);
+    wheelT = setTimeout(() => {
+      deck.state = release(deck.state, wheelVel, { reduced: reducedMotion() });
+      if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+    }, 120);
+  }, { passive: false });
+  el.addEventListener('keydown', (e) => {
+    if (e.target !== el) return;
+    const at = Math.round(deck.state.phase === 'idle' ? deck.state.pos : deck.state.target);
+    if (e.key === 'ArrowRight') { spinTo(deck.state.loop ? at + 1 : Math.min(deck.state.n - 1, at + 1)); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { spinTo(deck.state.loop ? at - 1 : Math.max(0, at - 1)); e.preventDefault(); }
+    else if (e.key === 'Enter' || e.key === ' ') { drawCard(deck.series[indexAt(deck.state.pos, deck.state.n, deck.state.loop)]?.id); e.preventDefault(); }
+  });
+}
+function refreshMini(id) {
+  const card = deck?.cards.find((c) => c.dataset.id === id);
+  const s = seriesById(id);
+  if (!card || !s) return;
+  const state = cardState(s, picks[s.id], Date.now());
+  card.dataset.state = state;
+  card.querySelector('.mst').innerHTML = miniStatus(s, picks[s.id], state);
+}
+function drawCard(id) {
+  const s = seriesById(id);
+  if (!s) return;
+  deck.cards.forEach((c) => c.classList.toggle('drawn', c.dataset.id === id));
+  const host = $('drawn');
+  host.innerHTML = cardHTML(s);
+  const art = host.querySelector('article.card');
+  // Round-1 picks were stored un-flipped; the flip control is gone, so flip them now.
+  if (art.dataset.state === 'ready' && needsAutoReveal(picks[s.id])) flipCard(art);
+  tick();
+  art.focus({ preventScroll: true });
 }
 
 function burst(art) {
@@ -164,9 +383,9 @@ function burst(art) {
   setTimeout(() => host.remove(), 1200);
 }
 
-function replaceCard(art, s) {
+function replaceCard(art, s, entry) {
   const tmp = document.createElement('div');
-  tmp.innerHTML = cardHTML(s);
+  tmp.innerHTML = cardHTML(s, entry);
   const next = tmp.firstElementChild;
   art.replaceWith(next);
   tick();
@@ -178,6 +397,11 @@ function flipCard(art) {
   if (!s || art.dataset.state !== 'ready') return;
   picks = reveal(picks, s.id);
   savePicks(storage, picks);
+  showFront(art, s);
+}
+
+// Visual half of a flip; the pick is already persisted as revealed.
+function showFront(art, s) {
   art.dataset.state = 'revealed';
   const front = art.querySelector('.face.front');
   front.innerHTML = frontHTML(s, picks[s.id], 'revealed');
@@ -185,18 +409,22 @@ function flipCard(art) {
   art.querySelector('.face.back').setAttribute('aria-hidden', 'true');
   art.classList.add('flipped');
   if (!reducedMotion()) burst(art);
+  refreshMini(s.id);
   renderRecord();
 }
 
+// Picking a side flips the card straight away (round 2: no second tap).
 function chooseSide(art, side) {
   const s = seriesById(art.dataset.id);
   if (!s) return;
-  const next = choose(picks, s, side, Date.now());
+  const next = chooseAndReveal(picks, s, side, Date.now());
   if (next === picks) return;
   picks = next;
   savePicks(storage, picks);
-  const fresh = replaceCard(art, s);
+  // Render the back with the picked side lit, then flip on the next task so the transition runs.
+  const fresh = replaceCard(art, s, { ...picks[s.id], revealed: false });
   fresh.querySelector(`.side[data-side="${side}"]`)?.focus();
+  setTimeout(() => showFront(fresh, s), 60);
 }
 
 function wireCards() {
@@ -214,16 +442,12 @@ function wireCards() {
   view.addEventListener('keydown', (e) => {
     const art = e.target.closest('article.card');
     if (!art || e.target !== art) return;
-    const state = art.dataset.state;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      if (state === 'pick' || state === 'ready') { chooseSide(art, e.key === 'ArrowLeft' ? 'home' : 'away'); e.preventDefault(); }
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      if (state === 'ready') { flipCard(art); e.preventDefault(); }
-    }
+    // Picking now seals the card at once, so arrows no longer pick (use the side buttons).
+    if ((e.key === 'Enter' || e.key === ' ') && art.dataset.state === 'ready') { flipCard(art); e.preventDefault(); }
   });
   // Horizontal swipe (≥48 px, more horizontal than vertical) pans the window one cell.
   let sw = null;
-  view.addEventListener('pointerdown', (e) => { if (e.isPrimary) sw = { x: e.clientX, y: e.clientY }; });
+  view.addEventListener('pointerdown', (e) => { if (e.isPrimary && !e.target.closest('#carousel')) sw = { x: e.clientX, y: e.clientY }; });
   view.addEventListener('pointerup', (e) => {
     if (!sw) return;
     const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
@@ -237,11 +461,17 @@ function wireCards() {
   });
   view.addEventListener('pointercancel', () => { sw = null; });
   $('openPack').addEventListener('click', () => {
-    let i = 0;
-    view.querySelectorAll('article.card').forEach((art) => {
-      if (art.dataset.state === 'ready') setTimeout(() => flipCard(art), 120 * i++);
-      else if (art.dataset.state === 'pick') { art.classList.remove('shake'); void art.offsetWidth; art.classList.add('shake'); }
-    });
+    if (!deck) return;
+    let any = false;
+    for (const s of deck.series) {
+      if (cardState(s, picks[s.id], Date.now()) !== 'ready') continue;
+      any = true;
+      const art = $('drawn').querySelector(`article.card[data-id="${CSS.escape(s.id)}"]`);
+      if (art) flipCard(art);
+      else { picks = reveal(picks, s.id); savePicks(storage, picks); refreshMini(s.id); }
+    }
+    if (any) { renderRecord(); return; }
+    deck.el.classList.remove('shake'); void deck.el.offsetWidth; deck.el.classList.add('shake');
   });
 }
 
@@ -343,16 +573,24 @@ function paint() {
   if (!lastPaint || lastPaint[0] !== s || lastPaint[1] !== e) { renderCardsView(); lastPaint = [s, e]; }
 }
 
-/* ---------- display font (non-blocking) ----------
-   Rajdhani is decorative: attach its stylesheet after parse with
-   font-display optional, so the first paint never waits on Google Fonts. */
-function loadDisplayFont() {
-  if (document.querySelector('link[data-worlds-font]')) return;
+/* ---------- display fonts (non-blocking) ----------
+   Stand-ins for Riot's unlicensable Beaufort / Spiegel (spec 2026-10-26 §3):
+   attach the stylesheet after parse with font-display optional, so the
+   first paint never waits on Google Fonts. */
+const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fira+Sans:wght@400;600&display=optional';
+const FONT_CSS_ZH = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&display=optional';
+function attachFont(key, href) {
+  if (document.querySelector(`link[data-worlds-font="${key}"]`)) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=optional';
-  link.dataset.worldsFont = '1';
+  link.href = href;
+  link.dataset.worldsFont = key;
   document.head.appendChild(link);
+}
+// The CJK serif is only fetched for Chinese readers (it is ~140 KB with its slice list).
+function loadDisplayFont() {
+  attachFont('latin', FONT_CSS);
+  if (lang === 'zh') attachFont('zh', FONT_CSS_ZH);
 }
 loadDisplayFont();
 
@@ -362,7 +600,7 @@ function renderHero() {
   if (patch && data.patch) patch.textContent = String(data.patch);
   const prov = $('prov');
   if (prov) {
-    const badge = buildProvenanceBadge({ updatedAt: data.updated, version: data.version, sourceCount: Array.isArray(data.sources) ? data.sources.length : undefined, lang });
+    const badge = buildProvenanceBadge({ updatedAt: data.updated, version: data.version, lang });
     prov.className = `w-prov prov-${badge.tier}`;
     prov.textContent = badge.text;
   }
@@ -377,6 +615,12 @@ function tick() {
     const nk = nextKickoff(data.series, now);
     cd.textContent = nk ? `${fmtLocal(nk)} · ${fmtDur(Date.parse(nk) - now)}` : T('No upcoming series', '暂无待开赛场次');
   }
+  document.querySelectorAll('#carousel .mcard').forEach((card) => {
+    const ko = +card.dataset.ko;
+    if (card.dataset.state === 'pick' && now >= ko) refreshMini(card.dataset.id);
+    const el = card.querySelector('.cd');
+    el.textContent = card.dataset.state === 'result' ? '' : now >= ko ? T('LOCKED', '已锁定') : fmtDur(ko - now);
+  });
   document.querySelectorAll('#cardsView article.card').forEach((art) => {
     const ko = +art.dataset.ko;
     if (art.dataset.state === 'pick' && now >= ko) { const s = seriesById(art.dataset.id); if (s) { replaceCard(art, s); return; } }
@@ -386,16 +630,55 @@ function tick() {
   });
 }
 
-/* ---------- record / champion / mvp / swiss / meta / sources ---------- */
+/* ---------- panels (layout A, spec 2026-10-26 §4) ---------- */
+const PANELS = ['cards', 'odds', 'mvp', 'swiss', 'meta'];
+function setPanel(id, { focus = false } = {}) {
+  const panel = PANELS.includes(id) ? id : 'cards';
+  for (const key of PANELS) {
+    const tab = $(`tab-${key}`);
+    const on = key === panel;
+    tab.setAttribute('aria-selected', String(on));
+    tab.tabIndex = on ? 0 : -1;
+    $(key).hidden = !on;
+    if (on && focus) tab.focus();
+  }
+  if (panel === 'mvp') loadPhotos();
+  if (location.hash.slice(1) !== panel) history.replaceState(null, '', `#${panel}`);
+}
+function wirePanels() {
+  const nav = document.querySelector('.w-nav');
+  nav.addEventListener('click', (e) => { const tab = e.target.closest('[role="tab"]'); if (tab) setPanel(tab.dataset.panel); });
+  nav.addEventListener('keydown', (e) => {
+    const i = PANELS.indexOf(document.activeElement?.dataset?.panel);
+    if (i < 0) return;
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (step) { setPanel(PANELS[(i + step + PANELS.length) % PANELS.length], { focus: true }); e.preventDefault(); }
+    else if (e.key === 'Home' || e.key === 'End') { setPanel(PANELS[e.key === 'Home' ? 0 : PANELS.length - 1], { focus: true }); e.preventDefault(); }
+  });
+  window.addEventListener('hashchange', () => setPanel(location.hash.slice(1)));
+  if (location.hash) setPanel(location.hash.slice(1));
+}
+
+function renderMini() {
+  if (!data) return;
+  const you = userRecord(data.series, picks);
+  const fab = fableRecord(data.series);
+  $('miniRec').textContent = `${you.hits}/${you.judged} · ${fab.hits}/${fab.judged}`;
+  const top = (data.champion || []).slice().sort((a, b) => b.prob - a.prob).slice(0, 3);
+  $('miniTop').innerHTML = top.map((c) => `<li><span>${esc(c.team)}</span><span>${pct1(c.prob)}${Number.isFinite(c.oddsImplied) ? ` · <b>${c.oddsImplied.toFixed(2)}×</b>` : ''}</span></li>`).join('');
+}
+
+/* ---------- record / champion / mvp / swiss / meta ---------- */
 function renderRecord() {
   if (!data) return;
+  renderMini();
   const you = userRecord(data.series, picks);
   const fab = fableRecord(data.series);
   const brier = Number.isFinite(data.record?.brier) ? data.record.brier : fab.brier;
   const kv = (b, l) => `<div class="rkv"><b>${b}</b><i>${l}</i></div>`;
   $('recordCols').innerHTML =
     `<div class="rcol you"><h3>${T('YOU', '你')}</h3><div class="rgrid">${kv(you.judged, T('judged', '已判'))}${kv(you.hits, T('hits', '命中'))}${kv(`${you.rate}%`, T('hit rate', '命中率'))}${kv(you.streak, T('streak', '连胜'))}</div></div>` +
-    `<div class="rcol fable"><h3>${FABLE_ICON} FABLE</h3><div class="rgrid">${kv(fab.judged, T('judged', '已判'))}${kv(fab.hits, T('hits', '命中'))}${kv(`${fab.rate}%`, T('hit rate', '命中率'))}${kv(`${fab.exact} ⭐`, T('exact score', '比分全中'))}${kv(Number(brier).toFixed(3), 'Brier')}</div></div>`;
+    `<div class="rcol fable"><h3>${FABLE_ICON} Fable 5.1 Max</h3><div class="rgrid">${kv(fab.judged, T('judged', '已判'))}${kv(fab.hits, T('hits', '命中'))}${kv(`${fab.rate}%`, T('hit rate', '命中率'))}${kv(`${fab.exact} ⭐`, T('exact score', '比分全中'))}${kv(Number(brier).toFixed(3), 'Brier')}</div></div>`;
   const rec = data.record;
   const html = rec?.log?.length
     ? renderTrackRecordHTML({ ...rec, note_en: rec.note_en ?? '', note_zh: rec.note_zh ?? '' }, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact series score', zh: '比分全中' }, logLimit: 12, title: { en: 'FABLE LOG', zh: 'FABLE 记录' } })
@@ -412,14 +695,30 @@ function renderChampion() {
       ? `<div class="chips">${f.champs.map((ch) => `<img src="${CHAMP_ICON(ch.slug)}" alt="${esc(ch.name)}" title="${esc(ch.name)}" loading="lazy" decoding="async" width="28" height="28">`).join('')}</div>`
       : '';
     const fear = f ? `<div class="fear"><span class="depth">${T('Fearless pool', '无畏征召英雄池')} · ${esc(f.depth)}</span>${chips}${f.note_en ? `<span class="fnote">${esc(T(f.note_en, f.note_zh))}</span>` : ''}</div>` : '';
-    return `<div class="prow"><div class="prow-h">${logo(c.team)}<b>${esc(c.team)}</b><span class="pv">${pct1(c.prob)}</span>${c.market != null ? `<small>market ${pct1(c.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, c.prob))}%"></b></i>${c.reason_en ? `<p class="why">${esc(T(c.reason_en, c.reason_zh))}</p>` : ''}${fear}</div>`;
+    return `<div class="prow"><div class="prow-h">${logo(c.team)}<b>${esc(c.team)}</b><span class="pv">${pct1(c.prob)}</span>${oddsHTML(c.oddsImplied)}${c.market != null ? `<small>market ${pct1(c.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, c.prob))}%"></b></i>${c.reason_en ? `<p class="why">${esc(T(c.reason_en, c.reason_zh))}</p>` : ''}${fear}</div>`;
   }).join('') || `<div class="empty">${T('Champion odds arrive with the first data run.', '夺冠概率将随首批数据发布。')}</div>`;
+}
+
+const oddsHTML = (odds) => (Number.isFinite(odds) ? `<span class="odds">${odds.toFixed(2)}× <i>${T('implied', '隐含')}</i></span>` : '');
+const initials = (name) => String(name || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || '?';
+// The photo manifest only matters on the MVP panel (hidden on load), so it is
+// fetched the first time that panel opens; until then rows show initials.
+let photoFor = null;
+function loadPhotos() {
+  if (photoFor) return;
+  import('../lib/worldsPlayerPhotos.js').then((m) => { photoFor = m.photoFor; if (data) renderMvp(); });
+}
+function photoHTML(player) {
+  const ph = photoFor?.(player);
+  return ph
+    ? `<img class="mvp-ph" src="${esc(ph.src)}" alt="" width="48" height="48" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-fallback="${esc(initials(player))}">`
+    : `<span class="mvp-ph ph" aria-hidden="true">${esc(initials(player))}</span>`;
 }
 
 function renderMvp() {
   const rows = (data.mvp || []).slice().sort((a, b) => b.prob - a.prob).slice(0, 6);
   $('mvpList').innerHTML = rows.map((m) =>
-    `<div class="prow"><div class="prow-h">${logo(m.teamCode)}<b>${esc(m.player)}</b><span class="tc">${esc(m.teamCode)}</span><span class="pv">${pct1(m.prob)}</span>${m.market != null ? `<small>market ${pct1(m.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, m.prob))}%"></b></i>${m.basis_en ? `<p class="why">${esc(T(m.basis_en, m.basis_zh))}</p>` : ''}</div>`,
+    `<div class="prow"><div class="prow-h">${photoHTML(m.player)}${logo(m.teamCode)}<b>${esc(m.player)}</b><span class="tc">${esc(m.teamCode)}</span><span class="pv">${pct1(m.prob)}</span>${oddsHTML(m.oddsImplied)}${m.market != null ? `<small>market ${pct1(m.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, m.prob))}%"></b></i>${m.basis_en ? `<p class="why">${esc(T(m.basis_en, m.basis_zh))}</p>` : ''}</div>`,
   ).join('') || `<div class="empty">${T('MVP candidates appear once the market names players.', 'MVP 候选将在市场公布选手后出现。')}</div>`;
 }
 
@@ -437,14 +736,8 @@ function renderMeta() {
   const fmt = (v) => (Number.isFinite(v) ? (v <= 1 ? pct1(v * 100) : pct1(v)) : esc(v ?? '—'));
   const rows = (data.meta || []).slice(0, 12);
   $('metaBody').innerHTML = rows.map((m) =>
-    `<tr><th scope="row">${esc(m.champ)}</th><td>${esc(m.picks ?? '—')}</td><td>${esc(m.bans ?? '—')}</td><td>${fmt(m.presence)}</td><td>${fmt(m.winrate)}</td></tr>`,
+    `<tr><th scope="row"><span class="champ"><img class="cav" src="${esc(DDRAGON_ICON(m.key || championKey(m.champ)))}" alt="" width="32" height="32" loading="lazy" decoding="async" data-fallback="${esc(String(m.champ).slice(0, 1))}">${esc(m.champ)}</span></th><td>${esc(m.picks ?? '—')}</td><td>${esc(m.bans ?? '—')}</td><td>${fmt(m.presence)}</td><td>${fmt(m.winrate)}</td></tr>`,
   ).join('') || `<tr><td colspan="5" class="empty">${T('Meta table arrives with the first data run.', 'Meta 表将随首批数据发布。')}</td></tr>`;
-}
-
-function renderSources() {
-  $('sources').innerHTML = (data.sources || []).map((s) =>
-    `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>${s.fetchedAt ? ` <time datetime="${esc(s.fetchedAt)}">${esc(String(s.fetchedAt).slice(0, 10))}</time>` : ''}</li>`,
-  ).join('');
 }
 
 function renderAll() {
@@ -456,7 +749,7 @@ function renderAll() {
   renderMvp();
   renderSwiss();
   renderMeta();
-  renderSources();
+  renderMini();
   tick();
 }
 
@@ -474,12 +767,25 @@ async function load() {
   renderAll();
 }
 
+// Remote portraits (player photos, Data Dragon icons) fall back to an initials tile.
+document.addEventListener('error', (e) => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement) || !img.dataset.fallback) return;
+  const tile = document.createElement('span');
+  tile.className = `${img.className} ph`;
+  tile.setAttribute('aria-hidden', 'true');
+  tile.textContent = img.dataset.fallback;
+  img.replaceWith(tile);
+}, true);
+
 buildScrub();
+wirePanels();
 wireCards();
 paint();
 load();
 setInterval(tick, 1000);
 window.addEventListener('afflatus-lang', (e) => {
   lang = e.detail || getLocale('en');
+  loadDisplayFont();
   if (data) renderAll(); else paint();
 });

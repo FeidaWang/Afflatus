@@ -40,6 +40,17 @@ export function reveal(picks, seriesId) {
   return { ...picks, [seriesId]: { ...entry, revealed: true } };
 }
 
+// Round 2: choosing a side flips the card at once (no second tap).
+export function chooseAndReveal(picks, series, side, now) {
+  const next = choose(picks, series, side, now);
+  return next === picks ? picks : reveal(next, series.id);
+}
+
+// Round-1 entries picked but never flipped have no flip control any more.
+export function needsAutoReveal(pickEntry) {
+  return !!pickEntry && !pickEntry.revealed;
+}
+
 export function agreement(series, pickEntry) {
   if (!series.pick || !pickEntry) return null;
   return pickEntry.side === series.pick.side ? 'agree' : 'disagree';

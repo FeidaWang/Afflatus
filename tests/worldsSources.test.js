@@ -148,6 +148,7 @@ describe('parsePlayerTable', () => {
       kda: 1.6,
       kp: 39.3,
       dpm: 393,
+      gd15: 30,
     });
   });
 });
@@ -220,5 +221,63 @@ describe('GOLGG url builders', () => {
       'https://gol.gg/players/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/',
     );
     expect(GOLGG.team(2813)).toBe('https://gol.gg/teams/team-stats/2813/split-ALL/tournament-ALL/');
+  });
+});
+
+import { DDRAGON, championKeyMap, parseTeamTable } from '../scripts/lib/worlds-sources.mjs';
+import { TACTIC_KEYS } from '../src/lib/worldsModel.js';
+
+describe('parseTeamTable', () => {
+  it('reads all six tactic metrics for each of the 16 teams', () => {
+    const rows = parseTeamTable(read('teams-table.html'));
+    expect(rows).toHaveLength(16);
+    expect(rows.map((r) => r.team).sort()).toEqual([...CODES].sort());
+    for (const r of rows) expect(Object.keys(r.values).sort()).toEqual([...TACTIC_KEYS].sort());
+    const gen = rows.find((r) => r.team === 'GEN');
+    expect(Number.isFinite(gen.values['GD@15'].raw)).toBe(true);
+    expect(typeof gen.values['GD@15'].display).toBe('string');
+  });
+
+  it('returns [] without a team table', () => {
+    expect(parseTeamTable('<html></html>')).toEqual([]);
+  });
+
+  it('builds the team list URL', () => {
+    expect(GOLGG.teams('Worlds 2026 Main Event')).toBe('https://gol.gg/teams/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/');
+  });
+});
+
+describe('parsePlayerTable GD@15', () => {
+  it('adds gd15 to player rows', () => {
+    expect(parsePlayerTable(read('players-table.html')).some((p) => Number.isFinite(p.gd15))).toBe(true);
+  });
+});
+
+describe('Data Dragon', () => {
+  it('maps champion names and ids to Data Dragon ids', () => {
+    const map = championKeyMap(readJson('ddragon-champions.json'));
+    expect(map.get('Wukong')).toBe('MonkeyKing');
+    expect(map.get('MonkeyKing')).toBe('MonkeyKing');
+    expect(map.get("Kai'Sa")).toBe('Kaisa');
+  });
+
+  it('builds version and champion URLs', () => {
+    expect(DDRAGON.versions).toBe('https://ddragon.leagueoflegends.com/api/versions.json');
+    expect(DDRAGON.champions('16.21.1')).toBe('https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion.json');
+  });
+});
+
+describe('parseTeamTable on a drifted page', () => {
+  it('returns [] when the Name header is gone', () => {
+    const html = read('teams-table.html').replace(/>Name</, '>Team<');
+    expect(parseTeamTable(html)).toEqual([]);
+  });
+
+  it('skips metrics a short row does not have instead of throwing', () => {
+    const html = '<table><tr><th>Name</th><th>GD@15</th><th>NASH%</th></tr><tr><td>Gen.G</td><td>812</td></tr></table>';
+    const [gen] = parseTeamTable(html);
+    expect(gen.team).toBe('GEN');
+    expect(gen.values['GD@15'].raw).toBe(812);
+    expect(gen.values).not.toHaveProperty('NASH%');
   });
 });

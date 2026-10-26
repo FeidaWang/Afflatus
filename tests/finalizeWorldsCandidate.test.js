@@ -21,9 +21,9 @@ function candidate() {
   };
 }
 
-function run(model) {
+function run(model, mutate = (d) => d) {
   const dir = mkdtempSync(join(tmpdir(), 'worlds-finalize-'));
-  writeFileSync(join(dir, 'worlds-data.json'), JSON.stringify(candidate()));
+  writeFileSync(join(dir, 'worlds-data.json'), JSON.stringify(mutate(candidate())));
   if (model) writeFileSync(join(dir, 'worlds-model-output.json'), JSON.stringify(model));
   execFileSync('node', ['scripts/finalize-worlds-candidate.mjs', dir], { encoding: 'utf8' });
   return JSON.parse(readFileSync(join(dir, 'worlds-data.json'), 'utf8'));
@@ -66,5 +66,48 @@ describe('finalize-worlds-candidate', () => {
     const data = run({ series: [{ id: 'r3-gen-lyon', adj: 0, factors_en: ['a', 'b', 'c'], factors_zh: ['甲', '乙', '丙'] }] });
     expect(data.series[0].factors_en).toEqual([]);
     expect(data.notes.some((n) => /factors rejected/.test(n))).toBe(true);
+  });
+});
+
+describe('finalize-worlds-candidate round-2 fields', () => {
+  const extreme = (player) => ({ player, role: 'mid', score: 1, stats: { kda: 5, dpm: 600, kp: 70, gd15: 200 }, reason_en: '', reason_zh: '' });
+  const tactic = (key) => ({ key, value: '1', pct: 1, reason_en: '', reason_zh: '' });
+  const withTeams = (d) => ({
+    ...d,
+    teams: [
+      { team: 'GEN', players: { best: extreme('Chovy'), worst: extreme('Duro') }, tactics: { best: tactic('GD@15'), worst: tactic('DRA%') } },
+      { team: 'LYON', tactics: { best: tactic('FB%'), worst: tactic('NASH%') } },
+    ],
+  });
+
+  it('keeps the scoreline distribution consistent with an adjusted P(win)', () => {
+    const data = run({ series: [{ id: 'r3-tes-g2', adj: -0.05, adj_reason: 'sub jungler', adj_src: 'https://example.com/n', factors_en: factors, factors_zh: factorsZh }] });
+    const pick = data.series[1].pick;
+    const homeWins = Object.entries(pick.scores).filter(([k]) => Number(k[0]) === 2).reduce((a, [, v]) => a + v, 0);
+    expect(homeWins).toBeCloseTo(pick.pWin[0], 2);
+    expect(pick.pDecider).toBeGreaterThan(0);
+    expect(validateWorldsData(data).ok).toBe(true);
+  });
+
+  it('merges team extreme reasons and truncates English at 400 characters', () => {
+    const data = run({ teams: [{ team: 'GEN', best_player_en: 'x'.repeat(450), best_player_zh: '最强', worst_tactic_en: 'Dragons lag', worst_tactic_zh: '控龙偏弱' }] }, withTeams);
+    const gen = data.teams[0];
+    expect(gen.players.best.reason_en).toHaveLength(400);
+    expect(gen.players.best.reason_zh).toBe('最强');
+    expect(gen.tactics.worst.reason_en).toBe('Dragons lag');
+    expect(gen.players.worst.reason_en).toBe('');
+    expect(data.teams[1].tactics.best.reason_en).toBe('');
+  });
+
+  it('allows longer champion reasons (600 / 320)', () => {
+    const data = run({ champion: [{ team: 'GEN', reason_en: 'y'.repeat(700), reason_zh: '理'.repeat(400) }] });
+    expect(data.champion[0].reason_en).toHaveLength(600);
+    expect(data.champion[0].reason_zh).toHaveLength(320);
+  });
+
+  it('accepts team reasons for a candidate with no teams field', () => {
+    const data = run({ teams: [{ team: 'GEN', best_player_en: 'x' }] });
+    expect(data.teams).toBeUndefined();
+    expect(validateWorldsData(data).ok).toBe(true);
   });
 });

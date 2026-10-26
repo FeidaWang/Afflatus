@@ -387,7 +387,7 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'en',
     nav: { order: 65, group: 'labs', en: 'Worlds 2026', zh: '全球总决赛' },
-    themeColor: '#05070c',
+    themeColor: '#0b0b0d',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.worlds,
     capabilities: ['live-data', 'local-state'],
