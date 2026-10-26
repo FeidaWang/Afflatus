@@ -66,21 +66,21 @@ describe('buildProvenanceBadge', () => {
     const now = new Date('2026-07-05T12:00:00Z');
     const b = buildProvenanceBadge({ updatedAt: '2026-07-05T06:00:00Z', version: 3, sourceCount: 5, lang: 'en', now });
     expect(b.tier).toBe('fresh');
-    expect(b.text).toBe('FABLE 5 MAX · 6h ago · 5 sources · v3 · NOT ADVICE');
+    expect(b.text).toBe('Fable 5.1 Max · 6h ago · 5 sources · v3 · NOT ADVICE');
   });
 
   it('amber state — zh, no sourceCount', () => {
     const now = new Date('2026-07-05T12:00:00Z');
     const b = buildProvenanceBadge({ updatedAt: '2026-07-03T00:00:00Z', version: 2, lang: 'zh', now });
     expect(b.tier).toBe('amber');
-    expect(b.text).toBe('FABLE 5 MAX · 2 天前 · v2 · 非投资建议');
+    expect(b.text).toBe('Fable 5.1 Max · 2 天前 · v2 · 非投资建议');
   });
 
   it('red state — omits version when not provided', () => {
     const now = new Date('2026-07-10T00:00:00Z');
     const b = buildProvenanceBadge({ updatedAt: '2026-07-05T00:00:00Z', lang: 'en', now });
     expect(b.tier).toBe('red');
-    expect(b.text).toBe('FABLE 5 MAX · 5d ago · NOT ADVICE');
+    expect(b.text).toBe('Fable 5.1 Max · 5d ago · NOT ADVICE');
   });
 
   it('defaults lang to en and now to current time when omitted', () => {
