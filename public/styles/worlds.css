@@ -133,7 +133,6 @@
 .stageH{margin:0 0 10px;font:700 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center}
 @keyframes colIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:16px}
 .card{position:relative;perspective:1200px;min-width:0;border-radius:18px;outline-offset:4px}
 .card-inner{display:grid;transform-style:preserve-3d;transition:transform .6s var(--ease)}
 .card.flipped .card-inner{transform:translateY(-8px) rotateY(180deg)}
@@ -201,6 +200,28 @@
 .verd .v{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);color:var(--dim)}
 .verd .v.ok{border-color:rgba(245,197,66,.6);color:var(--ink)}
 .verd .v.no{border-color:rgba(255,120,120,.4);color:var(--ink)}
+
+/* card deck carousel (1 stage) */
+.deck3d{position:relative;height:250px;perspective:1000px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;border-radius:16px;background:radial-gradient(60% 80% at 50% 100%,rgba(28,47,74,.6),transparent 70%);cursor:grab}
+.deck3d.dragging{cursor:grabbing}
+.deck3d:focus-visible{outline:2px solid var(--td-cyan);outline-offset:3px}
+.deck3d.shake{animation:shake .5s var(--ease)}
+.ringStage{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(calc(var(--r, 0px) * -1))}
+.mcard{position:absolute;left:50%;top:22px;width:var(--cw,150px);height:206px;margin-left:calc(var(--cw,150px) / -2);display:grid;align-content:space-between;justify-items:center;gap:6px;padding:14px 8px 12px;border-radius:14px;
+  background:var(--twill),linear-gradient(var(--denim),var(--denim));border:1px solid rgba(236,235,231,.18);outline:1px dashed rgba(245,197,66,.45);outline-offset:-6px;color:var(--ink);text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform,opacity}
+.mcard.center{border-color:var(--stitch);box-shadow:0 12px 32px rgba(0,0,0,.55)}
+.mcard.center::after{content:"";position:absolute;left:50%;bottom:-12px;width:28px;height:3px;margin-left:-14px;border-radius:2px;background:var(--stitch)}
+.mcard.drawn{border-color:var(--td-cyan)}
+.mcard .vsrow{display:flex;align-items:center;gap:6px}
+.mcard .vsrow i{font:700 10px/1 var(--mono);letter-spacing:.14em;color:var(--dim);font-style:normal}
+.mcard .logo{width:34px;height:34px}
+.mcard .codes{font:700 12px/1.2 var(--mono);letter-spacing:.06em}
+.mcard .mst{font:700 11px/1.2 var(--mono);color:var(--stitch);letter-spacing:.08em}
+.mcard[data-state="locked-missed"] .mst{color:var(--dim)}
+.mcard .cd{min-height:1.2em;font:400 10px/1.2 var(--mono);color:var(--dim)}
+.drawn{display:grid;justify-items:center;align-content:start;min-height:420px;margin-top:16px}
+.drawn .card{width:min(440px,100%)}
+.drawn-empty{margin:40px 0 0;font:400 12px/1.5 var(--mono);color:var(--dim);text-align:center}
 
 /* mid cards (2–3 stages) */
 .midGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
@@ -295,7 +316,8 @@
   .fpick b{font-size:22px}
 }
 @media(prefers-reduced-motion:reduce){
-  .scrubWin,.stageCol,.ko-tree-col,.card-inner,.pbar b,.side,.w-btn,.mid{transition:none;animation:none}
+  .scrubWin,.stageCol,.ko-tree-col,.card-inner,.pbar b,.side,.w-btn,.mid,.w-tab{transition:none;animation:none}
+  .deck3d.shake{animation:none}
   .face.back::after,.card.silver.flipped .face.front,.card.shake{animation:none}
   .burst{display:none}
 }

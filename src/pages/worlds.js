@@ -11,7 +11,8 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 import { densityFor, panRange, resizeLeft, resizeRight, zoomRange } from '../lib/stageRange.js';
 import { wheelScaleDelta } from '../lib/pinchZoom.js';
 import { STAGES, buildStages, currentStageIndex, nextKickoff } from '../lib/worldsStages.js';
-import { agreement, cardState, choose, fableRecord, loadPicks, rarity, reveal, savePicks, userRecord } from '../lib/worldsCards.js';
+import { agreement, cardState, chooseAndReveal, fableRecord, loadPicks, needsAutoReveal, rarity, reveal, savePicks, userRecord } from '../lib/worldsCards.js';
+import { createCarousel, drag, goTo, indexAt, release, step } from '../lib/worldsCarousel.js';
 import { getLocale } from '../lib/localeStore.js';
 
 const $ = (id) => document.getElementById(id);
@@ -88,14 +89,13 @@ function frontHTML(s, entry, state) {
     (agree ? `<div class="tag ${agree}">${T('You vs Fable', '你 vs Fable')} · ${agree === 'agree' ? T('AGREE', '一致') : T('DISAGREE', '分歧')}</div>` : '');
 }
 
-function cardHTML(s) {
-  const entry = picks[s.id];
+function cardHTML(s, entry = picks[s.id]) {
   const state = cardState(s, entry, Date.now());
   const flipped = state === 'revealed' || state === 'result';
   const rare = s.pick ? rarity(s.pick.pWin[pickIdx(s.pick)]) : 'teal';
   const pickable = state === 'pick' || state === 'ready';
   const side = (key) => `<button type="button" class="side${entry?.side === key ? ' on' : ''}" data-side="${key}" aria-pressed="${entry?.side === key}"${pickable ? '' : ' disabled'} aria-label="${T('Pick', '选')} ${esc(s[key])}">${logo(s[key])}<span class="code">${esc(s[key])}</span></button>`;
-  const hint = { pick: T('PICK YOUR WINNER', '先选你的胜方'), ready: T('TAP TO FLIP', '点击翻牌'), 'locked-missed': T('MISSED · LOCKED', '错过 · 已锁定') }[state] || '';
+  const hint = { pick: T('PICK YOUR WINNER · IT FLIPS', '选出你的胜方 · 即刻翻牌'), 'locked-missed': T('MISSED · LOCKED', '错过 · 已锁定') }[state] || '';
   return `<article class="card ${rare}${flipped ? ' flipped' : ''}" data-id="${esc(s.id)}" data-state="${state}" data-ko="${Date.parse(s.kickoff)}" tabindex="0" aria-label="${esc(s.home)} vs ${esc(s.away)} · BO${s.bo}">
     <div class="card-inner">
       <div class="face back"${flipped ? ' aria-hidden="true"' : ''}>
@@ -140,13 +140,178 @@ function renderCardsView() {
   }
   const col = (st, body) => `<section class="stageCol"><h3 class="stageH">${esc(T(st.long_en, st.long_zh))}</h3>${body}</section>`;
   if (density === 'detail') {
-    view.innerHTML = windowed.map((st) => col(st, `<div class="deck">${st.matches.map(cardHTML).join('')}</div>`)).join('');
+    const st = windowed[0];
+    view.innerHTML = col(st, `<div id="carousel" class="deck3d" tabindex="0" role="group" aria-roledescription="carousel" aria-label="${esc(T('Card deck — drag, scroll or use arrow keys; Enter draws the front card', '牌组：拖动、滚动或用方向键转动，回车抽出正面那张'))}"><div class="ringStage">${st.matches.map(miniCardHTML).join('')}</div></div><div id="drawn" class="drawn"><p class="drawn-empty">${T('Spin the deck and tap the front card to draw it.', '转动牌组，点正面那张卡把它抽出来。')}</p></div>`);
+    mountCarousel(st.matches);
   } else if (density === 'cards') {
     view.innerHTML = windowed.map((st, k) => col(st, `<div class="midGrid">${st.matches.map((m) => midHTML(m, s + k)).join('')}</div>`)).join('');
   } else {
     view.innerHTML = `<div class="ko-tree">${windowed.map((st, k) => `<div class="ko-tree-col"><div class="ko-tree-h">${esc(T(st.label_en, st.label_zh))}</div>${st.matches.map((m) => treeHTML(m, s + k)).join('')}</div>`).join('')}</div>`;
   }
   tick();
+}
+
+/* ---------- carousel (spec 2026-10-26 §5) ---------- */
+const STATE_LABEL = () => ({ pick: T('PICK', '待选'), ready: T('PICKED', '已选'), revealed: T('FLIPPED', '已翻'), 'locked-missed': T('MISSED', '错过'), result: T('FINAL', '完场') });
+function miniStatus(s, entry, state) {
+  if (state === 'result') return `${s.result.home}–${s.result.away}`;
+  if (state === 'revealed' && s.pick) return `${esc(s[s.pick.side])} ${pct(s.pick.pWin[pickIdx(s.pick)])}`;
+  return STATE_LABEL()[state];
+}
+function miniCardHTML(s, i) {
+  const entry = picks[s.id];
+  const state = cardState(s, entry, Date.now());
+  return `<div class="mcard" data-i="${i}" data-id="${esc(s.id)}" data-state="${state}" data-ko="${Date.parse(s.kickoff)}">
+    <span class="sticker">BO${s.bo}</span>
+    <span class="vsrow">${logo(s.home)}<i>VS</i>${logo(s.away)}</span>
+    <b class="codes">${esc(s.home)} · ${esc(s.away)}</b>
+    <span class="mst">${miniStatus(s, entry, state)}</span>
+    <span class="cd"></span>
+  </div>`;
+}
+
+// Cards per 16 ms frame, from one input delta; capped so a flick spins at most about a card a frame.
+const flingVel = (dCards, dtMs) => Math.max(-0.9, Math.min(0.9, (dCards / Math.max(8, dtMs)) * 16));
+let deck = null; // { el, cards, series, state, raf, cw }
+const cardStepPx = () => (deck.state.loop ? (2 * Math.PI * deck.r) / deck.state.n : deck.cw * 0.9);
+function layoutDeck() {
+  const { el, state } = deck;
+  deck.cw = Math.min(150, Math.max(110, el.clientWidth * 0.36));
+  deck.r = state.loop ? Math.round((deck.cw / 2) / Math.tan(Math.PI / state.n) + 12) : 0;
+  el.style.setProperty('--cw', `${deck.cw}px`);
+  el.style.setProperty('--r', `${deck.r}px`);
+}
+function applyDeck() {
+  const { cards, state, cw, r } = deck;
+  const center = indexAt(state.pos, state.n, state.loop);
+  cards.forEach((card, i) => {
+    let d = i - state.pos;
+    if (state.loop) d = ((d % state.n) + state.n * 1.5) % state.n - state.n / 2;
+    const ad = Math.abs(d);
+    card.style.transform = state.loop
+      ? `rotateY(${(d * 360) / state.n}deg) translateZ(${r}px)`
+      : `translateX(${d * cw * 0.9}px) translateZ(${-ad * 60}px) rotateY(${d * -12}deg)`;
+    card.style.opacity = String(Math.max(0.15, 1 - ad * (state.loop ? 0.28 : 0.35)));
+    card.style.zIndex = String(100 - Math.round(ad * 10));
+    card.classList.toggle('center', i === center);
+  });
+}
+function runDeck() {
+  if (deck.raf) return;
+  let last = performance.now();
+  const frame = (now) => {
+    deck.state = step(deck.state, Math.min(48, now - last));
+    last = now;
+    applyDeck();
+    deck.raf = deck.state.phase === 'idle' ? 0 : requestAnimationFrame(frame);
+  };
+  deck.raf = requestAnimationFrame(frame);
+}
+function spinTo(index) {
+  deck.state = reducedMotion() ? { ...deck.state, pos: index, target: index, vel: 0, phase: 'idle' } : goTo(deck.state, index);
+  if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+}
+function mountCarousel(series) {
+  if (deck?.raf) cancelAnimationFrame(deck.raf);
+  const el = $('carousel');
+  const n = series.length;
+  // Open the deck on the first card still to be picked.
+  const first = Math.max(0, series.findIndex((s) => cardState(s, picks[s.id], Date.now()) === 'pick'));
+  deck = { el, cards: [...el.querySelectorAll('.mcard')], series, state: createCarousel(n, first), raf: 0, cw: 150, r: 0 };
+  el.dataset.mode = deck.state.loop ? 'ring' : 'arc';
+  layoutDeck();
+  applyDeck();
+  wireDeck(el);
+}
+function wireDeck(el) {
+  let g = null; // gesture: { x, y, lastX, lastT, vel, dragging }
+  el.addEventListener('pointerdown', (e) => {
+    if (!e.isPrimary || deck.el !== el) return;
+    if (deck.raf) { cancelAnimationFrame(deck.raf); deck.raf = 0; }
+    g = { x: e.clientX, y: e.clientY, lastX: e.clientX, lastT: performance.now(), vel: 0, dragging: false, id: e.pointerId };
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    if (!g.dragging) {
+      const dx = e.clientX - g.x, dy = e.clientY - g.y;
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g = null; return; } // vertical: let the page scroll
+      if (Math.abs(dx) < 10) return;
+      g.dragging = true;
+      el.setPointerCapture(e.pointerId);
+      el.classList.add('dragging');
+    }
+    const now = performance.now();
+    const d = -(e.clientX - g.lastX) / cardStepPx();
+    deck.state = drag(deck.state, d);
+    g.vel = flingVel(d, now - g.lastT);
+    g.lastX = e.clientX; g.lastT = now;
+    applyDeck();
+  });
+  const end = (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    const was = g;
+    g = null;
+    el.classList.remove('dragging');
+    if (was.dragging) {
+      const stale = performance.now() - was.lastT > 80; // finger rested before lifting: no fling
+      deck.state = release(deck.state, stale ? 0 : was.vel, { reduced: reducedMotion() });
+      if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+      return;
+    }
+    if (e.type !== 'pointerup') return;
+    const card = e.target.closest('.mcard');
+    if (!card) return;
+    const i = +card.dataset.i;
+    if (i === indexAt(deck.state.pos, deck.state.n, deck.state.loop)) { spinTo(i); drawCard(card.dataset.id); }
+    else spinTo(i);
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+  let wheelT = 0, wheelVel = 0, wheelLast = 0;
+  el.addEventListener('wheel', (e) => {
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!delta) return;
+    e.preventDefault();
+    if (deck.raf) { cancelAnimationFrame(deck.raf); deck.raf = 0; }
+    const now = performance.now();
+    const d = (delta * (e.deltaMode === 1 ? 16 : 1)) / cardStepPx() / 2;
+    deck.state = drag(deck.state, d);
+    wheelVel = flingVel(d, now - wheelLast);
+    wheelLast = now;
+    applyDeck();
+    clearTimeout(wheelT);
+    wheelT = setTimeout(() => {
+      deck.state = release(deck.state, wheelVel, { reduced: reducedMotion() });
+      if (deck.state.phase === 'idle') applyDeck(); else runDeck();
+    }, 120);
+  }, { passive: false });
+  el.addEventListener('keydown', (e) => {
+    if (e.target !== el) return;
+    const at = Math.round(deck.state.phase === 'idle' ? deck.state.pos : deck.state.target);
+    if (e.key === 'ArrowRight') { spinTo(deck.state.loop ? at + 1 : Math.min(deck.state.n - 1, at + 1)); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { spinTo(deck.state.loop ? at - 1 : Math.max(0, at - 1)); e.preventDefault(); }
+    else if (e.key === 'Enter' || e.key === ' ') { drawCard(deck.series[indexAt(deck.state.pos, deck.state.n, deck.state.loop)]?.id); e.preventDefault(); }
+  });
+}
+function refreshMini(id) {
+  const card = deck?.cards.find((c) => c.dataset.id === id);
+  const s = seriesById(id);
+  if (!card || !s) return;
+  const state = cardState(s, picks[s.id], Date.now());
+  card.dataset.state = state;
+  card.querySelector('.mst').innerHTML = miniStatus(s, picks[s.id], state);
+}
+function drawCard(id) {
+  const s = seriesById(id);
+  if (!s) return;
+  deck.cards.forEach((c) => c.classList.toggle('drawn', c.dataset.id === id));
+  const host = $('drawn');
+  host.innerHTML = cardHTML(s);
+  const art = host.querySelector('article.card');
+  // Round-1 picks were stored un-flipped; the flip control is gone, so flip them now.
+  if (art.dataset.state === 'ready' && needsAutoReveal(picks[s.id])) flipCard(art);
+  tick();
+  art.focus({ preventScroll: true });
 }
 
 function burst(art) {
@@ -166,9 +331,9 @@ function burst(art) {
   setTimeout(() => host.remove(), 1200);
 }
 
-function replaceCard(art, s) {
+function replaceCard(art, s, entry) {
   const tmp = document.createElement('div');
-  tmp.innerHTML = cardHTML(s);
+  tmp.innerHTML = cardHTML(s, entry);
   const next = tmp.firstElementChild;
   art.replaceWith(next);
   tick();
@@ -180,6 +345,11 @@ function flipCard(art) {
   if (!s || art.dataset.state !== 'ready') return;
   picks = reveal(picks, s.id);
   savePicks(storage, picks);
+  showFront(art, s);
+}
+
+// Visual half of a flip; the pick is already persisted as revealed.
+function showFront(art, s) {
   art.dataset.state = 'revealed';
   const front = art.querySelector('.face.front');
   front.innerHTML = frontHTML(s, picks[s.id], 'revealed');
@@ -187,18 +357,22 @@ function flipCard(art) {
   art.querySelector('.face.back').setAttribute('aria-hidden', 'true');
   art.classList.add('flipped');
   if (!reducedMotion()) burst(art);
+  refreshMini(s.id);
   renderRecord();
 }
 
+// Picking a side flips the card straight away (round 2: no second tap).
 function chooseSide(art, side) {
   const s = seriesById(art.dataset.id);
   if (!s) return;
-  const next = choose(picks, s, side, Date.now());
+  const next = chooseAndReveal(picks, s, side, Date.now());
   if (next === picks) return;
   picks = next;
   savePicks(storage, picks);
-  const fresh = replaceCard(art, s);
+  // Render the back with the picked side lit, then flip on the next task so the transition runs.
+  const fresh = replaceCard(art, s, { ...picks[s.id], revealed: false });
   fresh.querySelector(`.side[data-side="${side}"]`)?.focus();
+  setTimeout(() => showFront(fresh, s), 60);
 }
 
 function wireCards() {
@@ -225,7 +399,7 @@ function wireCards() {
   });
   // Horizontal swipe (≥48 px, more horizontal than vertical) pans the window one cell.
   let sw = null;
-  view.addEventListener('pointerdown', (e) => { if (e.isPrimary) sw = { x: e.clientX, y: e.clientY }; });
+  view.addEventListener('pointerdown', (e) => { if (e.isPrimary && !e.target.closest('#carousel')) sw = { x: e.clientX, y: e.clientY }; });
   view.addEventListener('pointerup', (e) => {
     if (!sw) return;
     const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
@@ -239,11 +413,17 @@ function wireCards() {
   });
   view.addEventListener('pointercancel', () => { sw = null; });
   $('openPack').addEventListener('click', () => {
-    let i = 0;
-    view.querySelectorAll('article.card').forEach((art) => {
-      if (art.dataset.state === 'ready') setTimeout(() => flipCard(art), 120 * i++);
-      else if (art.dataset.state === 'pick') { art.classList.remove('shake'); void art.offsetWidth; art.classList.add('shake'); }
-    });
+    if (!deck) return;
+    let any = false;
+    for (const s of deck.series) {
+      if (cardState(s, picks[s.id], Date.now()) !== 'ready') continue;
+      any = true;
+      const art = $('drawn').querySelector(`article.card[data-id="${CSS.escape(s.id)}"]`);
+      if (art) flipCard(art);
+      else { picks = reveal(picks, s.id); savePicks(storage, picks); refreshMini(s.id); }
+    }
+    if (any) { renderRecord(); return; }
+    deck.el.classList.remove('shake'); void deck.el.offsetWidth; deck.el.classList.add('shake');
   });
 }
 
@@ -380,6 +560,12 @@ function tick() {
     const nk = nextKickoff(data.series, now);
     cd.textContent = nk ? `${fmtLocal(nk)} · ${fmtDur(Date.parse(nk) - now)}` : T('No upcoming series', '暂无待开赛场次');
   }
+  document.querySelectorAll('#carousel .mcard').forEach((card) => {
+    const ko = +card.dataset.ko;
+    if (card.dataset.state === 'pick' && now >= ko) refreshMini(card.dataset.id);
+    const el = card.querySelector('.cd');
+    el.textContent = card.dataset.state === 'result' ? '' : now >= ko ? T('LOCKED', '已锁定') : fmtDur(ko - now);
+  });
   document.querySelectorAll('#cardsView article.card').forEach((art) => {
     const ko = +art.dataset.ko;
     if (art.dataset.state === 'pick' && now >= ko) { const s = seriesById(art.dataset.id); if (s) { replaceCard(art, s); return; } }
