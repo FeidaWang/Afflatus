@@ -282,7 +282,7 @@ function wireDeck(el) {
       if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { g = null; return; } // vertical: let the page scroll
       if (Math.abs(dx) < 10) return;
       g.dragging = true;
-      el.setPointerCapture(e.pointerId);
+      try { el.setPointerCapture(e.pointerId); } catch { /* pointer already released (e.g. cancelled touch) */ }
       el.classList.add('dragging');
     }
     const now = performance.now();
