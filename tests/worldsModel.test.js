@@ -230,3 +230,78 @@ describe('worldsModel: scoring and record', () => {
     expect(rec.log[11].ok).toBe(false);
   });
 });
+
+import { TACTIC_KEYS, oddsFromPct, seriesDistribution, teamPlayerExtremes, teamTacticExtremes } from '../src/lib/worldsModel.js';
+
+describe('seriesDistribution', () => {
+  it('rounds a Bo3 scoreline to three decimals that still sum to one', () => {
+    const raw = enumerateSeries(0.6, 3).scores;
+    const { scores, pDecider } = seriesDistribution(raw, 3);
+    expect(Object.keys(scores).sort()).toEqual(['0-2', '1-2', '2-0', '2-1']);
+    expect(Math.abs(Object.values(scores).reduce((a, b) => a + b, 0) - 1)).toBeLessThan(1e-9);
+    for (const [k, v] of Object.entries(scores)) expect(Math.abs(v - raw[k])).toBeLessThanOrEqual(0.0015);
+    expect(pDecider).toBeCloseTo(raw['2-1'] + raw['1-2'], 2);
+  });
+
+  it('counts 3-2 and 2-3 as the Bo5 decider', () => {
+    const raw = enumerateSeries(0.55, 5, 0.02).scores;
+    expect(seriesDistribution(raw, 5).pDecider).toBeCloseTo(raw['3-2'] + raw['2-3'], 2);
+  });
+
+  it('has no decider for a Bo1', () => {
+    const out = seriesDistribution(enumerateSeries(0.7, 1).scores, 1);
+    expect(out).not.toHaveProperty('pDecider');
+    expect(out.scores).toEqual({ '1-0': 0.7, '0-1': 0.3 });
+  });
+});
+
+describe('teamPlayerExtremes', () => {
+  const ROLES = ['top', 'jng', 'mid', 'adc', 'sup'];
+  const row = (teamCode, role, kda, dpm, kp, gd15, games = 4) => ({ player: `${teamCode}-${role}`, teamCode, role, games, kda, dpm, kp, gd15 });
+  const rows = [
+    ...ROLES.map((role, i) => row('AAA', role, 3, role === 'sup' ? 150 : 600, 60, -100 * i)),
+    ...ROLES.map((role, i) => row('BBB', role, 2, role === 'sup' ? 140 : 500, 55, 100 * i)),
+  ];
+  rows[4] = row('AAA', 'sup', 9, 150, 80, 900); // elite support: lowest DPM on the team, best at everything in-role
+
+  it('compares players within their role, so a support is not worst for low damage', () => {
+    const out = teamPlayerExtremes(rows);
+    expect(out.AAA.worst.player).not.toBe('AAA-sup');
+    expect(out.AAA.best.player).toBe('AAA-sup');
+    expect(out.AAA.best.stats).toEqual({ kda: 9, dpm: 150, kp: 80, gd15: 900 });
+    expect(typeof out.AAA.best.score).toBe('number');
+  });
+
+  it('ignores players with fewer than two games and drops teams left with one player', () => {
+    const thin = [...rows.filter((r) => r.teamCode === 'AAA'), row('CCC', 'mid', 5, 700, 70, 500), row('CCC', 'top', 1, 300, 40, -900, 1)];
+    const out = teamPlayerExtremes(thin);
+    expect(out).not.toHaveProperty('CCC');
+  });
+});
+
+describe('teamTacticExtremes', () => {
+  const team = (code, gd) => ({ team: code, values: Object.fromEntries(TACTIC_KEYS.map((k) => [k, { raw: k === 'GD@15' ? gd : 50, display: String(k === 'GD@15' ? gd : 50) }])) });
+
+  it('ranks each metric across teams and names the best and worst one per team', () => {
+    const out = teamTacticExtremes([team('A', -500), team('B', 0), team('C', 800)]);
+    expect(out.C.best).toEqual({ key: 'GD@15', value: '800', pct: 1 });
+    expect(out.A.worst).toEqual({ key: 'GD@15', value: '-500', pct: 0 });
+  });
+
+  it('gives tied teams the same percentile', () => {
+    const out = teamTacticExtremes([team('A', 0), team('B', 0), team('C', 100)]);
+    expect(out.A.worst.pct).toBe(out.B.worst.pct);
+  });
+
+  it('lists the six tactic keys in spec order', () => {
+    expect(TACTIC_KEYS).toEqual(['GD@15', 'FB%', 'FT%', 'DRA%', 'VGPG', 'NASH%']);
+  });
+});
+
+describe('oddsFromPct', () => {
+  it('turns a percentage into decimal implied odds', () => {
+    expect(oddsFromPct(44.8)).toBe(2.23);
+    expect(oddsFromPct(100)).toBe(1);
+    expect(oddsFromPct(0)).toBeNull();
+  });
+});

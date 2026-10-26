@@ -290,3 +290,92 @@ export function buildRecord(series, since) {
     }),
   };
 }
+
+/* ---------- round 2 (spec 2026-10-26 §6) ---------- */
+
+const round3 = (v) => Math.round(v * 1000) / 1000;
+
+/** Scoreline map rounded to 3 dp (residual folded into the likeliest score) plus,
+ *  for Bo3/Bo5, pDecider = P(the series goes the full distance). */
+export function seriesDistribution(scores, bo) {
+  const entries = Object.entries(scores).map(([k, v]) => [k, round3(v)]);
+  const top = entries.reduce((best, e, i) => (e[1] > entries[best][1] ? i : best), 0);
+  entries[top][1] = round3(entries[top][1] + 1 - entries.reduce((sum, [, v]) => sum + v, 0));
+  const out = { scores: Object.fromEntries(entries) };
+  if (bo > 1) {
+    out.pDecider = round3(Object.entries(scores)
+      .filter(([k]) => k.split('-').reduce((a, b) => a + Number(b), 0) === bo)
+      .reduce((sum, [, v]) => sum + v, 0));
+  }
+  return out;
+}
+
+const PLAYER_STATS = ['kda', 'dpm', 'kp', 'gd15'];
+
+/** Best and worst player per team by mean in-role z-score of KDA, DPM, KP% and GD@15.
+ *  Players with fewer than two games are ignored; teams with fewer than two eligible players are omitted. */
+export function teamPlayerExtremes(rows) {
+  const eligible = rows.filter((r) => r.teamCode && r.role && r.games >= 2);
+  const z = new Map();
+  for (const role of new Set(eligible.map((r) => r.role))) {
+    const group = eligible.filter((r) => r.role === role);
+    for (const stat of PLAYER_STATS) {
+      const values = group.map((r) => r[stat]).filter(Number.isFinite);
+      const mean = values.reduce((a, b) => a + b, 0) / (values.length || 1);
+      const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / (values.length || 1));
+      for (const r of group) {
+        const zs = z.get(r) || [];
+        zs.push(Number.isFinite(r[stat]) && sd > 0 ? (r[stat] - mean) / sd : 0);
+        z.set(r, zs);
+      }
+    }
+  }
+  const byTeam = {};
+  for (const r of eligible) (byTeam[r.teamCode] ||= []).push(r);
+  const out = {};
+  for (const [team, players] of Object.entries(byTeam)) {
+    if (players.length < 2) continue;
+    const scored = players.map((r) => ({
+      player: r.player,
+      role: r.role,
+      score: round3(z.get(r).reduce((a, b) => a + b, 0) / PLAYER_STATS.length),
+      stats: Object.fromEntries(PLAYER_STATS.map((s) => [s, r[s] ?? null])),
+    }));
+    const best = scored.reduce((a, b) => (b.score > a.score ? b : a));
+    const worst = scored.reduce((a, b) => (b.score < a.score ? b : a));
+    out[team] = { best, worst };
+  }
+  return out;
+}
+
+export const TACTIC_KEYS = Object.freeze(['GD@15', 'FB%', 'FT%', 'DRA%', 'VGPG', 'NASH%']);
+
+/** Percentile (0..1, ties share their mean rank) of every tactic metric across teams;
+ *  each team's highest and lowest metric become its best and worst tactic. */
+export function teamTacticExtremes(rows) {
+  const pct = new Map(rows.map((r) => [r.team, {}]));
+  for (const key of TACTIC_KEYS) {
+    const present = rows.filter((r) => Number.isFinite(r.values?.[key]?.raw));
+    for (const r of present) {
+      const v = r.values[key].raw;
+      const below = present.filter((o) => o.values[key].raw < v).length;
+      const equal = present.filter((o) => o.values[key].raw === v).length;
+      const rank = below + (equal + 1) / 2;
+      pct.get(r.team)[key] = present.length > 1 ? round3((rank - 1) / (present.length - 1)) : 1;
+    }
+  }
+  const out = {};
+  for (const r of rows) {
+    const keys = TACTIC_KEYS.filter((k) => pct.get(r.team)[k] != null);
+    if (!keys.length) continue;
+    const pick = (better) => keys.reduce((a, b) => (better(pct.get(r.team)[b], pct.get(r.team)[a]) ? b : a));
+    const entry = (key) => ({ key, value: r.values[key].display, pct: pct.get(r.team)[key] });
+    out[r.team] = { best: entry(pick((x, y) => x > y)), worst: entry(pick((x, y) => x < y)) };
+  }
+  return out;
+}
+
+/** Decimal implied odds for a 0–100 probability; null when the probability is 0. */
+export function oddsFromPct(prob) {
+  return prob > 0 ? Math.round((100 / prob) * 100) / 100 : null;
+}
