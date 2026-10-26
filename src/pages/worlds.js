@@ -14,12 +14,20 @@ import { STAGES, buildStages, currentStageIndex, nextKickoff } from '../lib/worl
 import { agreement, cardState, chooseAndReveal, fableRecord, loadPicks, needsAutoReveal, rarity, reveal, savePicks, userRecord } from '../lib/worldsCards.js';
 import { createCarousel, drag, goTo, indexAt, release, step } from '../lib/worldsCarousel.js';
 import { getLocale } from '../lib/localeStore.js';
+import { championKey } from '../lib/worldsChampionKey.js';
+import { photoFor } from '../lib/worldsPlayerPhotos.js';
 
 const $ = (id) => document.getElementById(id);
 const N = STAGES.length;
 // Clawd, Anthropic's Claude mascot, drawn as pixel art (Claude and Clawd are Anthropic trademarks).
 const FABLE_ICON = '<svg class="fable-ic" viewBox="0 0 14 12" width="16" height="14" aria-hidden="true" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><g fill="#D77757"><rect x="2" y="1" width="10" height="7"/><rect x="0" y="4" width="2" height="2"/><rect x="12" y="4" width="2" height="2"/><rect x="3" y="8" width="1" height="3"/><rect x="5" y="8" width="1" height="3"/><rect x="8" y="8" width="1" height="3"/><rect x="10" y="8" width="1" height="3"/></g><rect x="4" y="3" width="1" height="2" fill="#0b0b0d"/><rect x="9" y="3" width="1" height="2" fill="#0b0b0d"/></svg>';
 const CHAMP_ICON = (slug) => `https://gol.gg/_img/champions_icon/${encodeURIComponent(slug)}.png`;
+const DDRAGON_FALLBACK = '16.21.1';
+const DDRAGON_ICON = (key) => `https://ddragon.leagueoflegends.com/cdn/${data?.ddragon || DDRAGON_FALLBACK}/img/champion/${encodeURIComponent(key)}.png`;
+const TACTIC_LABEL = {
+  'GD@15': ['Gold lead at 15', '15 分钟经济差'], 'FB%': ['First blood', '一血率'], 'FT%': ['First tower', '首塔率'],
+  'DRA%': ['Dragon control', '控龙率'], VGPG: ['Void grubs per game', '场均虚空巢虫'], 'NASH%': ['Baron control', '大龙控制率'],
+};
 
 let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
 const T = (en, zh) => (lang === 'zh' ? zh : en);
@@ -84,9 +92,46 @@ function frontHTML(s, entry, state) {
     `<div class="fpick">${logo(win)}<div><i>${FABLE_ICON} ${T('FABLE PICK', 'FABLE 研判')}</i><b>${esc(win)}</b><span>${pct(pw)}</span></div></div>` +
     `<div class="fprob"><span>${esc(s.home)} ${pct(p.pWin[0])}</span><i class="pbar"><b style="--w:${p.pWin[0] * 100}%"></b></i><span>${pct(p.pWin[1])} ${esc(s.away)}</span></div>` +
     `<div class="fodds"><span>${T('implied', '隐含赔率')} ${Number(p.oddsImplied[0]).toFixed(2)} · ${Number(p.oddsImplied[1]).toFixed(2)}</span><span>${T('score', '比分')} <b>${esc(p.score)}</b> ${pct(p.pScore)}</span></div>` +
+    triadHTML(s, p) +
+    scoreBarHTML(s, p) +
     (factors.length ? `<ul class="ffac">${factors.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : '') +
+    extremesHTML(s) +
     mk +
     (agree ? `<div class="tag ${agree}">${T('You vs Fable', '你 vs Fable')} · ${agree === 'agree' ? T('AGREE', '一致') : T('DISAGREE', '分歧')}</div>` : '');
+}
+
+// Win / goes-the-distance / lose for Bo3 and Bo5 (a series has no draw).
+function triadHTML(s, p) {
+  if (!(s.bo > 1) || !Number.isFinite(p.pDecider)) return '';
+  const cell = (label, v, cls) => `<span class="${cls}"><i>${label}</i><b>${pct(v)}</b></span>`;
+  return `<div class="wdl">${cell(esc(s.home), p.pWin[0], 'h')}${cell(T('DECIDER', '打满'), p.pDecider, 'd')}${cell(esc(s.away), p.pWin[1], 'a')}</div>`;
+}
+
+function scoreBarHTML(s, p) {
+  if (!p.scores) return '';
+  const margin = (k) => { const [h, a] = k.split('-').map(Number); return h - a; };
+  const rows = Object.entries(p.scores).sort((x, y) => margin(y[0]) - margin(x[0]));
+  const label = rows.map(([k, v]) => `${k} ${pct(v)}`).join(' · ');
+  return `<div class="sbar" role="img" aria-label="${esc(`${T('Scoreline', '比分分布')} (${s.home}–${s.away}): ${label}`)}" title="${esc(label)}">${rows.map(([k, v]) =>
+    `<span class="seg ${margin(k) > 0 ? 'h' : 'a'}" style="flex:${v}">${v >= 0.1 ? `<em>${k}</em>` : ''}</span>`).join('')}</div><div class="sleg">${esc(label)}</div>`;
+}
+
+function extremesHTML(s) {
+  const teams = new Map((data?.teams || []).map((t) => [t.team, t]));
+  const side = (code) => {
+    const t = teams.get(code);
+    if (!t || !(t.players || t.tactics)) return '';
+    const why = (x) => { const r = T(x.reason_en, x.reason_zh); return r ? `<p>${esc(r)}</p>` : ''; };
+    const player = (x, up) => (x ? `<li class="${up ? 'up' : 'dn'}"><i>${up ? T('STRONGEST PLAYER', '最强选手') : T('WEAKEST PLAYER', '最弱选手')}</i><b>${esc(x.player)}</b> <small>${esc(String(x.role || '').toUpperCase())}</small>${why(x)}</li>` : '');
+    const tactic = (x, up) => {
+      if (!x) return '';
+      const [en, zh] = TACTIC_LABEL[x.key] || [x.key, x.key];
+      return `<li class="${up ? 'up' : 'dn'}"><i>${up ? T('STRONGEST TACTIC', '最强战术点') : T('WEAKEST TACTIC', '最弱战术点')}</i><b>${esc(T(en, zh))}</b> <small>${esc(x.value)}</small>${why(x)}</li>`;
+    };
+    return `<div class="ext-team"><h4>${logo(code)}${esc(code)}</h4><ul>${player(t.players?.best, true)}${player(t.players?.worst, false)}${tactic(t.tactics?.best, true)}${tactic(t.tactics?.worst, false)}</ul></div>`;
+  };
+  const body = side(s.home) + side(s.away);
+  return body ? `<details class="ext"><summary>${T('Strengths and weak spots', '双方强弱点')}</summary><div class="ext-grid">${body}</div></details>` : '';
 }
 
 function cardHTML(s, entry = picks[s.id]) {
@@ -639,14 +684,23 @@ function renderChampion() {
       ? `<div class="chips">${f.champs.map((ch) => `<img src="${CHAMP_ICON(ch.slug)}" alt="${esc(ch.name)}" title="${esc(ch.name)}" loading="lazy" decoding="async" width="28" height="28">`).join('')}</div>`
       : '';
     const fear = f ? `<div class="fear"><span class="depth">${T('Fearless pool', '无畏征召英雄池')} · ${esc(f.depth)}</span>${chips}${f.note_en ? `<span class="fnote">${esc(T(f.note_en, f.note_zh))}</span>` : ''}</div>` : '';
-    return `<div class="prow"><div class="prow-h">${logo(c.team)}<b>${esc(c.team)}</b><span class="pv">${pct1(c.prob)}</span>${c.market != null ? `<small>market ${pct1(c.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, c.prob))}%"></b></i>${c.reason_en ? `<p class="why">${esc(T(c.reason_en, c.reason_zh))}</p>` : ''}${fear}</div>`;
+    return `<div class="prow"><div class="prow-h">${logo(c.team)}<b>${esc(c.team)}</b><span class="pv">${pct1(c.prob)}</span>${oddsHTML(c.oddsImplied)}${c.market != null ? `<small>market ${pct1(c.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, c.prob))}%"></b></i>${c.reason_en ? `<p class="why">${esc(T(c.reason_en, c.reason_zh))}</p>` : ''}${fear}</div>`;
   }).join('') || `<div class="empty">${T('Champion odds arrive with the first data run.', '夺冠概率将随首批数据发布。')}</div>`;
+}
+
+const oddsHTML = (odds) => (Number.isFinite(odds) ? `<span class="odds">${odds.toFixed(2)}× <i>${T('implied', '隐含')}</i></span>` : '');
+const initials = (name) => String(name || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || '?';
+function photoHTML(player) {
+  const ph = photoFor(player);
+  return ph
+    ? `<img class="mvp-ph" src="${esc(ph.src)}" alt="" width="48" height="48" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-fallback="${esc(initials(player))}">`
+    : `<span class="mvp-ph ph" aria-hidden="true">${esc(initials(player))}</span>`;
 }
 
 function renderMvp() {
   const rows = (data.mvp || []).slice().sort((a, b) => b.prob - a.prob).slice(0, 6);
   $('mvpList').innerHTML = rows.map((m) =>
-    `<div class="prow"><div class="prow-h">${logo(m.teamCode)}<b>${esc(m.player)}</b><span class="tc">${esc(m.teamCode)}</span><span class="pv">${pct1(m.prob)}</span>${m.market != null ? `<small>market ${pct1(m.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, m.prob))}%"></b></i>${m.basis_en ? `<p class="why">${esc(T(m.basis_en, m.basis_zh))}</p>` : ''}</div>`,
+    `<div class="prow"><div class="prow-h">${photoHTML(m.player)}${logo(m.teamCode)}<b>${esc(m.player)}</b><span class="tc">${esc(m.teamCode)}</span><span class="pv">${pct1(m.prob)}</span>${oddsHTML(m.oddsImplied)}${m.market != null ? `<small>market ${pct1(m.market)}</small>` : ''}</div><i class="pbar"><b style="--w:${Math.max(0, Math.min(100, m.prob))}%"></b></i>${m.basis_en ? `<p class="why">${esc(T(m.basis_en, m.basis_zh))}</p>` : ''}</div>`,
   ).join('') || `<div class="empty">${T('MVP candidates appear once the market names players.', 'MVP 候选将在市场公布选手后出现。')}</div>`;
 }
 
@@ -664,7 +718,7 @@ function renderMeta() {
   const fmt = (v) => (Number.isFinite(v) ? (v <= 1 ? pct1(v * 100) : pct1(v)) : esc(v ?? '—'));
   const rows = (data.meta || []).slice(0, 12);
   $('metaBody').innerHTML = rows.map((m) =>
-    `<tr><th scope="row">${esc(m.champ)}</th><td>${esc(m.picks ?? '—')}</td><td>${esc(m.bans ?? '—')}</td><td>${fmt(m.presence)}</td><td>${fmt(m.winrate)}</td></tr>`,
+    `<tr><th scope="row"><span class="champ"><img class="cav" src="${esc(DDRAGON_ICON(m.key || championKey(m.champ)))}" alt="" width="32" height="32" loading="lazy" decoding="async" data-fallback="${esc(String(m.champ).slice(0, 1))}">${esc(m.champ)}</span></th><td>${esc(m.picks ?? '—')}</td><td>${esc(m.bans ?? '—')}</td><td>${fmt(m.presence)}</td><td>${fmt(m.winrate)}</td></tr>`,
   ).join('') || `<tr><td colspan="5" class="empty">${T('Meta table arrives with the first data run.', 'Meta 表将随首批数据发布。')}</td></tr>`;
 }
 
@@ -694,6 +748,17 @@ async function load() {
   range = [i, i];
   renderAll();
 }
+
+// Remote portraits (player photos, Data Dragon icons) fall back to an initials tile.
+document.addEventListener('error', (e) => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement) || !img.dataset.fallback) return;
+  const tile = document.createElement('span');
+  tile.className = `${img.className} ph`;
+  tile.setAttribute('aria-hidden', 'true');
+  tile.textContent = img.dataset.fallback;
+  img.replaceWith(tile);
+}, true);
 
 buildScrub();
 wirePanels();
