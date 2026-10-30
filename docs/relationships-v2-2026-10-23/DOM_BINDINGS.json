@@ -1,0 +1,52 @@
+{
+  "audit": "REL-000",
+  "date": "2026-10-23",
+  "commit": "f2b282c3",
+  "template": "horoscope.html",
+  "script": "src/pages/horoscope.js",
+  "note": "Line numbers are from the audited commit. Every id below was read from source; none is guessed.",
+  "routing": {
+    "viewSwitch": { "file": "src/horoscope/dailyExperience.js", "lines": "17-31", "views": ["today", "self", "relationships", "journal"], "relationshipsOpens": "details.more-explorations" },
+    "headScriptStripsHash": { "file": "horoscope.html", "line": 5, "effect": "Removes ?query AND #hash before load, so a deep link to #relationships lands on Today. Same issue as almanac M0 F7." }
+  },
+  "inputs": {
+    "self": {
+      "form": { "id": "birthForm", "line": 237, "submit": "horoscope.js:1734" },
+      "fields": { "date": "bDate", "hour": "bHour", "gender": "bGender", "region": "bRegionSel", "city": "bCitySel", "dst": "bDst", "tz": "bTz", "lat": "bLat", "lon": "bLon" },
+      "status": ["bAssumptions", "bError", "bSaveStatus", "bResultAssumptions"]
+    },
+    "other": {
+      "form": { "id": "synForm", "line": 362, "submit": "horoscope.js:1757" },
+      "fields": { "name": "sName", "date": "sDate", "hour": "sHour", "region": "sRegionSel", "city": "sCitySel", "dst": "sDst", "tz": "sTz" },
+      "missingVsSelf": ["lat", "lon", "gender"],
+      "status": ["sAssumptions", "sError", "synHint", "sResultAssumptions"]
+    },
+    "hourOptions": { "file": "horoscope.js", "lines": "131-145", "values": [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23], "meaning": "start hour of a 1-2 h slot, consumed as an exact hour" },
+    "tzOptions": { "file": "horoscope.js", "lines": "162-176", "meaning": "fixed standard UTC offset + manual DST checkbox; not IANA" }
+  },
+  "book": { "container": "synBook", "line": 360, "render": "horoscope.js:310", "upsert": "horoscope.js:294", "storageKey": "afflatus-horo:book", "max": 20 },
+  "outputs": {
+    "result": { "id": "synResult", "line": 385, "render": "renderSyn horoscope.js:1187" },
+    "headlineScore": { "ids": ["sRing", "sScore"], "firstPaint": "synastry().base", "repaint": "resonanceScore(base, aspects)" },
+    "title": { "id": "synTitle", "source": "relationshipTitle(aspects)" },
+    "branchMatrix": { "ids": ["synBaziMatrixWrap", "synbmWrap"], "render": "horoscope.js:1128-1185", "source": "crossBranchMatrix" },
+    "attraction": { "ids": ["synAttractWrap", "synAttract"], "source": "attractionLines" },
+    "flags": { "ids": ["synFlagsWrap", "synFlags"], "source": "redFlagLines" },
+    "davison": { "ids": ["synDavisonSec", "synDavisonToggle", "synDavisonBody"], "source": "davisonReading (time-midpoint Sun/Moon)" },
+    "detail": {
+      "toggle": "synDetailToggle", "body": "synDetailBody",
+      "charts": "synCharts", "parts": "synParts", "pillarSubscores": "synPillars",
+      "modes": { "id": "synModes", "render": "horoscope.js:985" },
+      "ziwei": { "id": "synZiwei", "render": "horoscope.js:1000" },
+      "xiu": "synXiu", "sunMoonAspects": "synAstro"
+    },
+    "dailyPull": { "ids": ["pullScore", "pullTxt"], "source": "dailyPull (seeded random)" },
+    "weather": { "ids": ["synWeatherWrap", "synWeather"], "source": "dailyCoupleWeather + /transits-daily.json" },
+    "calendar": { "ids": ["synCalWrap", "synCal"], "render": "horoscope.js:1051", "source": "dailyPull x7, days 3-7 time-locked" },
+    "ics": { "id": "icsBtn", "handler": "horoscope.js:1108", "source": "argmax of dailyPull x7" },
+    "copyLink": { "id": "shareBtn", "handler": "horoscope.js:1600", "copies": "origin + pathname", "tipId": "shareTip" },
+    "card": { "id": "cardBtnSyn", "handler": "horoscope.js:1577", "contains": ["both four pillars", "zodiac glyphs", "score", "title", "one hook line"] }
+  },
+  "privacy": { "clearButton": { "id": "clearDataBtn", "line": 276, "handler": "horoscope.js:1682", "scope": "localStorage keys with prefix afflatus-horo:", "then": "full reload" } },
+  "worker": { "runner": "horoscope.js:83", "kind": "synastry-astro", "file": "src/workers/horoscopeSynthesis.worker.js", "cancelOn": ["pair-changed", "page-hidden"], "fallback": "same function on main thread" }
+}

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>if(location.search || location.hash){history.replaceState(null,"",location.pathname);}</script>
+<script>(function(){var l=location,d=document.documentElement,s=l.search,h=l.hash,F=/(?:^|[?&])fx=(almanac|off)(?:&|$)/.exec(s),W=/^#(today|you|two|log|self|relationships|journal)$/;try{if(F){if(F[1]==='almanac')sessionStorage.setItem('afflatus:fx','almanac');else sessionStorage.removeItem('afflatus:fx')}if(sessionStorage.getItem('afflatus:fx')==='almanac')d.setAttribute('data-fx','almanac')}catch(e){if(F&&F[1]==='almanac')d.setAttribute('data-fx','almanac')}if(s||h){history.replaceState(null,'',l.pathname+(W.test(h)?h:''))}})();</script>
 <meta name="referrer" content="no-referrer">
 <script>try{var f=document.documentElement.lang.toLowerCase().indexOf('zh')===0?'zh':'en',s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}if(!v)v=f;document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
 <script type="module" src="/src/entry/performance.js"></script>
@@ -207,7 +207,7 @@
     <button id="obsWriteNote" class="obs-primary" type="button" data-en="Leave a note for today" data-zh="留一句今日手记">留一句今日手记</button>
     <p class="obs-caption" data-en="Set down a thought. Let today rest here." data-zh="收起一个念头，让今天到这里。">收起一个念头，让今天到这里。</p>
     <div class="obs-rows">
-      <button type="button" id="obsDrawButton" class="obs-row"><img src="/assets/labs/icons/sun.svg" width="24" height="24" alt=""><span data-en="Daily reflection draw" data-zh="今日一签">今日一签</span><small id="obsDrawStatus">待开启</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
+      <button type="button" id="obsDrawButton" class="obs-row"><img src="/assets/labs/icons/sun.svg" width="24" height="24" alt=""><span data-en="Daily reflection draw" data-zh="今日一签">今日一签</span><small id="obsDrawStatus">Unopened</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
       <button type="button" id="obsAreasButton" class="obs-row" aria-expanded="false" aria-controls="obsAreas"><img src="/assets/labs/icons/people.svg" width="24" height="24" alt=""><span data-en="Five areas of life" data-zh="五个生活面向">五个生活面向</span><small data-en="Explore" data-zh="查看">查看</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
       <section id="obsAreas" class="obs-expand" hidden aria-label="日常反思" data-aria-en="Everyday reflections" data-aria-zh="日常反思"></section>
       <button type="button" id="obsSourcesButton" class="obs-row" aria-expanded="false" aria-controls="obsSources"><img src="/assets/labs/icons/book.svg" width="24" height="24" alt=""><span data-en="Behind this reading" data-zh="今日依据">今日依据</span><small data-en="Read" data-zh="了解">了解</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
@@ -324,13 +324,13 @@
 
       <details class="interpretation-details"><summary data-en="Explore the interpretation" data-zh="展开详细解读">Explore the interpretation</summary>
       <p class="form-note" data-en="Scores and character descriptions belong to this entertainment system. They do not measure your worth or reliably predict your future." data-zh="分数与性格描述只是本娱乐系统的设定，不衡量个人价值，也不能可靠预测未来。">Scores and character descriptions belong to this entertainment system. They do not measure your worth or reliably predict your future.</p>
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART DETAIL · 子平法" data-zh="生辰详批 · 子平法">CHART DETAIL · 子平法</span></div>
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART DETAIL · ZIPING METHOD" data-zh="生辰详批 · 子平法">CHART DETAIL · ZIPING METHOD</span></div>
       <div class="bz-wrap" id="bzWrap"></div>
 
       <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="PLAYFUL CHART SCORE" data-zh="趣味命盘评分">PLAYFUL CHART SCORE</span></div>
       <div class="mz-wrap" id="mzWrap"></div>
 
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="LUCK CYCLES · 大运流年" data-zh="大运流年">LUCK CYCLES · 大运流年</span></div>
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="LUCK CYCLES · DAYUN &amp; LIUNIAN" data-zh="大运流年">LUCK CYCLES · DAYUN &amp; LIUNIAN</span></div>
       <div class="dy-wrap" id="dyWrap"></div>
 
       <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHARACTER INTERPRETATION" data-zh="性格趣味解读">CHARACTER INTERPRETATION</span></div>
@@ -400,7 +400,7 @@
 
         <!-- §1.5 合盘 Beta: dual full charts + 4×4 Earthly-Branch matrix -->
         <div class="syn-sec" id="synBaziMatrixWrap" hidden>
-          <div class="xiu-h"><span data-en="BRANCH MATRIX · 合盘" data-zh="地支合盘矩阵">BRANCH MATRIX · 合盘</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
+          <div class="xiu-h"><span data-en="BRANCH MATRIX · SYNASTRY" data-zh="地支合盘矩阵">BRANCH MATRIX · SYNASTRY</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
           <div id="synbmWrap"></div>
         </div>
 
@@ -448,17 +448,17 @@
           <div id="synWeather"></div>
         </div>
         <div class="syn-sec" id="synCalWrap" hidden>
-          <div class="xiu-h" data-en="7-DAY OUTLOOK · TAP TOMORROW AGAIN" data-zh="缘分日历 · 明天再来看后面">7-DAY OUTLOOK · TAP TOMORROW AGAIN</div>
+          <div class="xiu-h" data-en="NEXT 7 DAYS · DAY PILLARS" data-zh="七日流日 · 双方日柱">NEXT 7 DAYS · DAY PILLARS</div>
           <div class="syn-cal" id="synCal"></div>
           <div class="share-row">
-            <button class="btn" type="button" id="icsBtn" data-en="Add this week's best day to my calendar ⤓" data-zh="把本周最佳共处日加进我的日历 ⤓">Add this week's best day to my calendar ⤓</button>
-            <span class="share-tip" data-en="Downloads a .ics file — your own calendar app sends the reminder, we don't." data-zh="下载一个 .ics 文件——提醒由你自己的日历 App 发出，我们不会推送任何消息。">Downloads a .ics file — your own calendar app sends the reminder, we don't.</span>
+            <button class="btn" type="button" id="icsBtn" data-en="Add this week's first smooth day to my calendar ⤓" data-zh="把本周第一个「顺」日加进我的日历 ⤓">Add this week's first smooth day to my calendar ⤓</button>
+            <span class="share-tip" id="icsTip" data-en="Downloads a .ics file — your own calendar app sends the reminder, we don't." data-zh="下载一个 .ics 文件——提醒由你自己的日历 App 发出，我们不会推送任何消息。">Downloads a .ics file — your own calendar app sends the reminder, we don't.</span>
           </div>
         </div>
         <div class="share-row">
           <button class="btn" type="button" id="shareBtn" data-en="Copy page link ⎘" data-zh="复制页面链接 ⎘">Copy page link ⎘</button>
           <button class="btn btn--seal" type="button" id="cardBtnSyn" data-en="Save synastry card ⤓" data-zh="保存合盘卡 ⤓">Save synastry card ⤓</button>
-          <span class="share-tip" id="shareTip" data-en="Send it — they'll open this exact pairing, no account needed." data-zh="发给对方——点开就是这一对的合盘，无需注册。">Send it — they'll open this exact pairing, no account needed.</span>
+          <span class="share-tip" id="shareTip" data-en="Copies the page address only — no birth details, so the other person enters their own." data-zh="只复制页面地址，不含任何出生资料；对方打开后需自行填写。">Copies the page address only — no birth details, so the other person enters their own.</span>
         </div>
       </div>
     </div>
@@ -467,11 +467,11 @@
   </details>
 
   <footer class="foot" data-i18n-html
-    data-en="STAR TERRACE · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time."
-    data-zh="观星台 · 仅供娱乐——不构成命理、医疗、情感或财务建议。全部推算在浏览器本地完成；出生资料保留在本机；页面链接不含出生资料，下载的卡片可能包含个人结果。节气按真实天文推算，以北京时间为准。">STAR TERRACE · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time.</footer>
+    data-en="ASTROLOGY FOR FUN · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time."
+    data-zh="趣味占星 · 仅供娱乐——不构成命理、医疗、情感或财务建议。全部推算在浏览器本地完成；出生资料保留在本机；页面链接不含出生资料，下载的卡片可能包含个人结果。节气按真实天文推算，以北京时间为准。">ASTROLOGY FOR FUN · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time.</footer>
 </main>
 
-<nav class="horo-bottom-nav" aria-label="观星导航" data-aria-en="Observatory navigation" data-aria-zh="观星导航">
+<nav class="horo-bottom-nav" aria-label="趣味占星导航" data-aria-en="Astrology for fun navigation" data-aria-zh="趣味占星导航">
   <button type="button" data-observatory-nav="today" aria-current="page"><img src="/assets/labs/icons/sun.svg" width="24" height="24" alt=""><span data-en="Today" data-zh="今日">今日</span></button>
   <button type="button" data-observatory-nav="self"><img src="/assets/labs/icons/user.svg" width="24" height="24" alt=""><span data-en="You" data-zh="自我">自我</span></button>
   <button type="button" data-observatory-nav="relationships"><img src="/assets/labs/icons/people.svg" width="24" height="24" alt=""><span data-en="Relations" data-zh="关系">关系</span></button>
