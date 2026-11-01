@@ -5,10 +5,10 @@ const groupTriggers = (page) => page.locator('#afflatus-header [data-header-disc
 
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers(page)).toHaveText(['市场']);
+  await expect(groupTriggers(page)).toHaveText(['分析', '实验室']);
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers(page)).toHaveText(['Markets']);
+  await expect(groupTriggers(page)).toHaveText(['Analysis', 'Labs']);
 
   // Fixed-locale pages do not own the adaptive preference. Seed the state
   // explicitly so this assertion never depends on a previous navigation.
@@ -19,7 +19,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
     languageSwitch(page).click(),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(groupTriggers(page)).toHaveText(['市场']);
+  await expect(groupTriggers(page)).toHaveText(['分析', '实验室']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
@@ -69,11 +69,11 @@ test('fixed-locale switching keeps the reader in the current section', async ({ 
     .toBeLessThan(180);
 });
 
-test('desktop pointer click toggles a Markets menu that hover opened', async ({ page }, testInfo) => {
+test('desktop pointer click toggles an Analysis menu that hover opened', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop pointer interaction');
   await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
 
-  const trigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-markets"]');
+  const trigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-analysis"]');
   await trigger.hover();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 

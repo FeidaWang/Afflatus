@@ -92,6 +92,40 @@ describe('destination labels', () => {
     }
   });
 
+  it('renders five top-level entries from the nav groups', () => {
+    const nav = elements(parse(headerBlockFor())).find((node) => attr(node, 'id') === 'af-primary-nav');
+    const label = (node) => elements(node).find((child) => classesOf(child).includes('af-nav-label'));
+    const entries = nav.childNodes.filter((node) => node.tagName);
+    expect(entries.map((node) => [node.tagName, attr(label(node), 'data-en'), attr(label(node), 'data-zh')])).toEqual([
+      ['div', 'Analysis', '分析'],
+      ['a', 'Courses', '课程'],
+      ['a', 'Serials', '连载'],
+      ['div', 'Labs', '实验室'],
+      ['a', 'About', '关于'],
+    ]);
+    const paths = (id) => elements(elements(nav).find((node) => attr(node, 'id') === id))
+      .filter((node) => node.tagName === 'a').map((node) => attr(node, 'data-header-path'));
+    expect(paths('af-analysis')).toEqual(['/portfolio.html', '/arena.html', '/signal.html', '/sectors.html']);
+    expect(paths('af-labs')).toEqual(['/horoscope.html', '/worlds.html']);
+  });
+
+  it('gives every dropdown row a bilingual sublabel and every group a compact title', () => {
+    const nodes = elements(parse(headerBlockFor()));
+    const rows = nodes.filter((node) => classesOf(node).includes('af-header-dropdown')).flatMap(elements).filter((node) => node.tagName === 'a');
+    expect(rows).toHaveLength(6);
+    for (const row of rows) {
+      const sublabel = byClass(row, 'af-nav-sublabel');
+      expect(attr(sublabel, 'data-en')).toBeTruthy();
+      expect(attr(sublabel, 'data-zh')).toBeTruthy();
+    }
+    expect(nodes.filter((node) => classesOf(node).includes('af-header-group-title')).map((node) => attr(node, 'data-zh'))).toEqual(['分析', '实验室']);
+  });
+
+  it('links English navigation to the Chinese-only serial', () => {
+    const serial = elements(parse(headerBlockFor())).find((node) => attr(node, 'data-header-path') === '/serial.html');
+    expect(attr(serial, 'href')).toBe('/zh/serial.html');
+  });
+
   it('has no single-item dropdown', () => {
     const groups = elements(parse(headerBlockFor())).filter((node) => classesOf(node).includes('af-header-dropdown'));
     for (const group of groups) expect(elements(group).filter((node) => node.tagName === 'a').length).toBeGreaterThan(1);

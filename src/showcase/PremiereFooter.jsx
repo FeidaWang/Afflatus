@@ -1,6 +1,6 @@
 import { navigationHref, navigationLabel } from '../lib/siteNavigation.js';
 
-const pages = ['/portfolio.html', '/arena.html', '/sectors.html', '/signal.html', '/course.html', '/serial.html', '/horoscope.html']
+const pages = ['/portfolio.html', '/arena.html', '/signal.html', '/sectors.html', '/course.html', '/serial.html', '/horoscope.html', '/worlds.html', '/about.html']
   .map(path => { const { en, zh } = navigationLabel(path); return [path, en, zh]; });
 // Same destinations and icon artwork as the course footer.
 const socials = [

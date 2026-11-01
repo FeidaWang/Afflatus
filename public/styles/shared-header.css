@@ -54,6 +54,9 @@
 #afflatus-header .af-header-group:last-child[data-open="true"]::after { left: auto; right: 0; translate: none; }
 #afflatus-header .af-header-dropdown a { display: flex; align-items: center; white-space: normal; min-height: 44px; padding: 7px 0; font: inherit; }
 #afflatus-header .af-header-dropdown a + a { margin-top: 4px; }
+#afflatus-header .af-header-dropdown a { justify-content: space-between; gap: 16px; }
+#afflatus-header .af-nav-sublabel { flex: none; color: #6b6a63; font-size: 13px; }
+#afflatus-header .af-header-group-title { display: none; }
 #afflatus-header .af-header-dropdown a[aria-current="page"] { font-weight: 400; }
 #afflatus-header .af-header-dropdown a[aria-current="page"] .af-nav-label::after { transform: scaleX(1); }
 /* Keep the approved language typography and control scale independent of the logo. */
@@ -83,10 +86,15 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-header-nav { position: absolute; top: calc(100% + 12px); left: 16px; right: 16px; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 20px; border: 1px solid #eeece5; border-radius: var(--af-menu-radius); background: var(--af-menu-paper); box-shadow: 0 2px 0 #e2dfd580, 0 12px 28px #29271e0a; max-height: calc(100dvh - var(--af-height) - 28px); overflow-y: auto; overscroll-behavior: contain; animation: af-menu-in 180ms ease-out; }
   #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 16px; }
   #afflatus-header .af-header-group { display: block; }
-  #afflatus-header .af-header-group > button { justify-content: space-between; }
+  /* Compact menu: five flat sections, so the disclosure gives way to a small title and open list. */
+  #afflatus-header .af-header-nav { gap: 0; }
+  #afflatus-header .af-header-nav > * + * { border-top: 1px solid #e8e6dc; }
+  #afflatus-header .af-header-group > button { display: none; }
+  #afflatus-header .af-header-group-title { display: block; padding: 12px 8px 2px; color: #6b6a63; font-size: 13px; }
   #afflatus-header .af-header-group[data-open="true"]::after { content: none; }
-  #afflatus-header .af-header-dropdown { position: static; translate: none; width: 100%; border: 0; border-radius: 12px; padding: 10px 16px; margin: 6px 0 12px; max-height: none; background: #f0eee7; box-shadow: none; }
-  #afflatus-header .af-header-dropdown a { font-size: 16px; }
+  #afflatus-header .af-header-dropdown { position: static; translate: none; width: 100%; border: 0; border-radius: 0; padding: 0; margin: 0; max-height: none; background: transparent; box-shadow: none; animation: none; }
+  #afflatus-header .af-header-dropdown a { font-size: 16px; padding: 7px 8px; }
+  #afflatus-header .af-header-dropdown a + a { margin-top: 0; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
 }
@@ -107,6 +115,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; max-height: none; border: 0; box-shadow: none; }
   #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; translate: none; max-height: none; }
   #afflatus-header:not([data-enhanced]) button { display: none; }
+  #afflatus-header:not([data-enhanced]) .af-header-group-title { display: block; }
   body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
