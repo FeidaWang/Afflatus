@@ -24,7 +24,7 @@ function updateLocale(){
  document.querySelectorAll('[data-cover-en]').forEach(img=>{img.src=img.dataset[lang==='zh'?'coverZh':'coverEn'];img.alt=img.dataset[lang==='zh'?'titleZh':'titleEn'];});
  document.querySelectorAll('[data-course-companion]').forEach(a=>a.href=`/${lang}/course/${a.dataset.courseCompanion}.html`);
  // Footer links follow the same route language as the masthead.
- document.querySelectorAll('.pa-footer a[href^="/"]').forEach(a=>{const path=a.getAttribute('href').replace(/^\/(en|zh)(?=\/)/,'');a.href=path==='/serial.html'?'/zh/serial.html':`/${lang}${path}`;});
+ document.querySelectorAll('.pa-footer a[href^="/"]:not([data-footer-language])').forEach(a=>{const path=a.getAttribute('href').replace(/^\/(en|zh)(?=\/)/,'');a.href=path==='/serial.html'?'/zh/serial.html':`/${lang}${path}`;});
  render();
 }
 document.addEventListener('click',event=>{

@@ -11,14 +11,6 @@ body.arena-page :is(.main-content, .site-footer, .pa-footer-inner) {
   padding-inline: 0;
 }
 
-body.arena-page .pa-footer-socials a {
-  justify-content: flex-end;
-}
-
-body.arena-page .pa-footer-socials a:last-child {
-  margin-right: 0;
-}
-
 body.arena-page .skip-link {
   left: var(--arena-content-edge);
   max-width: calc(100vw - 2 * var(--arena-content-edge));

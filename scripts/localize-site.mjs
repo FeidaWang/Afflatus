@@ -423,6 +423,9 @@ function convertLanguageLinks(document, route, locale) {
     else if (getAttr(node, 'id') === 'langBtn') setText(node, COPY[visibleLocale].langBtn);
     else if (getAttr(node, 'id') !== 'langMiniToggle') setText(node, nextLocale === 'zh' ? '中文' : 'EN');
   }
+  for (const node of all(document, (candidate) => getAttr(candidate, 'data-footer-language') != null)) {
+    setAttr(node, 'href', localizedRoutePath(route, getAttr(node, 'data-footer-language')));
+  }
 }
 
 function removeAdaptivePrepaint(document) {

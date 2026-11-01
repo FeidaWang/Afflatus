@@ -55,10 +55,11 @@ describe('premiere homepage', () => {
     expect(page.querySelector('.film-inline-play').getAttribute('aria-label')).toMatch(/film/i);
   });
 
-  it('links "Read the research" to the sectors evidence section that exists', async () => {
+  it('links each latest card once and each cover card once', async () => {
     const page = await render('en');
-    const research = [...page.querySelectorAll('a')].find((link) => link.textContent.includes('Read the research'));
-    expect(research.getAttribute('href')).toMatch(/\/sectors\.html#sources$/);
+    const hrefs = selector => [...page.querySelectorAll(selector)].map((link) => link.getAttribute('href'));
+    expect(hrefs('.home-card a')).toEqual(['/en/sectors.html', '/en/signal.html', '/zh/serial.html']);
+    expect(hrefs('a.home-learn-card')).toEqual(['/en/course.html', '/en/about.html', '/en/horoscope.html', '/en/worlds.html']);
   });
 
   it('renders the Chinese page with Chinese copy and labels', async () => {

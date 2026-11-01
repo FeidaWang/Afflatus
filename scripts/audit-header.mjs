@@ -1,7 +1,7 @@
 // Check the shared production header, replacing the obsolete persona-uniqueness rule.
 import { readFileSync } from 'node:fs';
 import { parse } from 'parse5';
-import { headerBlockFor, headerFiles } from './shared-header.mjs';
+import { footerBlockFor, footerRoutes, headerBlockFor, headerFiles } from './shared-header.mjs';
 const issues = [];
 const attr = (node, name) => node.attrs?.find(item => item.name === name)?.value;
 const walk = node => [node, ...(node.childNodes || []).flatMap(walk)];
@@ -19,5 +19,6 @@ for (const file of headerFiles) {
   }
   if (!headerNodes.some(node => node.tagName === 'a' && attr(node, 'data-header-path') === '/')) issues.push(`${file}: missing home link`);
 }
+for (const route of footerRoutes) if (!readFileSync(route.file, 'utf8').includes(footerBlockFor(route))) issues.push(`${route.file}: shared footer differs or is missing`);
 console.log(issues.length ? issues.join('\n') : `Shared header: ${headerFiles.length} source templates passed (structure, links, disclosure targets, styles).`);
 if (issues.length) process.exitCode = 1;
