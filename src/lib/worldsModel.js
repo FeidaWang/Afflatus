@@ -114,7 +114,7 @@ function shuffle(arr, rng) {
 }
 
 /** Seeded Monte Carlo of the remaining Swiss rounds + Bo5 bracket; returns { CODE: percent } summing to 100.0. */
-export function simulateChampion({ teams, ratings, scheduled = [], runs = 10000, seed = 1 }) {
+export function simulateChampion({ teams, ratings, scheduled = [], quarterfinals = [], runs = 10000, seed = 1 }) {
   const rng = mulberry32(seed);
   const n = teams.length;
   const codes = teams.map((t) => t.code);
@@ -188,7 +188,16 @@ export function simulateChampion({ teams, ratings, scheduled = [], runs = 10000,
     const qualifiers = codes.map((_, i) => i).filter((i) => w[i] === 3);
     const byLoss = (k) => qualifiers.filter((i) => l[i] === k);
     let bracket;
-    if (qualifiers.length === 8 && byLoss(0).length === 2 && byLoss(1).length === 3 && byLoss(2).length === 3) {
+    const known = quarterfinals.filter((q) => idx.has(q.home) && idx.has(q.away));
+    if (known.length === 4 && known.every((q) => qualifiers.includes(idx.get(q.home)) && qualifiers.includes(idx.get(q.away)))) {
+      // Drawn quarterfinals: settled ones keep their winner, open ones use the series price.
+      bracket = known.map((q) => {
+        const h = idx.get(q.home);
+        const a = idx.get(q.away);
+        if (q.winner) return idx.get(q.winner);
+        return rng() < (q.pWinHome ?? seriesWinProbFromGame(pGame[h][a], 5)) ? h : a;
+      });
+    } else if (qualifiers.length === 8 && byLoss(0).length === 2 && byLoss(1).length === 3 && byLoss(2).length === 3) {
       const top = byLoss(0);
       const low = shuffle(byLoss(2), rng);
       const rest = shuffle([...byLoss(1), low[2]], rng);
