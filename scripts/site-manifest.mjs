@@ -19,7 +19,8 @@ import {
   findRouteByPath,
   localizedRouteUrl,
 } from '../src/config/siteManifest.js';
-import { readerUrl } from '../src/lib/serialRoutes.js';
+import { COURSE_COMPANIONS, OBSERVATORY_CHAPTERS, ROUTE_TOPICS, TOPIC_GROUPS, TOPICS } from '../src/config/topics.js';
+import { novelSocialCardPath, readerPath, readerUrl } from '../src/lib/serialRoutes.js';
 import { renderHomeCards } from '../src/showcase/homeCards.js';
 import {
   buildRouteStructuredData,
@@ -227,6 +228,85 @@ function generatedHomeLatestModule() {
     `export const HOME_LATEST = Object.freeze(${JSON.stringify(homeLatest(), null, 2)});`,
     '',
   ].join('\n');
+}
+
+// One entry per page: a course page per book and companion, a novel per work
+// (its chapters are reached from the work's landing page). The search route
+// is the view of this index, not an entry in it.
+function generatedTopicsIndex(dates) {
+  const entries = [];
+  const dated = (date) => (date ? dateLabel(date) : null);
+  const routeEntry = (route) => {
+    const { group, topic, cover } = ROUTE_TOPICS[route.id];
+    const locale = route.publishedLocales?.[0] || 'en';
+    return {
+      id: route.id,
+      group,
+      topic,
+      title: { en: route.nav.en, zh: route.nav.zh },
+      summary: { en: route.locales.en.description, zh: route.locales.zh.description },
+      url: route.path,
+      cover: { en: cover, zh: cover },
+      date: dated(routeSeoFacts[route.id]?.dateModified || dates[localizedRouteUrl(route, locale)]),
+    };
+  };
+  for (const id of Object.keys(ROUTE_TOPICS)) {
+    const route = SITE_MANIFEST.find((item) => item.id === id);
+    const entry = routeEntry(route);
+    entries.push(entry);
+    if (id === 'sectors') {
+      for (const chapter of OBSERVATORY_CHAPTERS) {
+        entries.push({
+          ...entry,
+          id: `sectors-${chapter.id}`,
+          topic: ['ai-observatory'],
+          title: chapter.title,
+          summary: chapter.summary,
+          url: `/sectors.html#${chapter.id}`,
+          ...(chapter.cover ? { cover: { en: chapter.cover, zh: chapter.cover } } : {}),
+        });
+      }
+    }
+    if (id === 'course') {
+      const courseEntry = (page, fields) => ({
+        id: `course-${page}`,
+        group: entry.group,
+        topic: ['fde-course'],
+        url: `/course/${page}.html`,
+        cover: entry.cover,
+        date: dated(dates[courseUrl('en', page)]),
+        ...fields,
+      });
+      for (const book of courseBookCatalog) {
+        const week = Number(book.id);
+        entries.push(courseEntry(`book-${book.id}`, {
+          title: { en: `Week ${week}: ${book.title.en}`, zh: `第 ${week} 周：${book.title.zh}` },
+          summary: book.heading,
+          cover: book.covers,
+        }));
+      }
+      for (const [page, copy] of Object.entries(COURSE_COMPANIONS)) entries.push(courseEntry(page, copy));
+    }
+    if (id === 'serial') {
+      for (const { id: bookId, novel, chapterCount } of novelBooks()) {
+        const cover = novelSocialCardPath({ bookId });
+        entries.push({
+          id: `novel-${bookId}`,
+          group: entry.group,
+          topic: ['serials'],
+          title: { en: novel.title, zh: novel.title },
+          summary: {
+            en: `Original fiction in Chinese, ${chapterCount} chapters.`,
+            zh: `${novel.subtitle}，共 ${chapterCount} 章。`,
+          },
+          url: readerPath({ bookId }),
+          cover: { en: cover, zh: cover },
+          date: dated(dates[readerUrl({ bookId })]),
+        });
+      }
+    }
+  }
+  return `${JSON.stringify({ groups: TOPIC_GROUPS, topics: TOPICS, entries }, null, 2)}\n`;
 }
 
 function syncHomeCards() {
@@ -480,6 +560,7 @@ const sitemapDates = isShallowClone()
   : contentDates();
 if (!isShallowClone()) syncGeneratedFile(SITEMAP_DATES_PATH, `${JSON.stringify(sitemapDates, null, 2)}\n`);
 syncGeneratedFile('public/sitemap.xml', generatedSitemap(sitemapDates));
+syncGeneratedFile('public/topics-index.json', generatedTopicsIndex(sitemapDates));
 syncGeneratedFile('src/config/navRoutes.generated.js', generatedNavModule());
 syncGeneratedFile('src/config/homeLatest.generated.js', generatedHomeLatestModule());
 syncHomeCards();

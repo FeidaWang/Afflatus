@@ -1,0 +1,1292 @@
+{
+  "groups": {
+    "analysis": {
+      "en": "Analysis",
+      "zh": "分析"
+    },
+    "courses": {
+      "en": "Courses",
+      "zh": "课程"
+    },
+    "serials": {
+      "en": "Serials",
+      "zh": "连载"
+    },
+    "labs": {
+      "en": "Labs",
+      "zh": "实验室"
+    },
+    "about": {
+      "en": "About",
+      "zh": "关于"
+    }
+  },
+  "topics": [
+    {
+      "id": "ai-observatory",
+      "group": "analysis",
+      "title": {
+        "en": "AI Observatory",
+        "zh": "AI 观察站"
+      },
+      "summary": {
+        "en": "The companies, models and economics shaping AI, with the evidence shown.",
+        "zh": "塑造 AI 的公司、模型与商业逻辑，并列出依据。"
+      }
+    },
+    {
+      "id": "investing",
+      "group": "analysis",
+      "title": {
+        "en": "Investing & macro",
+        "zh": "投资与宏观"
+      },
+      "summary": {
+        "en": "A portfolio record, a daily stock journal and Federal Reserve policy, read together.",
+        "zh": "投资记录、每日美股看板与美联储政策，放在一起读。"
+      }
+    },
+    {
+      "id": "fde-course",
+      "group": "courses",
+      "title": {
+        "en": "FDE 0→1",
+        "zh": "FDE 0→1"
+      },
+      "summary": {
+        "en": "Twenty-four weeks of building useful tools with AI, with a guide, a handbook and a source library.",
+        "zh": "用 AI 做有用工具的 24 周实践课程，另有入门指南、实践手册与来源库。"
+      }
+    },
+    {
+      "id": "serials",
+      "group": "serials",
+      "title": {
+        "en": "Serials",
+        "zh": "连载"
+      },
+      "summary": {
+        "en": "Original serialised fiction, published in Chinese.",
+        "zh": "原创中文连载小说。"
+      }
+    },
+    {
+      "id": "labs",
+      "group": "labs",
+      "title": {
+        "en": "Labs",
+        "zh": "实验室"
+      },
+      "summary": {
+        "en": "Small experiments for entertainment: astrology charts and Worlds 2026 odds.",
+        "zh": "娱乐向的小实验：占星排盘与全球总决赛赔率。"
+      }
+    },
+    {
+      "id": "about",
+      "group": "about",
+      "title": {
+        "en": "About",
+        "zh": "关于"
+      },
+      "summary": {
+        "en": "The person behind this site, and the main things built here.",
+        "zh": "这个站背后的人，以及在这里做出的主要作品。"
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "sectors",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory",
+        "about"
+      ],
+      "title": {
+        "en": "AI Observatory",
+        "zh": "AI 观察站"
+      },
+      "summary": {
+        "en": "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
+        "zh": "探索全球 AI 公司与 Haiku 5.5 等前沿模型，按厂商比较能力与成本，并通过原创分析和交互实验理解订阅经济。"
+      },
+      "url": "/sectors.html",
+      "cover": {
+        "en": "/assets/topics/sectors.webp",
+        "zh": "/assets/topics/sectors.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "id": "sectors-overview",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "title": {
+        "en": "The ecosystem",
+        "zh": "产业全景"
+      },
+      "summary": {
+        "en": "Who depends on whom across chips, cloud, models and applications.",
+        "zh": "芯片、云、模型与应用之间，谁依赖谁。"
+      },
+      "url": "/sectors.html#overview",
+      "cover": {
+        "en": "/assets/topics/sectors.webp",
+        "zh": "/assets/topics/sectors.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "id": "sectors-models",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "title": {
+        "en": "The models",
+        "zh": "模型前沿"
+      },
+      "summary": {
+        "en": "How frontier models compare on capability and cost, by vendor.",
+        "zh": "按厂商比较前沿模型的能力与成本。"
+      },
+      "url": "/sectors.html#models",
+      "cover": {
+        "en": "/assets/labs/observatory-moon.webp",
+        "zh": "/assets/labs/observatory-moon.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "id": "sectors-rivalry",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "title": {
+        "en": "US & China",
+        "zh": "中美竞逐"
+      },
+      "summary": {
+        "en": "Two powers competing inside one interdependent industry.",
+        "zh": "两个大国，在同一个相互依存的产业里竞逐。"
+      },
+      "url": "/sectors.html#rivalry",
+      "cover": {
+        "en": "/assets/topics/sectors.webp",
+        "zh": "/assets/topics/sectors.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "id": "sectors-sources",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "title": {
+        "en": "Evidence, not a moving headline",
+        "zh": "依据，而不只是一条滚动标题"
+      },
+      "summary": {
+        "en": "Where the numbers come from, and what each claim rests on.",
+        "zh": "数字从哪里来，每项判断依据什么。"
+      },
+      "url": "/sectors.html#sources",
+      "cover": {
+        "en": "/assets/labs/reading-landscape-480.webp",
+        "zh": "/assets/labs/reading-landscape-480.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "id": "signal",
+      "group": "analysis",
+      "topic": [
+        "investing",
+        "about"
+      ],
+      "title": {
+        "en": "Fed Watch",
+        "zh": "美联储观察"
+      },
+      "summary": {
+        "en": "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
+        "zh": "探索2026年1月起的美联储决议、美国财政政策和AI产业传导，查看注明日期的一手来源。"
+      },
+      "url": "/signal.html",
+      "cover": {
+        "en": "/assets/topics/signal.webp",
+        "zh": "/assets/topics/signal.webp"
+      },
+      "date": {
+        "iso": "2026-10-05",
+        "label": {
+          "en": "5 Oct 2026",
+          "zh": "2026 年 10 月 5 日"
+        }
+      }
+    },
+    {
+      "id": "arena",
+      "group": "analysis",
+      "topic": [
+        "investing"
+      ],
+      "title": {
+        "en": "Stock Journal",
+        "zh": "美股看板"
+      },
+      "summary": {
+        "en": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
+        "zh": "关注 AI 时代的美股公司：Finnhub 最新报价与 Twelve Data 日线走势。报价可能有延迟，不构成投资建议。"
+      },
+      "url": "/arena.html",
+      "cover": {
+        "en": "/assets/topics/arena.webp",
+        "zh": "/assets/topics/arena.webp"
+      },
+      "date": {
+        "iso": "2026-11-02",
+        "label": {
+          "en": "2 Nov 2026",
+          "zh": "2026 年 11 月 2 日"
+        }
+      }
+    },
+    {
+      "id": "portfolio",
+      "group": "analysis",
+      "topic": [
+        "investing"
+      ],
+      "title": {
+        "en": "Portfolio",
+        "zh": "投资组合"
+      },
+      "summary": {
+        "en": "Selected positive trade examples, forward scenarios and a ten-stock research watchlist.",
+        "zh": "精选正向交易案例、前瞻情景和十支美股研究观察名单。"
+      },
+      "url": "/portfolio.html",
+      "cover": {
+        "en": "/assets/topics/home.webp",
+        "zh": "/assets/topics/home.webp"
+      },
+      "date": {
+        "iso": "2026-11-02",
+        "label": {
+          "en": "2 Nov 2026",
+          "zh": "2026 年 11 月 2 日"
+        }
+      }
+    },
+    {
+      "id": "course",
+      "group": "courses",
+      "topic": [
+        "fde-course",
+        "about"
+      ],
+      "title": {
+        "en": "Courses",
+        "zh": "课程"
+      },
+      "summary": {
+        "en": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
+        "zh": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"
+      },
+      "url": "/course.html",
+      "cover": {
+        "en": "/assets/topics/learn-courses.webp",
+        "zh": "/assets/topics/learn-courses.webp"
+      },
+      "date": {
+        "iso": "2026-11-02",
+        "label": {
+          "en": "2 Nov 2026",
+          "zh": "2026 年 11 月 2 日"
+        }
+      }
+    },
+    {
+      "id": "course-book-01",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-01.html",
+      "cover": {
+        "en": "/assets/course-covers/week-01-en.svg",
+        "zh": "/assets/course-covers/week-01-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 1: One useful thing",
+        "zh": "第 1 周：第一件有用的小事"
+      },
+      "summary": {
+        "en": "Start with everyday friction: diagnose your foundations and build a local tool",
+        "zh": "从生活摩擦出发：诊断基础，做出第一个本地工具"
+      }
+    },
+    {
+      "id": "course-book-02",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-02.html",
+      "cover": {
+        "en": "/assets/course-covers/week-02-en.svg",
+        "zh": "/assets/course-covers/week-02-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 2: Trust the input",
+        "zh": "第 2 周：让输入可信"
+      },
+      "summary": {
+        "en": "From running code to trustworthy input: functions, data structures and validation",
+        "zh": "把“能运行”变成“输入可信”：函数、数据结构与校验"
+      }
+    },
+    {
+      "id": "course-book-03",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-03.html",
+      "cover": {
+        "en": "/assets/course-covers/week-03-en.svg",
+        "zh": "/assets/course-covers/week-03-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 3: Take back control",
+        "zh": "第 3 周：学会接管故障"
+      },
+      "summary": {
+        "en": "Take over a failure: Git, dependencies, debugging and minimal fixes",
+        "zh": "学会接管故障：Git、依赖、调试与最小修复"
+      }
+    },
+    {
+      "id": "course-book-04",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-04.html",
+      "cover": {
+        "en": "/assets/course-covers/week-04-en.svg",
+        "zh": "/assets/course-covers/week-04-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 4: Records you can trust",
+        "zh": "第 4 周：让记录可信"
+      },
+      "summary": {
+        "en": "Trust your records: SQL, relationships, constraints and migrations",
+        "zh": "让记录可信：SQL、关系、约束与迁移"
+      }
+    },
+    {
+      "id": "course-book-05",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-05.html",
+      "cover": {
+        "en": "/assets/course-covers/week-05-en.svg",
+        "zh": "/assets/course-covers/week-05-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 5: From code to interface",
+        "zh": "第 5 周：从程序到页面"
+      },
+      "summary": {
+        "en": "Turn a program into a usable page: the Web, HTTP and API boundaries",
+        "zh": "把程序变成可用页面：Web、HTTP 与 API 边界"
+      }
+    },
+    {
+      "id": "course-book-06",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-06.html",
+      "cover": {
+        "en": "/assets/course-covers/week-06-en.svg",
+        "zh": "/assets/course-covers/week-06-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 6: The first release",
+        "zh": "第 6 周：第一次真正交付"
+      },
+      "summary": {
+        "en": "Your first real delivery: builds, release packages and working rollback",
+        "zh": "第一次真正交付：构建、发布包与可用的回滚"
+      }
+    },
+    {
+      "id": "course-book-07",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-07.html",
+      "cover": {
+        "en": "/assets/course-covers/week-07-en.svg",
+        "zh": "/assets/course-covers/week-07-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 7: Understand the problem",
+        "zh": "第 7 周：先理解问题"
+      },
+      "summary": {
+        "en": "Discover problems like an FDE: understand the workflow before choosing features",
+        "zh": "像 FDE 一样发现问题：先理解流程，再决定功能"
+      }
+    },
+    {
+      "id": "course-book-08",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-08.html",
+      "cover": {
+        "en": "/assets/course-covers/week-08-en.svg",
+        "zh": "/assets/course-covers/week-08-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 8: A tool becomes a habit",
+        "zh": "第 8 周：让工具成为习惯"
+      },
+      "summary": {
+        "en": "Make your first project a habit: local planning, calendar export and usability",
+        "zh": "让第一个项目成为习惯：本地计划、日历导出与可用性"
+      }
+    },
+    {
+      "id": "course-book-09",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-09.html",
+      "cover": {
+        "en": "/assets/course-covers/week-09-en.svg",
+        "zh": "/assets/course-covers/week-09-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 9: The smallest agent",
+        "zh": "第 9 周：最小的智能体"
+      },
+      "summary": {
+        "en": "From a model call to a minimal agent: decide when autonomy is unnecessary",
+        "zh": "从一次模型调用到最小 agent：先明确何时不需要自主性"
+      }
+    },
+    {
+      "id": "course-book-10",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-10.html",
+      "cover": {
+        "en": "/assets/course-covers/week-10-en.svg",
+        "zh": "/assets/course-covers/week-10-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 10: Evidence of completion",
+        "zh": "第 10 周：完成，需要证据"
+      },
+      "summary": {
+        "en": "Evaluate an agent: require external evidence of completion",
+        "zh": "为 agent 建立评测：让“完成了”有外部证据"
+      }
+    },
+    {
+      "id": "course-book-11",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-11.html",
+      "cover": {
+        "en": "/assets/course-covers/week-11-en.svg",
+        "zh": "/assets/course-covers/week-11-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 11: Context and boundaries",
+        "zh": "第 11 周：上下文与边界"
+      },
+      "summary": {
+        "en": "Context, skills and MCP: connect capabilities and enforce permissions",
+        "zh": "上下文、skills 与 MCP：把能力接进来，也把权限挡住"
+      }
+    },
+    {
+      "id": "course-book-12",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-12.html",
+      "cover": {
+        "en": "/assets/course-covers/week-12-en.svg",
+        "zh": "/assets/course-covers/week-12-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 12: Back to the evidence",
+        "zh": "第 12 周：回到原始证据"
+      },
+      "summary": {
+        "en": "A knowledge workbench: from sources to traceable evidence",
+        "zh": "知识工作台第一步：从来源到可追溯的证据"
+      }
+    },
+    {
+      "id": "course-book-13",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-13.html",
+      "cover": {
+        "en": "/assets/course-covers/week-13-en.svg",
+        "zh": "/assets/course-covers/week-13-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 13: Knowledge into action",
+        "zh": "第 13 周：让知识走向行动"
+      },
+      "summary": {
+        "en": "Turn knowledge into action: make a prediction and run a falsifiable experiment",
+        "zh": "把知识变成行动：提出预测，做一个能失败的小实验"
+      }
+    },
+    {
+      "id": "course-book-14",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-14.html",
+      "cover": {
+        "en": "/assets/course-covers/week-14-en.svg",
+        "zh": "/assets/course-covers/week-14-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 14: Test your understanding",
+        "zh": "第 14 周：检验真正掌握"
+      },
+      "summary": {
+        "en": "Test real understanding: recall, transfer and a lighter knowledge base",
+        "zh": "检验真正掌握：复测、迁移与知识库减负"
+      }
+    },
+    {
+      "id": "course-book-15",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-15.html",
+      "cover": {
+        "en": "/assets/course-covers/week-15-en.svg",
+        "zh": "/assets/course-covers/week-15-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 15: A controlled runtime",
+        "zh": "第 15 周：一个受控运行时"
+      },
+      "summary": {
+        "en": "Deploy a read-only runtime: location, authentication and every bill",
+        "zh": "部署只读运行时：明确运行位置、认证和每一笔费用"
+      }
+    },
+    {
+      "id": "course-book-16",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-16.html",
+      "cover": {
+        "en": "/assets/course-covers/week-16-en.svg",
+        "zh": "/assets/course-covers/week-16-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 16: After the interruption",
+        "zh": "第 16 周：中断之后"
+      },
+      "summary": {
+        "en": "Recover a run: persistent state, retries, idempotency and backups",
+        "zh": "让运行能够恢复：持久状态、重试、幂等与备份"
+      }
+    },
+    {
+      "id": "course-book-17",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-17.html",
+      "cover": {
+        "en": "/assets/course-covers/week-17-en.svg",
+        "zh": "/assets/course-covers/week-17-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 17: From draft to approval",
+        "zh": "第 17 周：从草稿到批准"
+      },
+      "summary": {
+        "en": "Connect one workflow: draft first, approve a specific action",
+        "zh": "连接一个真实工作流：先生成草稿，再按范围审批"
+      }
+    },
+    {
+      "id": "course-book-18",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-18.html",
+      "cover": {
+        "en": "/assets/course-covers/week-18-en.svg",
+        "zh": "/assets/course-covers/week-18-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 18: Care for a running system",
+        "zh": "第 18 周：照看运行中的系统"
+      },
+      "summary": {
+        "en": "From demonstration to operation: observation, alerts and incident response",
+        "zh": "从演示走向运维：运行观察、告警与事件处理"
+      }
+    },
+    {
+      "id": "course-book-19",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-19.html",
+      "cover": {
+        "en": "/assets/course-covers/week-19-en.svg",
+        "zh": "/assets/course-covers/week-19-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 19: An honest task ledger",
+        "zh": "第 19 周：可信的任务账本"
+      },
+      "summary": {
+        "en": "Build reliable experience: task ledgers, usage estimates and uncertainty",
+        "zh": "建立可信经验：AI 任务账本、用量估计与不确定性"
+      }
+    },
+    {
+      "id": "course-book-20",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-20.html",
+      "cover": {
+        "en": "/assets/course-covers/week-20-en.svg",
+        "zh": "/assets/course-covers/week-20-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 20: The right to reject",
+        "zh": "第 20 周：改进，也可以拒绝"
+      },
+      "summary": {
+        "en": "Controlled RSI: a hypothesis, a budget and the option to reject",
+        "zh": "受控 RSI：让一次改进有假设、有预算，也可以被拒绝"
+      }
+    },
+    {
+      "id": "course-book-21",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-21.html",
+      "cover": {
+        "en": "/assets/course-covers/week-21-en.svg",
+        "zh": "/assets/course-covers/week-21-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 21: A change you can review",
+        "zh": "第 21 周：可审查的改变"
+      },
+      "summary": {
+        "en": "Improve code: patches, isolated evaluation and human-controlled release",
+        "zh": "代码层改进：补丁、隔离评测与人为控制的发布"
+      }
+    },
+    {
+      "id": "course-book-22",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-22.html",
+      "cover": {
+        "en": "/assets/course-covers/week-22-en.svg",
+        "zh": "/assets/course-covers/week-22-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 22: A second pair of hands",
+        "zh": "第 22 周：交给第二位用户"
+      },
+      "summary": {
+        "en": "A second user: observe a task, obtain consent and hand over",
+        "zh": "第二位用户：观察任务、得到同意、完成交接"
+      }
+    },
+    {
+      "id": "course-book-23",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-23.html",
+      "cover": {
+        "en": "/assets/course-covers/week-23-en.svg",
+        "zh": "/assets/course-covers/week-23-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 23: What is worth keeping",
+        "zh": "第 23 周：值得留下什么"
+      },
+      "summary": {
+        "en": "Audit value: calculate net time saved and let unused work go",
+        "zh": "价值审计：计算净省时，也允许删除自己的作品"
+      }
+    },
+    {
+      "id": "course-book-24",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/book-24.html",
+      "cover": {
+        "en": "/assets/course-covers/week-24-en.svg",
+        "zh": "/assets/course-covers/week-24-zh.svg"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 24: Keep building",
+        "zh": "第 24 周：继续构建"
+      },
+      "summary": {
+        "en": "Graduation is a beginning: a new task, independent repair and an adaptable practice",
+        "zh": "毕业不是终点：新任务、独立修复与可更新的能力体系"
+      }
+    },
+    {
+      "id": "course-guide",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/guide.html",
+      "cover": {
+        "en": "/assets/topics/learn-courses.webp",
+        "zh": "/assets/topics/learn-courses.webp"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Start with a useful question",
+        "zh": "从这里开始"
+      },
+      "summary": {
+        "en": "From vibe coding to a personal FDE: a 24-week practice route.",
+        "zh": "从 Vibe Coding 到个人 FDE：24 周实践路线。"
+      }
+    },
+    {
+      "id": "course-handbook",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/handbook.html",
+      "cover": {
+        "en": "/assets/topics/learn-courses.webp",
+        "zh": "/assets/topics/learn-courses.webp"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "A handbook for the work ahead",
+        "zh": "一本随身的实践手册"
+      },
+      "summary": {
+        "en": "From vibe coding to a personal FDE: a 24-week practice route.",
+        "zh": "从 Vibe Coding 到个人 FDE：24 周实践路线。"
+      }
+    },
+    {
+      "id": "course-resources",
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "url": "/course/resources.html",
+      "cover": {
+        "en": "/assets/topics/learn-courses.webp",
+        "zh": "/assets/topics/learn-courses.webp"
+      },
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Back to the sources",
+        "zh": "回到原始来源"
+      },
+      "summary": {
+        "en": "78 courses, official documents and original research sources, with verification scope.",
+        "zh": "78 项公开课、官方文档与原始研究，附核对范围。"
+      }
+    },
+    {
+      "id": "serial",
+      "group": "serials",
+      "topic": [
+        "serials",
+        "about"
+      ],
+      "title": {
+        "en": "Serials",
+        "zh": "连载"
+      },
+      "summary": {
+        "en": "Original serialised fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device.",
+        "zh": "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。"
+      },
+      "url": "/serial.html",
+      "cover": {
+        "en": "/assets/topics/serial.webp",
+        "zh": "/assets/topics/serial.webp"
+      },
+      "date": {
+        "iso": "2026-11-01",
+        "label": {
+          "en": "1 Nov 2026",
+          "zh": "2026 年 11 月 1 日"
+        }
+      }
+    },
+    {
+      "id": "novel-wanjie-zhongchun",
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "title": {
+        "en": "万界种春",
+        "zh": "万界种春"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 15 chapters.",
+        "zh": "无限流 · 种田 · 多女主 · 剧情向，共 15 章。"
+      },
+      "url": "/zh/novels/wanjie-zhongchun/",
+      "cover": {
+        "en": "/assets/og/novels/wanjie-zhongchun.jpg",
+        "zh": "/assets/og/novels/wanjie-zhongchun.jpg"
+      },
+      "date": {
+        "iso": "2026-07-12",
+        "label": {
+          "en": "12 Jul 2026",
+          "zh": "2026 年 7 月 12 日"
+        }
+      }
+    },
+    {
+      "id": "novel-changye-qingjian",
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "title": {
+        "en": "长夜请柬",
+        "zh": "长夜请柬"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 10 chapters.",
+        "zh": "无限流 · 悬疑解谜 · 甜虐并行 · 大女主成长，共 10 章。"
+      },
+      "url": "/zh/novels/changye-qingjian/",
+      "cover": {
+        "en": "/assets/og/novels/changye-qingjian.jpg",
+        "zh": "/assets/og/novels/changye-qingjian.jpg"
+      },
+      "date": {
+        "iso": "2026-07-12",
+        "label": {
+          "en": "12 Jul 2026",
+          "zh": "2026 年 7 月 12 日"
+        }
+      }
+    },
+    {
+      "id": "novel-yuxi-gongci",
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "title": {
+        "en": "玉熙宫词",
+        "zh": "玉熙宫词"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 133 chapters.",
+        "zh": "女频高智商无限流 · 明穿权谋 · 三体宇宙 · 巨构蜂巢营 · BG双强，共 133 章。"
+      },
+      "url": "/zh/novels/yuxi-gongci/",
+      "cover": {
+        "en": "/assets/og/novels/yuxi-gongci.jpg",
+        "zh": "/assets/og/novels/yuxi-gongci.jpg"
+      },
+      "date": {
+        "iso": "2026-10-18",
+        "label": {
+          "en": "18 Oct 2026",
+          "zh": "2026 年 10 月 18 日"
+        }
+      }
+    },
+    {
+      "id": "horoscope",
+      "group": "labs",
+      "topic": [
+        "labs"
+      ],
+      "title": {
+        "en": "Astrology",
+        "zh": "趣味占星"
+      },
+      "summary": {
+        "en": "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
+        "zh": "体验在你的设备上计算的八字、西方占星与双人合盘。仅供娱乐。"
+      },
+      "url": "/horoscope.html",
+      "cover": {
+        "en": "/assets/topics/learn-astrology.webp",
+        "zh": "/assets/topics/learn-astrology.webp"
+      },
+      "date": {
+        "iso": "2026-11-01",
+        "label": {
+          "en": "1 Nov 2026",
+          "zh": "2026 年 11 月 1 日"
+        }
+      }
+    },
+    {
+      "id": "worlds",
+      "group": "labs",
+      "topic": [
+        "labs"
+      ],
+      "title": {
+        "en": "Worlds 2026",
+        "zh": "全球总决赛"
+      },
+      "summary": {
+        "en": "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+        "zh": "2026 英雄联盟全球总决赛每场赛前胜率、隐含赔率、夺冠概率与无畏征召英雄池深度。仅供娱乐，不构成博彩建议。"
+      },
+      "url": "/worlds.html",
+      "cover": {
+        "en": "/assets/topics/learn-worlds.webp",
+        "zh": "/assets/topics/learn-worlds.webp"
+      },
+      "date": {
+        "iso": "2026-11-01",
+        "label": {
+          "en": "1 Nov 2026",
+          "zh": "2026 年 11 月 1 日"
+        }
+      }
+    },
+    {
+      "id": "about",
+      "group": "about",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "About",
+        "zh": "关于"
+      },
+      "summary": {
+        "en": "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction.",
+        "zh": "王飞达是墨尔本的软件工程师，用编程智能体构建 AI 时代的产品：AI 产业图谱、经济动态、实践课程与原创小说。"
+      },
+      "url": "/about.html",
+      "cover": {
+        "en": "/assets/topics/learn-about.webp",
+        "zh": "/assets/topics/learn-about.webp"
+      },
+      "date": {
+        "iso": "2026-11-02",
+        "label": {
+          "en": "2 Nov 2026",
+          "zh": "2026 年 11 月 2 日"
+        }
+      }
+    },
+    {
+      "id": "main",
+      "group": "about",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "Home",
+        "zh": "首页"
+      },
+      "summary": {
+        "en": "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.",
+        "zh": "通过真实运行的产品，探索王飞达在全栈开发、UI/UX 设计、编程智能体、金融建模与 AI 产业研究中的跨领域实践。"
+      },
+      "url": "/",
+      "cover": {
+        "en": "/assets/topics/home.webp",
+        "zh": "/assets/topics/home.webp"
+      },
+      "date": {
+        "iso": "2026-11-02",
+        "label": {
+          "en": "2 Nov 2026",
+          "zh": "2026 年 11 月 2 日"
+        }
+      }
+    }
+  ]
+}
