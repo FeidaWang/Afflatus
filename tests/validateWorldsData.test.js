@@ -204,7 +204,8 @@ describe('round-2 optional fields', () => {
   });
   function withRound2() {
     const d = structuredClone(live);
-    const open = d.series.find((s) => s.pick && !s.result && s.bo === 3);
+    // Any open pick: from the knockouts on, every open series is a Bo5.
+    const open = d.series.find((s) => s.pick && !s.result);
     open.pick.scores = { '2-0': 0.61, '2-1': 0.265, '1-2': 0.04, '0-2': 0.085 };
     open.pick.pDecider = 0.305;
     d.teams = [extremes()];
