@@ -1,0 +1,27 @@
+/* The "···" menu on homepage and topic cards. Each host positions .related inside its card. */
+.related { position: absolute; }
+.related[hidden] { display: none; }
+.related-trigger { position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 28px; padding: 0; border: 0; border-radius: 999px; background: #e7e3d8; color: #111110; cursor: pointer; }
+.related-trigger::after { content: ""; position: absolute; inset: -8px -2px; }
+.related-trigger:hover { background: #dedad0; }
+.related-trigger[aria-expanded="true"] { background: #111110; color: #f7f5ef; }
+.related-trigger svg { width: 18px; height: 18px; }
+.related-panel { --related-shift: 0px; position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; width: min(340px, calc(100vw - 32px)); min-height: 200px; padding: 20px; border: 1px solid #e3e0d7; border-radius: 18px; background: #fbfaf6; color: #111110; font-size: 15px; line-height: 1.5; text-align: left; box-shadow: 0 18px 48px #11111024; translate: var(--related-shift) 0; scroll-margin-block: 88px 16px; }
+.related-panel:focus { outline: none; }
+.related-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.related-heading h3 { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.3; letter-spacing: -.01em; }
+.related-close { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; margin: -8px -8px -8px 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.related-close:hover { background: #1111100c; }
+.related-close svg { width: 18px; height: 18px; }
+.related-summary { margin: 0; color: #5c5b55; font-size: 14px; }
+.related-tree { display: block; width: 100%; height: auto; }
+.related-tree line { stroke: #8f8d84; stroke-width: 1.5; }
+.related-tree-center { fill: #111110; }
+.related-card { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border: 1px solid #e3e0d7; border-radius: 12px; color: inherit; text-decoration: none; }
+.related-card:hover { background: #f3f1ea; }
+.related-card-meta { display: flex; flex-wrap: wrap; gap: 2px 12px; color: #5c5b55; font-size: 12px; line-height: 1.4; }
+.related-card-title { font-weight: 600; line-height: 1.35; }
+.related-more { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; min-height: 44px; padding: 8px 14px; border: 1px solid #ceccc3; border-radius: 10px; color: inherit; font-size: 14px; text-decoration: none; }
+.related-more:hover { background: #f3f1ea; }
+.related-more svg { flex: none; width: 16px; height: 16px; }
+.related :is(a, button):focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }

@@ -68,7 +68,7 @@ const escapeHtml = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;
 const text = (tag, copy, attrs = '') => `<${tag}${attrs} data-en="${escapeHtml(copy.en)}" data-zh="${escapeHtml(copy.zh)}">${escapeHtml(copy.en)}</${tag}>`;
 
 // Static fallback for #root, written into index.html by scripts/site-manifest.mjs.
-// Keep in step with the matching sections of PremiereApp.jsx.
+// Keep in step with the matching sections of PremiereApp.jsx, minus its script-only "···" menus.
 export function renderHomeCards(latest) {
   const latestCards = latest.map(({ href, date, title, summary }) => `<article class="home-card">
             <p class="home-card-meta">${text('span', navigationLabel(href))}${date ? text('time', date.label, ` datetime="${date.iso}"`) : ''}</p>
@@ -76,12 +76,12 @@ export function renderHomeCards(latest) {
             ${text('p', summary, ' class="home-card-summary"')}
             <a class="home-card-action" href="${navigationHref(href, 'en')}">${text('span', LATEST_ACTIONS[href])}</a>
           </article>`).join('\n          ');
-  const learnCards = LEARN_CARDS.map(({ href, image, width, height, title, summary }) => `<a class="home-learn-card" href="${navigationHref(href, 'en')}">
+  const learnCards = LEARN_CARDS.map(({ href, image, width, height, title, summary }) => `<div class="home-learn-item"><a class="home-learn-card" href="${navigationHref(href, 'en')}">
             ${text('span', navigationLabel(href), ' class="home-learn-label"')}
             <img src="${image}" width="${width}" height="${height}" alt="" loading="lazy" decoding="async">
             ${text('h3', title)}
             ${text('p', summary)}
-          </a>`).join('\n          ');
+          </a></div>`).join('\n          ');
   return `<section class="home-latest section-shell" id="major-releases" aria-labelledby="latest-title">
         <div class="section-heading">${text('h2', LATEST_HEADING.title, ' id="latest-title"')}${text('p', LATEST_HEADING.note)}</div>
         <div class="home-latest-grid">
