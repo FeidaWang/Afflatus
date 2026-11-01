@@ -28,6 +28,14 @@ test.describe('homepage cards and accordion footer', () => {
     await expect(analysis.locator('a').first()).toHaveAttribute('href', '/zh/portfolio.html');
   });
 
+  test('footer language link remembers the choice', async ({ page }) => {
+    await page.goto('/en/about.html', { waitUntil: 'domcontentloaded' });
+    // The fixture resets the stored locale on every document, so stay on this one to read it.
+    await page.evaluate(() => window.addEventListener('click', event => event.preventDefault()));
+    await page.locator('[data-footer-language="zh"]').click();
+    expect(await page.evaluate(() => localStorage.getItem('afflatus:locale:v1'))).toBe('zh');
+  });
+
   for (const path of ['about.html', 'course.html', 'signal.html', 'portfolio.html', 'arena.html', 'course/guide.html']) {
     test(`footer language links stay on /${path}`, async ({ page }) => {
       await page.goto(`/en/${path}`, { waitUntil: 'domcontentloaded' });

@@ -195,7 +195,7 @@ AFFLATUS
 | 6 | 手机菜单 | 深色全屏 + 最新轮播（M5），放 P4；P1 先在现有米色菜单里按 5 组分段 |
 | 7 | 图卡封面 | 新出 4 张 1:1.1 无文字封面，P2 开工前准备 |
 | 8 | 专题页 URL | `/search.html?topic=`，为站内搜索留位 |
-| 9 | 「了解更多」四张卡 | 按页面：课程 · 关于 · 趣味占星 · 全球总决赛（§4-M2）；封面由站主提供，存为 `public/assets/home/learn-{courses,about,astrology,worlds}.webp`，取代 §5 的按分组写法 |
+| 9 | 「了解更多」四张卡 | 按页面：课程 · 关于 · 趣味占星 · 全球总决赛（§4-M2）；课程、关于、占星封面由站主提供，全球总决赛封面用 Figma 重画（Faker、Chovy），存为 `public/assets/home/learn-{courses,about,astrology,worlds}.webp`，取代 §5 的按分组写法 |
 | 10 | 「≤ 18 链接」口径 | 只算顶栏导航和正文：顶栏 9 + Hero 1 + 7 张卡各 1 个链接 = 17，页脚另计；因此不做 §4-M2 卡片结构里的两条行链接 |
 
 原型（`mock/`）与截图仍是敲定前的 Markets / Learn / Stories 命名和 `/topics.html` 地址，实施以本节为准，不再更新原型。

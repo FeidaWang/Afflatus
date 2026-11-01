@@ -54,8 +54,8 @@ export const LEARN_CARDS = [
   {
     href: '/worlds.html',
     image: '/assets/home/learn-worlds.webp',
-    width: 414,
-    height: 455,
+    width: 640,
+    height: 704,
     title: { en: 'Worlds 2026 odds & picks', zh: '2026 全球总决赛赔率与竞猜' },
     summary: {
       en: 'Pre-match win probabilities, champion odds and Fearless Draft pools. Entertainment only.',

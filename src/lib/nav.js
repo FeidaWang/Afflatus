@@ -43,3 +43,8 @@ document.querySelector('[data-header-language]')?.addEventListener('click', even
   const next = document.querySelector('[data-header-language]').hreflang.startsWith('zh') ? 'zh' : 'en';
   setLocale(next);
 });
+
+document.addEventListener('click', event => {
+  const link = event.target.closest?.('[data-footer-language]');
+  if (link) setLocale(link.dataset.footerLanguage);
+});

@@ -95,6 +95,8 @@ export default defineConfig({
     port: 4173
   },
   build: {
+    // Every supported browser has native modulepreload; the polyfill only added weight to each entry.
+    modulePreload: { polyfill: false },
     rollupOptions: {
       // Route inclusion is declared once in siteManifest.js. Retired archive
       // experiences remain in git history; their URLs ship only as redirects.
