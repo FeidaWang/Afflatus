@@ -15,12 +15,18 @@ test.describe('related popover', () => {
     expect(indexRequests).toHaveLength(1);
   });
 
-  test('opens with the topic summary, branch tree, one related card and a link onward', async ({ page }) => {
+  test('opens with the topic summary, a dated newest-first tree, one related card and a link onward', async ({ page }) => {
     await page.goto('/zh/', { waitUntil: 'load' });
     await trigger(page, '相关内容： AI 观察站').click();
     const panel = page.getByRole('dialog', { name: '相关内容' });
     await expect(panel.locator('.related-summary')).toContainText('塑造 AI');
-    await expect(panel.locator('.related-tree circle')).toHaveCount(5);
+    await expect(panel.locator('.related-tree-root')).toHaveText('AI 观察站');
+    const nodes = panel.locator('.related-tree li');
+    await expect(nodes).toHaveCount(5);
+    const dates = await nodes.locator('time').evaluateAll((times) => times.map((time) => time.dateTime));
+    expect(dates).toEqual([...dates].sort().reverse());
+    await expect(nodes.first()).toContainText('Haiku 5.5');
+    await expect(nodes.first().locator('a')).toHaveAttribute('href', '/zh/sectors.html#event-haiku55-launch');
     await expect(panel.locator('.related-card')).toHaveCount(1);
     await expect(panel.locator('.related-more')).toHaveAttribute('href', '/zh/search.html?topic=ai-observatory');
   });
@@ -97,14 +103,51 @@ test.describe('related popover', () => {
   });
 });
 
+test.describe('tree links', () => {
+  test('a Fed Watch node opens its record on the page', async ({ page }) => {
+    await page.goto('/en/', { waitUntil: 'load' });
+    await trigger(page, 'Related to Fed Watch').click();
+    const node = page.locator('.related-tree li a').last();
+    const href = await node.getAttribute('href');
+    expect(href).toMatch(/^\/en\/signal\.html#.+/);
+    await node.click();
+    await expect(page.locator(`[id="${decodeURIComponent(href.split('#')[1])}"]`)).toBeInViewport();
+  });
+
+  test('a record further down the list is still reachable by its link', async ({ page }) => {
+    await page.goto('/en/signal.html', { waitUntil: 'load' });
+    const oldest = await page.evaluate(async () => {
+      const { events } = await (await fetch('/signal-events.json')).json();
+      return [...events].sort((a, b) => a.date.localeCompare(b.date))[0].id;
+    });
+    await page.goto(`/en/signal.html#${oldest}`, { waitUntil: 'load' });
+    await expect(page.locator(`[id="${oldest}"]`)).toBeInViewport();
+  });
+
+  test('an observatory node lands on its event', async ({ page }) => {
+    await page.goto('/en/sectors.html#event-haiku55-launch', { waitUntil: 'load' });
+    const event = page.locator('#event-haiku55-launch');
+    await expect(event.locator('details')).toHaveJSProperty('open', true);
+    await expect(event).toBeInViewport();
+    expect((await event.boundingBox()).y).toBeGreaterThan(60);
+  });
+});
+
 test.describe('topic page', () => {
   test('lists a topic with its count, mosaic and working menus', async ({ page }) => {
     await page.goto('/en/search.html?topic=ai-observatory', { waitUntil: 'load' });
     await expect(page.locator('h1')).toHaveText('AI Observatory');
     await expect(page).toHaveTitle('AI Observatory · AFFLATUS');
-    await expect(page.locator('.topic-count')).toHaveText('5 results');
-    await expect(page.locator('.topic-result')).toHaveCount(5);
-    await expect(page.locator('.topic-mosaic img')).toHaveCount(5);
+    const { entries } = await page.evaluate(async () => (await fetch('/topics-index.json')).json());
+    const own = entries.filter((entry) => entry.topic.includes('ai-observatory'));
+    await expect(page.locator('.topic-count')).toHaveText(`${own.length} results`);
+    await expect(page.locator('.topic-result')).toHaveCount(own.length);
+    const dates = await page.locator('.topic-result time').evaluateAll((times) => times.map((time) => time.dateTime));
+    expect(dates).toEqual([...dates].sort().reverse());
+    const covers = await page.locator('.topic-mosaic img').evaluateAll((images) => images.map((image) => new URL(image.src).pathname));
+    expect(covers).toHaveLength(5);
+    const ownCovers = new Set(own.filter((entry) => entry.cover).map((entry) => entry.cover.en));
+    expect(covers.every((cover) => ownCovers.has(cover))).toBe(true);
     await expect(page.locator('.topic-result h2 a').first()).toHaveAttribute('href', '/en/sectors.html');
     const button = page.locator('.topic-result .related-trigger').first();
     await button.click();
@@ -125,7 +168,7 @@ test.describe('topic page', () => {
       await page.goto(`/en/search.html${search}`, { waitUntil: 'load' });
       await expect(page.locator('h1')).toHaveText('All topics');
       await expect(page.locator('.topic-note')).toHaveCount(search ? 1 : 0);
-      await expect(page.locator('.topic-result')).toHaveCount(6);
+      await expect(page.locator('.topic-result')).toHaveCount(7);
       await expect(page.locator('.topic-result h2 a').first()).toHaveAttribute('href', '/en/search.html?topic=ai-observatory');
     });
   }

@@ -20,6 +20,15 @@ export const TOPICS = Object.freeze([
     },
   },
   {
+    id: 'fed-watch',
+    group: 'analysis',
+    title: { en: 'Fed Watch', zh: '美联储观察' },
+    summary: {
+      en: 'Federal Reserve decisions, fiscal policy and AI, each dated and tied to a primary source.',
+      zh: '美联储决议、财政政策与 AI，每条都注明日期并附一手来源。',
+    },
+  },
+  {
     id: 'investing',
     group: 'analysis',
     title: { en: 'Investing & macro', zh: '投资与宏观' },
@@ -66,13 +75,13 @@ export const TOPICS = Object.freeze([
   },
 ]);
 
-// Listed in the order entries appear in the index, which is the order results are shown in.
+// Entries keep this order within the index, and results sort newest first from there.
 // The first topic is the entry's own; the About topic also collects the main works.
 export const ROUTE_TOPICS = Object.freeze({
   sectors: { group: 'analysis', topic: ['ai-observatory', 'about'], cover: '/assets/topics/sectors.webp' },
-  signal: { group: 'analysis', topic: ['investing', 'about'], cover: '/assets/topics/signal.webp' },
+  signal: { group: 'analysis', topic: ['fed-watch', 'investing', 'about'], cover: '/assets/topics/signal.webp' },
   arena: { group: 'analysis', topic: ['investing'], cover: '/assets/topics/arena.webp' },
-  portfolio: { group: 'analysis', topic: ['investing'], cover: '/assets/topics/home.webp' },
+  portfolio: { group: 'analysis', topic: ['investing'], cover: '/assets/topics/portfolio.webp' },
   course: { group: 'courses', topic: ['fde-course', 'about'], cover: '/assets/topics/learn-courses.webp' },
   serial: { group: 'serials', topic: ['serials', 'about'], cover: '/assets/topics/serial.webp' },
   horoscope: { group: 'labs', topic: ['labs'], cover: '/assets/topics/learn-astrology.webp' },
@@ -85,6 +94,7 @@ export const ROUTE_TOPICS = Object.freeze({
 export const OBSERVATORY_CHAPTERS = Object.freeze([
   {
     id: 'overview',
+    cover: '/assets/topics/sectors-overview.webp',
     title: { en: 'The ecosystem', zh: '产业全景' },
     summary: {
       en: 'Who depends on whom across chips, cloud, models and applications.',
@@ -93,7 +103,7 @@ export const OBSERVATORY_CHAPTERS = Object.freeze([
   },
   {
     id: 'models',
-    cover: '/assets/labs/observatory-moon.webp',
+    cover: '/assets/topics/sectors-models.webp',
     title: { en: 'The models', zh: '模型前沿' },
     summary: {
       en: 'How frontier models compare on capability and cost, by vendor.',
@@ -102,6 +112,7 @@ export const OBSERVATORY_CHAPTERS = Object.freeze([
   },
   {
     id: 'rivalry',
+    cover: '/assets/topics/sectors-rivalry.webp',
     title: { en: 'US & China', zh: '中美竞逐' },
     summary: {
       en: 'Two powers competing inside one interdependent industry.',
@@ -110,7 +121,7 @@ export const OBSERVATORY_CHAPTERS = Object.freeze([
   },
   {
     id: 'sources',
-    cover: '/assets/labs/reading-landscape-480.webp',
+    cover: '/assets/topics/sectors-sources.webp',
     title: { en: 'Evidence, not a moving headline', zh: '依据，而不只是一条滚动标题' },
     summary: {
       en: 'Where the numbers come from, and what each claim rests on.',
@@ -123,14 +134,17 @@ export const OBSERVATORY_CHAPTERS = Object.freeze([
 // scripts/generate-course-pages.mjs.
 export const COURSE_COMPANIONS = Object.freeze({
   guide: {
+    cover: '/assets/topics/course-guide.webp',
     title: { en: 'Start with a useful question', zh: '从这里开始' },
     summary: { en: 'From vibe coding to a personal FDE: a 24-week practice route.', zh: '从 Vibe Coding 到个人 FDE：24 周实践路线。' },
   },
   handbook: {
+    cover: '/assets/topics/course-handbook.webp',
     title: { en: 'A handbook for the work ahead', zh: '一本随身的实践手册' },
     summary: { en: 'From vibe coding to a personal FDE: a 24-week practice route.', zh: '从 Vibe Coding 到个人 FDE：24 周实践路线。' },
   },
   resources: {
+    cover: '/assets/topics/course-resources.webp',
     title: { en: 'Back to the sources', zh: '回到原始来源' },
     summary: { en: '78 courses, official documents and original research sources, with verification scope.', zh: '78 项公开课、官方文档与原始研究，附核对范围。' },
   },

@@ -46,4 +46,7 @@ export function initObservatory(data){
  const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){$$('.ob-chapter-nav a').forEach(a=>{if(a.hash===`#${entry.target.id}`)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}},{rootMargin:'-140px 0px -55% 0px',threshold:0});$$('.ob-chapter[id]').filter(el=>el.id!=='sources').forEach(el=>observer.observe(el));
  window.addEventListener('afflatus-lang',()=>{if(dialog.open)renderDirectory();$('#ob-copy-status').textContent='';});window.addEventListener('pagehide',event=>{if(event.persisted)return;observer.disconnect();slopeResize.disconnect();hero.dispose();map.dispose();window.removeEventListener('scroll',scroll);});
  $('#ob-company-count').innerHTML=t(countText(data.companies.length));apply();
+ // Links from other pages name a milestone, but the charts above it only take their height here.
+ const linked=location.hash.startsWith('#event-')&&document.getElementById(decodeURIComponent(location.hash.slice(1)));
+ if(linked){linked.querySelector('details').open=true;linked.scrollIntoView();}
 }

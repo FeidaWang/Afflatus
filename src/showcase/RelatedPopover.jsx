@@ -18,27 +18,28 @@ export function Text({ as: Tag = 'span', copy, language, ...props }) {
   return <Tag data-en={copy.en} data-zh={copy.zh} {...props}>{copy[language]}</Tag>;
 }
 
-// Decorative: the links below carry the same relationship for assistive technology.
-const TREE_CENTER = [148, 58];
-const TREE_LEAVES = [[250, 30], [46, 26], [268, 92], [88, 98]];
-const TREE_COLORS = ['#4a6fa5', '#5f8a6f', '#9a8748', '#b8664a'];
-function BranchTree({ count }) {
-  const leaves = TREE_LEAVES.slice(0, count);
-  return <svg className="related-tree" viewBox="0 0 296 116" aria-hidden="true" focusable="false">
-    {leaves.map(([x, y]) => <line key={`${x}-${y}`} x1={TREE_CENTER[0]} y1={TREE_CENTER[1]} x2={x} y2={y} />)}
-    {leaves.map(([x, y], index) => <circle key={`${x}-${y}`} cx={x} cy={y} r="9" fill={TREE_COLORS[index]} />)}
-    <circle className="related-tree-center" cx={TREE_CENTER[0]} cy={TREE_CENTER[1]} r="11" />
-  </svg>;
+// The current card, branching to the newest entries of its topic, newest at the top.
+function BranchTree({ root, leaves, language }) {
+  return <div className="related-tree">
+    <Text as="p" className="related-tree-root" copy={root.title} language={language} />
+    {leaves.length > 0 && <ol>{leaves.map((leaf) => <li key={leaf.id}>
+      <a href={entryHref(leaf.url, language)}>
+        <Text as="time" dateTime={leaf.date.iso} copy={leaf.date.label} language={language} />
+        <Text className="related-tree-title" copy={leaf.title} language={language} />
+      </a>
+    </li>)}</ol>}
+  </div>;
 }
 
 function RelatedBody({ index, url, topicId, language }) {
-  const { topic, leaves, card } = relatedFor(index, url, topicId);
+  const { entry, topic, leaves, card } = relatedFor(index, url, topicId);
   return <>
     <Text as="p" className="related-summary" copy={topic.summary} language={language} />
-    <BranchTree count={leaves.length} />
+    <BranchTree root={entry} leaves={leaves} language={language} />
     {card && <a className="related-card" href={entryHref(card.url, language)}>
       <span className="related-card-meta"><Text copy={index.groups[card.group]} language={language} />{card.date && <Text as="time" dateTime={card.date.iso} copy={card.date.label} language={language} />}</span>
       <Text className="related-card-title" copy={card.title} language={language} />
+      <Text className="related-card-summary" copy={card.summary} language={language} />
     </a>}
     <a className="related-more" href={topicHref(topic.id, language)}><Text copy={COPY.viewMore} language={language} /><ArrowRight aria-hidden="true" /></a>
   </>;

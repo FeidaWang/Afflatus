@@ -14,10 +14,11 @@ const resultCount = (count) => ({ en: `${count} ${count === 1 ? 'result' : 'resu
 
 // Cover positions by centre point and base size, ordered so a short topic still spreads out.
 const MOSAIC_SLOTS = [[48, 48, 96, 72], [62, 12, 80, 60], [14, 78, 84, 62], [84, 78, 62, 62], [14, 14, 72, 86], [78, 50, 66, 84], [40, 86, 60, 76], [88, 18, 60, 78], [36, 20, 64, 64], [62, 84, 72, 54], [18, 46, 58, 58]];
-const mosaicScale = (count) => (count <= 3 ? 2.2 : count <= 6 ? 1.7 : 1.3);
+const mosaicScale = (count) => (count === 1 ? 3 : count <= 3 ? 2.2 : count <= 6 ? 1.7 : 1.3);
 
 function TopicMosaic({ entries, language }) {
-  const covers = entries.slice(0, MOSAIC_SLOTS.length);
+  // Oldest first, so a long course shows its companion pages rather than only its weeks.
+  const covers = entries.filter((entry) => entry.cover).reverse().slice(0, MOSAIC_SLOTS.length);
   const scale = mosaicScale(covers.length);
   return <div className="topic-mosaic" aria-hidden="true">
     {covers.map((entry, index) => {

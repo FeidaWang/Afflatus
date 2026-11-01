@@ -17,7 +17,8 @@ export function validateTopicsIndex(data) {
     ids.add(entry.id);
     if (!data.groups[entry.group]) errors.push(`${tag}: unknown group "${entry.group}"`);
     if (!entry.topic?.length || !entry.topic.every((id) => topicIds.has(id))) errors.push(`${tag}: unknown topic`);
-    if (!isCopy(entry.title) || !isCopy(entry.summary) || !isCopy(entry.cover)) errors.push(`${tag}: missing bilingual fields`);
+    if (!isCopy(entry.title) || !isCopy(entry.summary)) errors.push(`${tag}: missing bilingual copy`);
+    if (entry.cover !== null && !isCopy(entry.cover)) errors.push(`${tag}: cover must be null or set for both locales`);
     if (!entry.url?.startsWith('/')) errors.push(`${tag}: url must be a site path`);
     if (entry.date !== null && !/^\d{4}-\d{2}/.test(entry.date?.iso)) errors.push(`${tag}: invalid date`);
   }

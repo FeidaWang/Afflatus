@@ -232,10 +232,14 @@ function generatedHomeLatestModule() {
 
 // One entry per page: a course page per book and companion, a novel per work
 // (its chapters are reached from the work's landing page). The search route
-// is the view of this index, not an entry in it.
+// is the view of this index, not an entry in it. Dated records from the data
+// files join as entries too, so a topic's timeline grows with its data; those
+// records and the observatory's undated chapters have no date or cover to claim.
 function generatedTopicsIndex(dates) {
   const entries = [];
   const dated = (date) => (date ? dateLabel(date) : null);
+  const bothLocales = (cover) => ({ en: cover, zh: cover });
+  const recordEntry = (parent, topic, fields) => ({ group: parent.group, topic: [topic], cover: null, ...fields });
   const routeEntry = (route) => {
     const { group, topic, cover } = ROUTE_TOPICS[route.id];
     const locale = route.publishedLocales?.[0] || 'en';
@@ -246,7 +250,7 @@ function generatedTopicsIndex(dates) {
       title: { en: route.nav.en, zh: route.nav.zh },
       summary: { en: route.locales.en.description, zh: route.locales.zh.description },
       url: route.path,
-      cover: { en: cover, zh: cover },
+      cover: bothLocales(cover),
       date: dated(routeSeoFacts[route.id]?.dateModified || dates[localizedRouteUrl(route, locale)]),
     };
   };
@@ -256,24 +260,41 @@ function generatedTopicsIndex(dates) {
     entries.push(entry);
     if (id === 'sectors') {
       for (const chapter of OBSERVATORY_CHAPTERS) {
-        entries.push({
-          ...entry,
+        entries.push(recordEntry(entry, 'ai-observatory', {
           id: `sectors-${chapter.id}`,
-          topic: ['ai-observatory'],
           title: chapter.title,
           summary: chapter.summary,
           url: `/sectors.html#${chapter.id}`,
-          ...(chapter.cover ? { cover: { en: chapter.cover, zh: chapter.cover } } : {}),
-        });
+          cover: bothLocales(chapter.cover),
+          date: null,
+        }));
+      }
+      // The observatory renders its newest snapshot, not public/sectors-data.json.
+      for (const event of readPublicJson(routeSeoFacts.sectors.provenance[0].path).events) {
+        entries.push(recordEntry(entry, 'ai-observatory', {
+          id: `sectors-event-${event.id}`,
+          title: event.title,
+          summary: event.body,
+          url: `/sectors.html#event-${event.id}`,
+          date: dated(event.date),
+        }));
+      }
+    }
+    if (id === 'signal') {
+      for (const event of readPublicJson('public/signal-events.json').events) {
+        entries.push(recordEntry(entry, 'fed-watch', {
+          id: `signal-event-${event.id}`,
+          title: event.name,
+          summary: event.print,
+          url: `/signal.html#${event.id}`,
+          date: dated(event.date),
+        }));
       }
     }
     if (id === 'course') {
-      const courseEntry = (page, fields) => ({
+      const courseEntry = (page, fields) => recordEntry(entry, 'fde-course', {
         id: `course-${page}`,
-        group: entry.group,
-        topic: ['fde-course'],
         url: `/course/${page}.html`,
-        cover: entry.cover,
         date: dated(dates[courseUrl('en', page)]),
         ...fields,
       });
@@ -285,24 +306,21 @@ function generatedTopicsIndex(dates) {
           cover: book.covers,
         }));
       }
-      for (const [page, copy] of Object.entries(COURSE_COMPANIONS)) entries.push(courseEntry(page, copy));
+      for (const [page, { cover, ...copy }] of Object.entries(COURSE_COMPANIONS)) {
+        entries.push(courseEntry(page, { ...copy, cover: bothLocales(cover) }));
+      }
     }
     if (id === 'serial') {
       for (const { id: bookId, novel, chapterCount } of novelBooks()) {
-        const cover = novelSocialCardPath({ bookId });
-        entries.push({
+        entries.push(recordEntry(entry, 'serials', {
           id: `novel-${bookId}`,
-          group: entry.group,
-          topic: ['serials'],
           title: { en: novel.title, zh: novel.title },
-          summary: {
-            en: `Original fiction in Chinese, ${chapterCount} chapters.`,
-            zh: `${novel.subtitle}，共 ${chapterCount} 章。`,
-          },
+          // The update note has no English text and no date; the date is the novel file's last publication.
+          summary: { en: `Original fiction in Chinese, ${chapterCount} chapters.`, zh: novel.updateNote },
           url: readerPath({ bookId }),
-          cover: { en: cover, zh: cover },
+          cover: bothLocales(novelSocialCardPath({ bookId })),
           date: dated(dates[readerUrl({ bookId })]),
-        });
+        }));
       }
     }
   }
