@@ -149,12 +149,14 @@ function entryRecords(groups) {
 }
 
 function settle(group) {
+  // gol.gg lists one row per series carrying the series score (1-0, 2-1, 3-2).
   const played = group.rows.filter((row) => row.played);
   const wins = { home: 0, away: 0 };
   for (const row of played) {
     const homeScore = row.home === group.home ? row.scoreHome : row.scoreAway;
     const awayScore = row.home === group.home ? row.scoreAway : row.scoreHome;
-    if (homeScore > awayScore) wins.home += 1; else wins.away += 1;
+    wins.home += homeScore;
+    wins.away += awayScore;
   }
   const target = Math.ceil(group.bo / 2);
   if (wins.home < target && wins.away < target) return null;
@@ -162,6 +164,7 @@ function settle(group) {
 }
 
 function seriesId(group, knockoutIndex) {
+  if (group.baselineId) return group.baselineId;
   const prefix = group.stage === 'swiss' ? `r${group.round}` : group.stage === 'final' ? 'f' : `${group.stage}${knockoutIndex}`;
   return `${prefix}-${group.home}-${group.away}`.toLowerCase();
 }
@@ -181,6 +184,17 @@ const playInHtml = await source('matchlist-playin.html', GOLGG.matchlist(PLAY_IN
 const mainRows = parseMatchlist(mainHtml);
 const playInRows = playInHtml ? parseMatchlist(playInHtml) : [];
 const groups = groupSeries(mainRows);
+// gol.gg may list a pairing in the opposite order from the sealed baseline; keep
+// the baseline's home/away and id so its pick and market sides still line up.
+function adoptBaseline(group) {
+  const same = (baseline?.series || []).find((s) => s.stage === group.stage && (s.stage !== 'swiss' || s.round === group.round)
+    && [s.home, s.away].sort().join('-') === [group.home, group.away].sort().join('-'));
+  if (!same) return;
+  group.home = same.home;
+  group.away = same.away;
+  group.baselineId = same.id;
+}
+groups.forEach(adoptBaseline);
 const recordAfterSwiss = entryRecords(groups);
 
 // Markets (fetched before scheduling so Polymarket can add series gol.gg has
@@ -199,6 +213,16 @@ for (const market of polySeries) {
   if (listed) continue;
   const home = recordAfterSwiss[market.home];
   const away = recordAfterSwiss[market.away];
+  if (market.bo === 5 && home?.w >= 3 && away?.w >= 3) {
+    const koWins = (code) => groups.filter((g) => g.stage !== 'swiss' && g.result
+      && (g.result.home > g.result.away ? g.home : g.away) === code).length;
+    const stage = koWins(market.home) === koWins(market.away) ? ['qf', 'sf', 'final'][koWins(market.home)] : null;
+    if (!stage) { notes.push(`polymarket series ${market.slug} skipped (knockout records disagree)`); continue; }
+    const group = { stage, home: market.home, away: market.away, date: market.kickoff.slice(0, 10), patch: '', rows: [], games: [], result: null, bo: 5 };
+    adoptBaseline(group);
+    groups.push(group);
+    continue;
+  }
   if (!home || !away || home.w >= 3 || home.l >= 3 || away.w >= 3 || away.l >= 3) { notes.push(`polymarket series ${market.slug} skipped (not an active swiss pairing)`); continue; }
   groups.push({
     stage: 'swiss', round: home.w + home.l + 1, home: market.home, away: market.away,
@@ -282,7 +306,7 @@ const series = groups.map((group) => {
   if (group.stage !== 'swiss') knockoutCounters[group.stage] = (knockoutCounters[group.stage] || 0) + 1;
   const id = seriesId(group, knockoutCounters[group.stage]);
   const previous = baselineById.get(id);
-  const market = polySeries.find((m) => pairKey(m.home, m.away) === pairKey(group.home, group.away)
+  const market = polySeries.find((m) => pairKey(m.home, m.away) === pairKey(group.home, group.away) && m.bo === group.bo
     && (group.result ? true : m.kickoff.slice(0, 10) >= group.date));
   const kickoff = previous?.kickoff && (previous.result || !market) ? previous.kickoff : market?.kickoff || estimatedKickoff(group);
   const started = Date.parse(kickoff) <= now.getTime();
@@ -325,8 +349,12 @@ const series = groups.map((group) => {
 });
 
 // Champion odds.
-const scheduled = series.filter((s) => !s.result && s.pick).map((s) => ({ home: s.home, away: s.away, bo: s.bo, pWinHome: s.pick.pWin[0] }));
-const championSim = simulateChampion({ teams: swiss.map((t) => ({ code: t.team, w: t.w, l: t.l, status: t.status })), ratings, scheduled, runs: 10000, seed: 20261025 });
+const scheduled = series.filter((s) => s.stage === 'swiss' && !s.result && s.pick).map((s) => ({ home: s.home, away: s.away, bo: s.bo, pWinHome: s.pick.pWin[0] }));
+// Quarterfinals in kickoff order; the sim pairs QF1/QF2 and QF3/QF4 winners in the semis.
+const quarterfinals = series.filter((s) => s.stage === 'qf').sort((a, b) => (a.kickoff < b.kickoff ? -1 : 1))
+  .map((s) => ({ home: s.home, away: s.away, winner: s.result ? (s.result.home > s.result.away ? s.home : s.away) : null, pWinHome: s.pick?.pWin[0] ?? null }));
+if (quarterfinals.length) notes.push('semifinal halves assumed QF1/QF2 and QF3/QF4 winners');
+const championSim = simulateChampion({ teams: swiss.map((t) => ({ code: t.team, w: t.w, l: t.l, status: t.status })), ratings, scheduled, quarterfinals, runs: 10000, seed: 20261025 });
 const marketRaw = Object.fromEntries(swiss.map(({ team }) => {
   const quotes = [polyWinner[team], kalshiWinner[team]].filter((v) => Number.isFinite(v));
   return [team, quotes.length ? quotes.reduce((a, b) => a + b, 0) / quotes.length : null];

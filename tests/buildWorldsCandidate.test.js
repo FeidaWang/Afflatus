@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, mkdtempSync, readFileSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -22,11 +22,12 @@ const FILES = {
 };
 const ROUND2 = ['teams.html', 'ddragon-versions.json', 'ddragon-champions.json'];
 
-function build({ without = [] } = {}) {
+function build({ without = [], matchlist = (html) => html, baseline = '/nonexistent', now = '2026-10-25T12:30:00Z' } = {}) {
   const fixtures = mkdtempSync(join(tmpdir(), 'worlds-fixtures-'));
   for (const [target, source] of Object.entries(FILES)) if (!without.includes(target)) copyFileSync(join(FIXTURES, source), join(fixtures, target));
+  writeFileSync(join(fixtures, 'matchlist-main.html'), matchlist(readFileSync(join(FIXTURES, FILES['matchlist-main.html']), 'utf8')));
   const output = mkdtempSync(join(tmpdir(), 'worlds-cand-'));
-  execFileSync('node', ['scripts/build-worlds-candidate.mjs', `--output=${output}`, `--offline-fixtures=${fixtures}`, '--now=2026-10-25T12:30:00Z', '--baseline=/nonexistent'], { encoding: 'utf8' });
+  execFileSync('node', ['scripts/build-worlds-candidate.mjs', `--output=${output}`, `--offline-fixtures=${fixtures}`, `--now=${now}`, `--baseline=${baseline}`], { encoding: 'utf8' });
   return {
     data: JSON.parse(readFileSync(join(output, 'worlds-data.json'), 'utf8')),
     payload: JSON.parse(readFileSync(join(output, 'worlds-run-payload.json'), 'utf8')),
@@ -119,5 +120,24 @@ describe('build-worlds-candidate round-2 fields', () => {
     expect(bare.teams.every((t) => !t.tactics)).toBe(true);
     expect(bare.notes.some((n) => /teams\.html/.test(n))).toBe(true);
     expect(bare.notes.some((n) => /ddragon/i.test(n))).toBe(true);
+  });
+});
+
+describe('build-worlds-candidate series-score rows', () => {
+  // gol.gg lists a Bo3 as one row with the series score; play Gen.G 1-2 LYON.
+  const played = (html) => html.replace(
+    /(title='Gen\.G vs LYON Preview'>Gen\.G vs LYON<\/a><\/td><td class='text-right'>Gen\.G<\/td><td class='text-center'>) - /,
+    '$11 - 2',
+  );
+  const dir = mkdtempSync(join(tmpdir(), 'worlds-base-'));
+  const baseline = join(dir, 'worlds-data.json');
+  writeFileSync(baseline, JSON.stringify({ series: [{ id: 'r3-lyon-gen', stage: 'swiss', round: 3, home: 'LYON', away: 'GEN', kickoff: '2026-10-25T17:00:00.000Z', pick: null }] }));
+  const { data } = build({ matchlist: played, baseline, now: '2026-10-26T12:00:00Z' });
+
+  it('settles a Bo3 from one 1-2 row and keeps the baseline orientation and id', () => {
+    const series = data.series.find((s) => s.round === 3 && [s.home, s.away].sort().join() === 'GEN,LYON');
+    expect(series.id).toBe('r3-lyon-gen');
+    expect(series.result).toMatchObject({ home: 2, away: 1 });
+    expect(data.swiss.find((t) => t.team === 'LYON')).toMatchObject({ w: 3, l: 0, status: 'advanced' });
   });
 });

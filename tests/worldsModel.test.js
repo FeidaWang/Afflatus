@@ -143,6 +143,21 @@ describe('worldsModel: simulateChampion', () => {
     expect(withSched.LOS).toBeGreaterThan(without.LOS);
   });
 
+  it('plays drawn quarterfinals instead of a random bracket', () => {
+    const through = ['GEN', 'DK', 'T1', 'TES', 'IG', 'BLG', 'KC', 'LYON'];
+    const teams = CODES.map((code) => (through.includes(code) ? { code, w: 3, l: 0, status: 'advanced' } : { code, w: 0, l: 3, status: 'eliminated' }));
+    const quarterfinals = [
+      { home: 'TES', away: 'IG', winner: 'IG', pWinHome: null },
+      { home: 'GEN', away: 'LYON', winner: null, pWinHome: 0 },
+      { home: 'DK', away: 'BLG', winner: null, pWinHome: 0.5 },
+      { home: 'KC', away: 'T1', winner: null, pWinHome: 0.5 },
+    ];
+    const out = simulateChampion({ teams, ratings, quarterfinals, runs: 2000, seed: 11 });
+    expect(out.TES).toBe(0);
+    expect(out.GEN).toBe(0);
+    expect(out.LYON).toBeGreaterThan(0);
+  });
+
   it('runs 10,000 simulations quickly', () => {
     const t0 = performance.now();
     simulateChampion({ teams: swissTeams(), ratings, runs: 10000, seed: 1 });
