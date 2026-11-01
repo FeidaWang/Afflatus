@@ -217,6 +217,23 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'about' },
   },
+  search: {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'TOPICS · AFFLATUS', zh: '专题 · AFFLATUS' },
+      title: { en: 'Browse by topic', zh: '按专题浏览' },
+      subtitle: {
+        en: 'AI research, investing and macro, a course, serial fiction and labs.',
+        zh: 'AI 研究、投资与宏观、实践课程、连载小说与实验室。',
+      },
+      alt: {
+        en: 'Browse AFFLATUS by topic',
+        zh: '按专题浏览 AFFLATUS',
+      },
+      images: { en: routeOgImage('search', 'en'), zh: routeOgImage('search', 'zh') },
+    },
+    structuredData: { kind: 'search' },
+  },
 });
 
 export const SITE_MANIFEST = Object.freeze([
@@ -483,6 +500,32 @@ export const SITE_MANIFEST = Object.freeze([
     locales: {
       en: {"title": "About Feida Wang · AFFLATUS", "description": "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction."},
       zh: {"title": "关于王飞达 · AFFLATUS", "description": "王飞达是墨尔本的软件工程师，用编程智能体构建 AI 时代的产品：AI 产业图谱、经济动态、实践课程与原创小说。"},
+    },
+  },
+  {
+    id: 'search',
+    file: 'search.html',
+    path: '/search.html',
+    status: 'active',
+    build: true,
+    sitemap: true,
+    defaultLocale: 'en',
+    nav: null,
+    themeColor: '#f0eee6',
+    schema: ['CollectionPage'],
+    seo: ROUTE_SEO.search,
+    capabilities: [],
+    metadata: {
+      title: "Topics · AFFLATUS",
+      description: "Browse AFFLATUS by topic: AI industry research, investing and macro, a practical course, serial fiction and labs.",
+      canonical: 'https://feida.au/en/search.html',
+      ogTitle: "Topics · AFFLATUS",
+      ogDescription: "Browse AFFLATUS by topic: AI industry research, investing and macro, a practical course, serial fiction and labs.",
+      ogImage: ROUTE_SEO.search.social.images.en,
+    },
+    locales: {
+      en: {"title": "Topics · AFFLATUS", "description": "Browse AFFLATUS by topic: AI industry research, investing and macro, a practical course, serial fiction and labs."},
+      zh: {"title": "专题 · AFFLATUS", "description": "按专题浏览 AFFLATUS：AI 产业研究、投资与宏观、实践课程、连载小说与实验室。"},
     },
   },
   {

@@ -26,6 +26,7 @@ const ACCENTS = Object.freeze({
   serial: '#ffc4a0',
   course: '#729cff',
   about: '#9bd7ff',
+  search: '#9bd7ff',
 });
 
 // 150+ chapter cards ship in the repository; a lower quality than route cards

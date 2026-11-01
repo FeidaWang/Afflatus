@@ -147,6 +147,18 @@
       "speedIndexMs": 778,
       "scriptBytes": 7446,
       "totalBytes": 102752
+    },
+    {
+      "id": "search",
+      "path": "/search.html",
+      "performanceScore": 0.98,
+      "lcpMs": 2252,
+      "tbtMs": 0,
+      "cls": 0.065,
+      "clsBudgetBase": 0.065,
+      "speedIndexMs": 773,
+      "scriptBytes": 25490,
+      "totalBytes": 221841
     }
   ]
 }

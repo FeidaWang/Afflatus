@@ -51,7 +51,8 @@ describe('siteManifest', () => {
   });
 
   it('includes only active, explicitly discoverable routes in the sitemap', () => {
-    expect(SITEMAP_ROUTES.length).toBe(NAV_ROUTES.length);
+    // The topic page is discoverable, but reached through topics rather than the header.
+    expect(SITEMAP_ROUTES.filter((route) => route.nav).length).toBe(NAV_ROUTES.length);
     for (const route of SITEMAP_ROUTES) {
       expect(route.status).toBe('active');
       expect(route.sitemap).toBe(true);

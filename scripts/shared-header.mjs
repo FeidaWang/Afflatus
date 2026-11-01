@@ -11,7 +11,7 @@ export const FOOTER_START = '<!-- shared-footer:start -->';
 export const FOOTER_END = '<!-- shared-footer:end -->';
 export const footerBlockFor = route => `${FOOTER_START}\n${renderSharedFooter(route.path)}\n${FOOTER_END}`;
 // Serial, sectors, horoscope and worlds carry their own page chrome instead of this footer.
-export const footerRoutes = BUILD_ROUTES.filter(route => ['main', 'portfolio', 'arena', 'signal', 'course', 'about'].includes(route.id));
+export const footerRoutes = BUILD_ROUTES.filter(route => ['main', 'portfolio', 'arena', 'signal', 'course', 'about', 'search'].includes(route.id));
 const write = process.argv.includes('--write');
 if (write) for (const file of headerFiles) {
   const headerBlock = headerBlockFor(file);

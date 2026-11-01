@@ -171,7 +171,7 @@ const breadcrumbNode = (route, locale, url) => {
       {
         '@type': 'ListItem',
         position: 2,
-        name: route.nav[key],
+        name: route.nav?.[key] || route.locales[key].title,
         item: url,
       },
     ],
@@ -221,6 +221,15 @@ function buildAboutGraph(route, locale, facts, url) {
     websiteNode(languageValue(route, locale)),
     imageNode(route, locale, url),
     page,
+    breadcrumbNode(route, locale, url),
+  ];
+}
+
+function buildSearchGraph(route, locale, facts, url) {
+  return [
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    basePageNode(route, locale, facts, url, 'CollectionPage'),
     breadcrumbNode(route, locale, url),
   ];
 }
@@ -478,6 +487,7 @@ const BUILDERS = Object.freeze({
   worlds: buildWorldsGraph,
   serial: buildSerialGraph,
   course: buildCourseGraph,
+  search: buildSearchGraph,
 });
 
 export function buildRouteStructuredData(route, {
