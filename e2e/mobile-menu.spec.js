@@ -99,9 +99,9 @@ test.describe('compact menu', () => {
     await expect(page.locator('main').first()).toBeHidden();
     await expect(page.locator('.af-menu-latest')).toBeVisible();
 
-    // Tabbing through the menu reaches the header's own keys and never the page behind it.
+    // Tab never reaches the page behind. WebKit's default skips links and buttons, leaving focus on the body.
     await page.keyboard.press('Tab');
-    expect(await page.evaluate(() => Boolean(document.activeElement.closest('#afflatus-header')))).toBe(true);
+    expect(await page.evaluate(() => Boolean(document.activeElement.closest('body > :not(#afflatus-header)')))).toBe(false);
     const pageLinksHidden = await page.evaluate(() => [...document.querySelectorAll('body > :not(#afflatus-header) a[href]')].every((link) => getComputedStyle(link).visibility === 'hidden'));
     expect(pageLinksHidden).toBe(true);
 
