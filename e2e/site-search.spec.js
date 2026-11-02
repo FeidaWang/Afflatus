@@ -69,3 +69,25 @@ test.describe('site search', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
 });
+
+test.describe('header search link', () => {
+  test('lands in the search box on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/about.html', { waitUntil: 'load' });
+    await page.getByRole('link', { name: 'Search', exact: true }).click();
+    await expect(page).toHaveURL(/\/en\/search\.html#q$/);
+    await expect(page.locator('#q')).toBeFocused();
+  });
+
+  test('follows the locale and sits beside the language key on a phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/zh/', { waitUntil: 'load' });
+    const link = page.getByRole('link', { name: '搜索', exact: true });
+    await expect(link).toHaveAttribute('href', '/zh/search.html#q');
+    const search = await link.boundingBox();
+    const language = await page.locator('.af-header-language').boundingBox();
+    expect(search.x + search.width).toBeLessThanOrEqual(language.x);
+    expect(search.height).toBeGreaterThanOrEqual(44);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  });
+});

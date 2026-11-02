@@ -47,15 +47,16 @@ test.describe('Afflatus reduced motion brand', () => {
 test.describe('Mobile primary navigation', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('sections stay open in the menu and collapse back to dropdowns across the breakpoint', async ({ page }) => {
+  test('groups open in the menu and collapse back to dropdowns across the breakpoint', async ({ page }) => {
     await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
     const menu = page.locator('#afflatus-header .af-header-menu');
     const analysis = page.locator('#af-analysis');
 
     await menu.click();
+    await expect(analysis).toBeHidden();
+    await page.locator('[aria-controls="af-analysis"]').click();
     await expect(analysis).toBeVisible();
-    await expect(page.locator('#af-labs')).toBeVisible();
 
     await page.setViewportSize({ width: 1280, height: 800 });
     await expect(analysis).toBeHidden();
@@ -64,7 +65,8 @@ test.describe('Mobile primary navigation', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(analysis).toBeHidden();
     await menu.click();
-    await expect(analysis).toBeVisible();
+    await expect(analysis).toBeHidden();
+    await expect(page.locator('[aria-controls="af-analysis"]')).toHaveAttribute('aria-expanded', 'false');
   });
 
   for (const route of MOBILE_NAV_ROUTES) {
@@ -78,15 +80,20 @@ test.describe('Mobile primary navigation', () => {
 
       const nav = page.locator('#af-primary-nav');
       await expect(nav).toBeVisible();
-      const items = nav.locator('a');
+      const items = nav.locator('a:not(.af-menu-latest-card)');
       await expect(items).toHaveCount(9); // Analysis ×4, Courses, Serials, Labs ×2, About
-      await expect(nav.locator('.af-header-group-title')).toHaveCount(2);
 
-      const bounds = await items.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()));
-      for (const item of bounds) {
-        expect(item.left).toBeGreaterThanOrEqual(-1);
-        expect(item.right).toBeLessThanOrEqual(391);
-        expect(item.height).toBeGreaterThanOrEqual(44);
+      // Groups open one at a time, so measure each with its own links showing.
+      for (const group of ['af-analysis', 'af-labs']) {
+        const trigger = nav.locator(`[aria-controls="${group}"]`);
+        if (await trigger.getAttribute('aria-expanded') === 'false') await trigger.click();
+        await expect(nav.locator(`#${group}`)).toBeVisible();
+        const bounds = await items.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()).filter((item) => item.height));
+        for (const item of bounds) {
+          expect(item.left).toBeGreaterThanOrEqual(-1);
+          expect(item.right).toBeLessThanOrEqual(391);
+          expect(item.height).toBeGreaterThanOrEqual(44);
+        }
       }
       expect(await nav.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
     });

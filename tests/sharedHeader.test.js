@@ -92,6 +92,17 @@ describe('destination labels', () => {
     }
   });
 
+  it('links search outside the five entries, and labels the menu button for both states', () => {
+    const header = elements(parse(headerBlockFor()));
+    const search = header.find((node) => classesOf(node).includes('af-header-search'));
+    expect(attr(search, 'href')).toBe('/en/search.html#q');
+    expect(attr(search, 'data-header-path')).toBe('/search.html#q');
+    expect([attr(search, 'data-aria-en'), attr(search, 'data-aria-zh')]).toEqual(['Search', '搜索']);
+    expect(header.find((node) => attr(node, 'id') === 'af-primary-nav').childNodes).not.toContain(search);
+    const menu = header.find((node) => classesOf(node).includes('af-header-menu'));
+    expect([attr(menu, 'data-close-en'), attr(menu, 'data-close-zh')]).toEqual(['Close navigation', '关闭导航']);
+  });
+
   it('renders five top-level entries from the nav groups', () => {
     const nav = elements(parse(headerBlockFor())).find((node) => attr(node, 'id') === 'af-primary-nav');
     const label = (node) => elements(node).find((child) => classesOf(child).includes('af-nav-label'));

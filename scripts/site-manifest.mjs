@@ -21,6 +21,7 @@ import {
 } from '../src/config/siteManifest.js';
 import { COURSE_COMPANIONS, OBSERVATORY_CHAPTERS, ROUTE_TOPICS, TOPIC_GROUPS, TOPICS } from '../src/config/topics.js';
 import { novelSocialCardPath, readerPath, readerUrl } from '../src/lib/serialRoutes.js';
+import { navigationHref, navigationLabel } from '../src/lib/siteNavigation.js';
 import { renderHomeCards } from '../src/showcase/homeCards.js';
 import {
   buildRouteStructuredData,
@@ -228,6 +229,18 @@ function generatedHomeLatestModule() {
     `export const HOME_LATEST = Object.freeze(${JSON.stringify(homeLatest(), null, 2)});`,
     '',
   ].join('\n');
+}
+
+// The compact menu's carousel: the homepage Latest cards, plus each locale's link and a cover.
+function generatedMenuLatest() {
+  const cards = homeLatest().map(({ href, date, title }) => ({
+    href: { en: navigationHref(href, 'en'), zh: navigationHref(href, 'zh') },
+    label: navigationLabel(href),
+    date,
+    title,
+    cover: ROUTE_TOPICS[SITE_MANIFEST.find((route) => route.path === href).id].cover,
+  }));
+  return `${JSON.stringify(cards, null, 2)}\n`;
 }
 
 // One entry per page: a course page per book and companion, a novel per work
@@ -582,6 +595,7 @@ syncGeneratedFile('public/sitemap.xml', generatedSitemap(sitemapDates));
 syncGeneratedFile('public/topics-index.json', generatedTopicsIndex(sitemapDates));
 syncGeneratedFile('src/config/navRoutes.generated.js', generatedNavModule());
 syncGeneratedFile('src/config/homeLatest.generated.js', generatedHomeLatestModule());
+syncGeneratedFile('public/menu-latest.json', generatedMenuLatest());
 syncHomeCards();
 syncGeneratedFile('src/config/publishedBooks.generated.js', generatedPublishedBooks());
 syncGeneratedFile('src/config/performanceRoutes.generated.js', generatedPerformanceRoutesModule());

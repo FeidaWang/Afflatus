@@ -31,9 +31,12 @@ body.arena-page .stock-dialog {
   }
 
   /* Keep the language key on the same right edge as the page and footer. */
+  body.arena-page #afflatus-header .af-header-search {
+    order: 1;
+  }
+
   body.arena-page #afflatus-header .af-header-menu {
     order: 1;
-    margin-left: auto;
   }
 
   body.arena-page #afflatus-header .af-header-language {

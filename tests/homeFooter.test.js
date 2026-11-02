@@ -58,7 +58,7 @@ describe('homepage cards', () => {
   const header = home.slice(home.indexOf('id="af-primary-nav"'), home.indexOf('data-header-language'));
 
   it('stays within the 18-link budget for navigation and page body', () => {
-    expect(app(header)).toHaveLength(9);
+    expect(app(header)).toHaveLength(10);
     expect(app(body)).toHaveLength(8);
     expect(app(header).length + app(body).length).toBeLessThanOrEqual(18);
   });

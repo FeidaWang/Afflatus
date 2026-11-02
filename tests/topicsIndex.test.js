@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { TOPIC_GROUPS, TOPICS } from '../src/config/topics.js';
@@ -213,3 +213,19 @@ describe('searchEntries', () => {
   });
 });
 
+describe('menu-latest.json', () => {
+  const cards = JSON.parse(readFileSync('public/menu-latest.json', 'utf8'));
+
+  it('carries the homepage Latest cards in order', () => {
+    expect(cards.map(({ date, title }) => ({ date, title }))).toEqual(HOME_LATEST.map(({ date, title }) => ({ date, title })));
+  });
+
+  it('gives each card a link per locale and a cover that exists', () => {
+    expect(cards.map((card) => card.href)).toEqual([
+      { en: '/en/sectors.html', zh: '/zh/sectors.html' },
+      { en: '/en/signal.html', zh: '/zh/signal.html' },
+      { en: '/zh/serial.html', zh: '/zh/serial.html' },
+    ]);
+    for (const card of cards) expect(existsSync(`public${card.cover}`)).toBe(true);
+  });
+});

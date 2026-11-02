@@ -18,6 +18,10 @@ if (header && !header.dataset.enhanced) {
   let upwardDistance = 0;
   let upwardStartedAt = 0;
   let keyboard = false;
+  let background = [];
+  let latestRequested = false;
+  const openLabel = { en: menu.dataset.ariaEn, zh: menu.dataset.ariaZh };
+  const closeLabel = { en: menu.dataset.closeEn, zh: menu.dataset.closeZh };
   const smooth = (a, b, p) => { const t = Math.max(0, Math.min(1, (p - a) / (b - a))); return t * t * (3 - 2 * t); };
   function drawBrand() {
     frame = 0;
@@ -59,13 +63,34 @@ if (header && !header.dataset.enhanced) {
   function scheduleBrand() { if (!frame) frame = requestAnimationFrame(drawBrand); }
   function setOpen(button, open) {
     button.setAttribute('aria-expanded', String(open));
-    // Compact groups are flat titled sections, so their lists stay open inside the menu.
-    panel(button).hidden = !open && (button === menu || !compact.matches);
-    if (button !== menu) {
+    panel(button).hidden = !open;
+    if (button === menu) setMenuChrome(open);
+    else {
       button.parentElement.dataset.open = String(open);
       if (open) openGroup = button;
       else if (openGroup === button) openGroup = null;
     }
+  }
+  function setMenuChrome(open) {
+    const zh = menu.getAttribute('aria-label') === menu.dataset.ariaZh;
+    const label = open ? closeLabel : openLabel;
+    menu.dataset.ariaEn = label.en;
+    menu.dataset.ariaZh = label.zh;
+    menu.setAttribute('aria-label', zh ? label.zh : label.en);
+    header.toggleAttribute('data-menu-open', open);
+    // The menu covers the page, so only the header stays reachable behind it.
+    background.forEach(element => { element.inert = false; });
+    background = open ? [...document.body.children].filter(element => element !== header && !element.inert) : [];
+    background.forEach(element => { element.inert = true; });
+  }
+  // Script-injected rather than imported, so the bundler cannot pull it into every page.
+  function loadLatest() {
+    if (latestRequested) return;
+    latestRequested = true;
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = '/lib/menu-latest.js';
+    document.head.append(script);
   }
   function closeGroups() {
     clearTimeout(closeTimer);
@@ -78,10 +103,9 @@ if (header && !header.dataset.enhanced) {
   }
   function resize() {
     const active = document.activeElement;
-    closeAll();
-    groups.forEach(button => setOpen(button, false));
+    closeGroups();
+    setOpen(menu, false);
     nav.hidden = compact.matches;
-    menu.setAttribute('aria-expanded', 'false');
     if (compact.matches && nav.contains(active)) menu.focus();
     else if (!compact.matches && active === menu) header.querySelector('[data-header-path="/"]').focus();
     scheduleBrand();
@@ -95,6 +119,7 @@ if (header && !header.dataset.enhanced) {
       if (!compact.matches && fine.matches && event.pointerType !== 'touch' && !suppressed) open(button);
     });
     group.addEventListener('pointerleave', () => {
+      if (compact.matches) return;
       suppressed = false;
       clearTimeout(closeTimer);
       closeTimer = setTimeout(() => {
@@ -114,7 +139,7 @@ if (header && !header.dataset.enhanced) {
     group.addEventListener('focusout', event => {
       if (!group.contains(event.relatedTarget)) {
         group.dataset.focus = 'false';
-        if (openGroup === button) closeGroups();
+        if (openGroup === button && !compact.matches) closeGroups();
       }
     });
   }
@@ -122,21 +147,33 @@ if (header && !header.dataset.enhanced) {
     const next = menu.getAttribute('aria-expanded') !== 'true';
     closeGroups();
     setOpen(menu, next);
+    if (!next) return;
+    const current = groups.find(button => panel(button).querySelector('[aria-current="page"]'));
+    if (current) open(current);
+    nav.querySelector('a, button').focus();
+    loadLatest();
   });
   header.addEventListener('click', event => { if (event.target.closest('a')) closeAll(); });
   document.addEventListener('keydown', event => {
     keyboard = true;
+    const menuOpen = compact.matches && menu.getAttribute('aria-expanded') === 'true';
+    if (event.key === 'Tab' && menuOpen) {
+      const items = [...header.querySelectorAll('a[href], button')].filter(item => item.getClientRects().length);
+      const [edge, wrapTo] = event.shiftKey ? [items[0], items.at(-1)] : [items.at(-1), items[0]];
+      if (document.activeElement === edge) { event.preventDefault(); wrapTo.focus(); }
+    }
     if (event.key !== 'Escape') return;
-    if (openGroup) {
+    if (menuOpen) {
+      event.preventDefault(); closeAll(); menu.focus();
+    } else if (openGroup) {
       event.preventDefault();
       const trigger = openGroup;
       closeGroups();
       trigger.focus();
-    } else if (compact.matches && menu.getAttribute('aria-expanded') === 'true') {
-      event.preventDefault(); closeAll(); menu.focus();
     }
   });
-  header.addEventListener('focusout', event => { if (!header.contains(event.relatedTarget)) closeAll(); });
+  // The compact menu keeps focus itself, and tapping its background must not close it.
+  header.addEventListener('focusout', event => { if (!compact.matches && !header.contains(event.relatedTarget)) closeAll(); });
   document.addEventListener('pointerdown', event => {
     keyboard = false;
     groups.forEach(button => { button.parentElement.dataset.focus = 'false'; });
