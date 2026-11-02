@@ -23,7 +23,7 @@ function BranchTree({ root, leaves, language }) {
   return <div className="related-tree">
     <Text as="p" className="related-tree-root" copy={root.title} language={language} />
     {leaves.length > 0 && <ol>{leaves.map((leaf) => <li key={leaf.id}>
-      <a href={entryHref(leaf.url, language)}>
+      <a href={entryHref(leaf.latestUrl || leaf.url, language)}>
         <Text as="time" dateTime={leaf.date.iso} copy={leaf.date.label} language={language} />
         <Text className="related-tree-title" copy={leaf.title} language={language} />
       </a>

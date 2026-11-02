@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TOPICS, TOPIC_GROUPS } from '../../config/topics.js';
 import { RelatedMenu, Text } from '../../showcase/RelatedPopover.jsx';
 import { entryHref, loadTopicsIndex, topicEntries, topicHref } from '../../showcase/topicsIndex.js';
@@ -9,7 +9,9 @@ const COPY = {
   allTopics: { en: 'All topics', zh: '全部专题' },
   unknown: { en: 'That topic does not exist. Choose one of these instead.', zh: '没有这个专题，可以从下面选择一个。' },
   failed: { en: 'The topic list could not be loaded. Please reload the page.', zh: '专题列表暂时无法加载，请刷新页面重试。' },
+  loadMore: { en: 'Load more', zh: '加载更多' },
 };
+const PAGE_SIZE = 10;
 const resultCount = (count) => ({ en: `${count} ${count === 1 ? 'result' : 'results'}`, zh: `${count} 条结果` });
 
 // Cover positions by centre point and base size, ordered so a short topic still spreads out.
@@ -57,10 +59,16 @@ export function SearchApp({ language }) {
   const [query] = useState(() => parseSearchQuery(window.location.search, TOPICS.map((topic) => topic.id)));
   const [index, setIndex] = useState(null);
   const [failed, setFailed] = useState(false);
+  const [shown, setShown] = useState(PAGE_SIZE);
+  const results = useRef(null);
   const topic = query.kind === 'topic' ? TOPICS.find((item) => item.id === query.topic) : null;
 
   useEffect(() => { loadTopicsIndex().then(setIndex, () => setFailed(true)); }, []);
   useEffect(() => { if (topic) document.title = `${topic.title[language]} · AFFLATUS`; }, [topic, language]);
+  // The button goes away with the last page, so focus moves on to the first new result.
+  useEffect(() => {
+    if (shown > PAGE_SIZE) results.current.children[shown - PAGE_SIZE].querySelector('a').focus({ preventScroll: true });
+  }, [shown]);
 
   const entries = !index ? [] : topic ? topicEntries(index, topic.id) : [...topicEntries(index, 'about'), ...topicEntries(index, 'labs')];
   return <>
@@ -73,7 +81,8 @@ export function SearchApp({ language }) {
       {failed && <Text as="p" className="topic-note" role="alert" copy={COPY.failed} language={language} />}
       {index && topic && <>
         <Text as="p" className="topic-count" copy={resultCount(entries.length)} language={language} />
-        <div className="topic-results">{entries.map((entry) => <TopicResult key={entry.id} entry={entry} topicId={topic.id} groups={index.groups} language={language} />)}</div>
+        <div className="topic-results" ref={results}>{entries.slice(0, shown).map((entry) => <TopicResult key={entry.id} entry={entry} topicId={topic.id} groups={index.groups} language={language} />)}</div>
+        {shown < entries.length && <button type="button" className="topic-more" onClick={() => setShown(shown + PAGE_SIZE)}><Text copy={COPY.loadMore} language={language} /></button>}
       </>}
       {index && !topic && <div className="topic-results"><TopicDirectory index={index} language={language} /></div>}
     </section>

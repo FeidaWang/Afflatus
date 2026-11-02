@@ -76,6 +76,23 @@ describe('topics index', () => {
     }
   });
 
+  it('sends each novel node to its latest chapter, and each record to an anchor its page renders', () => {
+    for (const { id, chapterCount } of JSON.parse(readFileSync('public/novels-index.json', 'utf8')).novels) {
+      const { chapters } = JSON.parse(readFileSync(`public/novels/${id}.json`, 'utf8'));
+      expect(chapters).toHaveLength(chapterCount);
+      const entry = index.entries.find((item) => item.id === `novel-${id}`);
+      expect(entry.url).toBe(`/zh/novels/${id}/`);
+      expect(entry.latestUrl).toBe(`/zh/novels/${id}/${encodeURIComponent(chapters.at(-1).id)}/`);
+    }
+    const signalIds = new Set(JSON.parse(readFileSync('public/signal-events.json', 'utf8')).events.map((event) => event.id));
+    const observatoryFiles = readdirSync('public/data/sectors-observatory').sort();
+    const observatoryIds = JSON.parse(readFileSync(`public/data/sectors-observatory/${observatoryFiles.at(-1)}`, 'utf8')).events.map((event) => `event-${event.id}`);
+    for (const entry of index.entries) {
+      if (entry.id.startsWith('signal-event-')) expect(signalIds.has(entry.url.split('#')[1])).toBe(true);
+      if (entry.id.startsWith('sectors-event-')) expect(observatoryIds).toContain(entry.url.split('#')[1]);
+    }
+  });
+
   it('stays small enough to fetch on demand', () => {
     // Grows with the data files, so this leaves room for new records.
     expect(gzipSync(readFileSync('public/topics-index.json')).length).toBeLessThan(40 * 1024);

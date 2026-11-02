@@ -45,6 +45,8 @@ html[lang^="zh"] .observatory .ob-hero-lede{text-align:center;white-space:pre-li
 .ob-chapter-nav a[aria-current="location"]{border-color:var(--ob-ink)}
 .ob-chapter{padding:100px 24px 35px}
 #ob-timeline li{scroll-margin-top:150px}
+#ob-timeline li.is-linked{animation:ob-linked 3.5s ease-out}
+@keyframes ob-linked{0%,55%{background:#f0dcc4;box-shadow:0 0 0 8px #f0dcc4}100%{background:transparent;box-shadow:0 0 0 8px transparent}}
 .ob-prose{max-width:640px;margin:0 auto}
 .ob-prose>p{font-family:var(--ob-serif);font-size:21px;line-height:1.5;margin:22px 0}
 .ob-prose>h3{margin:30px 0 20px}

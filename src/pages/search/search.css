@@ -28,6 +28,9 @@ html { background: var(--topic-paper); }
 .topic-result h2 a:focus-visible::after { outline: 2px solid #486f76; outline-offset: 2px; }
 .topic-result-summary { display: -webkit-box; margin: 0; overflow: hidden; color: var(--topic-muted); font-size: 14px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .topic-result .related { top: 14px; right: 14px; z-index: 1; }
+.topic-more { display: block; min-height: 44px; margin: 20px auto 0; padding: 8px 22px; border: 1px solid #ceccc3; border-radius: 10px; background: transparent; color: inherit; font: inherit; font-size: 15px; cursor: pointer; }
+.topic-more:hover { background: #f3f1ea; }
+.topic-more:focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }
 .topic-result:has(.related-panel) { z-index: 2; }
 /* Touch targets grow to 44px here (responsive-primitives.css), so the menu buttons need more room. */
 @media (pointer: coarse), (max-width: 440px) {

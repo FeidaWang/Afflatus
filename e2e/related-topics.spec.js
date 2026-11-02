@@ -104,14 +104,53 @@ test.describe('related popover', () => {
 });
 
 test.describe('tree links', () => {
-  test('a Fed Watch node opens its record on the page', async ({ page }) => {
+  test('a Fed Watch node opens, highlights and shows its record', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'load' });
     await trigger(page, 'Related to Fed Watch').click();
     const node = page.locator('.related-tree li a').last();
     const href = await node.getAttribute('href');
     expect(href).toMatch(/^\/en\/signal\.html#.+/);
     await node.click();
-    await expect(page.locator(`[id="${decodeURIComponent(href.split('#')[1])}"]`)).toBeInViewport();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    const record = page.locator(`[id="${decodeURIComponent(href.split('#')[1])}"]`);
+    await expect(record).toBeInViewport();
+    await expect(record).toHaveClass(/is-linked/);
+    await expect(record.locator('details')).toHaveJSProperty('open', true);
+    expect((await record.boundingBox()).y).toBeGreaterThan(60);
+  });
+
+  test('an AI Observatory node opens, highlights and shows its event', async ({ page }) => {
+    await page.goto('/zh/', { waitUntil: 'load' });
+    await trigger(page, '相关内容： AI 观察站').click();
+    const node = page.locator('.related-tree li a').first();
+    const href = await node.getAttribute('href');
+    expect(href).toMatch(/^\/zh\/sectors\.html#event-.+/);
+    await node.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    const event = page.locator(`[id="${href.split('#')[1]}"]`);
+    await expect(event).toBeInViewport();
+    await expect(event).toHaveClass(/is-linked/);
+    await expect(event.locator('details')).toHaveJSProperty('open', true);
+  });
+
+  test('a Serials node opens the latest chapter of the work', async ({ page }) => {
+    await page.goto('/zh/search.html?topic=serials', { waitUntil: 'load' });
+    await page.locator('.topic-result .related-trigger').first().click();
+    const node = page.locator('.related-tree li a').filter({ hasText: '万界种春' });
+    await expect(node).toHaveAttribute('href', /^\/zh\/novels\/wanjie-zhongchun\/[^/]+\/$/);
+    const href = await node.getAttribute('href');
+    await node.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    await expect(page.locator('h1, h2').filter({ hasText: '第' }).first()).toBeVisible();
+  });
+
+  test('a course node opens that week\'s book', async ({ page }) => {
+    await page.goto('/en/search.html?topic=fde-course', { waitUntil: 'load' });
+    await page.locator('.topic-result .related-trigger').first().click();
+    const node = page.locator('.related-tree li a').first();
+    await expect(node).toHaveAttribute('href', /^\/en\/course\/book-\d+\.html$/);
+    await node.click();
+    await expect(page).toHaveURL(/\/en\/course\/book-\d+\.html$/);
   });
 
   test('a record further down the list is still reachable by its link', async ({ page }) => {
@@ -141,7 +180,7 @@ test.describe('topic page', () => {
     const { entries } = await page.evaluate(async () => (await fetch('/topics-index.json')).json());
     const own = entries.filter((entry) => entry.topic.includes('ai-observatory'));
     await expect(page.locator('.topic-count')).toHaveText(`${own.length} results`);
-    await expect(page.locator('.topic-result')).toHaveCount(own.length);
+    await expect(page.locator('.topic-result')).toHaveCount(10);
     const dates = await page.locator('.topic-result time').evaluateAll((times) => times.map((time) => time.dateTime));
     expect(dates).toEqual([...dates].sort().reverse());
     const covers = await page.locator('.topic-mosaic img').evaluateAll((images) => images.map((image) => new URL(image.src).pathname));
@@ -154,6 +193,33 @@ test.describe('topic page', () => {
     await expect(page.locator('.related-more')).toHaveAttribute('href', '/en/search.html?topic=ai-observatory');
     await page.keyboard.press('Escape');
     await expect(button).toBeFocused();
+  });
+
+  test('shows ten results and reveals ten more on each click, keeping the order', async ({ page }) => {
+    await page.goto('/en/search.html?topic=ai-observatory', { waitUntil: 'load' });
+    const { entries } = await page.evaluate(async () => (await fetch('/topics-index.json')).json());
+    const total = entries.filter((entry) => entry.topic.includes('ai-observatory')).length;
+    const results = page.locator('.topic-result');
+    const more = page.getByRole('button', { name: 'Load more' });
+    await expect(results).toHaveCount(10);
+    await more.click();
+    await expect(results).toHaveCount(20);
+    await expect(results.nth(10).locator('h2 a')).toBeFocused();
+    await more.click();
+    await expect(results).toHaveCount(Math.min(30, total));
+    await expect(more).toHaveCount(total > 30 ? 1 : 0);
+    await expect(page.locator('.topic-count')).toHaveText(`${total} results`);
+    const dates = await page.locator('.topic-result time').evaluateAll((times) => times.map((time) => time.dateTime));
+    expect(dates).toEqual([...dates].sort().reverse());
+  });
+
+  test('labels the button in Chinese, and leaves it out of a short topic', async ({ page }) => {
+    await page.goto('/zh/search.html?topic=fde-course', { waitUntil: 'load' });
+    await expect(page.locator('.topic-more')).toHaveText('加载更多');
+    await expect(page.locator('.topic-more span')).toHaveAttribute('data-en', 'Load more');
+    await page.goto('/zh/search.html?topic=serials', { waitUntil: 'load' });
+    await expect(page.locator('.topic-result')).toHaveCount(4);
+    await expect(page.locator('.topic-more')).toHaveCount(0);
   });
 
   test('renders Chinese results, with novels linked under /zh/', async ({ page }) => {

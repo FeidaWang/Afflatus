@@ -12,6 +12,9 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .signal-hero h1{text-wrap:balance}.signal-hero .muted-title{display:block}
 .legacy-anchor{display:block;scroll-margin-top:140px}
+.record-card{scroll-margin-top:140px}
+.record-card.is-linked{animation:record-linked 3.5s ease-out}
+@keyframes record-linked{0%,55%{box-shadow:0 0 0 3px #486f76}100%{box-shadow:0 0 0 3px transparent}}
 @media(max-width:760px){.signal-sidebar nav a{flex:0 0 auto}}
 
 /* Touch targets reach 44px on narrow screens. */

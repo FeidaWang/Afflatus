@@ -48,5 +48,5 @@ export function initObservatory(data){
  $('#ob-company-count').innerHTML=t(countText(data.companies.length));apply();
  // Links from other pages name a milestone, but the charts above it only take their height here.
  const linked=location.hash.startsWith('#event-')&&document.getElementById(decodeURIComponent(location.hash.slice(1)));
- if(linked){linked.querySelector('details').open=true;linked.scrollIntoView();}
+ if(linked){linked.querySelector('details').open=true;linked.classList.add('is-linked');linked.scrollIntoView();}
 }

@@ -53,7 +53,10 @@ export function mountPolicyIndex() {
     if (position < 0) return;
     state.limit = Math.max(state.limit, position + 1);
     renderRecords();
-    document.getElementById(id).scrollIntoView();
+    const linked = document.getElementById(id);
+    linked.querySelector('details').open = true;
+    linked.classList.add('is-linked');
+    linked.scrollIntoView();
   }
 
   function renderOverview() {
