@@ -13,21 +13,41 @@ const COPY = {
   allTopics: { en: 'All topics', zh: '全部专题' },
 };
 const VIEWPORT_GUTTER = 16;
+// Keep in step with .related-tree li and .related-tree ol in related.css.
+const NODE_HEIGHT = 54;
+const NODE_GAP = 6;
+const BRANCH_WIDTH = 44;
 
 export function Text({ as: Tag = 'span', copy, language, ...props }) {
   return <Tag data-en={copy.en} data-zh={copy.zh} {...props}>{copy[language]}</Tag>;
+}
+
+// Curves fan out from the root dot to the middle of each node.
+function BranchCurves({ count }) {
+  const height = count * (NODE_HEIGHT + NODE_GAP) - NODE_GAP;
+  const middle = height / 2;
+  return <svg className="related-tree-branches" aria-hidden="true" width={BRANCH_WIDTH} height={height} fill="none" stroke="currentColor">
+    {Array.from({ length: count }, (_, index) => {
+      const y = index * (NODE_HEIGHT + NODE_GAP) + NODE_HEIGHT / 2;
+      return <path key={index} d={`M6 ${middle} C 26 ${middle}, 18 ${y}, ${BRANCH_WIDTH} ${y}`} />;
+    })}
+    <circle cx="6" cy={middle} r="6" fill="currentColor" stroke="none" />
+  </svg>;
 }
 
 // The current card, branching to the newest entries of its topic, newest at the top.
 function BranchTree({ root, leaves, language }) {
   return <div className="related-tree">
     <Text as="p" className="related-tree-root" copy={root.title} language={language} />
-    {leaves.length > 0 && <ol>{leaves.map((leaf) => <li key={leaf.id}>
-      <a href={entryHref(leaf.latestUrl || leaf.url, language)}>
-        <Text as="time" dateTime={leaf.date.iso} copy={leaf.date.label} language={language} />
-        <Text className="related-tree-title" copy={leaf.title} language={language} />
-      </a>
-    </li>)}</ol>}
+    {leaves.length > 0 && <div className="related-tree-body">
+      <BranchCurves count={leaves.length} />
+      <ol>{leaves.map((leaf) => <li key={leaf.id}>
+        <a href={entryHref(leaf.latestUrl || leaf.url, language)}>
+          <Text as="time" dateTime={leaf.date.iso} copy={leaf.date.label} language={language} />
+          <Text className="related-tree-title" copy={leaf.title} language={language} />
+        </a>
+      </li>)}</ol>
+    </div>}
   </div>;
 }
 

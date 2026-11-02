@@ -1,7 +1,7 @@
 /* Topic page: a cover mosaic beside the topic's results, one column at 979px and below.
    The layout starts a full screen tall so results arriving from the index do not push a visible footer. */
 :root { --topic-paper: #f0eee6; --topic-ink: #111110; --topic-muted: #5c5b55; --topic-line: #e3e0d7; --topic-gutter: clamp(24px, 5.3vw, 88px); }
-html { background: var(--topic-paper); }
+html { background: var(--topic-paper); scroll-padding-top: 96px; }
 .search-page { margin: 0; background: var(--topic-paper); color: var(--topic-ink); font-family: var(--af-font-sans, "Anthropic Sans", Arial, "PingFang SC", sans-serif); -webkit-font-smoothing: antialiased; }
 .search-page #afflatus-header { --af-paper: var(--topic-paper); border-bottom: 0; }
 .search-page #afflatus-header .af-header-inner, .search-page .pa-footer-inner { width: min(100%, 1440px); max-width: none; padding-inline: var(--topic-gutter); }

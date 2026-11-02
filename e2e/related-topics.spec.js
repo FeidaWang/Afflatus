@@ -27,6 +27,11 @@ test.describe('related popover', () => {
     expect(dates).toEqual([...dates].sort().reverse());
     await expect(nodes.first()).toContainText('Haiku 5.5');
     await expect(nodes.first().locator('a')).toHaveAttribute('href', '/zh/sectors.html#event-haiku55-launch');
+    await expect(panel.locator('.related-tree-branches path')).toHaveCount(5);
+    // Measured together, since the panel may still be scrolling into view.
+    const { node, link } = await nodes.first().evaluate((item) => ({ node: item.offsetHeight, link: item.querySelector('a').offsetHeight }));
+    expect(link).toBe(node);
+    expect(node).toBeGreaterThanOrEqual(44);
     await expect(panel.locator('.related-card')).toHaveCount(1);
     await expect(panel.locator('.related-more')).toHaveAttribute('href', '/zh/search.html?topic=ai-observatory');
   });
@@ -82,6 +87,25 @@ test.describe('related popover', () => {
     expect(page.url()).toMatch(/\/en\/$/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
+
+  for (const [width, height] of [[1280, 800], [390, 844]]) {
+    for (const path of ['/en/', '/en/search.html?topic=ai-observatory']) {
+      test(`scrolls fully into view below the header at ${width}x${height} on ${path}`, async ({ page }) => {
+        await page.setViewportSize({ width, height });
+        await page.goto(path, { waitUntil: 'load' });
+        const button = page.locator(path === '/en/' ? '.related-trigger >> nth=0' : '.topic-result .related-trigger >> nth=1');
+        await button.scrollIntoViewIfNeeded();
+        await button.click();
+        await expect(page.locator('.related-card')).toBeVisible();
+        const panel = page.locator('.related-panel');
+        await expect(async () => {
+          const box = await panel.boundingBox();
+          expect(box.y).toBeGreaterThanOrEqual(68);
+          expect(box.y + box.height).toBeLessThanOrEqual(height);
+        }).toPass();
+      });
+    }
+  }
 
   test('stays inside the viewport on the leftmost cover at the four-column breakpoint', async ({ page }) => {
     await page.setViewportSize({ width: 980, height: 800 });
