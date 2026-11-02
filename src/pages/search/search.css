@@ -15,6 +15,13 @@ html { background: var(--topic-paper); scroll-padding-top: 96px; }
 .topic-panel h1 { margin: 0 0 14px; font-size: clamp(36px, 3.6vw, 52px); font-weight: 700; line-height: 1.08; letter-spacing: -.035em; }
 .topic-summary, .topic-note { margin: 0 0 18px; font-size: 16px; line-height: 1.5; }
 .topic-note { color: var(--topic-muted); }
+.topic-search { margin: 0 0 22px; }
+.topic-search label { display: block; margin: 0 0 6px; color: var(--topic-muted); font-size: 13px; line-height: 1.4; }
+.topic-search-row { display: flex; gap: 8px; }
+.topic-search input { flex: 1; min-width: 0; min-height: 44px; padding: 8px 14px; border: 1px solid #ceccc3; border-radius: 10px; background: #f7f5ef; color: inherit; font: inherit; font-size: 16px; }
+.topic-search input::placeholder { color: var(--topic-muted); opacity: 1; }
+.topic-search button { flex: none; min-height: 44px; padding: 8px 18px; border: 0; border-radius: 10px; background: var(--topic-ink); color: var(--topic-paper); font: inherit; font-size: 15px; cursor: pointer; }
+.topic-search :is(input, button):focus-visible { outline: 2px solid #486f76; outline-offset: 2px; }
 .topic-count { margin: 0 0 14px; color: var(--topic-muted); font-size: 13px; line-height: 1.4; letter-spacing: .08em; }
 .topic-results { display: grid; gap: 12px; }
 .topic-result { position: relative; padding: 18px 20px; border: 1px solid var(--topic-line); border-radius: 14px; background: #f7f5ef; }

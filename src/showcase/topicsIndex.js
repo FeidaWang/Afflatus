@@ -20,7 +20,7 @@ export const entryHref = (url, language) => (url.startsWith('/zh/') ? url : navi
 export const topicHref = (topicId, language) => navigationHref(`/search.html?topic=${encodeURIComponent(topicId)}`, language);
 
 // Newest first; undated entries follow, and ties keep the index's own order.
-const byDateDescending = (a, b) => (b.date?.iso || '').localeCompare(a.date?.iso || '');
+export const byDateDescending = (a, b) => (b.date?.iso || '').localeCompare(a.date?.iso || '');
 export const topicEntries = (index, topicId) => index.entries
   .filter((entry) => entry.topic.includes(topicId))
   .sort(byDateDescending);

@@ -3,7 +3,7 @@ import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { TOPIC_GROUPS, TOPICS } from '../src/config/topics.js';
 import { HOME_LATEST } from '../src/config/homeLatest.generated.js';
-import { parseSearchQuery } from '../src/pages/search/topicQuery.js';
+import { parseSearchQuery, searchEntries } from '../src/pages/search/topicQuery.js';
 import { LEARN_CARDS } from '../src/showcase/homeCards.js';
 import { entryHref, relatedFor, topicEntries, topicHref } from '../src/showcase/topicsIndex.js';
 
@@ -155,4 +155,61 @@ describe('parseSearchQuery', () => {
       expect(parseSearchQuery(search, ids)).toEqual({ kind: 'directory', unknownTopic: true });
     }
   });
+
+  it('reads a query, trimmed, ahead of any topic', () => {
+    expect(parseSearchQuery('?q=%20fed%20watch%20', ids)).toEqual({ kind: 'query', q: 'fed watch' });
+    expect(parseSearchQuery('?q=fed&topic=labs', ids)).toEqual({ kind: 'query', q: 'fed' });
+  });
+
+  it('treats a blank query as no query', () => {
+    expect(parseSearchQuery('?q=', ids)).toEqual({ kind: 'directory', unknownTopic: false });
+    expect(parseSearchQuery('?q=%20%20&topic=labs', ids)).toEqual({ kind: 'topic', topic: 'labs' });
+  });
 });
+
+describe('searchEntries', () => {
+  const entry = (id, title, summary, iso) => ({
+    id,
+    title: { en: title, zh: `中文${title}` },
+    summary: { en: summary, zh: `摘要${summary}` },
+    date: iso ? { iso } : null,
+  });
+  const sample = {
+    entries: [
+      entry('old-body', 'Notes', 'about the Fed', '2026-01-01'),
+      entry('new-body', 'Letters', 'about the Fed', '2026-09-01'),
+      entry('old-title', 'Fed watch', 'rates', '2026-02-01'),
+      entry('undated-title', 'Fed archive', 'rates'),
+      entry('new-title', 'Fed minutes', 'rates', '2026-08-01'),
+      entry('other', 'Course', 'agents', '2026-10-01'),
+    ],
+  };
+  const ids = (q) => searchEntries(sample, q).map((item) => item.id);
+
+  it('puts title matches first, each part newest first', () => {
+    expect(ids('fed')).toEqual(['new-title', 'old-title', 'undated-title', 'new-body', 'old-body']);
+  });
+
+  it('needs every word, which may span the title and summary', () => {
+    expect(ids('fed rates')).toEqual(['new-title', 'old-title', 'undated-title']);
+    expect(ids('course rates')).toEqual([]);
+  });
+
+  it('matches either language and folds case and full-width forms', () => {
+    expect(ids('中文course')).toEqual(['other']);
+    expect(ids('摘要agents')).toEqual(['other']);
+    expect(ids('ＣＯＵＲＳＥ')).toEqual(['other']);
+  });
+
+  it('does not reorder the index it was given', () => {
+    const before = sample.entries.map((item) => item.id);
+    searchEntries(sample, 'fed');
+    expect(sample.entries.map((item) => item.id)).toEqual(before);
+  });
+
+  it('finds real entries in both languages', () => {
+    expect(searchEntries(index, 'Fed Watch').map((item) => item.url)).toContain('/signal.html');
+    expect(searchEntries(index, '美联储观察').map((item) => item.url)).toContain('/signal.html');
+  });
+});
+
