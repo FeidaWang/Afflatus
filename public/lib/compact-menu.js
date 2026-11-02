@@ -1,5 +1,10 @@
-// The compact menu's "Latest" carousel. header-controller.js loads this the first
-// time the menu opens, so no page pays for it until then.
+// What the compact menu does beyond showing and hiding: open on the current group,
+// take focus, and page through the "Latest" cards. header-controller.js imports this
+// the first time the menu opens, so no page pays for it until then.
+const header = document.querySelector('#afflatus-header');
+const menu = header.querySelector('.af-header-menu');
+const compact = matchMedia('(max-width: 979px)');
+const nav = document.getElementById('af-primary-nav');
 const language = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
 const COPY = {
   label: { en: 'Latest', zh: '最新' },
@@ -64,7 +69,7 @@ function render(cards) {
   next.addEventListener('click', () => go(1));
   track.addEventListener('scroll', showCount, { passive: true });
   showCount();
-  document.getElementById('af-primary-nav').append(labelled(make('section', 'af-menu-latest', track, make('div', 'af-menu-latest-pager', previous, count, next)), COPY.label));
+  nav.append(labelled(make('section', 'af-menu-latest', track, make('div', 'af-menu-latest-pager', previous, count, next)), COPY.label));
 }
 
 // The carousel is an extra: if it cannot load, the menu still has every link.
@@ -72,3 +77,28 @@ fetch('/menu-latest.json')
   .then((response) => (response.ok ? response.json() : []))
   .then((cards) => { if (cards.length) render(cards); })
   .catch(() => {});
+
+function menuOpened() {
+  if (menu.getAttribute('aria-expanded') !== 'true') return;
+  const current = [...nav.querySelectorAll('.af-header-group')].find((group) => group.querySelector('[aria-current="page"]'));
+  current?.querySelector('button').click();
+  nav.querySelector('a, button').focus();
+}
+// This module first runs during the opening click's import; later opens come through the listener.
+menu.addEventListener('click', menuOpened);
+menuOpened();
+
+// The controller's desktop rules close a group, or the menu, when focus or the pointer leaves.
+// Here the menu fills the screen, so it stays open until asked, even when its background is tapped.
+for (const type of ['focusout', 'pointerleave']) {
+  header.addEventListener(type, (event) => { if (compact.matches) event.stopPropagation(); }, true);
+}
+
+// Escape closes the whole menu at once, not just the open group first.
+addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape' || menu.getAttribute('aria-expanded') !== 'true') return;
+  event.stopPropagation();
+  event.preventDefault();
+  menu.click();
+  menu.focus();
+}, true);

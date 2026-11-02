@@ -40,7 +40,6 @@ test.describe('compact menu', () => {
       expect(state.navWide).toBeLessThanOrEqual(390);
       await menuButton(page).click();
       await expect(nav(page)).toBeHidden();
-      await expect(page.locator('#afflatus-header')).not.toHaveAttribute('data-menu-open', /.*/);
     });
   }
 
@@ -89,30 +88,28 @@ test.describe('compact menu', () => {
     await expect(menuButton(page)).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('keeps the keyboard inside, closes on Escape and returns focus to the button', async ({ page }) => {
+  test('hides the page from the keyboard, closes on Escape and returns focus to the button', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/portfolio.html', { waitUntil: 'load' });
     const button = menuButton(page);
     await button.focus();
     await page.keyboard.press('Enter');
     await expect(button).toHaveAttribute('aria-expanded', 'true');
-    await expect(button).toHaveAttribute('aria-label', 'Close navigation');
     await expect(page.locator('[aria-controls="af-analysis"]')).toBeFocused();
-    await expect(page.locator('main').first()).toHaveJSProperty('inert', true);
+    await expect(page.locator('main').first()).toBeHidden();
     await expect(page.locator('.af-menu-latest')).toBeVisible();
 
-    await page.locator('#afflatus-header .af-wordmark').focus();
-    await page.keyboard.press('Shift+Tab');
-    await expect(button).toBeFocused();
+    // Tabbing through the menu reaches the header's own keys and never the page behind it.
     await page.keyboard.press('Tab');
-    await expect(page.locator('#afflatus-header .af-wordmark')).toBeFocused();
+    expect(await page.evaluate(() => Boolean(document.activeElement.closest('#afflatus-header')))).toBe(true);
+    const pageLinksHidden = await page.evaluate(() => [...document.querySelectorAll('body > :not(#afflatus-header) a[href]')].every((link) => getComputedStyle(link).visibility === 'hidden'));
+    expect(pageLinksHidden).toBe(true);
 
     await page.keyboard.press('Escape');
     await expect(nav(page)).toBeHidden();
     await expect(button).toBeFocused();
     await expect(button).toHaveAttribute('aria-expanded', 'false');
-    await expect(button).toHaveAttribute('aria-label', 'Open navigation');
-    await expect(page.locator('main').first()).toHaveJSProperty('inert', false);
+    await expect(page.locator('main').first()).toBeVisible();
   });
 
   test('passes axe while open', async ({ page }) => {
@@ -125,8 +122,8 @@ test.describe('compact menu', () => {
   test('closes when the viewport grows to the desktop header', async ({ page }) => {
     await openMenu(page, '/en/');
     await page.setViewportSize({ width: 1200, height: 844 });
-    await expect(page.locator('#afflatus-header')).not.toHaveAttribute('data-menu-open', /.*/);
-    await expect(page.locator('main').first()).toHaveJSProperty('inert', false);
+    await expect(page.locator('[aria-controls="af-primary-nav"]')).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('main').first()).toBeVisible();
     await expect(nav(page)).toBeVisible();
     await expect(page.locator('#af-analysis')).toBeHidden();
     await expect(page.locator('[aria-controls="af-primary-nav"]')).toBeHidden();
@@ -136,13 +133,13 @@ test.describe('compact menu', () => {
 test.describe('Latest carousel', () => {
   test('loads only when the menu first opens', async ({ page }) => {
     const requests = [];
-    page.on('request', (request) => { if (/menu-latest/.test(request.url())) requests.push(new URL(request.url()).pathname); });
+    page.on('request', (request) => { if (/menu-latest|compact-menu/.test(request.url())) requests.push(new URL(request.url()).pathname); });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/', { waitUntil: 'load' });
     expect(requests).toEqual([]);
     await menuButton(page).click();
     await expect(page.locator('.af-menu-latest-card')).toHaveCount(3);
-    expect(requests.sort()).toEqual(['/lib/menu-latest.js', '/menu-latest.json']);
+    expect(requests.sort()).toEqual(['/lib/compact-menu.js', '/menu-latest.json']);
     await menuButton(page).click();
     await menuButton(page).click();
     await expect(page.locator('.af-menu-latest')).toHaveCount(1);

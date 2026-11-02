@@ -100,14 +100,16 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-header-dropdown a + a { margin-top: 0; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
-  /* With scripts the compact menu is a dark full screen; the paper list above is the no-script view. */
-  html:has(#afflatus-header[data-menu-open]) { overflow: hidden; }
+  /* With scripts the compact menu is a dark full screen; the paper list above is the no-script view.
+     Hiding the rest of the page also takes it out of the tab order and the accessibility tree. */
+  html:has(.af-header-menu[aria-expanded="true"]) { overflow: hidden; }
+  html:has(.af-header-menu[aria-expanded="true"]) body > :not(#afflatus-header) { visibility: hidden; }
   /* Outranks page themes; a page's backdrop-filter would also confine the fixed panel to the header. */
-  html body #afflatus-header[data-menu-open] { position: fixed; --af-paper: #141413; --af-ink: #faf9f5; border-bottom-color: transparent; background: #141413; color: #faf9f5; color-scheme: dark; backdrop-filter: none; }
-  html #afflatus-header[data-menu-open] :is(.af-wordmark, button) { color: inherit; }
-  html #afflatus-header[data-menu-open] :is(a, button):focus-visible { outline-color: #faf9f5; }
-  html #afflatus-header[data-menu-open] a.af-header-language { border: 0; background: #faf9f5; color: #141413; }
-  html #afflatus-header[data-menu-open] .af-header-menu { justify-content: center; border-radius: 10px; background: #2a2a28; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header { position: fixed; --af-paper: #141413; --af-ink: #faf9f5; border-bottom-color: transparent; background: #141413; color: #faf9f5; color-scheme: dark; backdrop-filter: none; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header :is(.af-wordmark, button) { color: inherit; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header :is(a, button):focus-visible { outline-color: #faf9f5; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header a.af-header-language { border: 0; background: #faf9f5; color: #141413; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header .af-header-menu { justify-content: center; border-radius: 10px; background: #2a2a28; }
   #afflatus-header .af-header-menu[aria-expanded="true"] .af-menu-icon { display: none; }
   #afflatus-header .af-header-menu[aria-expanded="true"] .af-menu-close { display: block; }
   #afflatus-header[data-enhanced] .af-header-nav { position: fixed; inset: var(--af-height) 0 0; gap: 2px; max-height: none; padding: 18px var(--af-header-compact-gap) 24px; border: 0; border-radius: 0; background: #141413; box-shadow: none; color: #8f8d85; animation: none; }
@@ -119,6 +121,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header[data-enhanced] .af-nav-label::after { content: none; }
   #afflatus-header[data-enhanced] .af-header-group-title { display: none; }
   #afflatus-header[data-enhanced] .af-nav-caret { width: 18px; height: 18px; margin-top: 6px; stroke-width: 1.6; }
+  #afflatus-header[data-enhanced] .af-header-group:not([data-open="true"]) .af-nav-caret { transform: none; }
   #afflatus-header[data-enhanced] .af-header-dropdown { padding: 2px 0 10px; overflow: visible; }
   #afflatus-header[data-enhanced] .af-header-dropdown a { padding: 7px 0; color: #8f8d85; font-size: 18px; }
   #afflatus-header[data-enhanced] .af-header-dropdown a[aria-current="page"] { color: #faf9f5; }
@@ -127,7 +130,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-menu-latest-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
   #afflatus-header .af-menu-latest-track::-webkit-scrollbar { display: none; }
   #afflatus-header .af-menu-latest-card { display: block; flex: 0 0 100%; min-height: 0; padding: 0; color: #8f8d85; font-size: 14px; white-space: normal; scroll-snap-align: start; }
-  html #afflatus-header[data-menu-open] .af-menu-latest-card:focus-visible { outline-offset: -2px; }
+  html:has(.af-header-menu[aria-expanded="true"]) #afflatus-header .af-menu-latest-card:focus-visible { outline-offset: -2px; }
   #afflatus-header .af-menu-latest-meta { display: flex; gap: 14px; margin: 0 0 10px; }
   #afflatus-header .af-menu-latest-card img { display: block; width: 100%; height: 150px; border-radius: 10px; background: #2a2a28; object-fit: cover; }
   #afflatus-header .af-menu-latest-title { display: -webkit-box; min-height: 48px; margin: 12px 0 0; overflow: hidden; color: #faf9f5; font-size: 19px; font-weight: 600; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
