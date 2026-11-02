@@ -252,6 +252,35 @@ Afflatus 是 Vite 8 MPA（根目录 `*.html` 即入口），运行时为 vanilla
 
 ---
 
+## 第二轮补充核实（2026-11-02，仅搜索引擎 + 本地验证）
+
+本轮网络策略仍只放行 github.com / npm，页面级抓取依旧不可用；以下结论来自约 58 次搜索与本地命令，细节与全部 URL 见 `research/08_followup_gaps.md`。
+
+**已关闭或基本关闭的事项**
+
+| 事项 | 结论 |
+| --- | --- |
+| Afflatus 当前 HEAD 门禁 | 本地 `npm ci` 后 `npx vitest run`：145 个文件、1709 通过、1 跳过；`npm run prebuild` 全部门禁 OK（site/header/css/i18n/og/observatory）。M0 可直接起步。 |
+| `renderBudgetCoordinator.js`、`webglLifecycle.js`、`src/scene/*` | 可从 git 历史恢复：提交 `d9d4fc4`（调度器两文件）与 `9da3af9`（整套 `src/scene/*`）。M4 可先 `git show` 评估复用，再决定新建。 |
+| 字体厂商与授权 | KH Interference = KH Type（khtype.com，按公司规模授权，有试用与学生版）；Shapiro = OGJ Type Design，MyFonts 约 $29/字重，"Std 65 Light Heavy Wide" 最接近 "Wide 65"；IvyPresto Headline = The Ivy Foundry（2020，Adobe Fonts 可用）；Fraktion Mono = Pangram Pangram（可试用，授权 $40 起）。 |
+| 官方频道与视频 URL | 官方频道 youtube.com/@MarathonTheGame。Gameplay Reveal Trailer `X8z0WsYKm2k`、Launch Gameplay Trailer `f5TcwVlHnKU`、Launch Cinematic `KF24WS4MMC0`、Season 2 预告 `HmSS0NI94Ro`、ViDoc `fjzmhROTv28` 等；另有 7 条 4K 无解说实机视频 ID。上传频道归属仍未逐条核实。 |
+| OST 流媒体 | Apple Music Vol. I 专辑页（29 首，约 54 分钟，Milan/Sony）已取得；Deezer、Amazon、MusicBrainz、RYM 链接已收集；Spotify 仅有单曲页；无官方 Bandcamp。 |
+| Game UI Database / Interface In Game | 域内搜索均无 Marathon 条目，确认缺少系统化 UI 截图库，需自行从视频截帧。 |
+| Joseph Cross 原帖 | 2023-05-30 X 线程 "Marathon Art Style (a short thread)"，由 Kotaku 文章嵌入转载；直接 status URL 未取得。 |
+| 库版本（npm 实时） | gsap 3.15.0、lenis 1.3.27、ogl 1.0.11（2025-01 后无新版）、three 0.187.0、motion 14.9.0、animejs 4.5.0。gzip 体积仍以本地实测为准。 |
+
+**部分关闭**
+
+- 色板：新增第二个独立粉丝来源（JustinPerea/Republic：#DCFF00 / #0A0A0A / #E8E2D2 / #4AC4F8），与 Omarchy 主题的酸绿/深黑/米白方向一致；Kurppa Hosk 在 LinkedIn 称主色为 "vibrant orange"，并把原始 logo/identity 归于 Mother Design 与 PlayStation Studios Creative（单一社交来源）。M1 token 初值建议：酸绿为主强调、橙为警示、青为数据，仍需真机校色。
+- Reddit：找到 2023 年 "Marathon Art appreciation thread" 与 2024 年美术风格对比帖，以及一条 r/IdentifyThisFont 求助帖（无答案）；未发现 HUD 截图合集。
+- Space.com 访谈标题已确认；Brian Vinton 被 VGC 列为 Senior Art Director，但与 Cross 离职报道的职务关系未厘清。
+
+**仍未关闭（需在可抓取页面的环境完成）**
+
+- marathonthegame.com 的技术栈、字体文件与动效（只有 "in-universe document"、"anti-website aesthetic" 的定性描述）。
+- 2025-04-12 玩法揭晓预告与 ViDoc 的配乐；Mielgo 短片是否用 Bach BWV 974（Annecy 官方条目只写 Ryan Lott 为作曲）。
+- OST Vol. I 第 7–24 首顺序、Spotify 专辑页、PCMag 评测署名、官方品牌 hex。
+
 ## 版权与合规指引
 
 **不直接嵌入任何受版权保护的截图、概念图或音乐。** 官方截图、Key Art、ArtStation / Behance 作品与 Milan Records 发行的原声均为 Bungie / 艺术家 / 厂牌的受保护作品；本次未找到任何允许个人网站复用的书面条款，press kit 的使用条款也未能读取（笔记 04 §1）。Bungie 自身曾因 alpha 版环境贴图使用了设计师 Fern "Antireal" Hook 的 2017 年海报而公开道歉、撤下实机视频并审查全部美术，最终和解并在 credits 中署名其为 "Visual Design Consultant" ([VGC](https://www.videogameschronicle.com/news/bungie-confirms-that-an-artists-work-was-stolen-and-used-in-marathon-without-their-permission); [VGC: pulls gameplay](https://www.videogameschronicle.com/news/bungie-pulls-marathon-gameplay-after-art-plagiarism-storm-and-say-its-reviewing-all-art); [Push Square](https://pushsquare.com/news/2026/03/artist-embroiled-in-marathon-art-theft-scandal-credited-as-visual-design-consultant))——这一事件对"复刻 Marathon 风格"的页面是最直接的警示：**风格可以致敬，图形必须原创**。贴纸 / 标签 / 海报式图形、阵营图标、Runner 剪影、飞蛾意象一律自绘，不以任何形式（含描摹、换色）搬用现成图形语言。
