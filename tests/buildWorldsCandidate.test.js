@@ -141,3 +141,47 @@ describe('build-worlds-candidate series-score rows', () => {
     expect(data.swiss.find((t) => t.team === 'LYON')).toMatchObject({ w: 3, l: 0, status: 'advanced' });
   });
 });
+
+describe('build-worlds-candidate published results', () => {
+  // A result already published on the baseline while gol.gg's row is still blank.
+  const seriesOf = (data) => data.series.find((s) => s.round === 3 && [s.home, s.away].sort().join() === 'GEN,LYON');
+  const pick = { side: 'home', pWin: [0.6, 0.4], score: '2-0', pScore: 0.4, oddsImplied: [1.67, 2.5], adj: 0, decidedAt: '2026-10-25T12:00:00.000Z' };
+  const baselineWith = (result) => {
+    const path = join(mkdtempSync(join(tmpdir(), 'worlds-base-')), 'worlds-data.json');
+    writeFileSync(path, JSON.stringify({ series: [{ id: 'r3-lyon-gen', stage: 'swiss', round: 3, home: 'LYON', away: 'GEN', kickoff: '2026-10-25T17:00:00.000Z', pick, result }] }));
+    return path;
+  };
+  const scored = (html) => html.replace(
+    /(title='Gen\.G vs LYON Preview'>Gen\.G vs LYON<\/a><\/td><td class='text-right'>Gen\.G<\/td><td class='text-center'>) - /,
+    '$11 - 2',
+  );
+
+  it('keeps the result, its games and its scoring when the gol.gg row is blank', () => {
+    const games = [{ gameId: '83659', winner: 'home', picks: { home: ['Vi'], away: ['Ahri'] } }];
+    const { data } = build({ baseline: baselineWith({ home: 2, away: 1, games }), now: '2026-10-26T12:00:00Z' });
+    expect(seriesOf(data).result).toEqual({ home: 2, away: 1, games });
+    expect(seriesOf(data).pick).toEqual(pick);
+    expect(data.swiss.find((t) => t.team === 'LYON')).toMatchObject({ w: 3, l: 0, status: 'advanced' });
+    expect(data.record.resolved).toBe(1);
+    expect(data.notes).toContain('r3-lyon-gen: result kept from the published data; gol.gg lists no final score');
+  });
+
+  it('prices the title the same as if gol.gg had listed the score', () => {
+    const baseline = baselineWith({ home: 2, away: 1, games: [] });
+    const kept = build({ baseline, now: '2026-10-26T12:00:00Z' }).data;
+    const listed = build({ matchlist: scored, baseline, now: '2026-10-26T12:00:00Z' }).data;
+    expect(kept.champion.map((c) => [c.team, c.prob])).toEqual(listed.champion.map((c) => [c.team, c.prob]));
+  });
+
+  it('lets a final gol.gg score replace the published result', () => {
+    const { data } = build({ matchlist: scored, baseline: baselineWith({ home: 1, away: 2, games: [] }), now: '2026-10-26T12:00:00Z' });
+    expect(seriesOf(data).result).toMatchObject({ home: 2, away: 1 });
+    expect(seriesOf(data).result.games).toHaveLength(1);
+    expect(data.notes.filter((note) => note.includes('result kept'))).toEqual([]);
+  });
+
+  it('leaves a series open when neither gol.gg nor the baseline has a result', () => {
+    const { data } = build({ baseline: baselineWith(null), now: '2026-10-26T12:00:00Z' });
+    expect(seriesOf(data).result).toBeNull();
+  });
+});
