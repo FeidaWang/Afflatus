@@ -1,7 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowRight, DotsThree, X } from '@phosphor-icons/react';
 import { entryHref, loadTopicsIndex, relatedFor, topicHref } from './topicsIndex.js';
 import './related.css';
+
+// Inline paths from Phosphor: the icon package's six weights per icon don't fit /search.html's script budget.
+const Icon = ({ d }) => <svg aria-hidden="true" viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d={d} /></svg>;
+const ARROW_RIGHT = 'M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z';
+const DOTS_THREE_BOLD = 'M144,128a16,16,0,1,1-16-16A16,16,0,0,1,144,128ZM60,112a16,16,0,1,0,16,16A16,16,0,0,0,60,112Zm136,0a16,16,0,1,0,16,16A16,16,0,0,0,196,112Z';
+const X_BOLD = 'M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z';
+const X_REGULAR = 'M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z';
 
 const COPY = {
   related: { en: 'Related', zh: '相关内容' },
@@ -61,7 +67,7 @@ function RelatedBody({ index, url, topicId, language }) {
       <Text className="related-card-title" copy={card.title} language={language} />
       <Text className="related-card-summary" copy={card.summary} language={language} />
     </a>}
-    <a className="related-more" href={topicHref(topic.id, language)}><Text copy={COPY.viewMore} language={language} /><ArrowRight aria-hidden="true" /></a>
+    <a className="related-more" href={topicHref(topic.id, language)}><Text copy={COPY.viewMore} language={language} /><Icon d={ARROW_RIGHT} /></a>
   </>;
 }
 
@@ -127,17 +133,17 @@ export function RelatedMenu({ url, topicId, label, language }) {
       data-aria-en={`${COPY.relatedTo.en} ${label.en}`}
       data-aria-zh={`${COPY.relatedTo.zh} ${label.zh}`}
       onClick={() => setOpen(!open)}
-    >{open ? <X aria-hidden="true" weight="bold" /> : <DotsThree aria-hidden="true" weight="bold" />}</button>
+    ><Icon d={open ? X_BOLD : DOTS_THREE_BOLD} /></button>
     {open && <div className="related-panel" ref={panel} role="dialog" tabIndex={-1} aria-label={COPY.related[language]} data-aria-en={COPY.related.en} data-aria-zh={COPY.related.zh}>
       <div className="related-heading">
         <Text as="h3" copy={COPY.related} language={language} />
-        <button type="button" className="related-close" aria-label={COPY.close[language]} data-aria-en={COPY.close.en} data-aria-zh={COPY.close.zh} onClick={close}><X aria-hidden="true" /></button>
+        <button type="button" className="related-close" aria-label={COPY.close[language]} data-aria-en={COPY.close.en} data-aria-zh={COPY.close.zh} onClick={close}><Icon d={X_REGULAR} /></button>
       </div>
       {index && <RelatedBody index={index} url={url} topicId={topicId} language={language} />}
       {!index && !failed && <Text as="p" className="related-summary" role="status" copy={COPY.loading} language={language} />}
       {!index && failed && <>
         <Text as="p" className="related-summary" role="alert" copy={COPY.failed} language={language} />
-        <a className="related-more" href={entryHref('/search.html', language)}><Text copy={COPY.allTopics} language={language} /><ArrowRight aria-hidden="true" /></a>
+        <a className="related-more" href={entryHref('/search.html', language)}><Text copy={COPY.allTopics} language={language} /><Icon d={ARROW_RIGHT} /></a>
       </>}
     </div>}
   </div>;
