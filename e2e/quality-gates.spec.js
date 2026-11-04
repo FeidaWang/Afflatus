@@ -109,6 +109,8 @@ test.describe('active-route browser gates', () => {
       if (await headerMenu.isVisible()) {
         await headerMenu.click();
         await expect(headerMenu).toHaveAttribute('aria-expanded', 'true');
+        // The menu's lazy module opens the current group and then takes focus; wait so a click can't undo it.
+        await expect(page.locator('#af-primary-nav').locator('a, button').first()).toBeFocused();
         if (await analysis.getAttribute('aria-expanded') === 'false') await analysis.click();
         await expect(page.locator('#af-analysis a').first()).toBeVisible();
       } else {

@@ -87,7 +87,8 @@ lockScroll();
 function menuOpened() {
   if (menu.getAttribute('aria-expanded') !== 'true') return;
   const current = [...nav.querySelectorAll('.af-header-group')].find((group) => group.querySelector('[aria-current="page"]'));
-  current?.querySelector('button').click();
+  // Already open if the group was tapped while this module loaded; a click would close it again.
+  current?.querySelector('button[aria-expanded="false"]')?.click();
   nav.querySelector('a, button').focus();
 }
 // This module first runs during the opening click's import; later opens come through the listener.

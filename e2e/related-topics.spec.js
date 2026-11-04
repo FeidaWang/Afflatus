@@ -183,6 +183,8 @@ test.describe('tree links', () => {
       const { events } = await (await fetch('/signal-events.json')).json();
       return [...events].sort((a, b) => a.date.localeCompare(b.date))[0].id;
     });
+    // The records have rendered by now, so this lands through hashchange rather than the first render.
+    await expect(page.locator('.record-card').first()).toBeVisible();
     await page.goto(`/en/signal.html#${oldest}`, { waitUntil: 'load' });
     await expect(page.locator(`[id="${oldest}"]`)).toBeInViewport();
   });
@@ -207,6 +209,8 @@ test.describe('topic page', () => {
     await expect(page.locator('.topic-result')).toHaveCount(10);
     const dates = await page.locator('.topic-result time').evaluateAll((times) => times.map((time) => time.dateTime));
     expect(dates).toEqual([...dates].sort().reverse());
+    // The covers load just after the results, so they stay out of LCP.
+    await expect(page.locator('.topic-mosaic img')).toHaveCount(5);
     const covers = await page.locator('.topic-mosaic img').evaluateAll((images) => images.map((image) => new URL(image.src).pathname));
     expect(covers).toHaveLength(5);
     const ownCovers = new Set(own.filter((entry) => entry.cover).map((entry) => entry.cover.en));

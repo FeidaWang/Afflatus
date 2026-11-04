@@ -155,6 +155,7 @@ export function mountPolicyIndex() {
   window.addEventListener('afflatus-lang', () => { if (data) { renderOverview(); renderRecords(); } });
   fetchJson('signal').then(payload => {
     data = payload; renderOverview(); renderRecords(); revealLinkedRecord();
+    addEventListener('hashchange', revealLinkedRecord);
   }).catch(() => {
     document.querySelector('[data-index-status]').textContent = copy('Research data is unavailable. Reload the page or open the official sources below.', '研究数据暂不可用，请刷新页面或查看下方官方来源。');
   });
