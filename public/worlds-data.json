@@ -5,8 +5,8 @@
   "mode": "live",
   "patch": "26.20",
   "decidedAt": "2026-11-04T07:52:38.373Z",
-  "note_en": "QF1 TES-IG kicked off 3 November, but gol.gg shows no score, so it stays unsettled here. Polymarket has already resolved TES's title market to No, so TES's 11.9% is likely stale. GEN lead at 44.3% ahead of LYON; T1 remain the widest gap with the market.",
-  "note_zh": "八强首战 TES 对 IG 已于 11 月 3 日开赛，但 gol.gg 尚无比分，此处暂未结算。Polymarket 已把 TES 夺冠市场结算为否，TES 的 11.9% 很可能已过时。GEN 以 44.3% 领跑，下一场对 LYON；T1 与市场分歧仍最大。",
+  "note_en": "IG beat TES 3-1 in the first quarterfinal and now meet the GEN/LYON winner. IG climb to 18.0% for the title, about double the 8.7% market. GEN lead at 43.6%; T1 at 8.2% against a 19.7% market remain the widest gap.",
+  "note_zh": "IG 3-1 击败 TES，半决赛将对阵 GEN/LYON 胜者。IG 夺冠概率升至 18.0%，约为市场 8.7% 的两倍。GEN 以 43.6% 领跑；T1 的 8.2% 对市场 19.7% 仍是最大分歧。",
   "archiveSource": {
     "label_en": "gol.gg Worlds 2026 schedule",
     "label_zh": "gol.gg Worlds 2026 赛程",
@@ -3024,40 +3024,40 @@
       "prob": 43.6,
       "oddsImplied": 2.29,
       "market": 47.1,
-      "reason_en": "44.3% (implied 2.26) sits a little under the 47.1% market. GEN went 3-0 in Swiss, are 86.6% against LYON and lead every team with an 80.0% dragon rate. The assumed path then meets the TES/IG winner in the semifinal.",
-      "reason_zh": "44.3%（隐含 2.26）略低于市场 47.1%。GEN 瑞士轮 3-0，对 LYON 胜率 86.6%，小龙率 80.0% 全场最高。按假定对阵，半决赛遇 TES/IG 胜者。"
+      "reason_en": "43.6% (implied 2.29) sits under the 47.1% market. GEN went 3-0 in Swiss, are 86.6% against LYON and lead every team with an 80.0% dragon rate. The winner of that series now meets IG in the semifinal.",
+      "reason_zh": "43.6%（隐含 2.29）低于市场 47.1%。GEN 瑞士轮 3-0，对 LYON 胜率 86.6%，小龙率 80.0% 全场最高。该场胜者将在半决赛对阵 IG。"
     },
     {
       "team": "BLG",
       "prob": 19.6,
       "oddsImplied": 5.1,
       "market": 13.7,
-      "reason_en": "19.3% (implied 5.18) sits above the 13.7% market. BLG are 59.1% over DK, and Knight plus an 87.5% first-blood rate drive the number. A 3-2 Swiss record and Viper's -463 GD@15 explain why the market is cooler.",
-      "reason_zh": "19.3%（隐含 5.18）高于市场 13.7%。BLG 对 DK 胜率 59.1%，Knight 与 87.5% 一血率是支撑。瑞士轮 3-2 和 Viper 的 -463 或是市场更保守的原因。"
+      "reason_en": "19.6% (implied 5.10) sits above the 13.7% market. BLG are 59.1% over DK, and Knight plus an 87.5% first-blood rate drive the number. A 3-2 Swiss record and Viper's -463 GD@15 explain why the market is cooler.",
+      "reason_zh": "19.6%（隐含 5.10）高于市场 13.7%。BLG 对 DK 胜率 59.1%，Knight 与 87.5% 一血率是支撑。瑞士轮 3-2 和 Viper 的 -463 或是市场更保守的原因。"
     },
     {
       "team": "IG",
       "prob": 18,
       "oddsImplied": 5.56,
       "market": 8.7,
-      "reason_en": "6.6% (implied 15.15) trails the 8.7% market. The simulation still prices IG at 47.8% in QF1, while the market appears to treat them as through because TES's title market is resolved. IG's 1613 GD@15 leads the field; a 37.5% Nashor rate is the weak spot.",
-      "reason_zh": "6.6%（隐含 15.15）低于市场 8.7%。模拟仍按 IG 八强胜率 47.8% 计算，而 TES 夺冠市场已结算，市场似已视 IG 晋级。IG 的 GD@15 为 1613 居首，大龙率 37.5% 是弱点。"
+      "reason_en": "18.0% (implied 5.56) is about double the 8.7% market after IG beat TES 3-1 to reach the semifinal. Their 1613 GD@15 leads the field, but the GEN/LYON winner comes next, which is why the market stays cooler.",
+      "reason_zh": "18.0%（隐含 5.56）约为市场 8.7% 的两倍。IG 3-1 击败 TES 晋级半决赛，GD@15 为 1613 居首，但下一场对阵 GEN/LYON 胜者，市场因此更保守。"
     },
     {
       "team": "DK",
       "prob": 9.2,
       "oddsImplied": 10.87,
       "market": 8.5,
-      "reason_en": "8.5% (implied 11.76) matches the 8.5% market. DK went 3-0 in Swiss and ShowMaker has a 9.0 KDA, but DK are only 40.9% against BLG in the quarterfinal, which caps the title number.",
-      "reason_zh": "8.5%（隐含 11.76）与市场 8.5% 一致。DK 瑞士轮 3-0，ShowMaker KDA 9.0，但八强对 BLG 仅 40.9%，压低了夺冠概率。"
+      "reason_en": "9.2% (implied 10.87) sits just above the 8.5% market. DK went 3-0 in Swiss and ShowMaker has a 9.0 KDA, but DK are only 40.9% against BLG in the quarterfinal, which caps the title number.",
+      "reason_zh": "9.2%（隐含 10.87）略高于市场 8.5%。DK 瑞士轮 3-0，ShowMaker KDA 9.0，但八强对 BLG 仅 40.9%，压低了夺冠概率。"
     },
     {
       "team": "T1",
       "prob": 8.2,
       "oddsImplied": 12.2,
       "market": 19.7,
-      "reason_en": "8.0% (implied 12.50) is well below the 19.7% market, the largest gap among live teams. T1 are 73.0% over KC, but the model then expects a hard semifinal. The market gives T1 far more credit than their 3-1 record alone.",
-      "reason_zh": "8.0%（隐含 12.50）远低于市场 19.7%，是仍在赛队伍中最大的分歧。T1 对 KC 胜率 73.0%，但模型认为半决赛艰难；市场溢价明显超出其 3-1 战绩。"
+      "reason_en": "8.2% (implied 12.20) is well below the 19.7% market, the largest gap on the board. T1 are 73.0% over KC, but the model then expects a hard semifinal. The market gives T1 far more credit than their 3-1 record alone.",
+      "reason_zh": "8.2%（隐含 12.20）远低于市场 19.7%，是全场最大分歧。T1 对 KC 胜率 73.0%，但模型认为半决赛艰难；市场溢价明显超出其 3-1 战绩。"
     },
     {
       "team": "KC",
@@ -3080,8 +3080,8 @@
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "11.9% (implied 8.40) is likely stale. The market shows 0 because Polymarket resolved TES's title market to No after QF1, but gol.gg has no score yet, so the simulation still treats the series as open. Discount this number until the result lands.",
-      "reason_zh": "11.9%（隐含 8.40）很可能已过时。市场为 0，因 Polymarket 在八强首战后已把 TES 夺冠结算为否；gol.gg 尚无比分，模拟仍视该场未结束。赛果录入前请勿采信此数字。"
+      "reason_en": "Eliminated by IG in the quarterfinal, 1-3; no implied odds, market 0.",
+      "reason_zh": "八强 1-3 负于 IG 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "HLE",
@@ -3155,8 +3155,8 @@
       "prob": 22.6,
       "oddsImplied": 4.42,
       "market": null,
-      "basis_en": "23.2% (implied 4.31) tops the list because GEN are 44.3% title favourites. The payload carries no MVP market to compare, so this is a relative weight among listed players, not a market-checked price.",
-      "basis_zh": "23.2%（隐含 4.31）居首，因 GEN 以 44.3% 领跑夺冠。payload 无 MVP 市场可对照，这是所列选手间的相对权重，并非经市场校验的价格。"
+      "basis_en": "22.6% (implied 4.42) tops the list because GEN are 43.6% title favourites. The payload carries no MVP market to compare, so this is a relative weight among listed players, not a market-checked price.",
+      "basis_zh": "22.6%（隐含 4.42）居首，因 GEN 以 43.6% 领跑夺冠。payload 无 MVP 市场可对照，这是所列选手间的相对权重，并非经市场校验的价格。"
     },
     {
       "player": "Canyon",
@@ -3164,8 +3164,8 @@
       "prob": 20,
       "oddsImplied": 5,
       "market": null,
-      "basis_en": "20.6% (implied 4.85). Canyon is GEN's top-rated player by in-role score, with a 10.5 KDA, 79.9% KP and +627 GD@15. No MVP market exists in the payload to compare.",
-      "basis_zh": "20.6%（隐含 4.85）。Canyon 是 GEN 同位置评分最高的选手，KDA 10.5、参团 79.9%、GD@15 +627。payload 无 MVP 市场可对照。"
+      "basis_en": "20.0% (implied 5.00). Canyon is GEN's top-rated player by in-role score, with a 10.5 KDA, 79.9% KP and +627 GD@15. No MVP market exists in the payload to compare.",
+      "basis_zh": "20.0%（隐含 5.00）。Canyon 是 GEN 同位置评分最高的选手，KDA 10.5、参团 79.9%、GD@15 +627。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Chovy",
@@ -3173,8 +3173,8 @@
       "prob": 19.6,
       "oddsImplied": 5.1,
       "market": null,
-      "basis_en": "20.2% (implied 4.95) leans on GEN's title odds rather than form: his 5.1 KDA and -350 GD@15 make him GEN's lowest in-role score. No MVP market exists in the payload to compare.",
-      "basis_zh": "20.2%（隐含 4.95）主要依赖 GEN 的夺冠概率而非状态：KDA 5.1、GD@15 -350，是 GEN 同位置评分最低。payload 无 MVP 市场可对照。"
+      "basis_en": "19.6% (implied 5.10) leans on GEN's title odds rather than form: his 5.1 KDA and -350 GD@15 make him GEN's lowest in-role score. No MVP market exists in the payload to compare.",
+      "basis_zh": "19.6%（隐含 5.10）主要依赖 GEN 的夺冠概率而非状态：KDA 5.1、GD@15 -350，是 GEN 同位置评分最低。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Knight",
@@ -3182,8 +3182,8 @@
       "prob": 14.5,
       "oddsImplied": 6.9,
       "market": null,
-      "basis_en": "14.5% (implied 6.90). Knight is BLG's best in-role score with an 8.4 KDA, 77.1% KP and +412 GD@15, on a team priced at 19.3% for the title. No MVP market exists in the payload to compare.",
-      "basis_zh": "14.5%（隐含 6.90）。Knight 是 BLG 同位置评分最高，KDA 8.4、参团 77.1%、GD@15 +412；BLG 夺冠概率 19.3%。payload 无 MVP 市场可对照。"
+      "basis_en": "14.5% (implied 6.90). Knight is BLG's best in-role score with an 8.4 KDA, 77.1% KP and +412 GD@15, on a team priced at 19.6% for the title. No MVP market exists in the payload to compare.",
+      "basis_zh": "14.5%（隐含 6.90）。Knight 是 BLG 同位置评分最高，KDA 8.4、参团 77.1%、GD@15 +412；BLG 夺冠概率 19.6%。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Kiin",
@@ -3191,8 +3191,8 @@
       "prob": 12.5,
       "oddsImplied": 8,
       "market": null,
-      "basis_en": "12.9% (implied 7.75) reflects GEN's 44.3% title odds. The payload holds no statline for Kiin, since he is neither GEN's best nor worst pick, and no MVP market to compare.",
-      "basis_zh": "12.9%（隐含 7.75）反映 GEN 44.3% 的夺冠概率。Kiin 既非 GEN 最强也非最弱选手，payload 无其数据，也无 MVP 市场可对照。"
+      "basis_en": "12.5% (implied 8.00) reflects GEN's 43.6% title odds. The payload holds no statline for Kiin, since he is neither GEN's best nor worst pick, and no MVP market to compare.",
+      "basis_zh": "12.5%（隐含 8.00）反映 GEN 43.6% 的夺冠概率。Kiin 既非 GEN 最强也非最弱选手，payload 无其数据，也无 MVP 市场可对照。"
     },
     {
       "player": "RooKie",
@@ -3200,8 +3200,8 @@
       "prob": 10.7,
       "oddsImplied": 9.35,
       "market": null,
-      "basis_en": "",
-      "basis_zh": ""
+      "basis_en": "10.7% (implied 9.35) joins the list because IG's title odds rose to 18.0% after beating TES 3-1. The payload holds no statline for RooKie and no MVP market to compare.",
+      "basis_zh": "10.7%（隐含 9.35）新进榜单，因 IG 3-1 胜 TES 后夺冠概率升至 18.0%。payload 无 RooKie 的数据，也无 MVP 市场可对照。"
     }
   ],
   "fearless": [
@@ -3398,8 +3398,8 @@
           "slug": "Ornn"
         }
       ],
-      "note_en": "Depth 36, level with TES in the opening quarterfinal.",
-      "note_zh": "深度 36，与八强首战对手 TES 相同。"
+      "note_en": "Depth 36 carried IG past TES 3-1 and into the semifinal; QF1 drafts are not yet logged.",
+      "note_zh": "深度 36，3-1 胜 TES 晋级半决赛；八强首战的征召数据尚未录入。"
     },
     {
       "team": "T1",
@@ -3538,8 +3538,8 @@
           "slug": "Jayce"
         }
       ],
-      "note_en": "Depth 36, level with IG in the opening quarterfinal.",
-      "note_zh": "深度 36，与八强首战对手 IG 相同。"
+      "note_en": "Depth 36 ended with a 1-3 quarterfinal loss to IG.",
+      "note_zh": "深度 36，八强 1-3 负于 IG 出局。"
     },
     {
       "team": "BLG",
@@ -5437,6 +5437,12 @@
   ],
   "notes": [
     "draft unavailable for game 83694",
-    "semifinal halves assumed QF1/QF2 and QF3/QF4 winners"
+    "semifinal halves assumed QF1/QF2 and QF3/QF4 winners",
+    "model: QF1 score 1-3 was entered from press reports (Sports Kyunghyang, esports.gg, DPM.LOL) because gol.gg still lists no score; it was not read from gol.gg.",
+    "model: QF1 game winners, drafts and player stats are unavailable, so result.games is empty and the Fearless, meta and player tables exclude that series.",
+    "model: All adjustments are 0: no new roster, substitute or illness report for a quarterfinalist was found.",
+    "model: News comes from search snippets and one article page; the other articles were not read in full.",
+    "model: The payload has no MVP market, and no statline for Ruler, Kiin or RooKie.",
+    "model: Sports Kyunghyang confirms IG face the GEN/LYON winner; the QF3/QF4 semifinal half is inferred from that."
   ]
 }
