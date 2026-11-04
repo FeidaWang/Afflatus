@@ -20,7 +20,6 @@ export function validateTopicsIndex(data) {
     if (!isCopy(entry.title) || !isCopy(entry.summary)) errors.push(`${tag}: missing bilingual copy`);
     if (entry.cover !== null && !isCopy(entry.cover)) errors.push(`${tag}: cover must be null or set for both locales`);
     if (!entry.url?.startsWith('/')) errors.push(`${tag}: url must be a site path`);
-    if (entry.latestUrl !== undefined && !entry.latestUrl.startsWith('/')) errors.push(`${tag}: latestUrl must be a site path`);
     if (entry.date !== null && !/^\d{4}-\d{2}/.test(entry.date?.iso)) errors.push(`${tag}: invalid date`);
   }
   return { ok: errors.length === 0, errors };

@@ -157,15 +157,17 @@ test.describe('tree links', () => {
     await expect(event.locator('details')).toHaveJSProperty('open', true);
   });
 
-  test('a Serials node opens the latest chapter of the work', async ({ page }) => {
+  test('a Serials node opens the work, not its last chapter', async ({ page }) => {
     await page.goto('/zh/search.html?topic=serials', { waitUntil: 'load' });
     await page.locator('.topic-result .related-trigger').first().click();
+    const links = page.locator('.related-tree a[href*="/novels/"]');
+    await expect(links.first()).toBeVisible();
+    for (const href of await links.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('href')))) {
+      expect(href).toMatch(/^\/zh\/novels\/[^/]+\/$/);
+    }
     const node = page.locator('.related-tree li a').filter({ hasText: '万界种春' });
-    await expect(node).toHaveAttribute('href', /^\/zh\/novels\/wanjie-zhongchun\/[^/]+\/$/);
-    const href = await node.getAttribute('href');
     await node.click();
-    await expect(page).toHaveURL(new RegExp(`${href}$`));
-    await expect(page.locator('h1, h2').filter({ hasText: '第' }).first()).toBeVisible();
+    await expect(page).toHaveURL(/\/zh\/novels\/wanjie-zhongchun\/$/);
   });
 
   test('a course node opens that week\'s book', async ({ page }) => {
