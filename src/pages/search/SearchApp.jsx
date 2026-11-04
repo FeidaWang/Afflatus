@@ -29,8 +29,11 @@ function TopicMosaic({ entries, language }) {
   // Oldest first, so a long course shows its companion pages rather than only its weeks.
   const covers = entries.filter((entry) => entry.cover).reverse().slice(0, MOSAIC_SLOTS.length);
   const scale = mosaicScale(covers.length);
+  // Wait a frame past the results' first paint: covers requested with it push LCP past its budget.
+  const [painted, setPainted] = useState(false);
+  useEffect(() => { if (covers.length) requestAnimationFrame(() => setPainted(true)); }, [covers.length]);
   return <div className="topic-mosaic" aria-hidden="true">
-    {covers.map((entry, index) => {
+    {painted && covers.map((entry, index) => {
       const [x, y, width, height] = MOSAIC_SLOTS[index];
       return <img
         key={entry.id}

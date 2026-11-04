@@ -40,6 +40,7 @@ test.describe('compact menu', () => {
       expect(state.navWide).toBeLessThanOrEqual(390);
       await menuButton(page).click();
       await expect(nav(page)).toBeHidden();
+      await expect(page.locator('html')).not.toHaveAttribute('data-af-menu-open');
     });
   }
 

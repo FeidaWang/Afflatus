@@ -78,6 +78,12 @@ fetch('/menu-latest.json')
   .then((cards) => { if (cards.length) render(cards); })
   .catch(() => {});
 
+// Set here rather than with html:has() in CSS, which slows every page's style recalculation.
+// Watching the attribute also catches the controller closing the menu on resize.
+const lockScroll = () => document.documentElement.toggleAttribute('data-af-menu-open', menu.getAttribute('aria-expanded') === 'true');
+new MutationObserver(lockScroll).observe(menu, { attributes: true, attributeFilter: ['aria-expanded'] });
+lockScroll();
+
 function menuOpened() {
   if (menu.getAttribute('aria-expanded') !== 'true') return;
   const current = [...nav.querySelectorAll('.af-header-group')].find((group) => group.querySelector('[aria-current="page"]'));
