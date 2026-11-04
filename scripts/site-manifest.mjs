@@ -318,7 +318,8 @@ function generatedTopicsIndex(dates) {
           // The update note has no English text and no date; the date is the novel file's last publication.
           summary: { en: `Original fiction in Chinese, ${chapterCount} chapters.`, zh: novel.updateNote },
           url: readerPath({ bookId }),
-          latestUrl: readerPath({ bookId, chapterId: readPublicJson(`public/novels/${bookId}.json`).chapters.at(-1).id }),
+          // A finished book's last chapter is its ending, so its node stays on the landing page.
+          ...(bookId !== 'yuxi-gongci' && { latestUrl: readerPath({ bookId, chapterId: readPublicJson(`public/novels/${bookId}.json`).chapters.at(-1).id }) }),
           cover: bothLocales(novelSocialCardPath({ bookId })),
           date: dated(dates[readerUrl({ bookId })]),
         }));
