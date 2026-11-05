@@ -80,6 +80,19 @@ describe('snapshot validation', () => {
     expect(snapshotErrors(snapshot({ eventId, races: [race(overrides)] })).length).toBeGreaterThan(0);
   });
 
+  it.each([
+    ['markup in a two-candidate count', { races: [race({ twoCandidate: { status: 'available', candidates: [{ candidateId: 'a', votes: '<img>' }, { candidateId: 'b', votes: 1 }] } })] }],
+    ['an unknown change type', { changes: [{ type: 'mystery', raceId: 'x' }] }],
+    ['markup in a change delta', { changes: [{ type: 'new_batch', raceId: 'x', delta: '<img>' }] }],
+  ])('rejects %s', (_name, overrides) => {
+    expect(snapshotErrors(snapshot(overrides)).length).toBeGreaterThan(0);
+  });
+
+  it('rejects a pointer with an unreadable time', () => {
+    const pointer = { schemaVersion: 1, eventId: 'x', revision: 1, snapshotId: 's1', history: [], sources: [{ lastCheckedAt: 'soon' }] };
+    expect(pointerErrors(pointer)).toContain('source time');
+  });
+
   it('accepts a declaration by the commission that runs the election', () => {
     const declared = race({ raceId: 'vic-2026/assembly/kew', eventId: 'vic-2026', electionDate: '2026-11-28', office: 'assembly', seatIds: ['kew'], decision: { ...certified(), authority: 'VEC' } });
     expect(snapshotErrors(snapshot({ eventId: 'vic-2026', races: [declared] }))).toEqual([]);
@@ -164,6 +177,15 @@ describe('leaders and calls stay separate', () => {
 
   it('names no leader while any candidate is unknown', () => {
     expect(primaryLeader(race({ candidates: [candidate('a', null), candidate('b', 1, 'rep')] }))).toBeNull();
+  });
+
+  it('marks a seat stale when its source has failed, so the mark cannot look fresh', () => {
+    const pointer = { sources: [{ sourceId: 'test', status: 'error' }] };
+    const states = seatStates({ races: [race()] }, pointer);
+    expect(states['NC-01']).toMatchObject({ status: 'leading', stale: true });
+    const seat = seatCatalogue('us-2026', 'house').find((item) => item.seatId === 'NC-01');
+    expect(seatMark(seat, states['NC-01'], PARTIES.us).stale).toBe(true);
+    expect(seatStates({ races: [race()] })['NC-01'].stale).toBeUndefined();
   });
 
   it('does not count a failed source as covered', () => {

@@ -143,6 +143,48 @@ test.describe('Elections console', () => {
     await expect(page.locator('.el-table')).toHaveCount(0);
   });
 
+  test('the language link keeps the view after moving around in the page', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'The language link sits in the collapsed header on phones.');
+    await page.goto(HUB);
+    await page.locator('.el-next .el-btn').click();
+    await page.locator('[data-office="council"]').click();
+    await expect(page.locator('[data-header-language]')).toHaveAttribute('href', /event=vic-2026.*office=council/);
+  });
+
+  test('switching office keeps focus and says where you are', async ({ page }) => {
+    await page.goto(console_('event=vic-2026'));
+    await page.locator('[data-office="council"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('[data-office="council"]')).toBeFocused();
+    await expect(page.locator('#el-live')).toHaveText('Legislative Council');
+    await expect(page).toHaveTitle(/VIC 2026 · Legislative Council/);
+  });
+
+  test('opening a console moves focus to its title', async ({ page }) => {
+    await page.goto(HUB);
+    await page.locator('.el-next .el-btn').click();
+    await expect(page.locator('#el-title')).toBeFocused();
+    await expect(page).toHaveTitle(/VIC 2026/);
+    await page.goBack();
+    await expect(page).toHaveTitle(/Elections 2026–28/);
+  });
+
+  test('a tablet keeps the map and the main columns', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Viewport test.');
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto(console_('event=vic-2026'));
+    await expect(page.locator('.el-map-svg')).toBeVisible();
+    await expect(page.locator('.el-explore-toggle')).toBeHidden();
+    await noOverflow(page);
+  });
+
+  test('with no seats-not-up data, the Senate draws no 51 line', async ({ page }) => {
+    await page.goto(console_('event=us-2026&office=senate'));
+    await expect(page.locator('.el-chamber-svg')).toBeVisible();
+    await expect(page.locator('.el-tally-mark')).toHaveCount(0);
+    await expect(page.locator('#el-sub')).toContainText('51 for an outright majority');
+  });
+
   test('shows readers no internal stage codes', async ({ page }) => {
     for (const query of ['event=us-2026', 'event=vic-2026', 'event=nsw-2027&office=council', 'event=au-2028', 'event=us-2028']) {
       await page.goto(console_(query));
@@ -811,7 +853,8 @@ test.describe('Elections feed', () => {
     await expect(page.locator('#el-drawer')).toBeVisible();
     await expect(page.locator('#el-drawer-title')).toHaveText('Albert Park');
     await expect(page.locator('.el-chamber-svg .is-selected')).toHaveAttribute('data-seat', 'albert-park');
-    expect(await page.evaluate(() => window.scrollY)).toBe(300);
+    // A new party bar can grow the tally; the browser then anchors the scroll so the content does not jump.
+    expect(Math.abs(await page.evaluate(() => window.scrollY) - 300)).toBeLessThan(40);
     expect(page.url()).toBe(url);
   });
 
@@ -840,6 +883,33 @@ test.describe('Elections feed', () => {
     await expect(mark(page, 'albert-park')).toHaveClass(/is-neutral/);
     await page.locator('#el-feed-toggle').click();
     await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
+  });
+
+  test('each party gets its own bar against the majority line', async ({ page, isMobile }) => {
+    await serve(page, 1);
+    await open(page);
+    const rows = page.locator('.el-tally-row');
+    expect(await rows.count()).toBeGreaterThan(0);
+    await expect(page.locator('.el-tally-bar')).toHaveCount(await rows.count());
+    await expect(page.locator('.el-tally-mark')).toHaveCount(await rows.count());
+    await expect(rows.first()).toContainText(/Labor|Coalition|Greens|Independent|Other/);
+    if (!isMobile) {
+      await page.setViewportSize({ width: 1024, height: 768 });
+      const bar = await page.locator('.el-tally-bar').first().boundingBox();
+      expect(bar.width).toBeGreaterThan(100);
+    }
+  });
+
+  test('status words carry the party and a stale flag, at every width', async ({ page, isMobile }) => {
+    const control = await serve(page, 1);
+    await open(page);
+    await expect(row(page, 'albert-park')).toContainText('Labor');
+    await page.locator('#el-feed-toggle').evaluate((button) => button.click());
+    control.patchSnapshot = (snapshot) => ({ ...snapshot, races: snapshot.races.map((race) => ({ ...race, coverage: 'stale' })) });
+    await page.reload();
+    await expect(row(page, 'albert-park').locator('.el-status')).toContainText('stale');
+    if (!isMobile) await expect(mark(page, 'albert-park')).toHaveClass(/is-stale/);
+    else await expect(row(page, 'albert-park').locator('.el-status')).toBeVisible();
   });
 
   test('a failed check keeps the last good data and says so, then recovers', async ({ page }) => {

@@ -127,6 +127,13 @@ function keepFirstObserved(race, previous) {
   return { ...race, decision: { ...race.decision, firstObservedAt: previous.decision.firstObservedAt } };
 }
 
+// The sample files show a recount as no places returned with votes kept. A first sighting of that may just be early votes.
+function confirmRecount(race, previous) {
+  if (race.counting.status !== 'recount') return race;
+  if (previous?.counting.status === 'recount' || previous?.progress.reported > 0) return race;
+  return { ...race, counting: { ...race.counting, status: 'counting' }, progress: { ...race.progress, reported: 0 } };
+}
+
 function withRescission(race, previous) {
   const wasDecided = previous && ['certified', 'provider_called', 'call_rescinded'].includes(previous.decision.status);
   if (!wasDecided || race.decision.status !== 'uncalled') return race;
@@ -178,6 +185,22 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
       }
     }
 
+    const previous = pointer ? await readJson(join(eventRoot, 'snapshots', `${pointer.snapshotId}.json`)) : null;
+    const before = new Map((previous?.races || []).map((race) => [race.raceId, race]));
+    // A file can parse and still break a rule. It takes the same failure path: old values stay and the page says so.
+    let races = [];
+    if (results.length) {
+      races = mergeRaces(previous, { [source.id]: results.flatMap(({ parsed }) => parsed.races) }, source.id)
+        .map((race) => confirmRecount(withRescission(keepFirstObserved(race, before.get(race.raceId)), before.get(race.raceId)), before.get(race.raceId)))
+        .sort((a, b) => a.raceId.localeCompare(b.raceId));
+      const errors = snapshotErrors({ schemaVersion: 1, eventId: source.eventId, snapshotId: 'candidate', mode: source.synthetic ? 'preview' : 'live', isSynthetic: Boolean(source.synthetic), races });
+      if (errors.length) {
+        const error = new FeedError('schema_drift', errors.slice(0, 20).join('; '));
+        failures.push(...results.splice(0).map(({ feed }) => ({ feed, error })));
+        races = [];
+      }
+    }
+
     const nextFailures = failures.length ? sourceState.failures + 1 : 0;
     const previousSource = pointer?.sources.find((item) => item.sourceId === source.id);
     const worst = failures.reduce((longest, { error }) => Math.max(longest, backoffSeconds(error, nextFailures, source.pollSeconds)), 0);
@@ -187,7 +210,6 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
       await writeJsonAtomic(join(eventRoot, 'private', 'quarantine', `${fetchedAt.replace(/[:.]/g, '-')}-${feed.key}.json`), { at: fetchedAt, feed: feed.key, kind: error.kind, message: error.message });
     }
 
-    const previous = pointer ? await readJson(join(eventRoot, 'snapshots', `${pointer.snapshotId}.json`)) : null;
     let snapshotId = pointer?.snapshotId ?? null;
     let history = pointer?.history ?? [];
     let publishedAt = pointer?.publishedAt ?? null;
@@ -195,10 +217,6 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     const fresh = results.flatMap(({ parsed }) => parsed.races);
 
     if (fresh.length) {
-      const before = new Map((previous?.races || []).map((race) => [race.raceId, race]));
-      const races = mergeRaces(previous, { [source.id]: fresh }, source.id)
-        .map((race) => withRescission(keepFirstObserved(race, before.get(race.raceId)), before.get(race.raceId)))
-        .sort((a, b) => a.raceId.localeCompare(b.raceId));
       const content = sha256(JSON.stringify(races.map((race) => ({ ...race, provenance: { ...race.provenance, fetchedAt: null, publishedAt: null, snapshotId: null, payloadHash: null } }))));
       const sourcePublishedAt = results.map(({ parsed }) => parsed.publishedAt).filter(Boolean).sort().at(-1) ?? null;
 
@@ -236,7 +254,8 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     await writeJsonAtomic(statePath, { feeds, failures: nextFailures, backoffUntil });
 
     if (snapshotId) {
-      const sourceUpdatedAt = fresh.map((race) => race.provenance.sourceUpdatedAt).filter(Boolean).sort().at(-1) ?? previousSource?.sourceUpdatedAt ?? null;
+      // Newest source time ever seen: a run that refreshed only the older house must not move it back.
+      const sourceUpdatedAt = [...fresh.map((race) => race.provenance.sourceUpdatedAt), previousSource?.sourceUpdatedAt].filter(Boolean).sort().at(-1) ?? null;
       await writeJsonAtomic(pointerPath, {
         schemaVersion: 1,
         eventId: source.eventId,

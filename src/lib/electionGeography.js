@@ -139,7 +139,7 @@ function featureElement({ feature, seats: members }, mark, label) {
   const hatch = mark.status === 'leading' ? `;--seat-fill:url(#el-map-hatch-${mark.party.id})` : '';
   const style = mark.party ? ` style="--seat:${mark.party.color}${hatch}"` : '';
   const record = mark.status === 'final' ? ' data-record' : '';
-  return `<path class="el-feature is-${mark.status}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${label(primary, members)}"${record}${style}/>`;
+  return `<path class="el-feature is-${mark.status}${mark.stale ? ' is-stale' : ''}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${label(primary, members)}"${record}${style}/>`;
 }
 
 function hatchPatterns(marks, viewBox) {

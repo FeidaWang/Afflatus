@@ -86,20 +86,26 @@ const COUNTING_WORDS = Object.freeze({
 });
 const WITHDRAWN = Object.freeze({ en: 'Decision withdrawn', zh: '判定已撤销' });
 
+function raceStatusWords(seat, race, event) {
+  const words = statusVocabulary(event);
+  const mark = seatMark(seat, currentStates()[seat.seatId], partiesOf(event));
+  // Party in words as well as colour, for anyone who cannot tell the colours apart.
+  const party = mark.party ? ` · ${L(mark.party)}` : '';
+  if (race.decision.status === 'certified') return `${L(words.final)}${party}`;
+  if (race.decision.status === 'provider_called') return `${L(words.called)} · ${esc(race.decision.authority)}${party}`;
+  if (mark.status === 'unavailable') return L(words.unavailable);
+  if (race.decision.status === 'call_rescinded') return L(WITHDRAWN);
+  if (COUNTING_WORDS[race.counting.status]) return L(COUNTING_WORDS[race.counting.status]);
+  if (mark.status === 'leading') return `${L(words.leading)}${party}`;
+  return L(race.counting.status === 'no_votes' ? words.notStarted : words.counting);
+}
+
 function seatStatus(seat) {
   if (!seat.onBallot) return L(NOT_ON_BALLOT);
   const race = currentRaces().get(seat.seatId);
   if (!race) return L(NO_RESULT);
-  const event = eventById(state.event);
-  const words = statusVocabulary(event);
-  if (race.decision.status === 'certified') return L(words.final);
-  if (race.decision.status === 'provider_called') return `${L(words.called)} · ${esc(race.decision.authority)}`;
-  const mark = seatMark(seat, currentStates()[seat.seatId], partiesOf(event));
-  if (mark.status === 'unavailable') return L(words.unavailable);
-  if (race.decision.status === 'call_rescinded') return L(WITHDRAWN);
-  if (COUNTING_WORDS[race.counting.status]) return L(COUNTING_WORDS[race.counting.status]);
-  if (mark.status === 'leading') return L(words.leading);
-  return L(race.counting.status === 'no_votes' ? words.notStarted : words.counting);
+  const stale = raceFreshness(race, shown.pointer) === 'stale';
+  return `${raceStatusWords(seat, race, eventById(state.event))}${stale ? ` · ${T('stale', '已过时')}` : ''}`;
 }
 // Coverage is measured in contests: a seat that is not on the ballot can never report.
 const contestCount = (seats) => seats.filter((seat) => seat.onBallot).length;
@@ -155,7 +161,7 @@ function renderHub(now) {
   const others = ELECTION_EVENTS.filter((event) => event !== next);
   $('el-view').innerHTML = `${renderRail(now)}${next ? renderNextCard(next, now) : ''}
     <ul class="el-cards">${others.map((event) => renderCard(event, now)).join('')}</ul>
-    <p class="el-foot">${T('Times shown in Australia/Melbourne and America/New_York. Seat numbers, dates and sources are public institutional facts pending verification. No results are loaded.', '时间以澳大利亚墨尔本和美国纽约时区显示。席位数、日期与来源是公开制度事实，尚待核验。本页未加载任何结果。')}</p>`;
+    <p class="el-foot">${T('Times shown in Australia/Melbourne and America/New_York. Seat numbers, dates and electorate names were checked against official sources in November 2026. No results are loaded.', '时间以澳大利亚墨尔本和美国纽约时区显示。席位数、日期和选区名称已于 2026 年 11 月对照官方来源核对。本页未加载任何结果。')}</p>`;
 }
 
 function renderRail(now) {
@@ -186,7 +192,7 @@ function renderNextCard(event, now) {
       <p class="el-next-facts">${L(event.pollsClose)} · ${officeFacts(event)} · ${L(event.extraFact)}</p>
       <dl class="el-kv">
         <dt>${T('Source', '来源')}</dt><dd>${L(event.feed)}</dd>
-        <dt>${T('Mode on the night', '当晚模式')}</dt><dd>${T('Live only if the source passes verification; otherwise results after the count. Never a fake LIVE.', '来源通过核验才显示实时；否则在计票后发布结果。绝不冒充实时。')}</dd>
+        <dt>${T('Mode on the night', '当晚模式')}</dt><dd>${T('Live only if the source passes verification and allows it. Otherwise this page shows no results: follow the official site. Never a fake LIVE.', '来源通过核验并获准才显示实时。否则本页不显示结果，请看官方网站。绝不冒充实时。')}</dd>
       </dl>
       <a class="el-btn" href="${eventHref(event.id)}" data-nav>${T(`Open the ${L(event.short)} console`, `打开${L(event.short)} 控制台`)} →</a>
     </div>
@@ -293,15 +299,23 @@ function renderTally(event, office, seats, unit) {
   }).join('');
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
-  const segments = counts ? parties.map((party) => segment(party, counts[party.id].decided, 'decided')).join('') + parties.map((party) => segment(party, counts[party.id].leading, 'leading')).join('') : '';
+  // One bar per party, each read against the line on its own. Stacked, parties together would cross a majority nobody holds.
+  const marker = (withLabel) => (office.heldSeatsUnknown ? '' : `<span class="el-tally-mark" style="left:${majorityAt}%">${withLabel ? `<span>${L(office.majorityLabel)}</span>` : ''}</span>`);
+  const active = counts ? parties.filter((party) => counts[party.id].decided || counts[party.id].leading) : [];
+  const bars = active.length
+    ? `<div class="el-tally-rows">${active.map((party, index) => `<div class="el-tally-row"><span class="el-tally-name">${L(party)}</span><div class="el-tally-bar">${segment(party, counts[party.id].decided, 'decided')}${segment(party, counts[party.id].leading, 'leading')}${marker(index === 0)}</div></div>`).join('')}</div>`
+    : `<div class="el-tally-bar">${marker(true)}</div>`;
+  // A declared region has no result per seat, so it has no colour. It is still not "no decision".
+  const declaredRegion = shown ? seats.filter((seat) => {
+    const race = currentRaces().get(seat.seatId);
+    return seat.onBallot && race?.seatIds.length > 1 && ['certified', 'provider_called'].includes(race.decision.status);
+  }).length : 0;
   // A decision or lead for someone with no listed party has no colour, but it is not "no decision".
   const unlisted = shown ? seats.filter((seat) => seat.onBallot && states[seat.seatId]?.status !== 'unavailable' && states[seat.seatId] && seatMark(seat, states[seat.seatId], parties).status === 'neutral').length : 0;
-  const open = shown ? tally.neutral + tally.unavailable - unlisted : office.seats - tally.off;
+  const open = shown ? tally.neutral + tally.unavailable - unlisted - declaredRegion : office.seats - tally.off;
   return `<section class="el-tally" id="el-tally" aria-label="${T('Seat tally', '席位统计')}">
-    <div class="el-tally-bar">${segments}
-      <span class="el-tally-mark" style="left:${majorityAt}%"><span>${L(office.majorityLabel)}</span></span>
-    </div>
-    <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${shown ? T('No decision or lead', '无判定或领先') : L(NO_RESULT)}<b>${open}</b></li>${unlisted ? `<li><i class="el-neutral"></i>${T('Decision or lead, no listed party', '有判定或领先，无所列党派')}<b>${unlisted}</b></li>` : ''}${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
+    ${bars}
+    <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${shown ? T('No decision or lead', '无判定或领先') : L(NO_RESULT)}<b>${open}</b></li>${declaredRegion ? `<li><i class="el-neutral"></i>${T('Declared, not allocated to seats', '已宣布，未按席位分配')}<b>${declaredRegion}</b></li>` : ''}${unlisted ? `<li><i class="el-neutral"></i>${T('Decision or lead, no listed party', '有判定或领先，无所列党派')}<b>${unlisted}</b></li>` : ''}${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
     ${office.majorityNote ? `<p class="el-note">${L(office.majorityNote)}</p>` : ''}
     ${shown ? `<p class="el-note">${T('Large numbers are seats with a named decision. Leads are counted apart. This page never declares who controls a chamber.', '大号数字是有具名判定的席位，领先单独计数。本页不宣布议院控制权。')}</p>` : ''}
     <p class="el-note el-sr">${office.seats} ${unit}</p>
@@ -503,7 +517,7 @@ const mapResize = typeof ResizeObserver === 'function' ? new ResizeObserver(() =
 function tileLook(seat) {
   if (!seat.onBallot) return { className: 'el-tile is-off', style: '' };
   const mark = seatMark(seat, currentStates()[seat.seatId], partiesOf(eventById(state.event)));
-  return { className: `el-tile${mark.status === 'neutral' ? '' : ` is-${mark.status}`}`, style: mark.party ? `--seat:${mark.party.color}` : '' };
+  return { className: `el-tile${mark.status === 'neutral' ? '' : ` is-${mark.status}`}${mark.stale ? ' is-stale' : ''}`, style: mark.party ? `--seat:${mark.party.color}` : '' };
 }
 
 function renderTiles(seats) {
@@ -551,7 +565,7 @@ function renderRaces() {
   const plain = (label, optional = true) => `<th scope="col" class="${optional ? 'el-opt' : ''} el-num">${label}</th>`;
   const head = us
     ? [heading('seat', T('Seat', '席位')), heading('group', T('State', '州'), true), plain(T('Leader', '领先者')), plain(T('Margin', '差距')), plain(T('% reporting', '已报告'), false), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))]
-    : [heading('seat', T('Electorate', '选区')), plain(T('State', '州')), plain(shown ? T('Places', '投票点') : T('% counted', '已计'), false), plain(T('Primary leader', '初选领先')), plain(T('TCP', '两候选人')), plain(T('Swing', '摆动')), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))];
+    : [heading('seat', T('Electorate', '选区')), plain(T('State', '州')), plain(shown ? T('Places', '投票点') : T('% counted', '已计'), false), plain(T('Primary leader', '第一优先票领先')), plain(T('TCP', '两候选人')), plain(T('Swing', '摆动')), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))];
   const races = currentRaces();
   const dash = (optional = true, race = null) => `<td class="${optional ? 'el-opt' : ''} el-num" title="${race ? NOT_PUBLISHED() : NOT_LOADED()}">${DASH}</td>`;
   const value = (text, optional, race) => (text === null ? dash(optional, race) : `<td class="${optional ? 'el-opt' : ''} el-num">${text}</td>`);
@@ -622,10 +636,12 @@ function formatAge(seconds) {
 
 function formatTime(iso) {
   if (!iso) return DASH;
-  const { family, timeLabel } = eventById(state.event);
+  const { family } = eventById(state.event);
   const timeZone = family === 'us' ? 'America/New_York' : 'Australia/Melbourne';
-  const text = new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-AU', { timeZone, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(iso));
-  return `${text} ${family === 'us' ? timeLabel : T('Melbourne', '墨尔本')}`;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return DASH;
+  const text = new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-AU', { timeZone, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(date);
+  return `${text} ${family === 'us' ? 'ET' : T('Melbourne', '墨尔本')}`;
 }
 
 // Each race carries its own age, so a fresh national check cannot hide one stale contest.
@@ -718,7 +734,7 @@ function feedStatusText(source) {
 function footText() {
   if (shown?.snapshot.isSynthetic) return T('Synthetic test data on this computer only. No real results are loaded, and none of this is published.', '合成测试数据，只在本机显示。未加载任何真实结果，也没有对外发布。');
   if (shown) return T('Unofficial counts from the named source. Check the official site for declared results.', '来自具名来源的非正式计票。正式结果以官方网站为准。');
-  return T('Seat numbers, dates and sources are public institutional facts pending verification. No results are loaded.', '席位数、日期与来源是公开制度事实，尚待核验。本页未加载任何结果。');
+  return T('Seat numbers, dates and electorate names were checked against official sources in November 2026. No results are loaded.', '席位数、日期和选区名称已于 2026 年 11 月对照官方来源核对。本页未加载任何结果。');
 }
 
 function renderFeedControls() {
@@ -737,7 +753,7 @@ function renderChanges() {
   const changes = shown?.snapshot.changes || [];
   if (!shown) return '';
   const raceName = (raceId) => shown.snapshot.races.find((race) => race.raceId === raceId)?.contestName || raceId;
-  const delta = (change) => (change.delta ? ` ${change.delta > 0 ? '+' : ''}${change.delta.toLocaleString('en-AU')}` : '');
+  const delta = (change) => (change.delta ? ` ${change.delta > 0 ? '+' : ''}${esc(change.delta.toLocaleString('en-AU'))}` : '');
   return `<div class="el-changes">
       <p class="el-eyebrow">${T('Changes in this snapshot', '本快照的变化')}</p>
       ${changes.length ? `<ul>${changes.slice(0, 6).map((change) => `<li><b>${L(CHANGE_WORDS[change.type])}</b>${delta(change)} · ${esc(raceName(change.raceId))}</li>`).join('')}</ul>${changes.length > 6 ? `<p class="el-note">${T(`And ${changes.length - 6} more.`, `另有 ${changes.length - 6} 项。`)}</p>` : ''}` : `<p class="el-note">${T('None recorded.', '没有记录。')}</p>`}
@@ -797,7 +813,7 @@ function renderConsoleStrip(event, office, seats) {
 }
 
 function setShown(snapshot, pointer) {
-  shown = snapshot ? { snapshot, pointer, states: seatStates(snapshot), races: raceIndex(snapshot) } : null;
+  shown = snapshot ? { snapshot, pointer, states: seatStates(snapshot, pointer), races: raceIndex(snapshot) } : null;
 }
 
 function fetchFeedJson(url) {
@@ -952,13 +968,13 @@ function renderCandidates(race) {
 function renderTwoCandidate(race) {
   const two = race.twoCandidate;
   if (!two) return '';
-  if (two.status === 'withheld') return `<p class="el-note">${T('The two-candidate count is withheld by the source for this seat. First preferences are unaffected.', '来源暂不公布此席位的两候选人计票。初选票不受影响。')}</p>`;
+  if (two.status === 'withheld') return `<p class="el-note">${T('The two-candidate count is withheld by the source for this seat. First preferences are unaffected.', '来源暂不公布此席位的两候选人计票。第一优先票不受影响。')}</p>`;
   if (two.status !== 'available') return `<p class="el-note">${T('No two-candidate count has been published for this seat yet.', '此席位尚未发布两候选人计票。')}</p>`;
   const known = two.candidates.every((item) => item.votes !== null);
   const sum = known ? two.candidates.reduce((total, item) => total + item.votes, 0) : 0;
   const rows = two.candidates.map((item) => {
     const candidate = race.candidates.find((entry) => entry.candidateId === item.candidateId);
-    return `<tr><td>${esc(candidate?.name) || DASH}</td><td class="el-num">${item.votes === null ? DASH : item.votes.toLocaleString('en-AU')}</td><td class="el-num">${sum && item.votes !== null ? `${((item.votes / sum) * 100).toFixed(1)}%` : DASH}</td></tr>`;
+    return `<tr><td>${esc(candidate?.name) || DASH}</td><td class="el-num">${item.votes === null ? DASH : esc(item.votes.toLocaleString('en-AU'))}</td><td class="el-num">${sum && item.votes !== null ? `${((item.votes / sum) * 100).toFixed(1)}%` : DASH}</td></tr>`;
   }).join('');
   return `<table class="el-cands el-cands-two">
       <caption>${T('Two-candidate count · indicative', '两候选人计票 · 仅供参考')}</caption>
@@ -1110,7 +1126,27 @@ function go(next, { push = true } = {}) {
   const url = `${window.location.pathname}${serializeState(next)}`;
   const moved = applyState(next);
   window.history[push ? 'pushState' : 'replaceState'](null, '', url);
+  // The header's language link carries the query string, so it must follow every move.
+  window.dispatchEvent(new Event('afflatus-locationchange'));
   if (moved) window.scrollTo({ top: 0 });
+}
+
+const HUB_TITLE = document.title;
+
+function syncPageTitle() {
+  const event = eventById(state.event);
+  if (!event) {
+    document.title = HUB_TITLE;
+    return;
+  }
+  document.title = `${L(event.short)} · ${L(officeById(event, state.office).fullName)} · AFFLATUS`;
+}
+
+// A whole view was redrawn, so the control that was pressed may be gone. Put focus somewhere that says where we are.
+function focusViewTitle() {
+  const title = $('el-title');
+  title.setAttribute('tabindex', '-1');
+  title.focus({ preventScroll: true });
 }
 
 // Returns true when the whole console was redrawn for another event or office.
@@ -1128,6 +1164,7 @@ function applyState(next) {
   zoomedSeat = null;
   table = { key: 'seat', direction: 'asc', expanded: false };
   render();
+  syncPageTitle();
   return true;
 }
 
@@ -1137,10 +1174,11 @@ let returnFocus = null;
 function selectSeat(seatId, trigger) {
   returnFocus = trigger || null;
   go(withRace(state, seatId), { push: !state.raceId });
-  const desktop = window.matchMedia('(min-width: 769px)').matches;
-  // The sheet covers the lower page on a phone, so bring the map above it.
-  const map = desktop ? null : trigger?.closest?.('.el-map-svg');
-  $('el-drawer-title')?.focus({ preventScroll: desktop || Boolean(map) });
+  const beside = window.matchMedia('(min-width: 1280px)').matches;
+  const phone = window.matchMedia('(max-width: 640px)').matches;
+  // The sheet covers the lower page on a phone, so bring the map above it. Between the two, the details sit below the map.
+  const map = phone ? trigger?.closest?.('.el-map-svg') : null;
+  $('el-drawer-title')?.focus({ preventScroll: beside || Boolean(map) });
   // Computed by hand: WebKit misplaces scrollIntoView on an SVG element.
   if (map) window.scrollTo({ top: window.scrollY + map.getBoundingClientRect().top - ($('afflatus-header')?.offsetHeight || 0) - 8 });
 }
@@ -1172,8 +1210,12 @@ document.addEventListener('click', (event) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     event.preventDefault();
     go(parseState(new URL(target.href).search));
+    focusViewTitle();
   } else if (target.matches('[data-office]')) {
-    go(withOffice(state, target.dataset.office));
+    const { office } = target.dataset;
+    go(withOffice(state, office));
+    document.querySelector(`[data-office="${office}"]`)?.focus();
+    $('el-live').textContent = L(officeById(eventById(state.event), office).fullName);
   } else if (target.matches('[data-geo]')) {
     go(withGeography(state, { view: target.dataset.geo }), { push: false });
     document.querySelector(`[data-geo="${target.dataset.geo}"]`)?.focus();
@@ -1281,8 +1323,10 @@ window.addEventListener('afflatus-lang', (event) => {
   lang = event.detail === 'zh' ? 'zh' : 'en';
   activeMap = null;
   render();
+  syncPageTitle();
 });
 
 // A URL that named an invalid event, office or race is corrected rather than echoed.
 window.history.replaceState(null, '', `${window.location.pathname}${serializeState(state)}${window.location.hash}`);
 render();
+syncPageTitle();

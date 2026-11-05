@@ -15,7 +15,7 @@ export const PARTIES = Object.freeze({
     { id: 'labor', en: 'Labor', zh: '工党', color: '#C8302E' },
     { id: 'coalition', en: 'Coalition', zh: '联盟党', color: '#1F4E9C' },
     { id: 'greens', en: 'Greens', zh: '绿党', color: '#4C8A1F' },
-    { id: 'teal', en: 'Ind / Teal', zh: '独立 / 青色', color: '#0F8FA6' },
+    { id: 'teal', en: 'Independent', zh: '独立', color: '#0F8FA6' },
     { id: 'other', en: 'Other', zh: '其他', color: '#7B4FB0' },
   ],
 });
@@ -26,16 +26,16 @@ export const NOT_ON_BALLOT = Object.freeze({ en: 'Not on ballot', zh: '本届不
 
 const STATUS_VOCABULARY = {
   us: {
-    notStarted: { en: 'Polls open · no results', zh: '投票中 · 尚无结果' },
+    notStarted: { en: 'No votes reported', zh: '尚未报告票数' },
     counting: { en: 'Reporting', zh: '计票中' },
-    leading: { en: 'Leading (provider named)', zh: '领先（标注提供方）' },
+    leading: { en: 'Leading', zh: '领先' },
     called: { en: 'Called by provider', zh: '提供方判定' },
     final: { en: 'Certified', zh: '已认证' },
     unavailable: { en: 'Source unavailable', zh: '来源不可用' },
   },
   au: {
     notStarted: { en: 'Not yet counting', zh: '尚未开始计票' },
-    counting: { en: 'Counted, with primary votes', zh: '计票中（含初选票）' },
+    counting: { en: 'Counted, with primary votes', zh: '计票中（含第一优先票）' },
     leading: { en: 'Leading on TCP', zh: '两候选人优先票领先' },
     called: { en: 'Media projection', zh: '媒体预测' },
     final: { en: 'Declared by {authority}', zh: '由 {authority} 正式宣布' },
@@ -74,7 +74,7 @@ export const ELECTION_EVENTS = Object.freeze([
     officialUrl: 'https://www.eac.gov/election-officials/election-results-canvass-and-certification',
     officialLabel: { en: 'How results are certified (EAC)', zh: '结果如何认证（EAC）' },
     votingSystem: { en: 'Plurality in most states; some use ranked choice or runoffs', zh: '多数州为简单多数，部分州用排序复选或决选' },
-    note: { en: 'A lead is not a race call. Calls come from named providers; certification comes later, state by state.', zh: '领先不等于判定。判定来自具名提供方，各州之后才逐一认证。' },
+    note: { en: 'A lead is not a race call. Calls come from named providers; certification comes later, state by state. Some contests can go to a later runoff.', zh: '领先不等于判定。判定来自具名提供方，各州之后才逐一认证。部分比赛可能之后还有决选。' },
     extraFact: { en: 'Senate 35 of 100 on ballot', zh: '参议院 100 席中 35 席改选' },
     offices: [
       HOUSE_US,
@@ -84,6 +84,8 @@ export const ELECTION_EVENTS = Object.freeze([
         fullName: { en: 'Senate', zh: '参议院' },
         seats: 100,
         majority: 51,
+        // Only 35 are up and the seats not up have no source yet, so no bar here can be read against 51.
+        heldSeatsUnknown: true,
         geometry: 'fan',
         majorityLabel: { en: '51 for an outright majority', zh: '51 席为绝对多数' },
         majorityNote: { en: 'A 50–50 split depends on the Vice President.', zh: '50 比 50 时取决于副总统。' },
@@ -109,7 +111,7 @@ export const ELECTION_EVENTS = Object.freeze([
     feed: { en: 'VEC results feed: not connected, access and permission to publish pending', zh: 'VEC 结果数据：尚未接入，访问权限和公开许可待定' },
     officialUrl: 'https://www.vec.vic.gov.au/',
     officialLabel: { en: 'Victorian Electoral Commission', zh: '维多利亚州选举委员会' },
-    votingSystem: { en: 'Assembly: full preferential. Council: proportional (STV), 8 regions × 5', zh: '下院：全优先制。上院：比例制（STV），8 个选区各 5 席' },
+    votingSystem: { en: 'Assembly: full preferential. Council: proportional (STV), 8 regions × 5', zh: '下院：全优先制。上院：比例制（STV），8 个大区各 5 席' },
     note: { en: 'A lead on TCP is not a declaration. The VEC declares results; media projections are labelled as such.', zh: '两候选人优先票领先不等于当选。结果由 VEC 宣布，媒体预测会单独标注。' },
     extraFact: { en: 'Legislative Council 40', zh: '立法院 40 席' },
     offices: [

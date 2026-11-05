@@ -147,8 +147,9 @@ export function seatMark(seat, state, parties = []) {
   if (state?.status === 'unavailable') return { status: 'unavailable' };
   const party = parties.find((item) => item.id === state?.party);
   if (!party || !PARTY_STATUSES.has(state?.status)) return { status: 'neutral' };
-  if (state.status === 'final' && !state.record) return { status: 'called', party };
-  return { status: state.status, party };
+  const stale = state.stale ? { stale: true } : {};
+  if (state.status === 'final' && !state.record) return { status: 'called', party, ...stale };
+  return { status: state.status, party, ...stale };
 }
 
 export function tallySeats(catalogue, states = {}, parties = []) {
@@ -162,7 +163,7 @@ function markElement(layout, slot, mark, ariaLabel) {
   const hatch = mark.status === 'leading' ? `;--seat-fill:url(#el-hatch-${mark.party.id})` : '';
   const style = mark.party ? ` style="--seat:${mark.party.color}${hatch}"` : '';
   const record = mark.status === 'final' ? ' data-record' : '';
-  const shared = `class="el-seat is-${mark.status}" data-seat="${seat.seatId}" tabindex="-1" role="button" aria-pressed="false" aria-label="${ariaLabel}"${record}${style}`;
+  const shared = `class="el-seat is-${mark.status}${mark.stale ? ' is-stale' : ''}" data-seat="${seat.seatId}" tabindex="-1" role="button" aria-pressed="false" aria-label="${ariaLabel}"${record}${style}`;
   if (!layout.desk) return `<circle ${shared} cx="${slot.x}" cy="${slot.y}" r="${slot.radius}"/>`;
   const { width, height } = layout.desk;
   return `<rect ${shared} x="${round(slot.x - width / 2)}" y="${round(slot.y - height / 2)}" width="${width}" height="${height}" transform="rotate(${slot.rotation} ${slot.x} ${slot.y})"/>`;

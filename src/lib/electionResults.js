@@ -15,6 +15,7 @@ const MODES = new Set(['preview', 'live']);
 const isTime = (value) => value === null || (typeof value === 'string' && !Number.isNaN(Date.parse(value)));
 const isCount = (value) => value === null || (Number.isInteger(value) && value >= 0);
 const isUrl = (value) => typeof value === 'string' && /^https?:\/\//.test(value);
+const CHANGE_TYPES = new Set(['new_batch', 'correction', 'rcv_transition', 'count_basis_change', 'call', 'call_rescinded', 'decision_changed', 'certification', 'source_switch', 'tcp_pair_change']);
 
 function decisionErrors(race, ids) {
   const name = race.raceId;
@@ -45,6 +46,7 @@ function raceErrors(race) {
   const ids = new Set(race.candidates.map((candidate) => candidate.candidateId));
   if (ids.size !== race.candidates.length) errors.push(`${name}: duplicate candidate`);
   if (!race.candidates.every((candidate) => isCount(candidate.votes))) errors.push(`${name}: votes`);
+  if (!(race.twoCandidate?.candidates || []).every((candidate) => isCount(candidate.votes))) errors.push(`${name}: two-candidate votes`);
   if (!isCount(race.progress?.reported ?? null) || !isCount(race.progress?.total ?? null)) errors.push(`${name}: progress`);
   // A multi-member contest fills its whole region, so part of one cannot count towards a chamber.
   if (Number.isInteger(race.positions) && race.seatIds.length !== race.positions) errors.push(`${name}: seats do not match positions`);
@@ -88,6 +90,10 @@ export function snapshotErrors(snapshot) {
   if (typeof snapshot.isSynthetic !== 'boolean') errors.push('isSynthetic');
   if (snapshot.mode === 'live' && snapshot.isSynthetic) errors.push('synthetic data cannot be live');
   if (!Array.isArray(snapshot.races)) return [...errors, 'races'];
+  for (const change of snapshot.changes || []) {
+    if (!CHANGE_TYPES.has(change.type)) errors.push('unknown change');
+    if (change.delta !== undefined && change.delta !== null && !Number.isInteger(change.delta)) errors.push('change delta');
+  }
   const ids = new Set(snapshot.races.map((race) => race.raceId));
   if (ids.size !== snapshot.races.length) errors.push('duplicate race');
   return [...errors, ...snapshot.races.flatMap(raceErrors), ...catalogueErrors(snapshot)];
@@ -99,7 +105,11 @@ export function pointerErrors(pointer) {
   if (!pointer.eventId || !Number.isInteger(pointer.revision)) errors.push('identity');
   if (!pointer.snapshotId || !/^[\w.-]+$/.test(pointer.snapshotId)) errors.push('snapshot id');
   if (!Array.isArray(pointer.history) || !Array.isArray(pointer.sources)) errors.push('history');
-  else if (!pointer.history.every((entry) => /^[\w.-]+$/.test(entry.snapshotId))) errors.push('history id');
+  else if (!pointer.history.every((entry) => /^[\w.-]+$/.test(entry.snapshotId) && isTime(entry.publishedAt ?? null))) errors.push('history id');
+  for (const source of Array.isArray(pointer.sources) ? pointer.sources : []) {
+    if (!['lastCheckedAt', 'lastSuccessAt', 'sourceUpdatedAt'].every((key) => isTime(source[key] ?? null))) errors.push('source time');
+  }
+  if (!isTime(pointer.publishedAt ?? null)) errors.push('published time');
   return errors;
 }
 
@@ -212,7 +222,7 @@ export function contestLeader(race) {
 }
 
 /** seatId -> mark state for chamberSvg and mapSvg. A multi-member contest has no per-seat result, so stays neutral. */
-export function seatStates(snapshot) {
+export function seatStates(snapshot, pointer = null) {
   const states = {};
   for (const race of snapshot?.races || []) {
     if (race.coverage === 'not_covered' || race.coverage === 'source_error') {
@@ -228,6 +238,9 @@ export function seatStates(snapshot) {
         const leader = contestLeader(race);
         if (leader) states[race.seatIds[0]] = { status: 'leading', party: leader.partyId };
       }
+      // Marks must not look fresh when the data under them is not.
+      const seatState = states[race.seatIds[0]];
+      if (seatState && raceFreshness(race, pointer) === 'stale') seatState.stale = true;
     }
   }
   return states;

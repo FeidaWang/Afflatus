@@ -30,6 +30,7 @@ npm run build && node scripts/elections/serve-local.mjs --store /tmp/el-store
 | 5 | 选定运行环境和存储（见下），需要站主授权 | 站主 | 11-25 前 |
 | 6 | 11-25 试运行：在**私有存储**里跑通一次，核对时间和字段。条款 5 禁止就试运行数据对外作任何表述，不得公开 | 开发 | 11-25 |
 | 7 | 只有第 2 条得到肯定答复后，才把 `publicRedistributionAllowed` 和 `enabled` 改为 true 并设置 `ELECTION_FEED_BASE` | 站主决定 | 11-28 前 |
+| 8 | 接任何美国来源前：按比赛校验（一场不合规不能拖垮全部）、决选和延后大选的日期、参议院留任席位来源。见 `M7.md` H4、M14–M16 | 开发 | 接美国来源前 |
 
 ### 运行环境（尚未选定）
 

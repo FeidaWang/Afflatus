@@ -283,6 +283,50 @@ describe('collector', () => {
     expect(latest().changes).toEqual([expect.objectContaining({ type: 'correction', delta: -8 })]);
   });
 
+  it('treats a file that breaks a rule as a failure: quarantined, old data kept, and the pointer says so', async () => {
+    dropLower('20261128_200500', [albert()]);
+    await run(NOW);
+    const before = race('albert-park');
+    const revision = pointer().revision;
+    const broken = contestXml({ name: 'Albert Park', votes: { a: 11, b: 5 } }).replace('<NumberOfPositions>1<', '<NumberOfPositions>2<');
+    dropLower('20261128_201000', [broken], { created: '2026-11-28T20:10:00' });
+    const result = await run(NOW + 300000);
+    expect(result.outcome).toBe('failed');
+    expect(result.kinds).toContain('schema_drift');
+    expect(race('albert-park')).toEqual(before);
+    expect(pointer().revision).toBe(revision + 1);
+    expect(pointer().sources[0].status).toBe('error');
+    expect(readdirSync(join(store, 'vic-2026', 'private', 'quarantine'))).toHaveLength(1);
+  });
+
+  it('does not call a first file with no places returned a recount', async () => {
+    dropLower('20261128_200500', [contestXml({ name: 'Albert Park', votes: { a: 7, b: 8 }, returned: 0 })]);
+    await run(NOW);
+    expect(race('albert-park').counting.status).toBe('counting');
+    expect(race('albert-park').progress.reported).toBe(0);
+  });
+
+  it('calls it a recount once places had been returned before', async () => {
+    dropLower('20261128_200500', [albert()]);
+    await run(NOW);
+    dropLower('20261128_201000', [contestXml({ name: 'Albert Park', votes: { a: 11, b: 5 }, returned: 0 })], { created: '2026-11-28T20:10:00' });
+    await run(NOW + 300000);
+    expect(race('albert-park').counting.status).toBe('recount');
+    dropLower('20261128_201500', [contestXml({ name: 'Albert Park', votes: { a: 12, b: 5 }, returned: 0 })], { created: '2026-11-28T20:15:00' });
+    await run(NOW + 600000);
+    expect(race('albert-park').counting.status).toBe('recount');
+  });
+
+  it('keeps the newest source time when only an older house is refreshed', async () => {
+    const transport = directoryTransport(feedDir);
+    dropLower('20261128_200500', [contestXml({ name: 'Albert Park', votes: { a: 10, b: 5 }, updated: '2026-11-28T20:00:00+11:00' })]);
+    await collectOnce({ source: lowerOnly, store, now: NOW, force: true, transport });
+    const first = pointer().sources[0].sourceUpdatedAt;
+    dropLower('20261128_201000', [contestXml({ name: 'Albert Park', votes: { a: 11, b: 5 }, updated: '2026-11-28T19:30:00+11:00' })], { created: '2026-11-28T20:10:00' });
+    await collectOnce({ source: lowerOnly, store, now: NOW + 300000, force: true, transport });
+    expect(pointer().sources[0].sourceUpdatedAt).toBe(first);
+  });
+
   it('ignores an older file served by a cache, and rolls nothing back', async () => {
     dropLower('20261128_200500', [albert({ declared: true, elected: 'a' })]);
     await run(NOW);
