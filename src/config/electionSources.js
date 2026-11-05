@@ -58,7 +58,7 @@ export const ELECTION_SOURCES = Object.freeze([
     expectedEventName: null,
     allowedHosts: [],
     feeds: [],
-    blockedBy: 'Caching and redistribution are not addressed, no race carries its own time, and no official cross-check has run. See docs/elections/M1.md.',
+    blockedBy: 'Caching and redistribution are not addressed, no race carries its own time, and only North Carolina has been cross-checked, once. See docs/elections/M1.md.',
   },
 ]);
 
