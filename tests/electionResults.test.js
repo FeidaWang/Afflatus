@@ -1,0 +1,369 @@
+import { describe, expect, it, vi } from 'vitest';
+import { ELECTION_FEED_BASE, ELECTION_SOURCES } from '../src/config/electionSources.js';
+import { PARTIES } from '../src/lib/electionRules.js';
+import { seatCatalogue } from '../src/lib/electionCatalogue.js';
+import { seatMark, tallySeats } from '../src/lib/chamberLayout.js';
+import {
+  ageSeconds, contestLeader, coveredSeats, feedAllowed, isLocalHost, partyTally, pointerErrors, primaryLeader, raceChanges, raceFreshness, raceIndex, resolveRaces, seatStates, snapshotErrors,
+} from '../src/lib/electionResults.js';
+import { HIDDEN_CHECK_MS, VISIBLE_CHECK_MS, createFeedController } from '../src/lib/electionFeed.js';
+
+const candidate = (id, votes, partyId = 'dem') => ({ candidateId: id, name: id, party: partyId, partyId, votes });
+const race = (overrides = {}) => ({
+  raceId: 'us-2026/house/NC-01',
+  office: 'house',
+  seatIds: ['NC-01'],
+  candidates: [candidate('a', 100, 'dem'), candidate('b', 90, 'rep')],
+  totals: { formal: 190, informal: null, total: null },
+  twoCandidate: null,
+  leaderBasis: 'votes',
+  coverage: 'available',
+  counting: { method: 'plurality', status: 'counting', round: null },
+  decision: { status: 'uncalled', candidateIds: [], authority: null, evidenceUrl: null, decidedAt: null, firstObservedAt: null },
+  progress: { unit: 'precincts', reported: 10, total: 20, isEstimate: false },
+  provenance: { sourceId: 'test', sourceUrl: null, sourceUpdatedAt: '2026-11-04T01:00:00.000Z', fetchedAt: '2026-11-04T01:01:00.000Z', publishedAt: null },
+  ...overrides,
+});
+const called = (candidateId = 'a') => ({ status: 'provider_called', candidateIds: [candidateId], authority: 'Provider X', evidenceUrl: 'https://example.org', decidedAt: '2026-11-04T02:00:00.000Z', firstObservedAt: null });
+const certified = (candidateId = 'a') => ({ status: 'certified', candidateIds: [candidateId], authority: 'State board', evidenceUrl: 'https://example.org', decidedAt: null, firstObservedAt: '2026-11-20T02:00:00.000Z' });
+const snapshot = (overrides = {}) => ({ schemaVersion: 1, snapshotId: 's1', eventId: 'us-2026', mode: 'preview', isSynthetic: true, sourceIds: ['vec-sample'], races: [race()], ...overrides });
+
+describe('snapshot validation', () => {
+  it('accepts a coherent snapshot', () => {
+    expect(snapshotErrors(snapshot())).toEqual([]);
+  });
+
+  it.each([
+    ['synthetic data marked live', { mode: 'live' }],
+    ['an unknown schema', { schemaVersion: 2 }],
+    ['no identity', { snapshotId: null }],
+    ['a duplicate race', { races: [race(), race()] }],
+    ['a zero-for-missing type', { races: [race({ candidates: [candidate('a', '100')] })] }],
+    ['negative votes', { races: [race({ candidates: [candidate('a', -1)] })] }],
+    ['a duplicate candidate', { races: [race({ candidates: [candidate('a', 1), candidate('a', 2)] })] }],
+    ['a call with no authority', { races: [race({ decision: { ...called(), authority: null } })] }],
+    ['a call with no time', { races: [race({ decision: { ...called(), decidedAt: null } })] }],
+    ['a call for nobody', { races: [race({ decision: { ...called(), candidateIds: [] } })] }],
+    ['a call for a stranger', { races: [race({ decision: called('z') })] }],
+    ['an impossible coverage state', { races: [race({ coverage: 'final' })] }],
+    ['a bad source time', { races: [race({ provenance: { ...race().provenance, sourceUpdatedAt: 'yesterday' } })] }],
+  ])('rejects %s', (_name, overrides) => {
+    expect(snapshotErrors(snapshot(overrides)).length).toBeGreaterThan(0);
+  });
+
+  it('allows null for every unknown', () => {
+    const unknown = race({ candidates: [candidate('a', null)], provenance: { sourceId: 'x', sourceUpdatedAt: null, fetchedAt: null, publishedAt: null } });
+    expect(snapshotErrors(snapshot({ races: [unknown] }))).toEqual([]);
+  });
+
+  it('rejects a path in a replay history id', () => {
+    expect(pointerErrors({ schemaVersion: 1, eventId: 'x', revision: 1, snapshotId: 's1', history: [{ snapshotId: '../secret' }], sources: [] })).toContain('history id');
+  });
+
+  it('rejects a pointer with a path in its snapshot id', () => {
+    expect(pointerErrors({ schemaVersion: 1, eventId: 'x', revision: 1, snapshotId: '../../etc/passwd', history: [], sources: [] })).toContain('snapshot id');
+  });
+});
+
+describe('publication gate', () => {
+  it('has no feed URL and no source cleared for the public', () => {
+    expect(ELECTION_FEED_BASE).toBeNull();
+    for (const source of ELECTION_SOURCES) {
+      expect(source.publicRedistributionAllowed, source.id).toBe(false);
+      expect(source.enabled, source.id).toBe(false);
+    }
+  });
+
+  it('shows synthetic data only on this computer', () => {
+    expect(isLocalHost('127.0.0.1')).toBe(true);
+    expect(feedAllowed({ isSynthetic: true, sourceIds: ['vec-sample'] }, '127.0.0.1')).toBe(true);
+    expect(feedAllowed({ isSynthetic: true, sourceIds: ['vec-sample'] }, 'feida.au')).toBe(false);
+  });
+
+  it('refuses every real source until it has a written yes', () => {
+    for (const hostname of ['feida.au', '127.0.0.1']) {
+      for (const id of ['vec-2026', 'civicapi', 'vec-sample', 'unknown']) {
+        expect(feedAllowed({ isSynthetic: false, sourceIds: [id] }, hostname), `${id} on ${hostname}`).toBe(false);
+      }
+      expect(feedAllowed({ isSynthetic: false, sourceIds: [] }, hostname)).toBe(false);
+    }
+  });
+});
+
+describe('leaders and calls stay separate', () => {
+  it('does not name a leader on a tie or with nothing counted', () => {
+    expect(primaryLeader(race({ candidates: [candidate('a', 5), candidate('b', 5)] }))).toBeNull();
+    expect(primaryLeader(race({ candidates: [candidate('a', null), candidate('b', null)] }))).toBeNull();
+    expect(primaryLeader(race({ candidates: [candidate('a', 0), candidate('b', 0)] }))).toBeNull();
+  });
+
+  it('turns a votes lead into "leading", never a call', () => {
+    expect(seatStates(snapshot())['NC-01']).toEqual({ status: 'leading', party: 'dem' });
+  });
+
+  it('uses only the published 2CP where that is the basis, not the first-preference leader', () => {
+    const tcp = (status, votes = [40, 60]) => race({
+      leaderBasis: 'tcp',
+      twoCandidate: { status, candidates: status === 'available' ? [{ candidateId: 'a', votes: votes[0] }, { candidateId: 'b', votes: votes[1] }] : [] },
+    });
+    expect(contestLeader(tcp('available')).candidateId).toBe('b');
+    expect(seatStates(snapshot({ races: [tcp('available')] }))['NC-01']).toEqual({ status: 'leading', party: 'rep' });
+    expect(seatStates(snapshot({ races: [tcp('withheld')] }))['NC-01']).toBeUndefined();
+    expect(seatStates(snapshot({ races: [tcp('absent')] }))['NC-01']).toBeUndefined();
+    expect(seatStates(snapshot({ races: [tcp('available', [50, 50])] }))['NC-01']).toBeUndefined();
+  });
+
+  it('marks a provider call and a certification differently, for the named winner', () => {
+    expect(seatStates(snapshot({ races: [race({ decision: called('b') })] }))['NC-01']).toEqual({ status: 'called', party: 'rep' });
+    expect(seatStates(snapshot({ races: [race({ decision: certified('a') })] }))['NC-01']).toMatchObject({ status: 'final', party: 'dem' });
+  });
+
+  it('falls back to the lead after a rescission, without any solid mark', () => {
+    const rescinded = race({ decision: { status: 'call_rescinded', candidateIds: [], authority: null, evidenceUrl: null, decidedAt: null, firstObservedAt: null } });
+    expect(seatStates(snapshot({ races: [rescinded] }))['NC-01'].status).toBe('leading');
+  });
+
+  it('never gives a multi-member region a per-seat result', () => {
+    const region = race({ raceId: 'r', office: 'council', seatIds: ['r-1', 'r-2'], leaderBasis: null, decision: { ...certified(), candidateIds: ['a'] } });
+    expect(seatStates(snapshot({ races: [region] }))).toEqual({});
+    expect(raceIndex(snapshot({ races: [region] })).get('r-2')).toBe(region);
+  });
+
+  it('marks missing coverage unavailable, not zero', () => {
+    const missing = race({ coverage: 'not_covered', candidates: [] });
+    expect(seatStates(snapshot({ races: [missing] }))['NC-01']).toEqual({ status: 'unavailable' });
+    expect(coveredSeats([{ seatId: 'NC-01', onBallot: true }], raceIndex(snapshot({ races: [missing] })))).toBe(0);
+  });
+
+  it('keeps a stale result visible', () => {
+    const stale = race({ coverage: 'stale' });
+    expect(seatStates(snapshot({ races: [stale] }))['NC-01'].status).toBe('leading');
+    expect(raceFreshness(stale, null)).toBe('stale');
+    expect(coveredSeats([{ seatId: 'NC-01', onBallot: true }], raceIndex(snapshot({ races: [stale] })))).toBe(1);
+  });
+});
+
+describe('tallies', () => {
+  const seats = seatCatalogue('vic-2026', 'assembly');
+  const parties = PARTIES.au;
+
+  it('counts decided and leading apart, and leaves everything else neutral', () => {
+    const states = {
+      [seats[0].seatId]: { status: 'final', party: 'labor', record: {} },
+      [seats[1].seatId]: { status: 'called', party: 'labor' },
+      [seats[2].seatId]: { status: 'leading', party: 'labor' },
+      [seats[3].seatId]: { status: 'leading', party: 'greens' },
+      [seats[4].seatId]: { status: 'unavailable' },
+    };
+    const tally = partyTally(seats, states, parties);
+    expect(tally.labor).toEqual({ decided: 2, leading: 1 });
+    expect(tally.greens).toEqual({ decided: 0, leading: 1 });
+    expect(tally.coalition).toEqual({ decided: 0, leading: 0 });
+    expect(tallySeats(seats, states, parties)).toMatchObject({ final: 1, called: 1, leading: 2, unavailable: 1, neutral: 83 });
+  });
+
+  it('holds a final mark to needing a record', () => {
+    const [seat] = seats;
+    expect(seatMark(seat, { status: 'final', party: 'labor' }, parties).status).toBe('called');
+    expect(seatMark(seat, { status: 'final', party: 'labor', record: {} }, parties).status).toBe('final');
+  });
+});
+
+describe('change events', () => {
+  const at = '2026-11-04T03:00:00.000Z';
+  const types = (before, after) => raceChanges(before, after, at).map((change) => change.type);
+
+  it('reports nothing for the first snapshot or when nothing changed', () => {
+    expect(raceChanges(undefined, race(), at)).toEqual([]);
+    expect(raceChanges(race(), race(), at)).toEqual([]);
+  });
+
+  it('calls a higher total a new batch and a lower one a correction', () => {
+    const more = race({ totals: { formal: 200, informal: null, total: null }, candidates: [candidate('a', 105), candidate('b', 95, 'rep')] });
+    expect(raceChanges(race(), more, at)[0]).toMatchObject({ type: 'new_batch', delta: 10 });
+    const less = race({ totals: { formal: 180, informal: null, total: null }, candidates: [candidate('a', 90), candidate('b', 90, 'rep')] });
+    expect(raceChanges(race(), less, at)[0]).toMatchObject({ type: 'correction', delta: -10 });
+  });
+
+  it('treats one candidate falling as a correction even when the total rises', () => {
+    const shifted = race({ totals: { formal: 195, informal: null, total: null }, candidates: [candidate('a', 95), candidate('b', 100, 'rep')] });
+    expect(types(race(), shifted)).toEqual(['correction']);
+  });
+
+  it('resets the baseline on a source switch instead of inventing a vote dump', () => {
+    const other = race({ totals: { formal: 900, informal: null, total: null }, provenance: { ...race().provenance, sourceId: 'other' } });
+    const changes = raceChanges(race(), other, at);
+    expect(changes).toEqual([{ raceId: other.raceId, at, type: 'source_switch', from: 'test', to: 'other' }]);
+  });
+
+  it('does not compare across RCV rounds', () => {
+    const before = race({ counting: { method: 'rcv', status: 'rcv_pending', round: 1 } });
+    const after = race({ counting: { method: 'rcv', status: 'counting', round: 2 }, totals: { formal: 50, informal: null, total: null } });
+    expect(types(before, after)).toEqual(['rcv_transition']);
+  });
+
+  it('separates call, rescission and certification', () => {
+    expect(types(race(), race({ decision: called() }))).toEqual(['call']);
+    expect(types(race({ decision: called() }), race())).toEqual(['call_rescinded']);
+    expect(types(race({ decision: called() }), race({ decision: certified() }))).toEqual(['certification']);
+    expect(types(race({ decision: certified() }), race({ decision: { ...race().decision, status: 'call_rescinded' } }))).toEqual(['call_rescinded']);
+  });
+
+  it('flags a changed 2CP pair', () => {
+    const pair = (ids) => race({ twoCandidate: { status: 'available', candidates: ids.map((id) => ({ candidateId: id, votes: 1 })) } });
+    expect(types(pair(['a', 'b']), pair(['a', 'c']))).toEqual(['tcp_pair_change']);
+  });
+});
+
+describe('one authoritative race per contest', () => {
+  const official = race({ provenance: { ...race().provenance, sourceId: 'official' } });
+  const copy = race({ totals: { formal: 190, informal: null, total: null }, provenance: { ...race().provenance, sourceId: 'aggregator' } });
+
+  it('takes the first source and never adds the copy', () => {
+    const resolved = resolveRaces(['official', 'aggregator'], { official: [official], aggregator: [copy] });
+    expect(resolved).toEqual([official]);
+    expect(resolved[0].totals.formal).toBe(190);
+  });
+
+  it('falls to the next source as a whole when the first has no such contest', () => {
+    expect(resolveRaces(['official', 'aggregator'], { official: [], aggregator: [copy] })).toEqual([copy]);
+  });
+});
+
+describe('source age', () => {
+  const now = Date.parse('2026-11-04T01:10:00.000Z');
+
+  it('measures from the source time and leaves unknown null', () => {
+    expect(ageSeconds('2026-11-04T01:00:00.000Z', now)).toBe(600);
+    expect(ageSeconds(null, now)).toBeNull();
+    expect(ageSeconds('2026-11-04T02:00:00.000Z', now)).toBeNull();
+  });
+
+  it('a fresh national time does not hide one stale race', () => {
+    const pointer = { sources: [{ sourceId: 'test', status: 'ok', lastCheckedAt: '2026-11-04T01:09:00.000Z', feeds: [{ office: 'house', status: 'ok' }, { office: 'senate', status: 'error' }] }] };
+    expect(raceFreshness(race(), pointer)).toBe('fresh');
+    expect(raceFreshness(race({ office: 'senate' }), pointer)).toBe('stale');
+    expect(raceFreshness(race({ coverage: 'stale' }), pointer)).toBe('stale');
+  });
+});
+
+describe('feed controller', () => {
+  const pointer = (revision, snapshotId = `s${revision}`) => ({ schemaVersion: 1, eventId: 'us-2026', revision, snapshotId, isSynthetic: true, sourceIds: ['vec-sample'], history: [], sources: [] });
+  const body = (snapshotId) => snapshot({ snapshotId });
+
+  function harness(routes, { hidden = false, hostname = '127.0.0.1' } = {}) {
+    const timers = [];
+    let isHidden = hidden;
+    const fetchJson = vi.fn(async (url) => {
+      const route = routes.get(url.replace('/feed/us-2026/', ''));
+      if (route === undefined) throw new Error(`404 ${url}`);
+      if (route instanceof Error) throw route;
+      return route;
+    });
+    const onChange = vi.fn();
+    const controller = createFeedController({
+      base: '/feed/', eventId: 'us-2026', hostname, fetchJson, onChange,
+      isHidden: () => isHidden,
+      schedule: (fn, ms) => {
+        const timer = { fn, ms };
+        timers.push(timer);
+        return timer;
+      },
+      cancel: (timer) => {
+        const index = timers.indexOf(timer);
+        if (index >= 0) timers.splice(index, 1);
+      },
+    });
+    return { controller, fetchJson, onChange, timers, setHidden: (value) => { isHidden = value; } };
+  }
+
+  it('applies a coherent pair and does not download the same snapshot twice', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('s1')]]);
+    const { controller, fetchJson } = harness(routes);
+    await controller.start();
+    expect(controller.state.snapshot.snapshotId).toBe('s1');
+    expect(controller.state.status).toBe('ok');
+    routes.set('latest.json', pointer(2, 's1'));
+    await controller.check();
+    expect(controller.state.pointer.revision).toBe(2);
+    expect(fetchJson.mock.calls.filter(([url]) => url.includes('snapshots/'))).toHaveLength(1);
+  });
+
+  it('keeps the last good data through a failure and through a bad pointer', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('s1')]]);
+    const { controller, timers } = harness(routes);
+    await controller.start();
+    routes.set('latest.json', new Error('offline'));
+    await controller.check();
+    expect(controller.state.status).toBe('error');
+    expect(controller.state.snapshot.snapshotId).toBe('s1');
+    expect(timers.at(-1).ms).toBeGreaterThan(VISIBLE_CHECK_MS);
+    routes.set('latest.json', { schemaVersion: 9 });
+    await controller.check();
+    expect(controller.state.snapshot.snapshotId).toBe('s1');
+    routes.set('latest.json', pointer(2));
+    routes.set('snapshots/s2.json', body('s2'));
+    await controller.check();
+    expect(controller.state.status).toBe('ok');
+    expect(controller.state.snapshot.snapshotId).toBe('s2');
+    expect(timers.at(-1).ms).toBe(VISIBLE_CHECK_MS);
+  });
+
+  it('refuses a pointer whose snapshot does not match or is invalid', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('other')]]);
+    const { controller } = harness(routes);
+    await controller.start();
+    expect(controller.state.snapshot).toBeNull();
+    expect(controller.state.status).toBe('error');
+    routes.set('snapshots/s1.json', snapshot({ snapshotId: 's1', mode: 'live' }));
+    await controller.check();
+    expect(controller.state.snapshot).toBeNull();
+  });
+
+  it('never moves backwards to an older cached pointer', async () => {
+    const routes = new Map([['latest.json', pointer(5)], ['snapshots/s5.json', body('s5')]]);
+    const { controller } = harness(routes);
+    await controller.start();
+    routes.set('latest.json', pointer(4));
+    routes.set('snapshots/s4.json', body('s4'));
+    await controller.check();
+    expect(controller.state.snapshot.snapshotId).toBe('s5');
+  });
+
+  it('shows nothing on a public host, even if a synthetic feed were reachable', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('s1')]]);
+    const { controller } = harness(routes, { hostname: 'feida.au' });
+    await controller.start();
+    expect(controller.state.snapshot).toBeNull();
+    expect(controller.state.pointer).toBeNull();
+  });
+
+  it('checks less often in a hidden tab, and at once on return', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('s1')]]);
+    const { controller, timers, fetchJson, setHidden } = harness(routes);
+    await controller.start();
+    expect(timers.at(-1).ms).toBe(VISIBLE_CHECK_MS);
+    setHidden(true);
+    controller.visibilityChanged();
+    expect(timers).toHaveLength(1);
+    expect(timers[0].ms).toBe(HIDDEN_CHECK_MS);
+    const calls = fetchJson.mock.calls.length;
+    setHidden(false);
+    controller.visibilityChanged();
+    await vi.waitFor(() => expect(fetchJson.mock.calls.length).toBeGreaterThan(calls));
+  });
+
+  it('stops checking while paused, and resumes with a check', async () => {
+    const routes = new Map([['latest.json', pointer(1)], ['snapshots/s1.json', body('s1')]]);
+    const { controller, timers, fetchJson } = harness(routes);
+    await controller.start();
+    controller.pause();
+    expect(timers).toHaveLength(0);
+    const calls = fetchJson.mock.calls.length;
+    controller.visibilityChanged();
+    expect(fetchJson.mock.calls.length).toBe(calls);
+    await controller.resume();
+    expect(fetchJson.mock.calls.length).toBeGreaterThan(calls);
+    expect(timers).toHaveLength(1);
+  });
+});

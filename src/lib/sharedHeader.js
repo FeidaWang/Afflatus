@@ -11,7 +11,7 @@ export function renderSharedHeader() {
     ${homeLink}
     <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
       ${link('/portfolio.html')}
-      ${group('markets', 'Markets', '市场', link('/arena.html') + link('/sectors.html') + link('/signal.html'))}
+      ${group('markets', 'Markets', '市场', link('/arena.html') + link('/sectors.html') + link('/signal.html') + link('/elections.html'))}
       ${link('/course.html')}
       ${link('/serial.html', 'title="Original stories in Chinese / 原创中文小说"')}
       ${link('/horoscope.html')}

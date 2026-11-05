@@ -23,6 +23,7 @@ const ACCENTS = Object.freeze({
   signal: '#f5d56a',
   horoscope: '#9a5a3d',
   worlds: '#3ec6ff',
+  elections: '#e6a83c',
   serial: '#ffc4a0',
   course: '#729cff',
   about: '#9bd7ff',
@@ -68,7 +69,7 @@ const cardHtml = ({
 <body><img src="${backgroundDataUrl}" alt="">${zhCaption}</body>
 </html>`;
   }
-  const light = route.id === 'horoscope';
+  const light = route.id === 'horoscope' || route.id === 'elections';
   const accent = ACCENTS[route.id] || route.themeColor;
   const languageLabel = locale === 'zh' ? '中文' : 'ENGLISH';
   const pageLabel = route.path === '/' ? 'feida.au' : `feida.au${route.path}`;
