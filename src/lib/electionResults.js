@@ -4,6 +4,8 @@
    a lead is never a call, and a call needs a named authority and a time.
    ============================================================ */
 import { sourceById } from '../config/electionSources.js';
+import { seatCatalogue } from './electionCatalogue.js';
+import { eventById } from './electionRules.js';
 
 const COVERAGE = new Set(['not_covered', 'available', 'stale', 'source_error']);
 const COUNTING = new Set(['no_votes', 'counting', 'rcv_pending', 'runoff', 'recount', 'count_complete']);
@@ -12,6 +14,24 @@ const MODES = new Set(['preview', 'live']);
 
 const isTime = (value) => value === null || (typeof value === 'string' && !Number.isNaN(Date.parse(value)));
 const isCount = (value) => value === null || (Number.isInteger(value) && value >= 0);
+const isUrl = (value) => typeof value === 'string' && /^https?:\/\//.test(value);
+
+function decisionErrors(race, ids) {
+  const name = race.raceId;
+  const decision = race.decision;
+  if (!DECISION.has(decision?.status)) return [`${name}: decision`];
+  const when = decision.decidedAt || decision.firstObservedAt;
+  if (decision.status === 'uncalled') return decision.candidateIds?.length ? [`${name}: an uncalled race names a winner`] : [];
+  if (!decision.authority || !when || !isTime(when)) return [`${name}: a decision needs an authority and a time`];
+  if (decision.status === 'call_rescinded') return [];
+  const errors = [];
+  if (!isUrl(decision.evidenceUrl)) errors.push(`${name}: a decision needs evidence`);
+  if (decision.candidateIds?.some((id) => !ids.has(id))) errors.push(`${name}: decision names an unknown candidate`);
+  // A region can be declared before its members are known. Any other seat needs exactly one winner.
+  if (race.seatIds.length === 1 && decision.candidateIds?.length !== 1) errors.push(`${name}: a decision needs one candidate`);
+  if (decision.candidateIds?.length > race.seatIds.length) errors.push(`${name}: more winners than seats`);
+  return errors;
+}
 
 function raceErrors(race) {
   const errors = [];
@@ -19,20 +39,43 @@ function raceErrors(race) {
   if (!race?.raceId || !Array.isArray(race.seatIds) || !race.seatIds.length) return [`${name}: missing identity`];
   if (!COVERAGE.has(race.coverage)) errors.push(`${name}: coverage`);
   if (!COUNTING.has(race.counting?.status)) errors.push(`${name}: counting`);
+  // Votes from different RCV rounds are not comparable, so a round must be named.
+  if (race.counting?.method === 'rcv' && !(Number.isInteger(race.counting.round) && race.counting.round >= 1)) errors.push(`${name}: an RCV count needs a round`);
   if (!Array.isArray(race.candidates)) return [...errors, `${name}: candidates`];
   const ids = new Set(race.candidates.map((candidate) => candidate.candidateId));
   if (ids.size !== race.candidates.length) errors.push(`${name}: duplicate candidate`);
   if (!race.candidates.every((candidate) => isCount(candidate.votes))) errors.push(`${name}: votes`);
-  const decision = race.decision;
-  if (!DECISION.has(decision?.status)) errors.push(`${name}: decision`);
-  if (decision?.status === 'provider_called' || decision?.status === 'certified') {
-    const when = decision.decidedAt || decision.firstObservedAt;
-    if (!decision.authority || !when || !isTime(when)) errors.push(`${name}: a decision needs an authority and a time`);
-    if (race.office !== 'council' && !decision.candidateIds?.length) errors.push(`${name}: a decision needs a candidate`);
-    if (decision.candidateIds?.some((id) => !ids.has(id))) errors.push(`${name}: decision names an unknown candidate`);
-  }
+  if (!isCount(race.progress?.reported ?? null) || !isCount(race.progress?.total ?? null)) errors.push(`${name}: progress`);
+  // A multi-member contest fills its whole region, so part of one cannot count towards a chamber.
+  if (Number.isInteger(race.positions) && race.seatIds.length !== race.positions) errors.push(`${name}: seats do not match positions`);
+  errors.push(...decisionErrors(race, ids));
   for (const key of ['sourceUpdatedAt', 'fetchedAt', 'publishedAt']) {
     if (!isTime(race.provenance?.[key] ?? null)) errors.push(`${name}: ${key}`);
+  }
+  return errors;
+}
+
+/** Joins each race to the catalogue, so a wrong cycle, seat or term cannot count towards a chamber. */
+function catalogueErrors(snapshot) {
+  const event = eventById(snapshot.eventId);
+  if (!event) return ['unknown event'];
+  const errors = [];
+  const taken = new Set();
+  for (const race of snapshot.races) {
+    const name = race?.raceId || 'race';
+    if (race?.eventId !== event.id) errors.push(`${name}: wrong event`);
+    if (race?.electionDate !== event.pollDate) errors.push(`${name}: wrong election date`);
+    // An Australian seat is declared by one commission. A US race is certified state by state.
+    if (event.family === 'au' && race?.decision?.status === 'certified' && race.decision.authority !== event.authority) errors.push(`${name}: wrong declaring authority`);
+    const seats = new Map(seatCatalogue(event.id, race?.office).map((seat) => [seat.seatId, seat]));
+    for (const seatId of race?.seatIds || []) {
+      const seat = seats.get(seatId);
+      if (!seat) errors.push(`${name}: ${seatId} is not in the catalogue`);
+      else if (seat.onBallot === false) errors.push(`${name}: ${seatId} is not on this ballot`);
+      else if (seat.term && race.targetTerm !== seat.term) errors.push(`${name}: wrong term`);
+      if (taken.has(seatId)) errors.push(`${name}: ${seatId} is in two races`);
+      taken.add(seatId);
+    }
   }
   return errors;
 }
@@ -47,7 +90,7 @@ export function snapshotErrors(snapshot) {
   if (!Array.isArray(snapshot.races)) return [...errors, 'races'];
   const ids = new Set(snapshot.races.map((race) => race.raceId));
   if (ids.size !== snapshot.races.length) errors.push('duplicate race');
-  return [...errors, ...snapshot.races.flatMap(raceErrors)];
+  return [...errors, ...snapshot.races.flatMap(raceErrors), ...catalogueErrors(snapshot)];
 }
 
 export function pointerErrors(pointer) {
@@ -77,8 +120,24 @@ export function feedAllowed(document, hostname) {
 
 /* ---------- Change events ---------- */
 
-const totalVotes = (race) => race.totals?.total ?? race.totals?.formal ?? (race.candidates.some((c) => c.votes !== null) ? race.candidates.reduce((sum, c) => sum + (c.votes ?? 0), 0) : null);
+const candidateSum = (race) => (race.candidates.some((c) => c.votes === null) ? null : race.candidates.reduce((sum, c) => sum + c.votes, 0));
+
+/** Two totals on the same basis: source total, then formal, then a sum only when every candidate is known. */
+function comparableTotals(previous, next) {
+  for (const key of ['total', 'formal']) {
+    const pair = [previous.totals?.[key] ?? null, next.totals?.[key] ?? null];
+    if (pair[0] !== null && pair[1] !== null) return pair;
+  }
+  return [candidateSum(previous), candidateSum(next)];
+}
+
 const isDecided = (decision) => decision?.status === 'provider_called' || decision?.status === 'certified';
+const winners = (decision) => (decision?.candidateIds || []).join(' ');
+// A recount or runoff restates a different count, so its total is not a batch or a correction.
+const RESTATED = new Set(['recount', 'runoff']);
+const changesBasis = (previous, next) => previous.counting.method !== next.counting.method
+  || previous.targetTerm !== next.targetTerm
+  || RESTATED.has(previous.counting.status) !== RESTATED.has(next.counting.status);
 
 /** Compares one race across two snapshots. A source switch resets the baseline, so no delta is reported. */
 export function raceChanges(previous, next, at) {
@@ -86,11 +145,15 @@ export function raceChanges(previous, next, at) {
   const base = { raceId: next.raceId, at };
   const changes = [];
   if (previous.provenance.sourceId !== next.provenance.sourceId) {
-    changes.push({ ...base, type: 'source_switch', from: previous.provenance.sourceId, to: next.provenance.sourceId });
-  } else if ((previous.counting.round ?? null) !== (next.counting.round ?? null)) {
+    // Another source lacking a call has not withdrawn it, so decisions are not compared either.
+    return [{ ...base, type: 'source_switch', from: previous.provenance.sourceId, to: next.provenance.sourceId }];
+  }
+  if ((previous.counting.round ?? null) !== (next.counting.round ?? null)) {
     changes.push({ ...base, type: 'rcv_transition', from: previous.counting.round ?? null, to: next.counting.round ?? null });
+  } else if (changesBasis(previous, next)) {
+    changes.push({ ...base, type: 'count_basis_change', from: previous.counting.status, to: next.counting.status });
   } else {
-    const [before, after] = [totalVotes(previous), totalVotes(next)];
+    const [before, after] = comparableTotals(previous, next);
     const lowered = next.candidates.some((candidate) => {
       const old = previous.candidates.find((item) => item.candidateId === candidate.candidateId);
       return old && old.votes !== null && candidate.votes !== null && candidate.votes < old.votes;
@@ -100,6 +163,7 @@ export function raceChanges(previous, next, at) {
   }
   const [was, is] = [previous.decision, next.decision];
   if (isDecided(was) && !isDecided(is)) changes.push({ ...base, type: 'call_rescinded', authority: was.authority });
+  else if (isDecided(was) && winners(was) !== winners(is)) changes.push({ ...base, type: 'decision_changed', authority: is.authority });
   else if (is.status === 'certified' && was.status !== 'certified') changes.push({ ...base, type: 'certification', authority: is.authority });
   else if (is.status === 'provider_called' && was.status !== 'provider_called') changes.push({ ...base, type: 'call', authority: is.authority });
   const pair = (race) => (race.twoCandidate?.candidates || []).map((item) => item.candidateId).join(' ');
@@ -126,7 +190,9 @@ export function resolveRaces(sourceOrder, racesBySource) {
 /* ---------- What the page shows ---------- */
 
 export function primaryLeader(race) {
-  const counted = race.candidates.filter((candidate) => candidate.votes !== null && candidate.votes > 0);
+  // With any candidate unknown, nobody can be said to lead.
+  if (race.candidates.some((candidate) => candidate.votes === null)) return null;
+  const counted = race.candidates.filter((candidate) => candidate.votes > 0);
   if (!counted.length) return null;
   const top = Math.max(...counted.map((candidate) => candidate.votes));
   const leaders = counted.filter((candidate) => candidate.votes === top);
@@ -135,6 +201,8 @@ export function primaryLeader(race) {
 
 /** The named leader on the contest's published basis, or null on a tie or with no such count. */
 export function contestLeader(race) {
+  // A first-round lead says nothing about the ranked-choice count or runoff that decides the seat.
+  if (race.counting?.method === 'rcv' || race.counting?.status === 'rcv_pending' || race.counting?.status === 'runoff') return null;
   if (race.leaderBasis === 'votes') return primaryLeader(race);
   if (race.leaderBasis !== 'tcp' || race.twoCandidate?.status !== 'available') return null;
   const [first, second] = race.twoCandidate.candidates;
@@ -188,7 +256,10 @@ export function partyTally(seats, states, parties) {
 
 /** Seats with a race in the snapshot. A stale one counts: it says so itself. */
 export function coveredSeats(seats, races) {
-  return seats.filter((seat) => seat.onBallot && races.has(seat.seatId) && races.get(seat.seatId).coverage !== 'not_covered').length;
+  return seats.filter((seat) => {
+    const coverage = seat.onBallot ? races.get(seat.seatId)?.coverage : undefined;
+    return coverage !== undefined && coverage !== 'not_covered' && coverage !== 'source_error';
+  }).length;
 }
 
 /** A race is stale when it was carried over, or its source has failed since. Never just because time passed. */

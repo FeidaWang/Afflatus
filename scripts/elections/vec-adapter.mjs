@@ -6,6 +6,9 @@ import { child, childrenOf, parseXml } from './safe-xml.mjs';
 import { FeedError } from './bounded-fetch.mjs';
 
 const TARGET_TERM = '2026-2030';
+const ELECTION_DATE = '2026-11-28';
+// VEC: the last redivision finished in October 2021 and no later one has been called.
+const BOUNDARY_VERSION = 'ebc-2021';
 
 const drift = (message) => new FeedError('schema_drift', message);
 
@@ -119,6 +122,8 @@ function twoCandidate(node, candidates) {
     votes: integer(child(item, 'Votes'), 'TCP votes'),
   }));
   if (pair.length !== 2) throw drift(`TwoCandidatePreferred needs exactly two candidates, found ${pair.length}`);
+  // Zeros with nothing returned are a zero file, not a tied count. A recount keeps its votes with returned at 0.
+  if (!base.reported && pair.every((item) => !item.votes)) for (const item of pair) item.votes = null;
   for (const { candidateId } of pair) {
     if (!candidates.some((item) => item.candidateId === candidateId)) throw drift(`TCP candidate ${candidateId} is not in the contest`);
   }
@@ -139,7 +144,7 @@ function normaliseContest(contest, { office, publishedAt, fetchedAt, payloadHash
   // The guide says a zero can mean "nothing reported yet", so nothing counted is unknown, not zero.
   const nothingCounted = !reported && !sourceFormal;
   // A recount publishes contest totals only: returned falls to 0 while the votes stay. See the 2 Oct sample files.
-  const recount = !reported && Boolean(sourceFormal);
+  const recount = reported === 0 && Boolean(sourceFormal);
   const candidates = office === 'assembly' ? assemblyCandidates(first, nothingCounted) : councilCandidates(first, nothingCounted);
   if (!candidates.length) throw drift(`${contestName} has no candidates`);
   const ids = new Set(candidates.map((item) => item.candidateId));
@@ -147,23 +152,26 @@ function normaliseContest(contest, { office, publishedAt, fetchedAt, payloadHash
 
   // The source's own total is used and never recomputed. A sum that disagrees means the shape changed.
   const formal = nothingCounted ? null : sourceFormal;
+  if (formal !== null && candidates.some((item) => item.votes === null)) throw drift(`${contestName}: a candidate has no votes while Formal says ${formal}`);
   const counted = candidates.reduce((sum, item) => sum + (item.votes ?? 0), 0);
   if (formal !== null && counted !== formal) throw drift(`${contestName}: candidates add to ${counted}, Formal says ${formal}`);
 
   const declared = flag(child(contest, 'Declared'), 'Declared') === true;
   const winners = candidates.filter((item) => item.elected).map((item) => item.candidateId);
-  const hasDeclaration = declared && (office === 'council' || winners.length === 1);
+  // Declared with no winner would read as the VEC withdrawing a result, when the file has only changed shape.
+  if (declared && office === 'assembly' && winners.length !== 1) throw drift(`${contestName} is declared with ${winners.length} elected`);
 
   return {
     raceId: `vic-2026/${office}/${office === 'assembly' ? seats[0].seatId : seats[0].area}`,
     eventId: 'vic-2026',
+    electionDate: ELECTION_DATE,
     office,
     seatIds: seats.map((seat) => seat.seatId),
     contestName,
     sourceContestId: child(contest, 'ContestIdentifier').attributes.Id ?? null,
     contestKind: 'regular',
     targetTerm: TARGET_TERM,
-    boundaryVersion: null,
+    boundaryVersion: BOUNDARY_VERSION,
     positions: integer(child(contest, 'NumberOfPositions'), 'Positions'),
     enrolment: integer(child(contest, 'Enrolment'), 'Enrolment'),
     candidates: candidates.map(({ elected: _elected, ...candidate }) => candidate),
@@ -176,7 +184,7 @@ function normaliseContest(contest, { office, publishedAt, fetchedAt, payloadHash
     leaderBasis: office === 'assembly' ? 'tcp' : null,
     coverage: 'available',
     counting: { method: office === 'assembly' ? 'preferential' : 'stv', status: nothingCounted ? 'no_votes' : recount ? 'recount' : 'counting', round: null },
-    decision: hasDeclaration
+    decision: declared
       ? { status: 'certified', candidateIds: winners, authority: 'VEC', evidenceUrl: source.url, decidedAt: null, firstObservedAt: publishedAt ?? fetchedAt }
       : { status: 'uncalled', candidateIds: [], authority: null, evidenceUrl: null, decidedAt: null, firstObservedAt: null },
     progress: { unit: 'polling_places', reported: recount ? null : reported, total, isEstimate: false },

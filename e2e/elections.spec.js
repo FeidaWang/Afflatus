@@ -62,7 +62,7 @@ test.describe('Elections console', () => {
     await expect(page.locator('[data-office="assembly"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.el-tally-mark')).toContainText('45 for majority');
     await expect(page.locator('.el-tally-keys')).toContainText('Labor');
-    await expect(page.locator('.el-sources')).toContainText('VEC results: disabled until verified');
+    await expect(page.locator('.el-sources')).toContainText('VEC results feed: not connected');
     await expect(page.locator('.el-strip')).toContainText('Coverage 0/88');
     await noOverflow(page);
   });
@@ -139,8 +139,16 @@ test.describe('Elections console', () => {
   test('an office with no seat view explains itself', async ({ page }) => {
     await page.goto(console_('event=us-2028'));
     await expect(page.locator('.el-tally-mark')).toContainText('270 to win');
-    await expect(page.locator('.el-chamber')).toContainText('M6');
+    await expect(page.locator('.el-chamber')).toContainText('not built yet');
     await expect(page.locator('.el-table')).toHaveCount(0);
+  });
+
+  test('shows readers no internal stage codes', async ({ page }) => {
+    for (const query of ['event=us-2026', 'event=vic-2026', 'event=nsw-2027&office=council', 'event=au-2028', 'event=us-2028']) {
+      await page.goto(console_(query));
+      await expect(page.locator('.el-strip')).toBeVisible();
+      expect(await page.locator('main').innerText()).not.toMatch(/\bM[0-9]\b/);
+    }
   });
 
   test('the Chinese document translates the rules', async ({ page }) => {
@@ -543,6 +551,19 @@ test.describe('Elections map', () => {
     expect(map.y).toBeGreaterThanOrEqual(header.height);
     expect(map.y + map.height).toBeLessThanOrEqual(sheet.y + 1);
     await noOverflow(page);
+  });
+
+  test('coverage counts the contests that are up, not the whole chamber', async ({ page }) => {
+    for (const [query, text] of [['event=nsw-2027&office=council', 'Coverage 0/21'], ['event=au-2028&office=senate', 'Coverage 0/40']]) {
+      await page.goto(console_(query));
+      await expect(page.locator('.el-strip')).toContainText(text);
+    }
+  });
+
+  test('NSW shows the date set by its Electoral Commission', async ({ page }) => {
+    await page.goto(console_('event=nsw-2027'));
+    await expect(page.locator('body')).toContainText('13 Mar 2027');
+    await expect(page.locator('body')).not.toContainText('27 Mar 2027');
   });
 
   test('offices with no verified boundaries state the gap and draw no shape', async ({ page, isMobile }) => {

@@ -13,6 +13,17 @@ describe('seat catalogues', () => {
     expect(new Set(catalogue.map((seat) => seat.seatId)).size).toBe(seats);
   });
 
+  it('gives each 2026 Senate contest its class and term, and no term to seats off the ballot', () => {
+    const onBallot = seatCatalogue('us-2026', 'senate').filter((seat) => seat.onBallot);
+    expect(onBallot).toHaveLength(35);
+    expect(onBallot.filter((seat) => seat.contest === 'regular').every((seat) => seat.senateClass === 2 && seat.term === '2027-2033')).toBe(true);
+    expect(onBallot.filter((seat) => seat.contest === 'special').map((seat) => [seat.seatId, seat.senateClass, seat.term])).toEqual([
+      ['FL-S1', 3, 'to-2029-01-03'],
+      ['OH-S1', 3, 'to-2029-01-03'],
+    ]);
+    expect(seatCatalogue('us-2026', 'senate').filter((seat) => !seat.onBallot).every((seat) => seat.term === null)).toBe(true);
+  });
+
   it('derives US House ids from apportionment, with at-large seats named', () => {
     const house = seatCatalogue('us-2026', 'house');
     const ids = house.map((seat) => seat.seatId);

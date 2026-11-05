@@ -123,13 +123,17 @@ function mergeRaces(previousSnapshot, freshBySource, sourceId) {
 // The feed has no declaration date, so a declaration keeps the first time it was observed.
 function keepFirstObserved(race, previous) {
   if (race.decision.status !== 'certified' || previous?.decision.status !== 'certified') return race;
+  if (race.decision.candidateIds.join(' ') !== previous.decision.candidateIds.join(' ')) return race;
   return { ...race, decision: { ...race.decision, firstObservedAt: previous.decision.firstObservedAt } };
 }
 
 function withRescission(race, previous) {
   const wasDecided = previous && ['certified', 'provider_called', 'call_rescinded'].includes(previous.decision.status);
   if (!wasDecided || race.decision.status !== 'uncalled') return race;
-  return { ...race, decision: { ...race.decision, status: 'call_rescinded' } };
+  // A withdrawal keeps who made the decision and the first time the withdrawal was seen.
+  const { authority, evidenceUrl, firstObservedAt, status } = previous.decision;
+  const seenAt = status === 'call_rescinded' ? firstObservedAt : race.provenance.publishedAt ?? race.provenance.fetchedAt;
+  return { ...race, decision: { ...race.decision, status: 'call_rescinded', authority, evidenceUrl, firstObservedAt: seenAt } };
 }
 
 /**
@@ -164,6 +168,9 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
         if (source.liveNotBefore && (!parsed.publishedAt || Date.parse(parsed.publishedAt) < Date.parse(source.liveNotBefore))) {
           throw new FeedError('wrong_identity', `File dated ${parsed.publishedAt} is before polls closed`);
         }
+        // A cache can serve an older file with a 200. It must not roll anything back.
+        const lastPublished = feeds[feed.key]?.publishedAt;
+        if (lastPublished && parsed.publishedAt && parsed.publishedAt < lastPublished) continue;
         results.push({ feed, parsed, response });
       } catch (error) {
         if (!(error instanceof FeedError)) throw error;
@@ -223,8 +230,8 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
       }
     }
 
-    for (const { feed, response } of results) {
-      feeds[feed.key] = { fileName: response.fileName ?? null, etag: response.etag ?? null, lastModified: response.lastModified ?? null };
+    for (const { feed, parsed, response } of results) {
+      feeds[feed.key] = { fileName: response.fileName ?? null, etag: response.etag ?? null, lastModified: response.lastModified ?? null, publishedAt: parsed.publishedAt ?? null };
     }
     await writeJsonAtomic(statePath, { feeds, failures: nextFailures, backoffUntil });
 

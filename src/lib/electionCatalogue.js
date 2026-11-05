@@ -31,19 +31,28 @@ function usHouse() {
   ));
 }
 
+// The term each 2026 Senate contest fills. A special fills the rest of a Class III term.
+const US_SENATE_2026_CONTESTS = Object.freeze({
+  regular: { senateClass: 2, term: '2027-2033' },
+  special: { senateClass: 3, term: 'to-2029-01-03' },
+});
+
 // S1 and S2 are display ids, not Senate classes. S1 is the seat on the 2026 ballot where one exists.
 function usSenate2026() {
   return Object.keys(US_HOUSE_APPORTIONMENT).flatMap((state) => {
     const contest = US_SENATE_2026_REGULAR.has(state) ? 'regular' : US_SENATE_2026_SPECIAL.has(state) ? 'special' : null;
     return [1, 2].map((number) => {
       const seatId = `${state}-S${number}`;
+      const onBallot = number === 1 && contest !== null;
       return {
         seatId,
         label: { en: `${state} Senate ${number}`, zh: `${state} 参议院 ${number}` },
         group: state,
         feature: state,
-        onBallot: number === 1 && contest !== null,
-        contest: number === 1 ? contest : null,
+        onBallot,
+        contest: onBallot ? contest : null,
+        senateClass: onBallot ? US_SENATE_2026_CONTESTS[contest].senateClass : null,
+        term: onBallot ? US_SENATE_2026_CONTESTS[contest].term : null,
         placeholder: false,
       };
     });

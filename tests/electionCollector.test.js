@@ -124,11 +124,6 @@ describe('VEC adapter', () => {
     expect(races[0].decision).toMatchObject({ status: 'certified', authority: 'VEC', candidateIds: ['vec-2'], decidedAt: null, firstObservedAt: publishedAt });
   });
 
-  it('does not declare a winner the file does not name', () => {
-    const { races } = parse(feedXml({ contests: [albert({ declared: true, elected: null })] }));
-    expect(races[0].decision.status).toBe('uncalled');
-  });
-
   it('keeps a withheld 2CP distinct from one not reported yet', () => {
     const withheld = parse(feedXml({ contests: [albert({ tcp: 'withheld' })] })).races[0];
     expect(withheld.twoCandidate.status).toBe('withheld');
@@ -186,6 +181,36 @@ describe('VEC adapter', () => {
     expect(melbourneToUtc('2026-11-28T20:05:00')).toBe('2026-11-28T09:05:00.000Z');
     expect(melbourneToUtc('2026-07-01T20:05:00')).toBe('2026-07-01T10:05:00.000Z');
     expect(melbourneToUtc('nonsense')).toBeNull();
+  });
+});
+
+describe('VEC adapter, zero files and declarations', () => {
+  it('reads a zero file as unknown, including its two-candidate count', () => {
+    const [zero] = parse(feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: 0, b: 0 }, returned: 0, tcp: { a: 0, b: 0 } })] })).races;
+    expect(zero.candidates.every((item) => item.votes === null)).toBe(true);
+    expect(zero.twoCandidate.candidates.every((item) => item.votes === null)).toBe(true);
+    expect(zero.counting.status).toBe('no_votes');
+  });
+
+  it('keeps a recount two-candidate count that has votes', () => {
+    const [recount] = parse(feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: 7, b: 8 }, returned: 0, tcp: { a: 7, b: 8 } })] })).races;
+    expect(recount.counting.status).toBe('recount');
+    expect(recount.twoCandidate.candidates.map((item) => item.votes)).toEqual([7, 8]);
+  });
+
+  it('refuses a declared seat with nobody elected, rather than reading it as a withdrawal', () => {
+    expect(() => parse(feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: 7, b: 8 }, declared: true })] }))).toThrow(/declared with 0 elected/);
+  });
+
+  it('refuses a blank candidate count beside a known total', () => {
+    expect(() => parse(feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: null, b: 8 }, formal: 8 })] }))).toThrow(/no votes while Formal/);
+  });
+
+  it('does not read a missing returned count as a recount', () => {
+    const xml = feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: 7, b: 8 } })] }).replace(/PollingPlacesReturned="\d+" /, '');
+    const [contest] = parse(xml).races;
+    expect(contest.counting.status).toBe('counting');
+    expect(contest.progress.reported).toBeNull();
   });
 });
 
@@ -258,6 +283,28 @@ describe('collector', () => {
     expect(latest().changes).toEqual([expect.objectContaining({ type: 'correction', delta: -8 })]);
   });
 
+  it('ignores an older file served by a cache, and rolls nothing back', async () => {
+    dropLower('20261128_200500', [albert({ declared: true, elected: 'a' })]);
+    await run(NOW);
+    const before = race('albert-park');
+    const older = lowerName('20261128_190500');
+    const stale = async () => ({ status: 200, bytes: zipOf(older.replace('.zip', '.xml'), feedXml({ contests: [contestXml({ name: 'Albert Park', votes: { a: 2, b: 1 }, updated: '2026-11-28T19:05:00+11:00' })], created: '2026-11-28T19:05:00' })), fileName: older });
+    await collectOnce({ source: lowerOnly, store, transport: stale, now: NOW + 300000, force: true });
+    expect(race('albert-park')).toEqual(before);
+    expect(race('albert-park').decision.status).toBe('certified');
+  });
+
+  it('keeps no first-seen time when the declared winner changes', async () => {
+    dropLower('20261128_200500', [albert({ declared: true, elected: 'a' })]);
+    await run(NOW);
+    const firstSeen = race('albert-park').decision.firstObservedAt;
+    dropLower('20261128_201000', [contestXml({ name: 'Albert Park', votes: { a: 5, b: 11 }, declared: true, elected: 'b' })], { created: '2026-11-28T20:10:00' });
+    await run(NOW + 300000);
+    expect(race('albert-park').decision.candidateIds).toEqual(['vec-2']);
+    expect(race('albert-park').decision.firstObservedAt).not.toBe(firstSeen);
+    expect(latest().changes.map((change) => change.type)).toContain('decision_changed');
+  });
+
   it('records a call being withdrawn and keeps the page honest afterwards', async () => {
     dropLower('20261128_200500', [albert({ declared: true, elected: 'a' })]);
     await run(NOW);
@@ -267,11 +314,13 @@ describe('collector', () => {
     expect(race('albert-park').decision.firstObservedAt).toBe(firstSeen);
     dropLower('20261128_201500', [contestXml({ name: 'Albert Park', votes: { a: 12, b: 5 } })], { created: '2026-11-28T20:15:00' });
     await run(NOW + 600000);
-    expect(race('albert-park').decision.status).toBe('call_rescinded');
+    const withdrawn = race('albert-park').decision;
+    expect(withdrawn).toMatchObject({ status: 'call_rescinded', authority: 'VEC', candidateIds: [] });
+    expect(withdrawn.firstObservedAt).not.toBe(firstSeen);
     expect(latest().changes.map((change) => change.type)).toContain('call_rescinded');
     dropLower('20261128_202000', [contestXml({ name: 'Albert Park', votes: { a: 13, b: 5 } })], { created: '2026-11-28T20:20:00' });
     await run(NOW + 900000);
-    expect(race('albert-park').decision.status).toBe('call_rescinded');
+    expect(race('albert-park').decision).toEqual(withdrawn);
     expect(latest().changes.map((change) => change.type)).not.toContain('call_rescinded');
   });
 

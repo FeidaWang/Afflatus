@@ -1,8 +1,8 @@
 /* ============================================================
    Election rule packs: the event layer decides jurisdiction, chamber
-   geometry, voting system and status vocabulary. Constants here are public
-   institutional facts pending M1 verification. There are no results,
-   candidates or feeds in this module, and all feeds stay disabled.
+   geometry, voting system and status vocabulary. Seat counts and dates are
+   checked against official sources in docs/elections/M1.md. There are no
+   results, candidates or feeds in this module, and all feeds stay disabled.
    ============================================================ */
 
 export const PARTIES = Object.freeze({
@@ -70,7 +70,7 @@ export const ELECTION_EVENTS = Object.freeze([
     timeLabel: 'AEDT · ET',
     authority: 'State election offices',
     decision: { en: 'Provider call, then state certification', zh: '提供方判定，之后由各州认证' },
-    feed: { en: 'civicAPI and state sites: disabled until verified (M1)', zh: 'civicAPI 与各州网站：核验前禁用（M1）' },
+    feed: { en: 'civicAPI and state sites: not connected', zh: 'civicAPI 与各州网站：尚未接入' },
     officialUrl: 'https://www.eac.gov/election-officials/election-results-canvass-and-certification',
     officialLabel: { en: 'How results are certified (EAC)', zh: '结果如何认证（EAC）' },
     votingSystem: { en: 'Plurality in most states; some use ranked choice or runoffs', zh: '多数州为简单多数，部分州用排序复选或决选' },
@@ -106,7 +106,7 @@ export const ELECTION_EVENTS = Object.freeze([
     timeLabel: 'AEDT',
     authority: 'VEC',
     decision: { en: 'VEC declaration; media projections are labelled', zh: 'VEC 正式宣布；媒体预测单独标注' },
-    feed: { en: 'VEC results: disabled until verified (M1)', zh: 'VEC 结果：核验前禁用（M1）' },
+    feed: { en: 'VEC results feed: not connected, access and permission to publish pending', zh: 'VEC 结果数据：尚未接入，访问权限和公开许可待定' },
     officialUrl: 'https://www.vec.vic.gov.au/',
     officialLabel: { en: 'Victorian Electoral Commission', zh: '维多利亚州选举委员会' },
     votingSystem: { en: 'Assembly: full preferential. Council: proportional (STV), 8 regions × 5', zh: '下院：全优先制。上院：比例制（STV），8 个选区各 5 席' },
@@ -140,16 +140,16 @@ export const ELECTION_EVENTS = Object.freeze([
     name: { en: 'New South Wales state election 2027', zh: '新南威尔士州 2027 州选举' },
     short: { en: 'NSW 2027', zh: '新州 2027' },
     region: { en: 'New South Wales', zh: '新南威尔士州' },
-    headline: { en: 'New South Wales votes on Saturday 27 March', zh: '新南威尔士州 3 月 27 日（周六）投票' },
-    pollDate: '2027-03-27',
-    sortDate: '2027-03-27',
-    pollsCloseUtc: '2027-03-27T07:00:00Z',
-    dateLabel: { en: '27 Mar 2027', zh: '2027 年 3 月 27 日' },
+    headline: { en: 'New South Wales votes on Saturday 13 March', zh: '新南威尔士州 3 月 13 日（周六）投票' },
+    pollDate: '2027-03-13',
+    sortDate: '2027-03-13',
+    pollsCloseUtc: '2027-03-13T07:00:00Z',
+    dateLabel: { en: '13 Mar 2027', zh: '2027 年 3 月 13 日' },
     pollsClose: { en: 'Polls close 18:00 AEDT', zh: '18:00 AEDT 关门' },
     timeLabel: 'AEDT',
     authority: 'NSW Electoral Commission',
     decision: { en: 'NSW Electoral Commission declaration; media projections are labelled', zh: '新州选举委员会正式宣布；媒体预测单独标注' },
-    feed: { en: 'NSW Electoral Commission: disabled until verified (M1)', zh: '新州选举委员会：核验前禁用（M1）' },
+    feed: { en: 'NSW Electoral Commission: not connected', zh: '新州选举委员会：尚未接入' },
     officialUrl: 'https://elections.nsw.gov.au/',
     officialLabel: { en: 'NSW Electoral Commission', zh: '新州选举委员会' },
     votingSystem: { en: 'Assembly: optional preferential. Council: proportional (STV), 21 of 42 up', zh: '下院：可选优先制。上院：比例制（STV），42 席中 21 席改选' },
@@ -170,6 +170,8 @@ export const ELECTION_EVENTS = Object.freeze([
         name: { en: 'Council', zh: '立法院' },
         fullName: { en: 'Legislative Council', zh: '立法院' },
         seats: 42,
+        // 21 of the 42 are up in 2027; which places they are is not on this page.
+        up: 21,
         majority: 22,
         geometry: 'horseshoe',
         majorityLabel: { en: '22 is an arithmetic majority', zh: '22 席为算术过半' },
@@ -193,7 +195,7 @@ export const ELECTION_EVENTS = Object.freeze([
     timeLabel: 'AEDT',
     authority: 'AEC',
     decision: { en: 'AEC declaration; media projections are labelled', zh: 'AEC 正式宣布；媒体预测单独标注' },
-    feed: { en: 'AEC Tally Room and Media Feed: disabled until verified (M1)', zh: 'AEC Tally Room 与 Media Feed：核验前禁用（M1）' },
+    feed: { en: 'AEC Tally Room and Media Feed: not connected', zh: 'AEC Tally Room 与 Media Feed：尚未接入' },
     officialUrl: 'https://www.aec.gov.au/',
     officialLabel: { en: 'Australian Electoral Commission', zh: '澳大利亚选举委员会' },
     votingSystem: { en: 'House: full preferential. Senate: proportional (STV), 40 of 76 up at a half-Senate election', zh: '众议院：全优先制。参议院：比例制（STV），半数改选时 76 席中 40 席改选' },
@@ -214,6 +216,8 @@ export const ELECTION_EVENTS = Object.freeze([
         name: { en: 'Senate', zh: '参议院' },
         fullName: { en: 'Senate', zh: '参议院' },
         seats: 76,
+        // 40 at a half-Senate election: 6 from each state and all 4 territory senators.
+        up: 40,
         majority: 39,
         geometry: 'horseshoe',
         majorityLabel: { en: '39 is an arithmetic majority', zh: '39 席为算术过半' },
@@ -236,11 +240,11 @@ export const ELECTION_EVENTS = Object.freeze([
     timeLabel: 'ET · AEDT',
     authority: 'Electoral College',
     decision: { en: 'Provider call, then state certification and the Electoral College', zh: '提供方判定，之后各州认证并由选举人团投票' },
-    feed: { en: 'No feed planned before M6', zh: 'M6 之前不接数据源' },
+    feed: { en: 'No feed connected', zh: '尚未接入数据源' },
     officialUrl: 'https://www.archives.gov/electoral-college/allocation',
     officialLabel: { en: 'Electoral College allocation (NARA)', zh: '选举人票分配（NARA）' },
     votingSystem: { en: 'Electoral College; Maine and Nebraska split by district', zh: '选举人团；缅因州与内布拉斯加州按选区拆分' },
-    note: { en: 'No candidates or scenarios are shown. Scenario mode arrives with M6 and stays separate from results.', zh: '不显示候选人或情景。情景模式在 M6 才有，并与结果完全分开。' },
+    note: { en: 'No candidates or scenarios are shown.', zh: '不显示候选人或情景。' },
     extraFact: { en: 'Maine and Nebraska split', zh: '缅因州与内布拉斯加州拆分' },
     offices: [
       {

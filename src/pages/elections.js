@@ -103,6 +103,8 @@ function seatStatus(seat) {
 }
 // Coverage is measured in contests: a seat that is not on the ballot can never report.
 const contestCount = (seats) => seats.filter((seat) => seat.onBallot).length;
+// Which places are up is not listed for NSW Council and the AU Senate, so the office gives the number.
+const contestTotal = (seats, office) => office?.up ?? contestCount(seats);
 const eventHref = (eventId) => serializeState(withEvent(eventId)) || window.location.pathname;
 const hubHref = () => window.location.pathname;
 
@@ -292,12 +294,14 @@ function renderTally(event, office, seats, unit) {
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
   const segments = counts ? parties.map((party) => segment(party, counts[party.id].decided, 'decided')).join('') + parties.map((party) => segment(party, counts[party.id].leading, 'leading')).join('') : '';
-  const open = shown ? tally.neutral + tally.unavailable : office.seats - tally.off;
+  // A decision or lead for someone with no listed party has no colour, but it is not "no decision".
+  const unlisted = shown ? seats.filter((seat) => seat.onBallot && states[seat.seatId]?.status !== 'unavailable' && states[seat.seatId] && seatMark(seat, states[seat.seatId], parties).status === 'neutral').length : 0;
+  const open = shown ? tally.neutral + tally.unavailable - unlisted : office.seats - tally.off;
   return `<section class="el-tally" id="el-tally" aria-label="${T('Seat tally', '席位统计')}">
     <div class="el-tally-bar">${segments}
       <span class="el-tally-mark" style="left:${majorityAt}%"><span>${L(office.majorityLabel)}</span></span>
     </div>
-    <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${shown ? T('No decision or lead', '无判定或领先') : L(NO_RESULT)}<b>${open}</b></li>${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
+    <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${shown ? T('No decision or lead', '无判定或领先') : L(NO_RESULT)}<b>${open}</b></li>${unlisted ? `<li><i class="el-neutral"></i>${T('Decision or lead, no listed party', '有判定或领先，无所列党派')}<b>${unlisted}</b></li>` : ''}${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
     ${office.majorityNote ? `<p class="el-note">${L(office.majorityNote)}</p>` : ''}
     ${shown ? `<p class="el-note">${T('Large numbers are seats with a named decision. Leads are counted apart. This page never declares who controls a chamber.', '大号数字是有具名判定的席位，领先单独计数。本页不宣布议院控制权。')}</p>` : ''}
     <p class="el-note el-sr">${office.seats} ${unit}</p>
@@ -319,7 +323,7 @@ function chamberMarkup(event, office, seats) {
 
 function renderChamber(event, office, seats) {
   if (!office.geometry) {
-    return `<div class="el-chamber-slot"><p>${T('An Electoral College view arrives with M6. No seat chart applies here.', '选举人团视图在 M6 才有，这里不适用席位图。')}</p></div>`;
+    return `<div class="el-chamber-slot"><p>${T('The Electoral College view is not built yet. No seat chart applies here.', '选举人团视图尚未建成，这里不适用席位图。')}</p></div>`;
   }
   const svg = chamberMarkup(event, office, seats);
   const key = tallySeats(seats, NO_STATES).off
@@ -528,7 +532,7 @@ function renderRaces() {
   const count = $('el-races-count');
   if (!seats.length) {
     count.textContent = T('No race list yet', '暂无比赛列表');
-    host.innerHTML = `<p class="el-empty">${T('The contest list for this office arrives with M6.', '此议院的比赛列表在 M6 才有。')}</p>`;
+    host.innerHTML = `<p class="el-empty">${T('No contest list is available for this office yet.', '此议院暂无比赛列表。')}</p>`;
     return;
   }
   const sorted = sortSeats(seats, table.key, table.direction, seatStatus);
@@ -581,6 +585,7 @@ const leaderName = (race, pick = contestLeader) => {
 };
 
 function marginText(race) {
+  if (!contestLeader(race)) return null;
   const counted = race.candidates.map((candidate) => candidate.votes).filter((votes) => votes !== null).sort((a, b) => b - a);
   return counted.length > 1 ? (counted[0] - counted[1]).toLocaleString('en-AU') : null;
 }
@@ -599,8 +604,10 @@ function tcpText(race) {
   if (two?.status === 'withheld') return T('Withheld by source', '来源暂不公布');
   if (two?.status !== 'available') return null;
   const leader = contestLeader(race);
-  const sum = two.candidates.reduce((total, item) => total + (item.votes ?? 0), 0);
-  if (!leader || !sum) return T('Tied', '持平');
+  const [first, second] = two.candidates;
+  if (first.votes === null || second.votes === null) return null;
+  if (!leader) return first.votes > 0 ? T('Tied', '持平') : null;
+  const sum = first.votes + second.votes;
   const votes = two.candidates.find((item) => item.candidateId === leader.candidateId).votes;
   return `${esc(leader.name)} ${((votes / sum) * 100).toFixed(1)}%`;
 }
@@ -646,7 +653,7 @@ function renderSources(event, seats) {
     <h2 id="el-sources-title" class="el-sr">${T('Sources & status', '来源与状态')}</h2>
     <dl class="el-kv">
       <dt>${T('Mode', '模式')}</dt><dd>${L(modeLabel())}</dd>
-      <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestCount(seats)}` : DASH}</dd>
+      <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestTotal(seats, officeById(event, state.office))}` : DASH}</dd>
       <dt>${T('Feed', '数据源')}</dt><dd>${feedSource ? esc(feedSource.name) : L(event.feed)}</dd>
       ${source ? `<dt>${T('Feed status', '数据源状态')}</dt><dd>${feedStatusText(source)}</dd>` : ''}
       <dt>${T('Geography', '地理')}</dt><dd>${geography ? L(geography.short) : T('Schematic only · no verified boundaries', '仅示意 · 无经核验的边界')}</dd>
@@ -676,6 +683,8 @@ const CHANGE_WORDS = Object.freeze({
   rcv_transition: { en: 'Round change', zh: '轮次变化' },
   call: { en: 'Called', zh: '判定' },
   call_rescinded: { en: 'Decision withdrawn', zh: '判定撤销' },
+  decision_changed: { en: 'Decision changed', zh: '判定变更' },
+  count_basis_change: { en: 'Different count', zh: '计票方式变化' },
   certification: { en: 'Declared', zh: '正式宣布' },
   source_switch: { en: 'Source switch', zh: '更换来源' },
   tcp_pair_change: { en: 'Two-candidate pair changed', zh: '两候选人组合变化' },
@@ -779,7 +788,7 @@ function renderConsoleStrip(event, office, seats) {
   const stale = races.filter((race) => raceFreshness(race, shown.pointer) === 'stale').length;
   const source = shown?.pointer?.sources?.[0];
   renderStrip(`${L(event.short)} · ${L(office.fullName)}`, [
-    seats.length ? `${T('Coverage', '覆盖')} ${coveredSeats(seats, currentRaces())}/${contestCount(seats)}` : T('Coverage —', '覆盖 —'),
+    seats.length ? `${T('Coverage', '覆盖')} ${coveredSeats(seats, currentRaces())}/${contestTotal(seats, office)}` : T('Coverage —', '覆盖 —'),
     ...(shown ? [] : [T('Source age —', '来源时间 —')]),
     ...(source && !isReplay() ? [`${T('Checked', '检查')} ${formatAge(ageSeconds(source.lastCheckedAt, Date.now()))}`] : []),
     ...(stale ? [`<em>${T(`${stale} stale`, `${stale} 场已过时`)}</em>`] : []),
@@ -945,7 +954,8 @@ function renderTwoCandidate(race) {
   if (!two) return '';
   if (two.status === 'withheld') return `<p class="el-note">${T('The two-candidate count is withheld by the source for this seat. First preferences are unaffected.', '来源暂不公布此席位的两候选人计票。初选票不受影响。')}</p>`;
   if (two.status !== 'available') return `<p class="el-note">${T('No two-candidate count has been published for this seat yet.', '此席位尚未发布两候选人计票。')}</p>`;
-  const sum = two.candidates.reduce((total, item) => total + (item.votes ?? 0), 0);
+  const known = two.candidates.every((item) => item.votes !== null);
+  const sum = known ? two.candidates.reduce((total, item) => total + item.votes, 0) : 0;
   const rows = two.candidates.map((item) => {
     const candidate = race.candidates.find((entry) => entry.candidateId === item.candidateId);
     return `<tr><td>${esc(candidate?.name) || DASH}</td><td class="el-num">${item.votes === null ? DASH : item.votes.toLocaleString('en-AU')}</td><td class="el-num">${sum && item.votes !== null ? `${((item.votes / sum) * 100).toFixed(1)}%` : DASH}</td></tr>`;
@@ -1011,7 +1021,7 @@ function renderDrawer(event, office, seat) {
       </div>
       <button type="button" class="el-drawer-close" data-close aria-label="${T('Close race details', '关闭比赛详情')}">×</button>
     </div>
-    ${seat.placeholder ? `<p class="el-note">${T('Placeholder. The electorate name needs a verified catalogue (M1).', '占位。选区名称需要经核验的名单（M1）。')}</p>` : ''}
+    ${seat.placeholder ? `<p class="el-note">${T('Placeholder. The electorate name needs an official list.', '占位。选区名称需要官方名单。')}</p>` : ''}
     ${seat.area && seat.feature ? `<p class="el-note">${T('This region elects five members together. The number only counts them.', '这个大区一起选出五席，编号只用于计数。')}</p>` : ''}
     ${seat.contest === 'special' ? `<p class="el-note">${T('Special contest in 2026.', '2026 年特别选举。')}</p>` : ''}
     ${onBallot ? `<table class="el-cands">

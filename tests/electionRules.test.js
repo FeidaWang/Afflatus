@@ -59,7 +59,7 @@ describe('election rule packs', () => {
   });
 
   it('never lists an enabled feed', () => {
-    for (const event of ELECTION_EVENTS) expect(event.feed.en).toMatch(/disabled until verified|No feed planned/);
+    for (const event of ELECTION_EVENTS) expect(event.feed.en).toMatch(/not connected|No feed connected/);
   });
 });
 
@@ -86,6 +86,11 @@ describe('election calendar', () => {
   it('moves on from Victoria when its polls close at 18:00 AEDT', () => {
     expect(nextEvent(at('2026-11-28T17:59:00+11:00')).id).toBe('vic-2026');
     expect(nextEvent(at('2026-11-28T18:00:00+11:00')).id).toBe('nsw-2027');
+  });
+
+  it('moves on from NSW when its polls close on 13 March 2027, per the NSW Electoral Commission', () => {
+    expect(nextEvent(at('2027-03-13T17:59:00+11:00')).id).toBe('nsw-2027');
+    expect(nextEvent(at('2027-03-13T18:00:00+11:00')).id).toBe('au-2028');
   });
 
   it('falls through an undated event in order and ends after the last one', () => {

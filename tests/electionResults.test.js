@@ -11,6 +11,8 @@ import { HIDDEN_CHECK_MS, VISIBLE_CHECK_MS, createFeedController } from '../src/
 const candidate = (id, votes, partyId = 'dem') => ({ candidateId: id, name: id, party: partyId, partyId, votes });
 const race = (overrides = {}) => ({
   raceId: 'us-2026/house/NC-01',
+  eventId: 'us-2026',
+  electionDate: '2026-11-03',
   office: 'house',
   seatIds: ['NC-01'],
   candidates: [candidate('a', 100, 'dem'), candidate('b', 90, 'rep')],
@@ -26,6 +28,7 @@ const race = (overrides = {}) => ({
 });
 const called = (candidateId = 'a') => ({ status: 'provider_called', candidateIds: [candidateId], authority: 'Provider X', evidenceUrl: 'https://example.org', decidedAt: '2026-11-04T02:00:00.000Z', firstObservedAt: null });
 const certified = (candidateId = 'a') => ({ status: 'certified', candidateIds: [candidateId], authority: 'State board', evidenceUrl: 'https://example.org', decidedAt: null, firstObservedAt: '2026-11-20T02:00:00.000Z' });
+const senateRace = (seatId, targetTerm) => race({ raceId: `us-2026/senate/${seatId}`, office: 'senate', seatIds: [seatId], targetTerm });
 const snapshot = (overrides = {}) => ({ schemaVersion: 1, snapshotId: 's1', eventId: 'us-2026', mode: 'preview', isSynthetic: true, sourceIds: ['vec-sample'], races: [race()], ...overrides });
 
 describe('snapshot validation', () => {
@@ -47,8 +50,48 @@ describe('snapshot validation', () => {
     ['a call for a stranger', { races: [race({ decision: called('z') })] }],
     ['an impossible coverage state', { races: [race({ coverage: 'final' })] }],
     ['a bad source time', { races: [race({ provenance: { ...race().provenance, sourceUpdatedAt: 'yesterday' } })] }],
+    ['a call with no evidence', { races: [race({ decision: { ...called(), evidenceUrl: null } })] }],
+    ['two winners for one seat', { races: [race({ decision: { ...called(), candidateIds: ['a', 'b'] } })] }],
+    ['an uncalled race with a winner', { races: [race({ decision: { ...race().decision, candidateIds: ['a'] } })] }],
+    ['a rescission with no authority', { races: [race({ decision: { ...race().decision, status: 'call_rescinded', firstObservedAt: '2026-11-04T03:00:00.000Z' } })] }],
+    ['a rescission with no time', { races: [race({ decision: { ...race().decision, status: 'call_rescinded', authority: 'Provider X' } })] }],
+    ['votes as a numeric string', { races: [race({ candidates: [candidate('a', '1,200')] })] }],
+    ['fractional votes', { races: [race({ candidates: [candidate('a', 1.5)] })] }],
+    ['a numeric string in progress', { races: [race({ progress: { ...race().progress, reported: '10' } })] }],
+    ['an RCV count with no round', { races: [race({ counting: { method: 'rcv', status: 'counting', round: null } })] }],
+    ['last cycle returned for this one', { races: [race({ electionDate: '2024-11-05' })] }],
+    ['another event in this snapshot', { races: [race({ eventId: 'us-2028' })] }],
+    ['an event that does not exist', { eventId: 'us-2024' }],
+    ['a seat from outside the catalogue', { races: [race({ seatIds: ['NC-15'] })] }],
+    ['one seat in two races', { races: [race(), race({ raceId: 'us-2026/house/NC-01-copy' })] }],
+    ['a Senate seat not on this ballot', { races: [senateRace('NC-S2', '2027-2033')] }],
+    ['a regular contest with the special term', { races: [senateRace('NC-S1', 'to-2029-01-03')] }],
+    ['a special contest with the regular term', { races: [senateRace('OH-S1', '2027-2033')] }],
   ])('rejects %s', (_name, overrides) => {
     expect(snapshotErrors(snapshot(overrides)).length).toBeGreaterThan(0);
+  });
+
+  it.each([
+    ['part of a multi-member region', { raceId: 'vic-2026/council/x', eventId: 'vic-2026', electionDate: '2026-11-28', office: 'council', seatIds: ['eastern-victoria-1'], positions: 5 }],
+    ['a declaration by a media outlet', { raceId: 'vic-2026/assembly/kew', eventId: 'vic-2026', electionDate: '2026-11-28', office: 'assembly', seatIds: ['kew'], decision: { ...certified(), authority: 'A News Desk' } }],
+    ['evidence that is not a link', { decision: { ...called(), evidenceUrl: 'TBC' } }],
+  ])('rejects %s', (_name, overrides) => {
+    const eventId = overrides.eventId || 'us-2026';
+    expect(snapshotErrors(snapshot({ eventId, races: [race(overrides)] })).length).toBeGreaterThan(0);
+  });
+
+  it('accepts a declaration by the commission that runs the election', () => {
+    const declared = race({ raceId: 'vic-2026/assembly/kew', eventId: 'vic-2026', electionDate: '2026-11-28', office: 'assembly', seatIds: ['kew'], decision: { ...certified(), authority: 'VEC' } });
+    expect(snapshotErrors(snapshot({ eventId: 'vic-2026', races: [declared] }))).toEqual([]);
+  });
+
+  it('accepts regular and special contests on their own terms', () => {
+    expect(snapshotErrors(snapshot({ races: [senateRace('NC-S1', '2027-2033'), senateRace('OH-S1', 'to-2029-01-03')] }))).toEqual([]);
+  });
+
+  it('accepts an unopposed winner with no votes reported', () => {
+    const unopposed = race({ candidates: [candidate('a', 0)], counting: { method: 'plurality', status: 'no_votes', round: null }, decision: called() });
+    expect(snapshotErrors(snapshot({ races: [unopposed] }))).toEqual([]);
   });
 
   it('allows null for every unknown', () => {
@@ -91,6 +134,44 @@ describe('publication gate', () => {
 });
 
 describe('leaders and calls stay separate', () => {
+  it('keeps same-party candidates apart', () => {
+    const contest = race({ candidates: [candidate('a', 100, 'dem'), candidate('b', 90, 'dem')] });
+    expect(contestLeader(contest).candidateId).toBe('a');
+    const states = seatStates({ races: [{ ...contest, decision: called('b') }] });
+    expect(states['NC-01']).toEqual({ status: 'called', party: 'dem' });
+  });
+
+  it('colours nothing for a write-in with no party, and still draws the seat', () => {
+    const writeIn = { candidateId: 'w', name: 'Write-in', party: null, partyId: null, votes: 200 };
+    const contest = race({ candidates: [writeIn, candidate('b', 90, 'dem')] });
+    const states = seatStates({ races: [contest] });
+    const seat = seatCatalogue('us-2026', 'house').find((item) => item.seatId === 'NC-01');
+    expect(states['NC-01']).toEqual({ status: 'leading', party: null });
+    expect(() => seatMark(seat, states['NC-01'], PARTIES.us)).not.toThrow();
+    expect(seatMark(seat, states['NC-01'], PARTIES.us).party).toBeFalsy();
+    expect(partyTally([seat], states, PARTIES.us).dem).toEqual({ decided: 0, leading: 0 });
+  });
+
+  it.each([
+    ['a ranked-choice count pending', { method: 'rcv', status: 'rcv_pending', round: 1 }],
+    ['a ranked-choice first round', { method: 'rcv', status: 'counting', round: 1 }],
+    ['a race going to a runoff', { method: 'plurality', status: 'runoff', round: null }],
+  ])('names no leader with %s', (_name, counting) => {
+    const contest = race({ counting });
+    expect(contestLeader(contest)).toBeNull();
+    expect(seatStates({ races: [contest] })).toEqual({});
+  });
+
+  it('names no leader while any candidate is unknown', () => {
+    expect(primaryLeader(race({ candidates: [candidate('a', null), candidate('b', 1, 'rep')] }))).toBeNull();
+  });
+
+  it('does not count a failed source as covered', () => {
+    const seats = seatCatalogue('us-2026', 'house').filter((seat) => seat.seatId === 'NC-01');
+    expect(coveredSeats(seats, new Map([['NC-01', race({ coverage: 'source_error' })]]))).toBe(0);
+    expect(coveredSeats(seats, new Map([['NC-01', race({ coverage: 'stale' })]]))).toBe(1);
+  });
+
   it('does not name a leader on a tie or with nothing counted', () => {
     expect(primaryLeader(race({ candidates: [candidate('a', 5), candidate('b', 5)] }))).toBeNull();
     expect(primaryLeader(race({ candidates: [candidate('a', null), candidate('b', null)] }))).toBeNull();
@@ -209,6 +290,40 @@ describe('change events', () => {
     expect(types(race({ decision: certified() }), race({ decision: { ...race().decision, status: 'call_rescinded' } }))).toEqual(['call_rescinded']);
   });
 
+  it('reports a declared winner changing, even with the same status', () => {
+    const before = race({ decision: certified('a') });
+    const after = race({ decision: certified('b') });
+    expect(raceChanges(before, after, 'now').map((change) => change.type)).toEqual(['decision_changed']);
+  });
+
+  it.each([
+    ['a recount', { counting: { method: 'plurality', status: 'recount', round: null }, totals: { formal: 200, informal: null, total: null } }],
+    ['a runoff', { counting: { method: 'plurality', status: 'runoff', round: null }, totals: { formal: 50, informal: null, total: null } }],
+    ['another method', { counting: { method: 'rcv', status: 'counting', round: null }, totals: { formal: 50, informal: null, total: null } }],
+    ['another term', { targetTerm: 'to-2029-01-03', totals: { formal: 50, informal: null, total: null } }],
+  ])('invents no batch or correction across %s', (_name, overrides) => {
+    const types = raceChanges(race(), race(overrides), 'now').map((change) => change.type);
+    expect(types).toEqual(['count_basis_change']);
+  });
+
+  it('reports nothing when a total can no longer be known', () => {
+    const before = race({ candidates: [candidate('a', 10), candidate('b', 5, 'rep')], totals: null });
+    const after = race({ candidates: [candidate('a', null), candidate('b', 6, 'rep')], totals: null });
+    expect(raceChanges(before, after, 'now')).toEqual([]);
+  });
+
+  it('compares totals on one basis only', () => {
+    const before = race({ totals: { formal: 190, informal: null, total: null } });
+    const after = race({ candidates: [candidate('a', 105), candidate('b', 90, 'rep')], totals: { formal: 195, informal: 5, total: 200 } });
+    expect(raceChanges(before, after, 'now')[0]).toMatchObject({ type: 'new_batch', delta: 5 });
+  });
+
+  it('does not treat a new source without the call as a withdrawal', () => {
+    const before = race({ decision: called() });
+    const after = race({ provenance: { ...race().provenance, sourceId: 'other' } });
+    expect(raceChanges(before, after, 'now').map((change) => change.type)).toEqual(['source_switch']);
+  });
+
   it('flags a changed 2CP pair', () => {
     const pair = (ids) => race({ twoCandidate: { status: 'available', candidates: ids.map((id) => ({ candidateId: id, votes: 1 })) } });
     expect(types(pair(['a', 'b']), pair(['a', 'c']))).toEqual(['tcp_pair_change']);
@@ -223,6 +338,12 @@ describe('one authoritative race per contest', () => {
     const resolved = resolveRaces(['official', 'aggregator'], { official: [official], aggregator: [copy] });
     expect(resolved).toEqual([official]);
     expect(resolved[0].totals.formal).toBe(190);
+  });
+
+  it('never adds a source total to its method subtotals or to county rows', () => {
+    const before = race({ candidates: [candidate('a', 100), candidate('b', 90)], totals: { formal: 190, informal: null, total: 190 } });
+    const after = race({ candidates: [candidate('a', 110), candidate('b', 90)], totals: { formal: 200, informal: null, total: 200, byMethod: { early: 120, day: 80 }, byCounty: { one: 200 } } });
+    expect(raceChanges(before, after, 'now')).toEqual([{ raceId: before.raceId, at: 'now', type: 'new_batch', delta: 10 }]);
   });
 
   it('falls to the next source as a whole when the first has no such contest', () => {

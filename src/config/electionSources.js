@@ -58,7 +58,7 @@ export const ELECTION_SOURCES = Object.freeze([
     expectedEventName: null,
     allowedHosts: [],
     feeds: [],
-    blockedBy: 'District coverage is unverified, caching and redistribution are not addressed, and it returned 503 on 5 November.',
+    blockedBy: 'Caching and redistribution are not addressed, no race carries its own time, and no official cross-check has run. See docs/elections/M1.md.',
   },
 ]);
 
