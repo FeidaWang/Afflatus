@@ -92,13 +92,13 @@
       "id": "elections",
       "path": "/elections.html",
       "performanceScore": 0.98,
-      "lcpMs": 2101,
+      "lcpMs": 2102,
       "tbtMs": 0,
       "cls": 0.041,
       "clsBudgetBase": 0.1,
       "speedIndexMs": 1802,
-      "scriptBytes": 39525,
-      "totalBytes": 217480
+      "scriptBytes": 41749,
+      "totalBytes": 220063
     },
     {
       "id": "horoscope",

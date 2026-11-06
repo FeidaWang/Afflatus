@@ -1,0 +1,84 @@
+{
+ "command": "caffeinate -u env LIGHTHOUSE_ROUTE_IDS=elections node scripts/run-lighthouse.mjs",
+ "route": "/elections.html",
+ "note": "First pass: three runs, used for the baseline medians. It failed only the script-size gate against the old 39525-byte row.",
+ "runs": [
+  {
+   "file": "lhr-1793947401857.json",
+   "fetchTime": "2026-11-06T06:43:14.132Z",
+   "lighthouse": "12.6.1",
+   "runtimeError": null,
+   "performance": 0.98,
+   "lcpMs": 2102.6482,
+   "tbtMs": 0,
+   "cls": 0.04109862355435336,
+   "speedIndexMs": 1802.6482,
+   "scriptBytes": 41749,
+   "totalBytes": 220063
+  },
+  {
+   "file": "lhr-1793947411892.json",
+   "fetchTime": "2026-11-06T06:43:24.178Z",
+   "lighthouse": "12.6.1",
+   "runtimeError": null,
+   "performance": 0.98,
+   "lcpMs": 2101.5813,
+   "tbtMs": 0,
+   "cls": 0.04109862355435336,
+   "speedIndexMs": 1801.5813,
+   "scriptBytes": 41749,
+   "totalBytes": 220063
+  },
+  {
+   "file": "lhr-1793947421701.json",
+   "fetchTime": "2026-11-06T06:43:34.001Z",
+   "lighthouse": "12.6.1",
+   "runtimeError": null,
+   "performance": 0.98,
+   "lcpMs": 2101.4231,
+   "tbtMs": 0,
+   "cls": 0.04109862355435336,
+   "speedIndexMs": 1801.4231,
+   "scriptBytes": 41749,
+   "totalBytes": 220063
+  }
+ ],
+ "recheck": {
+  "note": "Second pass after updating the row: three runs, all assertions passed.",
+  "runs": [
+   {
+    "file": "lhr-1793947452419.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 2102.1036,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1802.1036,
+    "scriptBytes": 41749,
+    "totalBytes": 220063
+   },
+   {
+    "file": "lhr-1793947462434.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 2101.5343000000003,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1801.5343,
+    "scriptBytes": 41749,
+    "totalBytes": 220063
+   },
+   {
+    "file": "lhr-1793947472262.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 1951.4993,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1801.4993,
+    "scriptBytes": 41749,
+    "totalBytes": 220063
+   }
+  ]
+ }
+}
