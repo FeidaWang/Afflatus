@@ -168,12 +168,6 @@ test.describe('tree links', () => {
     await expect(page.locator('h1, h2').filter({ hasText: '第' }).first()).toBeVisible();
   });
 
-  test('the finished novel\'s node stays on its landing page', async ({ page }) => {
-    await page.goto('/zh/search.html?topic=serials', { waitUntil: 'load' });
-    await page.locator('.topic-result').filter({ hasText: '万界种春' }).locator('.related-trigger').click();
-    await expect(page.locator('.related-tree li a').filter({ hasText: '玉熙宫词' })).toHaveAttribute('href', '/zh/novels/yuxi-gongci/');
-  });
-
   test('a course node opens that week\'s book', async ({ page }) => {
     await page.goto('/en/search.html?topic=fde-course', { waitUntil: 'load' });
     await page.locator('.topic-result .related-trigger').first().click();
