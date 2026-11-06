@@ -67,7 +67,7 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-rail-now{position:absolute;top:0;transform:translateX(-50%);padding:2px 7px;background:var(--el-ink);color:var(--el-bg);font:10.5px/1.5 var(--el-mono);letter-spacing:.06em;white-space:nowrap}
 .el-rail-now::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:14px;background:var(--el-ink)}
 .el-rail-stop{position:absolute;top:-6px;width:18%;transform:translateX(-50%);text-align:center}
-.el-rail-stop a{display:block;font:11.5px/1.35 var(--el-mono);color:var(--el-muted);text-decoration:none}
+.el-rail-stop a{display:block;font:11.5px/1.35 var(--el-mono);color:var(--el-muted);text-decoration:none;word-break:keep-all}
 .el-rail-stop a:hover b{text-decoration:underline}
 .el-rail-stop i{display:block;width:14px;height:14px;margin:0 auto 6px;border-radius:50%;background:var(--el-bg);border:2px solid var(--el-ink)}
 .el-rail-stop.past i{background:var(--el-ink)}
@@ -155,7 +155,7 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-room-label{fill:var(--el-ink);font-family:var(--el-mono);letter-spacing:.04em}
 [data-chamber=fan] .el-room-label{font-size:18.5px}
 [data-chamber=horseshoe] .el-room-label{font-size:16px}
-.el-chamber-readout{min-height:1.5em;font:12px/1.5 var(--el-mono);color:var(--el-ink);text-align:center}
+.el-chamber-readout{min-height:1.5em;font:12px/1.5 var(--el-mono);color:var(--el-ink);text-align:center;word-break:keep-all;text-wrap:balance}
 .el-chamber-key{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;font:12px/1.4 var(--el-mono);color:var(--el-muted)}
 .el-chamber-key li{display:inline-flex;align-items:center;gap:6px}
 .el-chamber-key i{display:inline-block;width:11px;height:11px}

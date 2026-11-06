@@ -196,7 +196,8 @@ export const ELECTION_EVENTS = Object.freeze([
     // For ordering only. No date has been announced.
     sortDate: '2028-05-31',
     pollsCloseUtc: null,
-    dateLabel: { en: 'Date not set · half-Senate window ends May 2028', zh: '日期未定 · 半数参议院选举窗口至 2028 年 5 月' },
+    // No-break spaces keep the Chinese month on one line with its year.
+    dateLabel: { en: 'Date not set · half-Senate window ends May 2028', zh: '日期未定 · 半数参议院选举窗口至 2028\u00a0年\u00a05\u00a0月' },
     pollsClose: { en: 'Polls close 18:00 local, state by state', zh: '各州当地 18:00 关门' },
     // No date is set and the window runs into May, after daylight saving ends.
     timeLabel: 'AEST/AEDT',
