@@ -103,21 +103,24 @@ test.describe('active-route browser gates', () => {
       }
 
       // Below the desktop breakpoint the primary nav sits behind the header
-      // menu, where groups are flat titled sections with no disclosure.
+      // menu, whose groups open in place and stay open on Tab.
       const headerMenu = page.locator('#afflatus-header .af-header-menu');
+      const analysis = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-analysis"]');
       if (await headerMenu.isVisible()) {
         await headerMenu.click();
         await expect(headerMenu).toHaveAttribute('aria-expanded', 'true');
+        // The menu's lazy module opens the current group and then takes focus; wait so a click can't undo it.
+        await expect(page.locator('#af-primary-nav').locator('a, button').first()).toBeFocused();
+        if (await analysis.getAttribute('aria-expanded') === 'false') await analysis.click();
         await expect(page.locator('#af-analysis a').first()).toBeVisible();
       } else {
-        const analysisTrigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-analysis"]');
-        await expect(analysisTrigger).toBeVisible();
-        await analysisTrigger.focus();
+        await expect(analysis).toBeVisible();
+        await analysis.focus();
         await page.keyboard.press('Enter');
-        await expect(analysisTrigger).toHaveAttribute('aria-expanded', 'true');
+        await expect(analysis).toHaveAttribute('aria-expanded', 'true');
         await page.keyboard.press('Escape');
-        await expect(analysisTrigger).toHaveAttribute('aria-expanded', 'false');
-        await expect(analysisTrigger).toBeFocused();
+        await expect(analysis).toHaveAttribute('aria-expanded', 'false');
+        await expect(analysis).toBeFocused();
       }
 
       const routeLinks = page.locator('#af-primary-nav > a[href]');

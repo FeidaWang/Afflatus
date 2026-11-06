@@ -59,8 +59,7 @@ if (header && !header.dataset.enhanced) {
   function scheduleBrand() { if (!frame) frame = requestAnimationFrame(drawBrand); }
   function setOpen(button, open) {
     button.setAttribute('aria-expanded', String(open));
-    // Compact groups are flat titled sections, so their lists stay open inside the menu.
-    panel(button).hidden = !open && (button === menu || !compact.matches);
+    panel(button).hidden = !open;
     if (button !== menu) {
       button.parentElement.dataset.open = String(open);
       if (open) openGroup = button;
@@ -78,10 +77,9 @@ if (header && !header.dataset.enhanced) {
   }
   function resize() {
     const active = document.activeElement;
-    closeAll();
-    groups.forEach(button => setOpen(button, false));
+    closeGroups();
+    setOpen(menu, false);
     nav.hidden = compact.matches;
-    menu.setAttribute('aria-expanded', 'false');
     if (compact.matches && nav.contains(active)) menu.focus();
     else if (!compact.matches && active === menu) header.querySelector('[data-header-path="/"]').focus();
     scheduleBrand();
@@ -122,6 +120,8 @@ if (header && !header.dataset.enhanced) {
     const next = menu.getAttribute('aria-expanded') !== 'true';
     closeGroups();
     setOpen(menu, next);
+    // The rest of the compact menu loads on first use; /serial.html's script budget has no room for it here.
+    if (next) import(/* @vite-ignore */ '/lib/compact-menu.js');
   });
   header.addEventListener('click', event => { if (event.target.closest('a')) closeAll(); });
   document.addEventListener('keydown', event => {

@@ -1,0 +1,68 @@
+[
+  {
+    "href": {
+      "en": "/en/sectors.html",
+      "zh": "/zh/sectors.html"
+    },
+    "label": {
+      "en": "AI Observatory",
+      "zh": "AI 观察站"
+    },
+    "date": {
+      "iso": "2026-10-09",
+      "label": {
+        "en": "9 Oct 2026",
+        "zh": "2026 年 10 月 9 日"
+      }
+    },
+    "title": {
+      "en": "Haiku 5.5 makes the small-task layer cheaper",
+      "zh": "Haiku 5.5 降低小任务层的成本"
+    },
+    "cover": "/assets/topics/sectors.webp"
+  },
+  {
+    "href": {
+      "en": "/en/signal.html",
+      "zh": "/zh/signal.html"
+    },
+    "label": {
+      "en": "Fed Watch",
+      "zh": "美联储观察"
+    },
+    "date": {
+      "iso": "2026-10-01",
+      "label": {
+        "en": "1 Oct 2026",
+        "zh": "2026 年 10 月 1 日"
+      }
+    },
+    "title": {
+      "en": "Waller: trusted data in an AI economy",
+      "zh": "Waller：AI经济中的可信数据"
+    },
+    "cover": "/assets/topics/signal.webp"
+  },
+  {
+    "href": {
+      "en": "/zh/serial.html",
+      "zh": "/zh/serial.html"
+    },
+    "label": {
+      "en": "Serials",
+      "zh": "连载"
+    },
+    "date": {
+      "iso": "2026-10",
+      "label": {
+        "en": "Oct 2026",
+        "zh": "2026 年 10 月"
+      }
+    },
+    "title": {
+      "en": "玉熙宫词",
+      "zh": "玉熙宫词"
+    },
+    "cover": "/assets/topics/serial.webp"
+  }
+]

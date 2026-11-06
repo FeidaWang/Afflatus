@@ -23,6 +23,7 @@ function localize(html,lang,page){
    if(attr(`data-${lang}`)!=null)n.childNodes=[{nodeName:'#text',value:attr(`data-${lang}`),parentNode:n}];
    if(attr(`data-aria-${lang}`)!=null)set('aria-label',attr(`data-aria-${lang}`));
    if(attr('href')?.startsWith('/')){const path=attr('href').replace(/^\/(en|zh)(?=\/)/,'');set('href',path==='/serial.html'?'/zh/serial.html':`/${lang}${path}`);}
+   if(attr('data-footer-language')!=null)set('href',`/${attr('data-footer-language')}/course/${page}.html`);
    if(attr('data-header-language')!=null){set('href',`/${other}/course/${page}.html`);set('hreflang',other==='zh'?'zh-CN':'en');set('aria-label',other==='zh'?'切换到中文':'Switch to English');n.childNodes=[{nodeName:'#text',value:other==='zh'?'中文':'EN',parentNode:n}];}
    if(attr('data-header-path')==='/course.html')set('aria-current','page');
    else n.attrs=n.attrs.filter(a=>a.name!=='aria-current');

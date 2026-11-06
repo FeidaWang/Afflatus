@@ -138,29 +138,32 @@ h1, h2, p { margin: 0; }
   .film-dialog--landscape video { position: absolute; left: 50%; top: 50%; width: 100dvh; max-width: none; max-inline-size: none; height: 100vw; transform: translate(-50%, -50%) rotate(90deg); }
 }
 body:has(.film-dialog[open]) { overflow: hidden; }
-.latest-work { padding-block: 0 88px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 48px; padding-block: 48px 36px; border-top: 1px solid var(--home-line); }
 .section-heading h2 { font-size: clamp(34px, 3.5vw, 50px); line-height: 1.05; font-weight: 650; letter-spacing: -.045em; }
 .section-heading p { font: 20px/1.4 var(--home-serif); max-width: 475px; }
-.work-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.work-item { display: grid; grid-template-columns: 32px 1fr 26px; grid-template-rows: 24px auto; gap: 8px 20px; padding-inline: 0 44px; text-decoration: none; }
-.work-item + .work-item { padding-left: 44px; border-left: 1px solid var(--home-line); }
-.work-item:last-child { padding-right: 0; }
-.work-number { grid-row: 1 / 3; font-size: 13px; padding-top: 2px; }
-.work-title { grid-column: 2 / 4; grid-row: 1 / 3; padding-top: 20px; padding-right: 35px; border-top: 1px solid var(--home-line); font-size: clamp(20px, 1.9vw, 27px); line-height: 1.35; letter-spacing: -.025em; }
-.work-item svg { grid-column: 3; grid-row: 2; align-self: center; width: 24px; height: 24px; transition: transform 180ms ease; }
-.work-item:hover svg { transform: translateX(5px); }
-.home-essay { padding-block: 60px 90px; }
-.home-essay::before { content: ''; display: block; border-top: 1px solid var(--home-line); margin-top: -60px; margin-bottom: 60px; }
-.eyebrow { font-size: 12px; line-height: 1.5; letter-spacing: .08em; }
-.essay-grid { display: grid; grid-template-columns: 1.38fr 1fr; gap: 110px; padding-top: 32px; }
-.essay-grid h2 { font-family: var(--home-serif); font-size: clamp(38px, 4vw, 58px); line-height: 1.08; font-weight: 450; letter-spacing: -.035em; max-width: 620px; }
-.essay-grid p { font-family: var(--home-serif); font-size: 25px; line-height: 1.35; }
-.essay-grid .text-link { margin-top: 24px; }
-.destinations { padding-bottom: 100px; }
-.destinations h2 { border-top: 1px solid var(--home-line); padding-top: 52px; font-size: clamp(32px, 3vw, 44px); font-weight: 600; letter-spacing: -.035em; }
-.destinations nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 44px; margin-top: 36px; }
-.destinations .text-link { width: 100%; }
+.home-latest { padding-block: 0 72px; }
+.home-latest-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.home-card { position: relative; display: flex; flex-direction: column; min-height: 340px; padding: 28px 32px; border: 1px solid #e3e0d7; border-radius: 20px; background: #f7f5ef; }
+.home-card .related { top: 22px; right: 22px; }
+.home-card-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 20px; padding-right: 44px; font-size: 13px; line-height: 1.4; color: var(--home-muted); }
+.home-card h3, .home-learn-card h3 { margin: 0; font-weight: 600; letter-spacing: -.02em; line-height: 1.22; }
+.home-card h3 { margin-bottom: 12px; font-size: 23px; }
+.home-card-summary { display: -webkit-box; margin-bottom: 28px; overflow: hidden; font-size: 15px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+.home-card-action { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; margin-top: auto; padding: 10px 16px; border-radius: 10px; background: #e7e3d8; font-size: 15px; font-weight: 500; text-decoration: none; }
+.home-card-action:hover { background: #dedad0; }
+.home-card-action svg { flex: none; width: 18px; height: 18px; transition: transform 180ms ease; }
+.home-card-action:hover svg { transform: translateX(4px); }
+.home-learn { padding-block: 0 96px; }
+.home-learn > h2 { padding-block: 24px; border-top: 1px solid var(--home-line); font-size: 15px; font-weight: 600; line-height: 1.4; }
+.home-learn-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.home-learn-item { position: relative; }
+.home-learn-item .related { top: 0; right: 0; }
+.home-learn-card { display: block; text-decoration: none; }
+.home-learn-label { display: flex; align-items: center; min-height: 28px; margin-bottom: 14px; padding-right: 48px; font-size: 13px; line-height: 1.4; color: var(--home-muted); }
+.home-learn-card img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1.1; margin-bottom: 18px; border-radius: 8px; object-fit: cover; background: var(--home-line); }
+.home-learn-card h3 { margin-bottom: 8px; font-size: 19px; }
+.home-learn-card p { font-size: 14px; line-height: 1.5; color: var(--home-muted); }
+.home-learn-card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 html[lang^="zh"] .premiere-intro h1 { line-height: 1.15; letter-spacing: -.05em; font-size: clamp(48px, 5.2vw, 75px); }
 html[lang^="zh"] .premiere-copy p { font-size: clamp(24px, 2vw, 29px); line-height: 1.55; }
 html[lang^="zh"] .premiere-copy .text-link { font-size: 24px; }
@@ -169,14 +172,14 @@ html[lang^="zh"] .premiere-copy .text-link { font-size: 24px; }
   .premiere-intro h1 { font-size: 6vw; }
   .premiere-copy p { font-size: 27px; }
   .premiere-copy .text-link { font-size: 25px; }
-  .work-item { padding-right: 24px; gap: 8px 12px; }
-  .work-item + .work-item { padding-left: 24px; }
-  .essay-grid { gap: 48px; }
+  .home-latest-grid { grid-template-columns: 1fr; gap: 16px; }
+  .home-card { min-height: 0; }
 }
 @media (max-width: 979px) {
   .premiere-intro { grid-template-columns: 1fr; gap: 28px; align-items: start; padding-block: 44px 32px; }
   .premiere-intro h1 { font-size: clamp(39px, 7.3vw, 68px); }
   .premiere-copy p { max-width: 540px; }
+  .home-learn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
   :root { --home-gutter: 24px; }
@@ -189,29 +192,25 @@ html[lang^="zh"] .premiere-copy .text-link { font-size: 24px; }
   .film-inline-placeholder .film-poster { border-radius: 12px; }
   .section-heading { display: block; padding-block: 32px 28px; }
   .section-heading p { margin-top: 16px; font-size: 20px; }
-  .work-grid { grid-template-columns: 1fr; }
-  .work-item, .work-item + .work-item { min-height: 80px; padding: 18px 0; border-left: 0; border-top: 1px solid var(--home-line); grid-template-columns: 32px 1fr 26px; grid-template-rows: 1fr; align-items: center; }
-  .work-title { grid-column: 2; grid-row: 1; font-size: 23px; padding: 0; border: 0; }
-  .work-number { grid-row: 1; padding: 0; }
-  .work-item svg { grid-row: 1; }
-  .latest-work { padding-bottom: 48px; }
-  .home-essay { padding-block: 40px 56px; }
-  .home-essay::before { margin-top: -40px; margin-bottom: 40px; }
-  .essay-grid { grid-template-columns: 1fr; gap: 24px; padding-top: 24px; }
-  .essay-grid h2 { font-size: 42px; }
-  .essay-grid p { font-size: 24px; }
-  .destinations { padding-bottom: 56px; }
-  .destinations h2 { padding-top: 36px; }
-  .destinations nav { grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px; }
+  .home-latest { padding-bottom: 48px; }
+  .home-card { padding: 24px 22px; }
+  .home-learn { padding-bottom: 56px; }
   .film-dialog:not(.film-dialog--landscape) { width: calc(100% - 24px); padding: 12px; }
   html[lang^="zh"] .premiere-intro h1 { font-size: clamp(40px, 9vw, 64px); }
   html[lang^="zh"] .premiere-copy p { font-size: 24px; }
+}
+@media (max-width: 520px) {
+  .home-learn-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+/* Touch targets grow to 44px here (responsive-primitives.css), so the menu buttons need more room. */
+@media (pointer: coarse), (max-width: 440px) {
+  .home-card .related { top: 14px; right: 14px; }
+  .home-learn-label { min-height: 44px; margin-bottom: 8px; }
 }
 @media (max-width: 360px) {
   :root { --home-gutter: 18px; }
   .premiere-intro h1 { font-size: 36px; }
   .premiere-copy p { font-size: 22px; }
-  .essay-grid h2 { font-size: 36px; }
 }
 @container film-mini (max-width: 300px) {
   .film-player--mini:not(:fullscreen) .film-mini-toolbar { gap: 8px; padding: 4px 10px; }
@@ -221,5 +220,5 @@ html[lang^="zh"] .premiere-copy .text-link { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .text-link svg, .work-item svg { transition: none; }
+  .text-link svg, .home-card-action svg { transition: none; }
 }

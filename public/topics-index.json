@@ -1,0 +1,2724 @@
+{
+  "groups": {
+    "analysis": {
+      "en": "Analysis",
+      "zh": "分析"
+    },
+    "courses": {
+      "en": "Courses",
+      "zh": "课程"
+    },
+    "serials": {
+      "en": "Serials",
+      "zh": "连载"
+    },
+    "labs": {
+      "en": "Labs",
+      "zh": "实验室"
+    },
+    "about": {
+      "en": "About",
+      "zh": "关于"
+    }
+  },
+  "topics": [
+    {
+      "id": "ai-observatory",
+      "group": "analysis",
+      "title": {
+        "en": "AI Observatory",
+        "zh": "AI 观察站"
+      },
+      "summary": {
+        "en": "The companies, models and economics shaping AI, with the evidence shown.",
+        "zh": "塑造 AI 的公司、模型与商业逻辑，并列出依据。"
+      }
+    },
+    {
+      "id": "fed-watch",
+      "group": "analysis",
+      "title": {
+        "en": "Fed Watch",
+        "zh": "美联储观察"
+      },
+      "summary": {
+        "en": "Federal Reserve decisions, fiscal policy and AI, each dated and tied to a primary source.",
+        "zh": "美联储决议、财政政策与 AI，每条都注明日期并附一手来源。"
+      }
+    },
+    {
+      "id": "investing",
+      "group": "analysis",
+      "title": {
+        "en": "Investing & macro",
+        "zh": "投资与宏观"
+      },
+      "summary": {
+        "en": "A portfolio record, a daily stock journal and Federal Reserve policy, read together.",
+        "zh": "投资记录、每日美股看板与美联储政策，放在一起读。"
+      }
+    },
+    {
+      "id": "fde-course",
+      "group": "courses",
+      "title": {
+        "en": "FDE 0→1",
+        "zh": "FDE 0→1"
+      },
+      "summary": {
+        "en": "Twenty-four weeks of building useful tools with AI, with a guide, a handbook and a source library.",
+        "zh": "用 AI 做有用工具的 24 周实践课程，另有入门指南、实践手册与来源库。"
+      }
+    },
+    {
+      "id": "serials",
+      "group": "serials",
+      "title": {
+        "en": "Serials",
+        "zh": "连载"
+      },
+      "summary": {
+        "en": "Original serialised fiction, published in Chinese.",
+        "zh": "原创中文连载小说。"
+      }
+    },
+    {
+      "id": "labs",
+      "group": "labs",
+      "title": {
+        "en": "Labs",
+        "zh": "实验室"
+      },
+      "summary": {
+        "en": "Small experiments for entertainment: astrology charts and Worlds 2026 odds.",
+        "zh": "娱乐向的小实验：占星排盘与全球总决赛赔率。"
+      }
+    },
+    {
+      "id": "about",
+      "group": "about",
+      "title": {
+        "en": "About",
+        "zh": "关于"
+      },
+      "summary": {
+        "en": "The person behind this site, and the main things built here.",
+        "zh": "这个站背后的人，以及在这里做出的主要作品。"
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "sectors",
+      "group": "analysis",
+      "topic": [
+        "ai-observatory",
+        "about"
+      ],
+      "title": {
+        "en": "AI Observatory",
+        "zh": "AI 观察站"
+      },
+      "summary": {
+        "en": "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
+        "zh": "探索全球 AI 公司与 Haiku 5.5 等前沿模型，按厂商比较能力与成本，并通过原创分析和交互实验理解订阅经济。"
+      },
+      "url": "/sectors.html",
+      "cover": {
+        "en": "/assets/topics/sectors.webp",
+        "zh": "/assets/topics/sectors.webp"
+      },
+      "date": {
+        "iso": "2026-10-09",
+        "label": {
+          "en": "9 Oct 2026",
+          "zh": "2026 年 10 月 9 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": {
+        "en": "/assets/topics/sectors-overview.webp",
+        "zh": "/assets/topics/sectors-overview.webp"
+      },
+      "id": "sectors-overview",
+      "title": {
+        "en": "The ecosystem",
+        "zh": "产业全景"
+      },
+      "summary": {
+        "en": "Who depends on whom across chips, cloud, models and applications.",
+        "zh": "芯片、云、模型与应用之间，谁依赖谁。"
+      },
+      "url": "/sectors.html#overview",
+      "date": null
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": {
+        "en": "/assets/topics/sectors-models.webp",
+        "zh": "/assets/topics/sectors-models.webp"
+      },
+      "id": "sectors-models",
+      "title": {
+        "en": "The models",
+        "zh": "模型前沿"
+      },
+      "summary": {
+        "en": "How frontier models compare on capability and cost, by vendor.",
+        "zh": "按厂商比较前沿模型的能力与成本。"
+      },
+      "url": "/sectors.html#models",
+      "date": null
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": {
+        "en": "/assets/topics/sectors-rivalry.webp",
+        "zh": "/assets/topics/sectors-rivalry.webp"
+      },
+      "id": "sectors-rivalry",
+      "title": {
+        "en": "US & China",
+        "zh": "中美竞逐"
+      },
+      "summary": {
+        "en": "Two powers competing inside one interdependent industry.",
+        "zh": "两个大国，在同一个相互依存的产业里竞逐。"
+      },
+      "url": "/sectors.html#rivalry",
+      "date": null
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": {
+        "en": "/assets/topics/sectors-sources.webp",
+        "zh": "/assets/topics/sectors-sources.webp"
+      },
+      "id": "sectors-sources",
+      "title": {
+        "en": "Evidence, not a moving headline",
+        "zh": "依据，而不只是一条滚动标题"
+      },
+      "summary": {
+        "en": "Where the numbers come from, and what each claim rests on.",
+        "zh": "数字从哪里来，每项判断依据什么。"
+      },
+      "url": "/sectors.html#sources",
+      "date": null
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-devin",
+      "title": {
+        "en": "Devin puts the agent in a workspace",
+        "zh": "Devin 把智能体放进工作空间"
+      },
+      "summary": {
+        "en": "A task-oriented system combines planning, terminal, editor and browser. The precursor to delegating development rather than requesting snippets.",
+        "zh": "规划、终端、编辑器与浏览器组合成任务系统，为委派开发任务铺路。"
+      },
+      "url": "/sectors.html#event-devin",
+      "date": {
+        "iso": "2024-03-12",
+        "label": {
+          "en": "12 Mar 2024",
+          "zh": "2024 年 3 月 12 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-mcp",
+      "title": {
+        "en": "MCP opens a tool-connection layer",
+        "zh": "MCP 开放工具连接层"
+      },
+      "summary": {
+        "en": "A common protocol makes external data and tools accessible to models. It helps agent integrations move beyond one-off connectors.",
+        "zh": "统一协议让模型连接外部数据与工具，减少一次性的连接开发。"
+      },
+      "url": "/sectors.html#event-mcp",
+      "date": {
+        "iso": "2024-11-25",
+        "label": {
+          "en": "25 Nov 2024",
+          "zh": "2024 年 11 月 25 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-devinga",
+      "title": {
+        "en": "Devin becomes generally available",
+        "zh": "Devin 正式开放"
+      },
+      "summary": {
+        "en": "Delegated software engineering becomes a purchasable workflow; availability is distinct from guaranteed autonomous success.",
+        "zh": "委派软件工程成为可采购的工作流；正式开放不代表任务必然自主成功。"
+      },
+      "url": "/sectors.html#event-devinga",
+      "date": {
+        "iso": "2024-12-10",
+        "label": {
+          "en": "10 Dec 2024",
+          "zh": "2024 年 12 月 10 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-copilotmode",
+      "title": {
+        "en": "Copilot adds agent mode",
+        "zh": "Copilot 加入 Agent Mode"
+      },
+      "summary": {
+        "en": "The IDE assistant can iterate on edits and commands, bringing tool use into the developer’s everyday environment.",
+        "zh": "IDE 助手开始迭代修改并执行命令，让工具使用进入日常开发环境。"
+      },
+      "url": "/sectors.html#event-copilotmode",
+      "date": {
+        "iso": "2025-02-06",
+        "label": {
+          "en": "6 Feb 2025",
+          "zh": "2025 年 2 月 6 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-claudecode",
+      "title": {
+        "en": "Claude Code enters research preview",
+        "zh": "Claude Code 进入研究预览"
+      },
+      "summary": {
+        "en": "The terminal becomes an agent interface, with repository context, file edits and command execution.",
+        "zh": "终端成为智能体界面，结合仓库上下文、文件修改与命令执行。"
+      },
+      "url": "/sectors.html#event-claudecode",
+      "date": {
+        "iso": "2025-02-24",
+        "label": {
+          "en": "24 Feb 2025",
+          "zh": "2025 年 2 月 24 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-codexcli",
+      "title": {
+        "en": "Codex CLI brings the agent to the terminal",
+        "zh": "Codex CLI 把智能体带进终端"
+      },
+      "summary": {
+        "en": "An open-source local interface gives reasoning models access to repository code and terminal tools. Local work joins the emerging cloud workflow.",
+        "zh": "开源本地界面连接推理模型、仓库代码与终端工具。本地工作成为云端工作流的重要补充。"
+      },
+      "url": "/sectors.html#event-codexcli",
+      "date": {
+        "iso": "2025-04-16",
+        "label": {
+          "en": "16 Apr 2025",
+          "zh": "2025 年 4 月 16 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-cursorbackground",
+      "title": {
+        "en": "Cursor moves tasks into the background",
+        "zh": "Cursor 让任务在后台运行"
+      },
+      "summary": {
+        "en": "Background agents enter preview in separate remote environments. Developers can monitor, redirect or take over asynchronous repository tasks.",
+        "zh": "后台智能体进入预览，在独立远程环境执行任务。开发者可以查看、调整或接管异步仓库工作。"
+      },
+      "url": "/sectors.html#event-cursorbackground",
+      "date": {
+        "iso": "2025-05-15",
+        "label": {
+          "en": "15 May 2025",
+          "zh": "2025 年 5 月 15 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-codexcloud",
+      "title": {
+        "en": "Codex delegates work to cloud sandboxes",
+        "zh": "Codex 在云端沙箱承接任务"
+      },
+      "summary": {
+        "en": "Parallel isolated tasks turn the coding agent into an asynchronous collaborator. Results still need review and testing.",
+        "zh": "并行隔离任务使编程智能体成为异步协作者，结果仍需要审查和测试。"
+      },
+      "url": "/sectors.html#event-codexcloud",
+      "date": {
+        "iso": "2025-05-16",
+        "label": {
+          "en": "16 May 2025",
+          "zh": "2025 年 5 月 16 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-copilotpr",
+      "title": {
+        "en": "Copilot takes issues through to PRs",
+        "zh": "Copilot 从 Issue 走向 PR"
+      },
+      "summary": {
+        "en": "Repository tasks connect to the pull-request review loop. The unit of work becomes an issue, rather than a completion.",
+        "zh": "仓库任务接入 PR 审查环节，工作单元从代码补全变为 Issue。"
+      },
+      "url": "/sectors.html#event-copilotpr",
+      "date": {
+        "iso": "2025-05-19",
+        "label": {
+          "en": "19 May 2025",
+          "zh": "2025 年 5 月 19 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-claude4",
+      "title": {
+        "en": "Claude 4 and Claude Code GA",
+        "zh": "Claude 4 与 Claude Code 正式版"
+      },
+      "summary": {
+        "en": "Longer tool workflows and a generally available command-line product make agent coding more broadly accessible.",
+        "zh": "更长的工具工作流与正式版命令行产品，扩大智能体编程的可用范围。"
+      },
+      "url": "/sectors.html#event-claude4",
+      "date": {
+        "iso": "2025-05-22",
+        "label": {
+          "en": "22 May 2025",
+          "zh": "2025 年 5 月 22 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-geminicli",
+      "title": {
+        "en": "Gemini CLI brings an open-source agent",
+        "zh": "Gemini CLI 开源终端智能体"
+      },
+      "summary": {
+        "en": "An open-source command-line agent broadens the ecosystem beyond proprietary editors and cloud services.",
+        "zh": "开源命令行智能体让生态扩展到专有编辑器与云服务之外。"
+      },
+      "url": "/sectors.html#event-geminicli",
+      "date": {
+        "iso": "2025-06-25",
+        "label": {
+          "en": "25 Jun 2025",
+          "zh": "2025 年 6 月 25 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-codexupgrade",
+      "title": {
+        "en": "GPT-5-Codex specializes for agent coding",
+        "zh": "GPT-5-Codex 面向智能体编程"
+      },
+      "summary": {
+        "en": "An agent-oriented model emphasizes extended coding and review workflows, alongside improvements to the coding product.",
+        "zh": "面向智能体的模型强调长程编程与审查工作流，产品能力同步演进。"
+      },
+      "url": "/sectors.html#event-codexupgrade",
+      "date": {
+        "iso": "2025-09-15",
+        "label": {
+          "en": "15 Sep 2025",
+          "zh": "2025 年 9 月 15 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-sonnet45",
+      "title": {
+        "en": "Sonnet 4.5 pushes sustained coding",
+        "zh": "Sonnet 4.5 推进持续编程"
+      },
+      "summary": {
+        "en": "The focus shifts toward longer software tasks and agent scaffolding. Vendor demonstrations remain distinct from independent reliability tests.",
+        "zh": "关注点转向更长的软件任务与智能体框架；厂商演示需与独立可靠性评测区分。"
+      },
+      "url": "/sectors.html#event-sonnet45",
+      "date": {
+        "iso": "2025-09-29",
+        "label": {
+          "en": "29 Sep 2025",
+          "zh": "2025 年 9 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-composer",
+      "title": {
+        "en": "Composer and a workspace for parallel agents",
+        "zh": "Composer 与并行智能体工作空间"
+      },
+      "summary": {
+        "en": "Cursor 2.0 pairs a coding model with parallel agents, isolated worktrees and browser verification. Review and testing become central parts of the interface.",
+        "zh": "Cursor 2.0 将编程模型、并行智能体、独立工作树与浏览器验证结合，审查与测试成为界面的核心环节。"
+      },
+      "url": "/sectors.html#event-composer",
+      "date": {
+        "iso": "2025-10-29",
+        "label": {
+          "en": "29 Oct 2025",
+          "zh": "2025 年 10 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-antigravity",
+      "title": {
+        "en": "Antigravity connects editor, terminal and browser",
+        "zh": "Antigravity 连接编辑器、终端与浏览器"
+      },
+      "summary": {
+        "en": "Google launches a public preview with an agent manager and reviewable artifacts. Work is organized around delegated tasks spanning multiple development surfaces.",
+        "zh": "Google 发布公开预览，提供智能体管理与可审查的成果。工作围绕跨越多种开发界面的委派任务组织。"
+      },
+      "url": "/sectors.html#event-antigravity",
+      "date": {
+        "iso": "2025-11-18",
+        "label": {
+          "en": "18 Nov 2025",
+          "zh": "2025 年 11 月 18 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-cursorlong",
+      "title": {
+        "en": "Cursor studies long-running agents",
+        "zh": "Cursor 研究长时运行智能体"
+      },
+      "summary": {
+        "en": "Research on planners and workers explores extended autonomous coding. A successful experiment does not establish general unattended reliability.",
+        "zh": "规划者与执行者研究探索长时自主编程；成功实验仍不能证明普遍的无人值守可靠性。"
+      },
+      "url": "/sectors.html#event-cursorlong",
+      "date": {
+        "iso": "2026-01-14",
+        "label": {
+          "en": "14 Jan 2026",
+          "zh": "2026 年 1 月 14 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-codexapp",
+      "title": {
+        "en": "The Codex app coordinates parallel work",
+        "zh": "Codex App 协调并行工作"
+      },
+      "summary": {
+        "en": "A dedicated app organizes multiple agents, isolated worktrees and automations around a developer’s projects.",
+        "zh": "专用应用围绕项目组织多个智能体、隔离工作树与自动化。"
+      },
+      "url": "/sectors.html#event-codexapp",
+      "date": {
+        "iso": "2026-02-02",
+        "label": {
+          "en": "2 Feb 2026",
+          "zh": "2026 年 2 月 2 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-arc3",
+      "title": {
+        "en": "ARC-AGI-3 tests unfamiliar interactive worlds",
+        "zh": "ARC-AGI-3 检验陌生交互世界"
+      },
+      "summary": {
+        "en": "Evaluation asks agents to explore and learn unseen environments. Coding success alone is insufficient evidence of general intelligence.",
+        "zh": "评测要求智能体探索并学习未见环境，编程成功本身不足以证明通用智能。"
+      },
+      "url": "/sectors.html#event-arc3",
+      "date": {
+        "iso": "2026-03-25",
+        "label": {
+          "en": "25 Mar 2026",
+          "zh": "2026 年 3 月 25 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-mirrorcode",
+      "title": {
+        "en": "MirrorCode tests some weeks-long coding tasks",
+        "zh": "MirrorCode 测试部分需要数周的编程任务"
+      },
+      "summary": {
+        "en": "METR and Epoch AI report preliminary evidence on selected long coding tasks. Success on some tasks is consequential, but does not establish reliable autonomy across arbitrary weeks-long projects.",
+        "zh": "METR 与 Epoch AI 报告部分长程编程任务的初步证据。完成某些任务意义重大，但不能证明对任意数周项目都具备可靠自主能力。"
+      },
+      "url": "/sectors.html#event-mirrorcode",
+      "date": {
+        "iso": "2026-04-10",
+        "label": {
+          "en": "10 Apr 2026",
+          "zh": "2026 年 4 月 10 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-cursorindustry",
+      "title": {
+        "en": "Cursor joins SpaceX",
+        "zh": "Cursor 加入 SpaceX"
+      },
+      "summary": {
+        "en": "A major agent-coding product moves into a larger model and compute ecosystem. Product names and parent companies must be distinguished.",
+        "zh": "主要编程智能体产品进入更大的模型与算力生态；产品名称与母公司应区分。"
+      },
+      "url": "/sectors.html#event-cursorindustry",
+      "date": {
+        "iso": "2026-08-14",
+        "label": {
+          "en": "14 Aug 2026",
+          "zh": "2026 年 8 月 14 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-opusmilestone",
+      "title": {
+        "en": "Opus 5.5 advances the coding frontier",
+        "zh": "Opus 5.5 推进编程前沿"
+      },
+      "summary": {
+        "en": "New benchmark results broaden the frontier comparison. Different effort settings and fallback policies must remain visible.",
+        "zh": "新基准结果扩展前沿比较；推理配置与回退策略必须保持可见。"
+      },
+      "url": "/sectors.html#event-opusmilestone",
+      "date": {
+        "iso": "2026-09-22",
+        "label": {
+          "en": "22 Sep 2026",
+          "zh": "2026 年 9 月 22 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-sonnetmilestone",
+      "title": {
+        "en": "Sonnet 5.5 raises the agent benchmark",
+        "zh": "Sonnet 5.5 提升智能体基准"
+      },
+      "summary": {
+        "en": "Anthropic reports 70.6% on Terminal-Bench 4.0. This is a vendor result on a defined task suite, not an AGI milestone percentage.",
+        "zh": "Anthropic 报告 Terminal-Bench 4.0 成绩 70.6%；这是特定任务集的厂商成绩，不是 AGI 完成比例。"
+      },
+      "url": "/sectors.html#event-sonnetmilestone",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-devday",
+      "title": {
+        "en": "DevDay expands shared agent workflows",
+        "zh": "DevDay 扩展协作式智能体工作流"
+      },
+      "summary": {
+        "en": "GPT-6.1 Sol and Codex workflow updates put more emphasis on shared environments, review and coordinated agent work.",
+        "zh": "GPT-6.1 Sol 与 Codex 工作流更新，更强调共享环境、审查与智能体协作。"
+      },
+      "url": "/sectors.html#event-devday",
+      "date": {
+        "iso": "2026-09-29",
+        "label": {
+          "en": "29 Sep 2026",
+          "zh": "2026 年 9 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "ai-observatory"
+      ],
+      "cover": null,
+      "id": "sectors-event-haiku55-launch",
+      "title": {
+        "en": "Haiku 5.5 makes the small-task layer cheaper",
+        "zh": "Haiku 5.5 降低小任务层的成本"
+      },
+      "summary": {
+        "en": "A small model with adjustable effort changes how agents divide work. The useful design question becomes which tasks can be delegated, verified and escalated, rather than which model runs every step. This is our interpretation of the release.",
+        "zh": "带可调推理档位的小模型，改变智能体分工方式。设计问题变为哪些任务可以委派、验证与升级处理，以及由谁承担最终责任。这是本站对发布的解读。"
+      },
+      "url": "/sectors.html#event-haiku55-launch",
+      "date": {
+        "iso": "2026-10-07",
+        "label": {
+          "en": "7 Oct 2026",
+          "zh": "2026 年 10 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "signal",
+      "group": "analysis",
+      "topic": [
+        "fed-watch",
+        "investing",
+        "about"
+      ],
+      "title": {
+        "en": "Fed Watch",
+        "zh": "美联储观察"
+      },
+      "summary": {
+        "en": "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
+        "zh": "探索2026年1月起的美联储决议、美国财政政策和AI产业传导，查看注明日期的一手来源。"
+      },
+      "url": "/signal.html",
+      "cover": {
+        "en": "/assets/topics/signal.webp",
+        "zh": "/assets/topics/signal.webp"
+      },
+      "date": {
+        "iso": "2026-10-05",
+        "label": {
+          "en": "5 Oct 2026",
+          "zh": "2026 年 10 月 5 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WALLER-FRED-2026-10-01",
+      "title": {
+        "en": "Waller: trusted data in an AI economy",
+        "zh": "Waller：AI经济中的可信数据"
+      },
+      "summary": {
+        "en": "Waller highlighted FRED’s role in data provenance and warned that AI can hallucinate, obscure assumptions and confuse correlation with causation.",
+        "zh": "Waller强调FRED在数据溯源中的作用，提醒AI可能幻觉、隐藏假设或混淆相关性与因果关系。"
+      },
+      "url": "/signal.html#WALLER-FRED-2026-10-01",
+      "date": {
+        "iso": "2026-10-01",
+        "label": {
+          "en": "1 Oct 2026",
+          "zh": "2026 年 10 月 1 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WH-SI-2026-09-29",
+      "title": {
+        "en": "Executive-branch AI terminology order",
+        "zh": "行政部门AI术语命令"
+      },
+      "summary": {
+        "en": "The White House fact sheet describes an order replacing AI terminology with “Super Intelligence” in executive-branch communications and non-statutory documents.",
+        "zh": "白宫事实清单介绍一项命令：行政部门通信和非成文法文件以“超级智能”替代AI术语。"
+      },
+      "url": "/signal.html#WH-SI-2026-09-29",
+      "date": {
+        "iso": "2026-09-29",
+        "label": {
+          "en": "29 Sep 2026",
+          "zh": "2026 年 9 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WALLER-PAYMENTS-2026-09-29",
+      "title": {
+        "en": "Waller: payments in the age of AI agents",
+        "zh": "Waller：AI智能体时代的支付"
+      },
+      "summary": {
+        "en": "Waller discussed AI in cross-border payments and agentic commerce, emphasizing authentication, liability, fraud prevention and trust.",
+        "zh": "Waller讨论跨境支付和智能体商业中的AI应用，强调身份验证、责任归属、反欺诈与信任。"
+      },
+      "url": "/signal.html#WALLER-PAYMENTS-2026-09-29",
+      "date": {
+        "iso": "2026-09-29",
+        "label": {
+          "en": "29 Sep 2026",
+          "zh": "2026 年 9 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-COOK-AI-2026-09-28",
+      "title": {
+        "en": "Cook: near-term inflation, later productivity gains",
+        "zh": "Cook：短期通胀与较晚的生产率收益"
+      },
+      "summary": {
+        "en": "Cook distinguished AI-sector relative-price shocks from broader pressure on construction and energy. She did not expect productivity relief to offset broadening inflation later this year.",
+        "zh": "Cook区分AI行业相对价格冲击与施工、能源等更广泛的压力。她预计生产率的降通胀作用无法及时抵消今年稍后的广泛价格压力。"
+      },
+      "url": "/signal.html#COOK-AI-2026-09-28",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-IMPLEMENTATION-2026-09-16",
+      "title": {
+        "en": "September implementation corridor",
+        "zh": "9月政策执行利率走廊"
+      },
+      "summary": {
+        "en": "The implementation note sets IORB at 3.90%, standing repo at 4.00%, and ON RRP at 3.75%, effective September 17.",
+        "zh": "执行说明将准备金利率设为3.90%、常备回购利率4.00%、隔夜逆回购利率3.75%，9月17日生效。"
+      },
+      "url": "/signal.html#FED-IMPLEMENTATION-2026-09-16",
+      "date": {
+        "iso": "2026-09-16",
+        "label": {
+          "en": "16 Sep 2026",
+          "zh": "2026 年 9 月 16 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-09-16",
+      "title": {
+        "en": "September hike: 3.75–4.00%",
+        "zh": "9月加息：3.75%–4.00%"
+      },
+      "summary": {
+        "en": "The FOMC raised the target by 25 bp to 3.75–4.00%, unanimously, while continuing ample-reserve implementation. Inflation remained elevated.",
+        "zh": "FOMC一致加息25基点至3.75%–4.00%，继续实行充足准备金框架。通胀仍偏高。"
+      },
+      "url": "/signal.html#FED-2026-09-16",
+      "date": {
+        "iso": "2026-09-16",
+        "label": {
+          "en": "16 Sep 2026",
+          "zh": "2026 年 9 月 16 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WARSH-JH-2026-08-28",
+      "title": {
+        "en": "Warsh: AI changes the policy questions",
+        "zh": "Warsh：AI改变政策所面对的问题"
+      },
+      "summary": {
+        "en": "At Jackson Hole, Warsh discussed AI’s possible effects on productivity, labor and capital intensity, and questioned the practice of forward guidance.",
+        "zh": "Warsh在杰克逊霍尔讨论AI对生产率、劳动力与资本密集度的潜在影响，并质疑前瞻指引的做法。"
+      },
+      "url": "/signal.html#WARSH-JH-2026-08-28",
+      "date": {
+        "iso": "2026-08-28",
+        "label": {
+          "en": "28 Aug 2026",
+          "zh": "2026 年 8 月 28 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-MINUTES-2026-07-29",
+      "title": {
+        "en": "Minutes of the July 28-29 FOMC Meeting",
+        "zh": "7 月 28 至 29 日 FOMC 会议纪要"
+      },
+      "summary": {
+        "en": "The Federal Reserve published the July 28-29 meeting minutes at 2:00 p.m. EDT on August 19, 2026.",
+        "zh": "美联储于 2026 年 8 月 19 日美东时间下午 2 时发布 7 月 28 至 29 日会议纪要。"
+      },
+      "url": "/signal.html#FED-MINUTES-2026-07-29",
+      "date": {
+        "iso": "2026-08-19",
+        "label": {
+          "en": "19 Aug 2026",
+          "zh": "2026 年 8 月 19 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-RMP-2026-08-14",
+      "title": {
+        "en": "Desk Removes New Reserve-Management Purchases",
+        "zh": "操作台取消本期新增储备管理购买"
+      },
+      "summary": {
+        "en": "For 14 August–14 September, the Desk plans about $17.0bn of reinvestment purchases and no reserve-management purchases.",
+        "zh": "8月14日至9月14日，操作台计划约170亿美元再投资购买，不进行储备管理购买。"
+      },
+      "url": "/signal.html#FED-RMP-2026-08-14",
+      "date": {
+        "iso": "2026-08-14",
+        "label": {
+          "en": "14 Aug 2026",
+          "zh": "2026 年 8 月 14 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-NFP-2026-07",
+      "title": {
+        "en": "July Employment Situation",
+        "zh": "7月就业形势"
+      },
+      "summary": {
+        "en": "Payrolls fell 23,000; May and June were revised down 103,000 combined. Private payrolls still rose 30,000, but local-government education fell 50,000, retail 19,000 and financial activities 14,000; health care added 22,000. Unemployment was 4.1%, participation 61.4%, hourly earnings growth 3.2% year over year, and temporary layoffs rose 153,000 to 921,000.",
+        "zh": "非农减少2.3万人；5月与6月合计下修10.3万人。私人部门仍增加3万人，但地方政府教育减少5万人、零售减少1.9万人、金融活动减少1.4万人，医疗保健增加2.2万人。失业率为4.1%，劳动参与率61.4%，时薪同比增长3.2%，临时失业人数增加15.3万至92.1万。"
+      },
+      "url": "/signal.html#NFP-2026-07",
+      "date": {
+        "iso": "2026-08-07",
+        "label": {
+          "en": "7 Aug 2026",
+          "zh": "2026 年 8 月 7 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TRUMP-POLYSILICON-2026-08-06",
+      "title": {
+        "en": "Section 232 Polysilicon Onshoring Regime",
+        "zh": "232条款多晶硅本土化机制"
+      },
+      "summary": {
+        "en": "The proclamation establishes minimum import prices and, from 4 December 2026, a 15% duty on covered derivatives, while authorizing incentives for US production of polysilicon, ingots, wafers and cells.",
+        "zh": "公告设立最低进口价，并从2026年12月4日起对相关衍生品征收15%关税，同时授权激励美国生产多晶硅、硅锭、硅片与电池片。"
+      },
+      "url": "/signal.html#TRUMP-POLYSILICON-2026-08-06",
+      "date": {
+        "iso": "2026-08-06",
+        "label": {
+          "en": "6 Aug 2026",
+          "zh": "2026 年 8 月 6 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TREASURY-REFUNDING-2026-08-05",
+      "title": {
+        "en": "2026-08 quarterly refunding",
+        "zh": "2026-08季度再融资"
+      },
+      "summary": {
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $28.7bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约287亿美元。"
+      },
+      "url": "/signal.html#TREASURY-REFUNDING-2026-08-05",
+      "date": {
+        "iso": "2026-08-05",
+        "label": {
+          "en": "5 Aug 2026",
+          "zh": "2026 年 8 月 5 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-PCE-2026-06",
+      "title": {
+        "en": "June Personal Income and Outlays",
+        "zh": "6月个人收入与支出"
+      },
+      "summary": {
+        "en": "Headline PCE fell 0.1% monthly and rose 3.7% yearly; core rose 0.1% monthly and 3.3% yearly. Real PCE grew 0.4%, nominal PCE 0.3%, and the saving rate fell to 2.7%. Services supplied $58.2bn of the $65.2bn nominal spending increase.",
+        "zh": "整体PCE环比下降0.1%、同比上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际PCE增长0.4%、名义PCE增长0.3%，储蓄率降至2.7%；名义消费增加652亿美元，其中服务贡献582亿美元。"
+      },
+      "url": "/signal.html#PCE-2026-06",
+      "date": {
+        "iso": "2026-07-30",
+        "label": {
+          "en": "30 Jul 2026",
+          "zh": "2026 年 7 月 30 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-07-29",
+      "title": {
+        "en": "FOMC Holds as Three Voters Prefer a Hike",
+        "zh": "FOMC维持利率，三名票委主张加息"
+      },
+      "summary": {
+        "en": "The Committee held 3.50–3.75% by a 9–3 vote; three members preferred a 25bp hike.",
+        "zh": "委员会以9比3维持3.50%–3.75%；三名成员主张加息25个基点。"
+      },
+      "url": "/signal.html#FED-2026-07-29",
+      "date": {
+        "iso": "2026-07-29",
+        "label": {
+          "en": "29 Jul 2026",
+          "zh": "2026 年 7 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TRUMP-AI-2026-07-23",
+      "title": {
+        "en": "Ratepayer pledge expands to utilities and states",
+        "zh": "电力用户保护承诺扩大至公用事业与州政府"
+      },
+      "summary": {
+        "en": "The White House reported more than 200 additional participants joining the Ratepayer Protection Pledge. Large data-center operators are to fund the generation and infrastructure their projects require.",
+        "zh": "白宫表示，超过200家新增参与者加入电力用户保护承诺。大型数据中心运营商将承担项目所需发电与基础设施费用。"
+      },
+      "url": "/signal.html#TRUMP-AI-2026-07-23",
+      "date": {
+        "iso": "2026-07-23",
+        "label": {
+          "en": "23 Jul 2026",
+          "zh": "2026 年 7 月 23 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-MINUTES-2026-06-17",
+      "title": {
+        "en": "2026-06-17 FOMC minutes",
+        "zh": "2026-06-17 FOMC会议纪要"
+      },
+      "summary": {
+        "en": "The published minutes provide the detailed discussion of the 2026-06-17 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-06-17会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "url": "/signal.html#FED-MINUTES-2026-06-17",
+      "date": {
+        "iso": "2026-07-08",
+        "label": {
+          "en": "8 Jul 2026",
+          "zh": "2026 年 7 月 8 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-06-17",
+      "title": {
+        "en": "June unanimous hold under the new chair",
+        "zh": "6月新主席任内一致维持利率"
+      },
+      "summary": {
+        "en": "A 12–0 vote held 3.50–3.75% and reaffirmed ample reserves. The statement stressed strong productivity and investment alongside elevated inflation.",
+        "zh": "委员会以12比0维持3.50%–3.75%，重申充足准备金框架。声明强调生产率与投资强劲，同时通胀仍偏高。"
+      },
+      "url": "/signal.html#FED-2026-06-17",
+      "date": {
+        "iso": "2026-06-17",
+        "label": {
+          "en": "17 Jun 2026",
+          "zh": "2026 年 6 月 17 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WH-AI-SECURITY-2026-06-05",
+      "title": {
+        "en": "NSPM-11: AI in national security",
+        "zh": "NSPM-11：国家安全领域AI"
+      },
+      "summary": {
+        "en": "The memorandum establishes a framework for AI adoption and governance across national-security agencies, including secure and responsible use.",
+        "zh": "备忘录为国家安全机构的AI采用及治理建立框架，包括安全和负责任使用要求。"
+      },
+      "url": "/signal.html#WH-AI-SECURITY-2026-06-05",
+      "date": {
+        "iso": "2026-06-05",
+        "label": {
+          "en": "5 Jun 2026",
+          "zh": "2026 年 6 月 5 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-COOK-AI-2026-05-27",
+      "title": {
+        "en": "Cook: AI investment, inflation and financial stability",
+        "zh": "Cook：AI投资、通胀与金融稳定"
+      },
+      "summary": {
+        "en": "Cook linked AI investment to equipment, construction and energy price pressure, while discussing productivity gains, workforce disruption and debt-financed buildout.",
+        "zh": "Cook将AI投资与设备、施工及能源价格压力联系起来，同时讨论生产率收益、就业冲击与债务融资扩张。"
+      },
+      "url": "/signal.html#COOK-AI-2026-05-27",
+      "date": {
+        "iso": "2026-05-27",
+        "label": {
+          "en": "27 May 2026",
+          "zh": "2026 年 5 月 27 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-MINUTES-2026-04-29",
+      "title": {
+        "en": "2026-04-29 FOMC minutes",
+        "zh": "2026-04-29 FOMC会议纪要"
+      },
+      "summary": {
+        "en": "The published minutes provide the detailed discussion of the 2026-04-29 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-04-29会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "url": "/signal.html#FED-MINUTES-2026-04-29",
+      "date": {
+        "iso": "2026-05-20",
+        "label": {
+          "en": "20 May 2026",
+          "zh": "2026 年 5 月 20 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TREASURY-REFUNDING-2026-05-06",
+      "title": {
+        "en": "2026-05 quarterly refunding",
+        "zh": "2026-05季度再融资"
+      },
+      "summary": {
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $41.7bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约417亿美元。"
+      },
+      "url": "/signal.html#TREASURY-REFUNDING-2026-05-06",
+      "date": {
+        "iso": "2026-05-06",
+        "label": {
+          "en": "6 May 2026",
+          "zh": "2026 年 5 月 6 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-04-29",
+      "title": {
+        "en": "April hold; disagreement on the easing bias",
+        "zh": "4月维持利率；对宽松倾向存在分歧"
+      },
+      "summary": {
+        "en": "Rates remained 3.50–3.75%. Miran sought a cut; Hammack, Kashkari and Logan supported holding but opposed the statement’s easing bias.",
+        "zh": "利率保持3.50%–3.75%。Miran要求降息；Hammack、Kashkari与Logan支持维持利率，但反对声明中的宽松倾向。"
+      },
+      "url": "/signal.html#FED-2026-04-29",
+      "date": {
+        "iso": "2026-04-29",
+        "label": {
+          "en": "29 Apr 2026",
+          "zh": "2026 年 4 月 29 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-MINUTES-2026-03-18",
+      "title": {
+        "en": "2026-03-18 FOMC minutes",
+        "zh": "2026-03-18 FOMC会议纪要"
+      },
+      "summary": {
+        "en": "The published minutes provide the detailed discussion of the 2026-03-18 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-03-18会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "url": "/signal.html#FED-MINUTES-2026-03-18",
+      "date": {
+        "iso": "2026-04-08",
+        "label": {
+          "en": "8 Apr 2026",
+          "zh": "2026 年 4 月 8 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-OMB-SEQUESTER-2026-04-03",
+      "title": {
+        "en": "FY2027 sequestration order",
+        "zh": "2027财年自动削支命令"
+      },
+      "summary": {
+        "en": "The order directs reductions in non-exempt direct-spending accounts on October 1, 2026, based on OMB’s April 3 report.",
+        "zh": "命令依据OMB的4月3日报告，要求自2026年10月1日起削减非豁免直接支出账户。"
+      },
+      "url": "/signal.html#OMB-SEQUESTER-2026-04-03",
+      "date": {
+        "iso": "2026-04-03",
+        "label": {
+          "en": "3 Apr 2026",
+          "zh": "2026 年 4 月 3 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WH-AI-FRAMEWORK-2026-03-20",
+      "title": {
+        "en": "National AI legislative framework",
+        "zh": "全国AI立法框架"
+      },
+      "summary": {
+        "en": "The administration proposed a uniform national framework covering children, communities, intellectual property, speech, innovation and workforce development. It called for Congressional legislation.",
+        "zh": "政府提出覆盖儿童、社区、知识产权、言论、创新和劳动力发展的全国统一框架，呼吁国会立法。"
+      },
+      "url": "/signal.html#WH-AI-FRAMEWORK-2026-03-20",
+      "date": {
+        "iso": "2026-03-20",
+        "label": {
+          "en": "20 Mar 2026",
+          "zh": "2026 年 3 月 20 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-03-18",
+      "title": {
+        "en": "March hold amid Middle East uncertainty",
+        "zh": "3月维持利率，中东局势增添不确定性"
+      },
+      "summary": {
+        "en": "The target stayed at 3.50–3.75%. Miran preferred a 25 bp cut. The statement added uncertainty from Middle East developments.",
+        "zh": "目标区间仍为3.50%–3.75%，Miran主张降息25基点。声明新增中东局势带来的不确定性。"
+      },
+      "url": "/signal.html#FED-2026-03-18",
+      "date": {
+        "iso": "2026-03-18",
+        "label": {
+          "en": "18 Mar 2026",
+          "zh": "2026 年 3 月 18 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WH-AI-POWER-2026-03-04",
+      "title": {
+        "en": "Ratepayer Protection Pledge",
+        "zh": "电力用户保护承诺"
+      },
+      "summary": {
+        "en": "The proclamation records seven technology companies accepting a pledge intended to protect household electricity costs as data centers expand.",
+        "zh": "公告记录七家科技公司接受承诺，旨在数据中心扩张时保护居民电价。"
+      },
+      "url": "/signal.html#WH-AI-POWER-2026-03-04",
+      "date": {
+        "iso": "2026-03-04",
+        "label": {
+          "en": "4 Mar 2026",
+          "zh": "2026 年 3 月 4 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-WALLER-AI-2026-02-24",
+      "title": {
+        "en": "Waller: operationalizing AI at the Fed",
+        "zh": "Waller：联储内部的AI落地"
+      },
+      "summary": {
+        "en": "Waller outlined a coordinated, System-wide approach to AI adoption, shared infrastructure and operational efficiency at the Federal Reserve.",
+        "zh": "Waller介绍联储采用AI的全系统协同模式、共享基础设施和运营效率目标。"
+      },
+      "url": "/signal.html#WALLER-AI-2026-02-24",
+      "date": {
+        "iso": "2026-02-24",
+        "label": {
+          "en": "24 Feb 2026",
+          "zh": "2026 年 2 月 24 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-COOK-AI-2026-02-24",
+      "title": {
+        "en": "Cook: AI and productivity",
+        "zh": "Cook：AI与生产率"
+      },
+      "summary": {
+        "en": "Cook’s opening remarks addressed how AI adoption and productivity may reshape the economy and the measurement of its performance.",
+        "zh": "Cook在开场讲话中讨论AI采用和生产率如何改变经济及其衡量方式。"
+      },
+      "url": "/signal.html#COOK-AI-2026-02-24",
+      "date": {
+        "iso": "2026-02-24",
+        "label": {
+          "en": "24 Feb 2026",
+          "zh": "2026 年 2 月 24 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-MINUTES-2026-01-28",
+      "title": {
+        "en": "2026-01-28 FOMC minutes",
+        "zh": "2026-01-28 FOMC会议纪要"
+      },
+      "summary": {
+        "en": "The published minutes provide the detailed discussion of the 2026-01-28 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-01-28会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "url": "/signal.html#FED-MINUTES-2026-01-28",
+      "date": {
+        "iso": "2026-02-18",
+        "label": {
+          "en": "18 Feb 2026",
+          "zh": "2026 年 2 月 18 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-BARR-AI-2026-02-17",
+      "title": {
+        "en": "Barr: AI, work and transition risk",
+        "zh": "Barr：AI、就业与转型风险"
+      },
+      "summary": {
+        "en": "Barr described AI’s potential for productivity and innovation, while warning that labor-market disruption can precede longer-run gains.",
+        "zh": "Barr指出AI可提升生产率与创新能力，但劳动力市场冲击可能先于长期收益出现。"
+      },
+      "url": "/signal.html#BARR-AI-2026-02-17",
+      "date": {
+        "iso": "2026-02-17",
+        "label": {
+          "en": "17 Feb 2026",
+          "zh": "2026 年 2 月 17 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TREASURY-REFUNDING-2026-02-04",
+      "title": {
+        "en": "2026-02 quarterly refunding",
+        "zh": "2026-02季度再融资"
+      },
+      "summary": {
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $34.8bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约348亿美元。"
+      },
+      "url": "/signal.html#TREASURY-REFUNDING-2026-02-04",
+      "date": {
+        "iso": "2026-02-04",
+        "label": {
+          "en": "4 Feb 2026",
+          "zh": "2026 年 2 月 4 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-FED-2026-01-28",
+      "title": {
+        "en": "January hold; two dissent for a cut",
+        "zh": "1月维持利率；两人主张降息"
+      },
+      "summary": {
+        "en": "The FOMC held 3.50–3.75%. Miran and Waller preferred a 25 bp cut; the statement described elevated inflation and stabilizing unemployment.",
+        "zh": "FOMC维持3.50%–3.75%。Miran与Waller主张降息25基点；声明指出通胀偏高、失业率出现企稳迹象。"
+      },
+      "url": "/signal.html#FED-2026-01-28",
+      "date": {
+        "iso": "2026-01-28",
+        "label": {
+          "en": "28 Jan 2026",
+          "zh": "2026 年 1 月 28 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-TRUMP-CHIPS-2026-01",
+      "title": {
+        "en": "Section 232 Semiconductor Tariff Regime",
+        "zh": "232条款半导体关税机制"
+      },
+      "summary": {
+        "en": "A 25% duty applied to a narrow category including Nvidia H200 and AMD MI325X chips, with exemptions for US data centers, R&D, startups and other domestic buildout; a broader second phase remains possible.",
+        "zh": "包括Nvidia H200与AMD MI325X在内的一小类先进芯片被征收25%关税，但美国数据中心、研发、初创企业及其他本土建设用途获豁免；更广泛的第二阶段仍有可能。"
+      },
+      "url": "/signal.html#TRUMP-CHIPS-2026-01",
+      "date": {
+        "iso": "2026-01-14",
+        "label": {
+          "en": "14 Jan 2026",
+          "zh": "2026 年 1 月 14 日"
+        }
+      }
+    },
+    {
+      "group": "analysis",
+      "topic": [
+        "fed-watch"
+      ],
+      "cover": null,
+      "id": "signal-event-IRS-DEPRECIATION-2026-01-14",
+      "title": {
+        "en": "100% bonus depreciation guidance",
+        "zh": "100%额外首年折旧指引"
+      },
+      "summary": {
+        "en": "Notice 2026-11 clarifies the permanent 100% first-year deduction for eligible property acquired after January 19, 2025, under the 2025 law.",
+        "zh": "Notice 2026-11澄清2025年法律下，对2025年1月19日后取得的合格资产永久适用100%首年折旧扣除的规则。"
+      },
+      "url": "/signal.html#IRS-DEPRECIATION-2026-01-14",
+      "date": {
+        "iso": "2026-01-14",
+        "label": {
+          "en": "14 Jan 2026",
+          "zh": "2026 年 1 月 14 日"
+        }
+      }
+    },
+    {
+      "id": "arena",
+      "group": "analysis",
+      "topic": [
+        "investing"
+      ],
+      "title": {
+        "en": "Stock Journal",
+        "zh": "美股看板"
+      },
+      "summary": {
+        "en": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
+        "zh": "关注 AI 时代的美股公司：Finnhub 最新报价与 Twelve Data 日线走势。报价可能有延迟，不构成投资建议。"
+      },
+      "url": "/arena.html",
+      "cover": {
+        "en": "/assets/topics/arena.webp",
+        "zh": "/assets/topics/arena.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "elections",
+      "group": "analysis",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "Elections",
+        "zh": "选举"
+      },
+      "summary": {
+        "en": "A calendar of US and Australian elections from 2026 to 2028, with seat charts and race tables for each event. Preview: no results are loaded yet.",
+        "zh": "2026 至 2028 年美国与澳大利亚选举日历，每场配席位图和比赛表。预览：尚未加载任何结果。"
+      },
+      "url": "/elections.html",
+      "cover": {
+        "en": "/assets/topics/elections.webp",
+        "zh": "/assets/topics/elections.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "portfolio",
+      "group": "analysis",
+      "topic": [
+        "investing"
+      ],
+      "title": {
+        "en": "Portfolio",
+        "zh": "投资组合"
+      },
+      "summary": {
+        "en": "Selected positive trade examples, forward scenarios and a ten-stock research watchlist.",
+        "zh": "精选正向交易案例、前瞻情景和十支美股研究观察名单。"
+      },
+      "url": "/portfolio.html",
+      "cover": {
+        "en": "/assets/topics/portfolio.webp",
+        "zh": "/assets/topics/portfolio.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "course",
+      "group": "courses",
+      "topic": [
+        "fde-course",
+        "about"
+      ],
+      "title": {
+        "en": "Courses",
+        "zh": "课程"
+      },
+      "summary": {
+        "en": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
+        "zh": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"
+      },
+      "url": "/course.html",
+      "cover": {
+        "en": "/assets/topics/learn-courses.webp",
+        "zh": "/assets/topics/learn-courses.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-01-en.svg",
+        "zh": "/assets/course-covers/week-01-zh.svg"
+      },
+      "id": "course-book-01",
+      "url": "/course/book-01.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 1: One useful thing",
+        "zh": "第 1 周：第一件有用的小事"
+      },
+      "summary": {
+        "en": "Start with everyday friction: diagnose your foundations and build a local tool",
+        "zh": "从生活摩擦出发：诊断基础，做出第一个本地工具"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-02-en.svg",
+        "zh": "/assets/course-covers/week-02-zh.svg"
+      },
+      "id": "course-book-02",
+      "url": "/course/book-02.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 2: Trust the input",
+        "zh": "第 2 周：让输入可信"
+      },
+      "summary": {
+        "en": "From running code to trustworthy input: functions, data structures and validation",
+        "zh": "把“能运行”变成“输入可信”：函数、数据结构与校验"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-03-en.svg",
+        "zh": "/assets/course-covers/week-03-zh.svg"
+      },
+      "id": "course-book-03",
+      "url": "/course/book-03.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 3: Take back control",
+        "zh": "第 3 周：学会接管故障"
+      },
+      "summary": {
+        "en": "Take over a failure: Git, dependencies, debugging and minimal fixes",
+        "zh": "学会接管故障：Git、依赖、调试与最小修复"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-04-en.svg",
+        "zh": "/assets/course-covers/week-04-zh.svg"
+      },
+      "id": "course-book-04",
+      "url": "/course/book-04.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 4: Records you can trust",
+        "zh": "第 4 周：让记录可信"
+      },
+      "summary": {
+        "en": "Trust your records: SQL, relationships, constraints and migrations",
+        "zh": "让记录可信：SQL、关系、约束与迁移"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-05-en.svg",
+        "zh": "/assets/course-covers/week-05-zh.svg"
+      },
+      "id": "course-book-05",
+      "url": "/course/book-05.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 5: From code to interface",
+        "zh": "第 5 周：从程序到页面"
+      },
+      "summary": {
+        "en": "Turn a program into a usable page: the Web, HTTP and API boundaries",
+        "zh": "把程序变成可用页面：Web、HTTP 与 API 边界"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-06-en.svg",
+        "zh": "/assets/course-covers/week-06-zh.svg"
+      },
+      "id": "course-book-06",
+      "url": "/course/book-06.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 6: The first release",
+        "zh": "第 6 周：第一次真正交付"
+      },
+      "summary": {
+        "en": "Your first real delivery: builds, release packages and working rollback",
+        "zh": "第一次真正交付：构建、发布包与可用的回滚"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-07-en.svg",
+        "zh": "/assets/course-covers/week-07-zh.svg"
+      },
+      "id": "course-book-07",
+      "url": "/course/book-07.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 7: Understand the problem",
+        "zh": "第 7 周：先理解问题"
+      },
+      "summary": {
+        "en": "Discover problems like an FDE: understand the workflow before choosing features",
+        "zh": "像 FDE 一样发现问题：先理解流程，再决定功能"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-08-en.svg",
+        "zh": "/assets/course-covers/week-08-zh.svg"
+      },
+      "id": "course-book-08",
+      "url": "/course/book-08.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 8: A tool becomes a habit",
+        "zh": "第 8 周：让工具成为习惯"
+      },
+      "summary": {
+        "en": "Make your first project a habit: local planning, calendar export and usability",
+        "zh": "让第一个项目成为习惯：本地计划、日历导出与可用性"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-09-en.svg",
+        "zh": "/assets/course-covers/week-09-zh.svg"
+      },
+      "id": "course-book-09",
+      "url": "/course/book-09.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 9: The smallest agent",
+        "zh": "第 9 周：最小的智能体"
+      },
+      "summary": {
+        "en": "From a model call to a minimal agent: decide when autonomy is unnecessary",
+        "zh": "从一次模型调用到最小 agent：先明确何时不需要自主性"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-10-en.svg",
+        "zh": "/assets/course-covers/week-10-zh.svg"
+      },
+      "id": "course-book-10",
+      "url": "/course/book-10.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 10: Evidence of completion",
+        "zh": "第 10 周：完成，需要证据"
+      },
+      "summary": {
+        "en": "Evaluate an agent: require external evidence of completion",
+        "zh": "为 agent 建立评测：让“完成了”有外部证据"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-11-en.svg",
+        "zh": "/assets/course-covers/week-11-zh.svg"
+      },
+      "id": "course-book-11",
+      "url": "/course/book-11.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 11: Context and boundaries",
+        "zh": "第 11 周：上下文与边界"
+      },
+      "summary": {
+        "en": "Context, skills and MCP: connect capabilities and enforce permissions",
+        "zh": "上下文、skills 与 MCP：把能力接进来，也把权限挡住"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-12-en.svg",
+        "zh": "/assets/course-covers/week-12-zh.svg"
+      },
+      "id": "course-book-12",
+      "url": "/course/book-12.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 12: Back to the evidence",
+        "zh": "第 12 周：回到原始证据"
+      },
+      "summary": {
+        "en": "A knowledge workbench: from sources to traceable evidence",
+        "zh": "知识工作台第一步：从来源到可追溯的证据"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-13-en.svg",
+        "zh": "/assets/course-covers/week-13-zh.svg"
+      },
+      "id": "course-book-13",
+      "url": "/course/book-13.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 13: Knowledge into action",
+        "zh": "第 13 周：让知识走向行动"
+      },
+      "summary": {
+        "en": "Turn knowledge into action: make a prediction and run a falsifiable experiment",
+        "zh": "把知识变成行动：提出预测，做一个能失败的小实验"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-14-en.svg",
+        "zh": "/assets/course-covers/week-14-zh.svg"
+      },
+      "id": "course-book-14",
+      "url": "/course/book-14.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 14: Test your understanding",
+        "zh": "第 14 周：检验真正掌握"
+      },
+      "summary": {
+        "en": "Test real understanding: recall, transfer and a lighter knowledge base",
+        "zh": "检验真正掌握：复测、迁移与知识库减负"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-15-en.svg",
+        "zh": "/assets/course-covers/week-15-zh.svg"
+      },
+      "id": "course-book-15",
+      "url": "/course/book-15.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 15: A controlled runtime",
+        "zh": "第 15 周：一个受控运行时"
+      },
+      "summary": {
+        "en": "Deploy a read-only runtime: location, authentication and every bill",
+        "zh": "部署只读运行时：明确运行位置、认证和每一笔费用"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-16-en.svg",
+        "zh": "/assets/course-covers/week-16-zh.svg"
+      },
+      "id": "course-book-16",
+      "url": "/course/book-16.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 16: After the interruption",
+        "zh": "第 16 周：中断之后"
+      },
+      "summary": {
+        "en": "Recover a run: persistent state, retries, idempotency and backups",
+        "zh": "让运行能够恢复：持久状态、重试、幂等与备份"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-17-en.svg",
+        "zh": "/assets/course-covers/week-17-zh.svg"
+      },
+      "id": "course-book-17",
+      "url": "/course/book-17.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 17: From draft to approval",
+        "zh": "第 17 周：从草稿到批准"
+      },
+      "summary": {
+        "en": "Connect one workflow: draft first, approve a specific action",
+        "zh": "连接一个真实工作流：先生成草稿，再按范围审批"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-18-en.svg",
+        "zh": "/assets/course-covers/week-18-zh.svg"
+      },
+      "id": "course-book-18",
+      "url": "/course/book-18.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 18: Care for a running system",
+        "zh": "第 18 周：照看运行中的系统"
+      },
+      "summary": {
+        "en": "From demonstration to operation: observation, alerts and incident response",
+        "zh": "从演示走向运维：运行观察、告警与事件处理"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-19-en.svg",
+        "zh": "/assets/course-covers/week-19-zh.svg"
+      },
+      "id": "course-book-19",
+      "url": "/course/book-19.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 19: An honest task ledger",
+        "zh": "第 19 周：可信的任务账本"
+      },
+      "summary": {
+        "en": "Build reliable experience: task ledgers, usage estimates and uncertainty",
+        "zh": "建立可信经验：AI 任务账本、用量估计与不确定性"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-20-en.svg",
+        "zh": "/assets/course-covers/week-20-zh.svg"
+      },
+      "id": "course-book-20",
+      "url": "/course/book-20.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 20: The right to reject",
+        "zh": "第 20 周：改进，也可以拒绝"
+      },
+      "summary": {
+        "en": "Controlled RSI: a hypothesis, a budget and the option to reject",
+        "zh": "受控 RSI：让一次改进有假设、有预算，也可以被拒绝"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-21-en.svg",
+        "zh": "/assets/course-covers/week-21-zh.svg"
+      },
+      "id": "course-book-21",
+      "url": "/course/book-21.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 21: A change you can review",
+        "zh": "第 21 周：可审查的改变"
+      },
+      "summary": {
+        "en": "Improve code: patches, isolated evaluation and human-controlled release",
+        "zh": "代码层改进：补丁、隔离评测与人为控制的发布"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-22-en.svg",
+        "zh": "/assets/course-covers/week-22-zh.svg"
+      },
+      "id": "course-book-22",
+      "url": "/course/book-22.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 22: A second pair of hands",
+        "zh": "第 22 周：交给第二位用户"
+      },
+      "summary": {
+        "en": "A second user: observe a task, obtain consent and hand over",
+        "zh": "第二位用户：观察任务、得到同意、完成交接"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-23-en.svg",
+        "zh": "/assets/course-covers/week-23-zh.svg"
+      },
+      "id": "course-book-23",
+      "url": "/course/book-23.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 23: What is worth keeping",
+        "zh": "第 23 周：值得留下什么"
+      },
+      "summary": {
+        "en": "Audit value: calculate net time saved and let unused work go",
+        "zh": "价值审计：计算净省时，也允许删除自己的作品"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/course-covers/week-24-en.svg",
+        "zh": "/assets/course-covers/week-24-zh.svg"
+      },
+      "id": "course-book-24",
+      "url": "/course/book-24.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Week 24: Keep building",
+        "zh": "第 24 周：继续构建"
+      },
+      "summary": {
+        "en": "Graduation is a beginning: a new task, independent repair and an adaptable practice",
+        "zh": "毕业不是终点：新任务、独立修复与可更新的能力体系"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/topics/course-guide.webp",
+        "zh": "/assets/topics/course-guide.webp"
+      },
+      "id": "course-guide",
+      "url": "/course/guide.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Start with a useful question",
+        "zh": "从这里开始"
+      },
+      "summary": {
+        "en": "From vibe coding to a personal FDE: a 24-week practice route.",
+        "zh": "从 Vibe Coding 到个人 FDE：24 周实践路线。"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/topics/course-handbook.webp",
+        "zh": "/assets/topics/course-handbook.webp"
+      },
+      "id": "course-handbook",
+      "url": "/course/handbook.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "A handbook for the work ahead",
+        "zh": "一本随身的实践手册"
+      },
+      "summary": {
+        "en": "From vibe coding to a personal FDE: a 24-week practice route.",
+        "zh": "从 Vibe Coding 到个人 FDE：24 周实践路线。"
+      }
+    },
+    {
+      "group": "courses",
+      "topic": [
+        "fde-course"
+      ],
+      "cover": {
+        "en": "/assets/topics/course-resources.webp",
+        "zh": "/assets/topics/course-resources.webp"
+      },
+      "id": "course-resources",
+      "url": "/course/resources.html",
+      "date": {
+        "iso": "2026-09-28",
+        "label": {
+          "en": "28 Sep 2026",
+          "zh": "2026 年 9 月 28 日"
+        }
+      },
+      "title": {
+        "en": "Back to the sources",
+        "zh": "回到原始来源"
+      },
+      "summary": {
+        "en": "78 courses, official documents and original research sources, with verification scope.",
+        "zh": "78 项公开课、官方文档与原始研究，附核对范围。"
+      }
+    },
+    {
+      "id": "serial",
+      "group": "serials",
+      "topic": [
+        "serials",
+        "about"
+      ],
+      "title": {
+        "en": "Serials",
+        "zh": "连载"
+      },
+      "summary": {
+        "en": "Original serialised fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device.",
+        "zh": "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。"
+      },
+      "url": "/serial.html",
+      "cover": {
+        "en": "/assets/topics/serial.webp",
+        "zh": "/assets/topics/serial.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "cover": {
+        "en": "/assets/og/novels/wanjie-zhongchun.jpg",
+        "zh": "/assets/og/novels/wanjie-zhongchun.jpg"
+      },
+      "id": "novel-wanjie-zhongchun",
+      "title": {
+        "en": "万界种春",
+        "zh": "万界种春"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 15 chapters.",
+        "zh": "每日更新 · 目前已更新至第15章（赤潮殖民舱篇 完）"
+      },
+      "url": "/zh/novels/wanjie-zhongchun/",
+      "date": {
+        "iso": "2026-07-12",
+        "label": {
+          "en": "12 Jul 2026",
+          "zh": "2026 年 7 月 12 日"
+        }
+      }
+    },
+    {
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "cover": {
+        "en": "/assets/og/novels/changye-qingjian.jpg",
+        "zh": "/assets/og/novels/changye-qingjian.jpg"
+      },
+      "id": "novel-changye-qingjian",
+      "title": {
+        "en": "长夜请柬",
+        "zh": "长夜请柬"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 10 chapters.",
+        "zh": "每日更新 · 目前已更新至第10章（长乐小区篇 完）"
+      },
+      "url": "/zh/novels/changye-qingjian/",
+      "date": {
+        "iso": "2026-07-12",
+        "label": {
+          "en": "12 Jul 2026",
+          "zh": "2026 年 7 月 12 日"
+        }
+      }
+    },
+    {
+      "group": "serials",
+      "topic": [
+        "serials"
+      ],
+      "cover": {
+        "en": "/assets/og/novels/yuxi-gongci.jpg",
+        "zh": "/assets/og/novels/yuxi-gongci.jpg"
+      },
+      "id": "novel-yuxi-gongci",
+      "title": {
+        "en": "玉熙宫词",
+        "zh": "玉熙宫词"
+      },
+      "summary": {
+        "en": "Original fiction in Chinese, 133 chapters.",
+        "zh": "全本修订完成：2026年10月修订稿，共133章（明幕篇36章、星幕篇61章、营幕篇33章、结局3章）"
+      },
+      "url": "/zh/novels/yuxi-gongci/",
+      "date": {
+        "iso": "2026-10-18",
+        "label": {
+          "en": "18 Oct 2026",
+          "zh": "2026 年 10 月 18 日"
+        }
+      }
+    },
+    {
+      "id": "horoscope",
+      "group": "labs",
+      "topic": [
+        "labs"
+      ],
+      "title": {
+        "en": "Astrology",
+        "zh": "趣味占星"
+      },
+      "summary": {
+        "en": "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
+        "zh": "体验在你的设备上计算的八字、西方占星与双人合盘。仅供娱乐。"
+      },
+      "url": "/horoscope.html",
+      "cover": {
+        "en": "/assets/topics/learn-astrology.webp",
+        "zh": "/assets/topics/learn-astrology.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "worlds",
+      "group": "labs",
+      "topic": [
+        "labs"
+      ],
+      "title": {
+        "en": "Worlds 2026",
+        "zh": "全球总决赛"
+      },
+      "summary": {
+        "en": "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+        "zh": "2026 英雄联盟全球总决赛每场赛前胜率、隐含赔率、夺冠概率与无畏征召英雄池深度。仅供娱乐，不构成博彩建议。"
+      },
+      "url": "/worlds.html",
+      "cover": {
+        "en": "/assets/topics/learn-worlds.webp",
+        "zh": "/assets/topics/learn-worlds.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "about",
+      "group": "about",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "About",
+        "zh": "关于"
+      },
+      "summary": {
+        "en": "Feida Wang is a software engineer in Melbourne who builds AI-era products with coding agents: an AI industry atlas, economic updates, a course and original fiction.",
+        "zh": "王飞达是墨尔本的软件工程师，用编程智能体构建 AI 时代的产品：AI 产业图谱、经济动态、实践课程与原创小说。"
+      },
+      "url": "/about.html",
+      "cover": {
+        "en": "/assets/topics/learn-about.webp",
+        "zh": "/assets/topics/learn-about.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "main",
+      "group": "about",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "Home",
+        "zh": "首页"
+      },
+      "summary": {
+        "en": "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.",
+        "zh": "通过真实运行的产品，探索王飞达在全栈开发、UI/UX 设计、编程智能体、金融建模与 AI 产业研究中的跨领域实践。"
+      },
+      "url": "/",
+      "cover": {
+        "en": "/assets/topics/home.webp",
+        "zh": "/assets/topics/home.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    }
+  ]
+}

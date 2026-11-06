@@ -63,7 +63,10 @@
 #afflatus-header a.af-header-language { position: relative; flex: none; justify-content: center; min-height: calc(44px * var(--af-control-scale)); padding: 0 calc(20px * var(--af-control-scale)) 2px; border: 0; border-radius: calc(10px * var(--af-control-scale)); background: #141413; color: #faf9f5; font: var(--af-weight-regular) calc(16px * var(--af-control-scale))/1.25 var(--af-font-sans); }
 /* The visible button is smaller; its transparent pointer target remains 44px high. */
 #afflatus-header a.af-header-language::before { content: ''; position: absolute; inset-block: calc((44px * var(--af-control-scale) - 44px) / 2); inset-inline: 0; }
+#afflatus-header .af-header-search { flex: none; justify-content: center; width: 44px; margin-inline: -8px; padding: 0; }
+#afflatus-header .af-header-search svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 #afflatus-header .af-header-menu { display: none; }
+#afflatus-header .af-menu-close { display: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
 #afflatus-header .af-menu-icon { display: block; flex: none; width: calc(32px * var(--af-menu-scale)); height: calc(24px * var(--af-menu-scale)); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 #afflatus-header [hidden] { display: none; }
 body:has(> #afflatus-header) { padding-top: 68px; }
@@ -81,7 +84,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
   #afflatus-header .af-brand-full { opacity: 0; }
   #afflatus-header .af-brand-compact { opacity: 1; }
-  #afflatus-header .af-header-language { margin-left: auto; }
+  #afflatus-header .af-header-search { margin-left: auto; margin-right: -12px; }
   #afflatus-header .af-header-menu { display: inline-flex; flex: none; justify-content: flex-end; width: 44px; padding: 0; }
   #afflatus-header .af-header-nav { position: absolute; top: calc(100% + 12px); left: 16px; right: 16px; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 20px; border: 1px solid #eeece5; border-radius: var(--af-menu-radius); background: var(--af-menu-paper); box-shadow: 0 2px 0 #e2dfd580, 0 12px 28px #29271e0a; max-height: calc(100dvh - var(--af-height) - 28px); overflow-y: auto; overscroll-behavior: contain; animation: af-menu-in 180ms ease-out; }
   #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 16px; }
@@ -97,6 +100,43 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-header-dropdown a + a { margin-top: 0; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
+  /* With scripts the compact menu is a dark full screen; the paper list above is the no-script view.
+     Hiding the rest of the page also takes it out of the tab order and the accessibility tree.
+     Keep :has() on the header: on html it made every page's style recalculation far slower. */
+  html[data-af-menu-open] { overflow: hidden; }
+  html[data-af-menu-open] body > :not(#afflatus-header) { visibility: hidden; }
+  /* Outranks page themes; a page's backdrop-filter would also confine the fixed panel to the header. */
+  #afflatus-header:has(.af-header-menu[aria-expanded="true"]) { position: fixed; --af-paper: #141413; --af-ink: #faf9f5; border-bottom-color: transparent; background: #141413; color: #faf9f5; color-scheme: dark; backdrop-filter: none; }
+  #afflatus-header:has(.af-header-menu[aria-expanded="true"]) :is(.af-wordmark, button) { color: inherit; }
+  #afflatus-header:has(.af-header-menu[aria-expanded="true"]) :is(a, button):focus-visible { outline-color: #faf9f5; }
+  #afflatus-header:has(.af-header-menu[aria-expanded="true"]) a.af-header-language { border: 0; background: #faf9f5; color: #141413; }
+  #afflatus-header:has(.af-header-menu[aria-expanded="true"]) .af-header-menu { justify-content: center; border-radius: 10px; background: #2a2a28; }
+  #afflatus-header .af-header-menu[aria-expanded="true"] .af-menu-icon { display: none; }
+  #afflatus-header .af-header-menu[aria-expanded="true"] .af-menu-close { display: block; }
+  #afflatus-header[data-enhanced] .af-header-nav { position: fixed; inset: var(--af-height) 0 0; gap: 2px; max-height: none; padding: 18px var(--af-header-compact-gap) 24px; border: 0; border-radius: 0; background: #141413; box-shadow: none; color: #8f8d85; animation: none; }
+  #afflatus-header[data-enhanced] .af-header-nav > * { flex: none; border-top: 0; }
+  #afflatus-header[data-enhanced] .af-header-nav > a { align-self: flex-start; }
+  #afflatus-header[data-enhanced] .af-header-nav > a, #afflatus-header[data-enhanced] .af-header-group > button { display: inline-flex; width: auto; padding: 0; color: #8f8d85; font-size: 40px; font-weight: var(--af-weight-medium); line-height: 1.28; letter-spacing: -.01em; }
+  html[lang^="zh"] #afflatus-header[data-enhanced] .af-header-nav > a, html[lang^="zh"] #afflatus-header[data-enhanced] .af-header-group > button { font-size: 36px; line-height: 1.42; letter-spacing: 0; }
+  #afflatus-header[data-enhanced] .af-header-nav a[aria-current="page"], #afflatus-header[data-enhanced] .af-header-group:has(a[aria-current="page"]) > button { color: #faf9f5; }
+  #afflatus-header[data-enhanced] .af-nav-label::after { content: none; }
+  #afflatus-header[data-enhanced] .af-header-group-title { display: none; }
+  #afflatus-header[data-enhanced] .af-nav-caret { width: 18px; height: 18px; margin-top: 6px; stroke-width: 1.6; }
+  #afflatus-header[data-enhanced] .af-header-group:not([data-open="true"]) .af-nav-caret { transform: none; }
+  #afflatus-header[data-enhanced] .af-header-dropdown { padding: 2px 0 10px; overflow: visible; }
+  #afflatus-header[data-enhanced] .af-header-dropdown a { padding: 7px 0; color: #8f8d85; font-size: 18px; }
+  #afflatus-header[data-enhanced] .af-header-dropdown a[aria-current="page"] { color: #faf9f5; }
+  #afflatus-header[data-enhanced] .af-nav-sublabel { color: inherit; }
+  #afflatus-header .af-menu-latest { width: 100%; max-width: 520px; margin-top: auto; padding-top: 28px; }
+  #afflatus-header .af-menu-latest-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  #afflatus-header .af-menu-latest-track::-webkit-scrollbar { display: none; }
+  #afflatus-header .af-menu-latest-card { display: block; flex: 0 0 100%; min-height: 0; padding: 0; color: #8f8d85; font-size: 14px; white-space: normal; scroll-snap-align: start; }
+  #afflatus-header .af-menu-latest-card:focus-visible { outline-offset: -2px; }
+  #afflatus-header .af-menu-latest-meta { display: flex; gap: 14px; margin: 0 0 10px; }
+  #afflatus-header .af-menu-latest-card img { display: block; width: 100%; height: 150px; border-radius: 10px; background: #2a2a28; object-fit: cover; }
+  #afflatus-header .af-menu-latest-title { display: -webkit-box; min-height: 48px; margin: 12px 0 0; overflow: hidden; color: #faf9f5; font-size: 19px; font-weight: 600; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  #afflatus-header .af-menu-latest-pager { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 14px; }
+  #afflatus-header .af-menu-latest-pager button { justify-content: center; width: 44px; padding: 0; border: 1px solid #3a3a37; border-radius: 10px; color: #c9c7bf; font-size: 17px; }
 }
 /* With scripting on, paint the collapsed geometry from the first frame so the header does not
    shift the page when header-controller.js sets data-enhanced. */

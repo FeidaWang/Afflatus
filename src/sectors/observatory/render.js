@@ -35,7 +35,7 @@ export function checkpoint(data,index=1) {
  return `${t(c.status,'p','class="ob-detail-kicker"')}${t(c.title,'h3')}${t(c.body,'p')}${c.benchmark ? `<div class="ob-benchmark"><div><span>${e(c.benchmark.label)}</span><strong>${c.benchmark.value}%</strong></div><progress max="100" value="${c.benchmark.value}" aria-label="${e(c.benchmark.label)}" data-i18n-static-aria="benchmark identifier"></progress>${t(c.benchmark.basis,'p','class="ob-caption"')}<time>${c.benchmark.date}</time></div>`:''}${sourceLink(data,c.source)}`;
 }
 export function timeline(data,year='all') {
- return data.events.filter(v=>year==='all'||v.date.startsWith(year)).map(v=>`<li data-event="${v.id}"><details><summary><time datetime="${v.date}">${v.date}</time>${t(v.title)}<span class="ob-plus" aria-hidden="true">+</span></summary><div class="ob-event-body">${t(v.body,'p')}${sourceLink(data,v.source)}</div></details></li>`).join('');
+ return data.events.filter(v=>year==='all'||v.date.startsWith(year)).map(v=>`<li id="event-${v.id}" data-event="${v.id}"><details><summary><time datetime="${v.date}">${v.date}</time>${t(v.title)}<span class="ob-plus" aria-hidden="true">+</span></summary><div class="ob-event-body">${t(v.body,'p')}${sourceLink(data,v.source)}</div></details></li>`).join('');
 }
 const chapter=(n,en,zh)=> `<div class="ob-chapter-kicker"><span>${n} / 08</span>${text(en,zh,'span')}</div>`;
 export function renderPage(data) {
