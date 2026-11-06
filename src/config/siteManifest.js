@@ -273,7 +273,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 15, group: null, en: 'Portfolio', zh: '投资组合' },
+    nav: { order: 15, group: 'analysis', en: 'Portfolio', zh: '投资组合', sublabel: { en: 'FY25/26', zh: 'FY25/26' } },
     themeColor: '#05070b',
     schema: ['ProfilePage'],
     seo: ROUTE_SEO.portfolio,
@@ -299,7 +299,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 20, group: null, en: 'Stock Journal', zh: '美股看板' },
+    nav: { order: 20, group: 'analysis', en: 'Stock Journal', zh: '美股看板', sublabel: { en: 'Daily', zh: '每日' } },
     themeColor: '#05070e',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.arena,
@@ -325,7 +325,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 30, group: null, en: 'AI Observatory', zh: 'AI 观察站' },
+    nav: { order: 40, group: 'analysis', en: 'AI Observatory', zh: 'AI 观察站', sublabel: { en: 'Sectors', zh: '产业' } },
     themeColor: '#e8e6dc',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.sectors,
@@ -351,7 +351,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 40, group: null, en: 'Fed Watch', zh: '美联储观察' },
+    nav: { order: 30, group: 'analysis', en: 'Fed Watch', zh: '美联储观察', sublabel: { en: 'Macro', zh: '宏观' } },
     themeColor: '#faf9f5',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.signal,
@@ -377,7 +377,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 45, group: 'analysis', en: 'Elections', zh: '选举' },
+    nav: { order: 45, group: 'analysis', en: 'Elections', zh: '选举', sublabel: { en: '2026–28', zh: '2026–28' } },
     themeColor: '#f5f3ee',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.elections,
@@ -403,7 +403,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 60, group: 'labs', en: 'Astrology for fun', zh: '趣味占星' },
+    nav: { order: 60, group: 'labs', en: 'Astrology', zh: '趣味占星', sublabel: { en: 'For fun', zh: '娱乐' } },
     themeColor: '#202320',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.horoscope,
@@ -429,7 +429,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 65, group: 'labs', en: 'Worlds 2026', zh: '全球总决赛' },
+    nav: { order: 65, group: 'labs', en: 'Worlds 2026', zh: '全球总决赛', sublabel: { en: 'Odds', zh: '赔率' } },
     themeColor: '#0b0b0d',
     schema: ['WebApplication'],
     seo: ROUTE_SEO.worlds,
@@ -456,7 +456,7 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'zh',
     publishedLocales: ['zh'],
-    nav: { order: 70, group: 'labs', en: 'Stories', zh: '故事' },
+    nav: { order: 55, group: null, en: 'Serials', zh: '连载', title: 'Original stories in Chinese / 原创中文小说' },
     themeColor: '#f4f0e7',
     schema: ['Book', 'CreativeWorkSeries'],
     seo: ROUTE_SEO.serial,
@@ -484,7 +484,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 80, group: 'labs', en: 'Course', zh: '课程' },
+    nav: { order: 50, group: null, en: 'Courses', zh: '课程' },
     themeColor: '#f7f5ef',
     schema: ['Course', 'ItemList'],
     seo: ROUTE_SEO.course,
@@ -510,7 +510,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'en',
-    nav: { order: 90, group: 'labs', en: 'About', zh: '关于' },
+    nav: { order: 90, group: null, en: 'About', zh: '关于' },
     themeColor: '#faf9f5',
     schema: ['AboutPage', 'Person'],
     seo: ROUTE_SEO.about,
@@ -556,6 +556,12 @@ export const SITE_MANIFEST = Object.freeze([
   },
 ]);
 
+// Header disclosures; routes join one through nav.group, the rest stay single links.
+export const NAV_GROUPS = Object.freeze({
+  analysis: { en: 'Analysis', zh: '分析' },
+  labs: { en: 'Labs', zh: '实验室' },
+});
+
 export const NAV_ROUTES = Object.freeze(
   SITE_MANIFEST
     .filter((route) => route.status === 'active' && route.nav)
@@ -567,6 +573,8 @@ export const NAV_ROUTES = Object.freeze(
       zh: route.nav.zh,
       ...(route.publishedLocales ? { publishedLocales: route.publishedLocales } : {}),
       ...(route.nav.group ? { group: route.nav.group } : {}),
+      ...(route.nav.sublabel ? { sublabel: route.nav.sublabel } : {}),
+      ...(route.nav.title ? { title: route.nav.title } : {}),
     })),
 );
 

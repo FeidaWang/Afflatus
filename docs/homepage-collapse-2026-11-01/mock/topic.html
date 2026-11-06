@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock · Topic</title><link rel="stylesheet" href="mock.css">
+<style>
+.tp{display:grid;grid-template-columns:1.6fr 1fr;gap:48px;padding-block:40px 80px;min-height:760px}
+.mosaic{position:relative;min-height:640px}
+.mosaic a{position:absolute;display:block;overflow:hidden;border-radius:3px;box-shadow:0 1px 2px #0002}.mosaic img{width:100%;height:100%;object-fit:cover;display:block}
+.tp-side .eyebrow{font-size:14px;color:var(--muted);margin-bottom:6px}.tp-side h1{font-size:44px;font-weight:700;letter-spacing:-.035em;line-height:1.05;margin-bottom:28px}
+.count{font-family:ui-monospace,Menlo,monospace;font-size:13px;letter-spacing:.12em;color:var(--muted);margin:0 0 16px 16px}
+.res{display:flex;flex-direction:column;gap:12px}
+.res a{display:block;padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid #eae7de;position:relative}
+.res .meta{margin-bottom:6px;font-size:13px}.res .more{position:absolute;right:16px;top:16px}
+.res strong{font-weight:500;font-size:16.5px;line-height:1.35;display:block;padding-right:36px}
+.search{display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border-radius:999px;border:1.5px solid #4a6fa5;background:#fff;font-size:14px;min-width:260px}
+.search svg{width:16px;height:16px}
+@media (max-width:979px){.search{display:none}.tp{grid-template-columns:1fr;gap:28px;min-height:0}.mosaic{min-height:300px}.mosaic a{transform:scale(.7);transform-origin:top left}.tp-side h1{font-size:36px}}
+</style></head><body>
+<header class="hd"><div class="shell hd-in">
+  <a class="wordmark" href="#">AFFLATUS</a>
+  <nav class="nav"><div class="grp"><button><span data-zh="市场">Markets</span><svg class="caret" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></button></div><div class="grp"><button><span data-zh="研习">Learn</span><svg class="caret" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></button></div><a href="#" data-zh="故事">Stories</a><div class="grp"><button><span data-zh="实验室">Labs</span><svg class="caret" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></button></div><a href="#" data-zh="关于">About</a></nav>
+  <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span data-zh="AI 观察站">AI Observatory</span></div>
+  <a class="lang" href="#" data-zh="EN">中文</a>
+  <button class="burger" aria-label="Open navigation"><svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 2h30M1 12h30M1 22h13"/></svg></button>
+</div></header>
+<main class="shell tp">
+  <div class="mosaic">
+    <a href="#" style="left:6%;top:4%;width:72px;height:86px"><img src="img/sectors-en.jpg" alt=""></a>
+    <a href="#" style="left:30%;top:10%;width:64px;height:64px"><img src="img/signal-en.jpg" alt=""></a>
+    <a href="#" style="left:56%;top:2%;width:80px;height:60px"><img src="img/arena-en.jpg" alt=""></a>
+    <a href="#" style="left:80%;top:12%;width:60px;height:78px"><img src="img/portfolio-en.jpg" alt=""></a>
+    <a href="#" style="left:14%;top:34%;width:58px;height:58px"><img src="img/serial-zh.jpg" alt=""></a>
+    <a href="#" style="left:40%;top:38%;width:96px;height:72px"><img src="img/observatory-moon.webp" alt=""></a>
+    <a href="#" style="left:68%;top:40%;width:66px;height:84px"><img src="img/course-en.jpg" alt=""></a>
+    <a href="#" style="left:4%;top:62%;width:84px;height:62px"><img src="img/reading-landscape-960.webp" alt=""></a>
+    <a href="#" style="left:30%;top:70%;width:60px;height:76px"><img src="img/worlds-en.jpg" alt=""></a>
+    <a href="#" style="left:54%;top:76%;width:72px;height:54px"><img src="img/horoscope-en.jpg" alt=""></a>
+    <a href="#" style="left:82%;top:66%;width:62px;height:62px"><img src="img/afflatus-r07-poster.jpg" alt=""></a>
+  </div>
+  <aside class="tp-side">
+    <div class="eyebrow" data-zh="专题总览">Topic overview</div>
+    <h1 data-zh="AI 观察站">AI Observatory</h1>
+    <div class="count">12 <span data-zh="条结果">RESULTS</span> ⟲</div>
+    <div class="res">
+      <a href="#"><div class="meta"><span data-zh="研究">Research</span><span data-zh="2026 年 11 月 1 日">Nov 1, 2026</span></div><strong data-zh="前沿实验室：用测量代替叙述">Frontier labs, measured rather than narrated</strong><span class="more">···</span></a>
+      <a href="#"><div class="meta"><span data-zh="方法">Method</span><span data-zh="2026 年 10 月 19 日">Oct 19, 2026</span></div><strong data-zh="来源、披露、计算与假设：四类证据如何分开记账">Sources, disclosures, calculations, hypotheses: keeping four kinds of evidence apart</strong><span class="more">···</span></a>
+      <a href="#"><div class="meta"><span data-zh="竞争">Competition</span><span data-zh="2026 年 10 月">Oct 2026</span></div><strong data-zh="竞争格局图与生态关系">Competition map and ecosystem relations</strong><span class="more">···</span></a>
+      <a href="#"><div class="meta"><span data-zh="美联储观察">Fed Watch</span><span data-zh="2026 年 11 月 1 日">Nov 1, 2026</span></div><strong data-zh="利率、收益率与实验室的资本成本">Rates, yields and the labs' cost of capital</strong><span class="more">···</span></a>
+      <a href="#"><div class="meta"><span data-zh="课程">Course</span><span data-zh="第 7 周">Week 7</span></div><strong data-zh="阅读模型卡：从披露中提取可比较的数字">Reading model cards: pulling comparable numbers out of disclosures</strong><span class="more">···</span></a>
+      <a href="#"><div class="meta"><span data-zh="美股看板">Stock Journal</span><span data-zh="每日">Daily</span></div><strong data-zh="半导体与云厂商：观察站覆盖公司的盘面">Semis and hyperscalers: the observatory's coverage on the tape</strong><span class="more">···</span></a>
+    </div>
+  </aside>
+</main>
+<footer class="ft"><div class="shell">
+  <div class="ft-grid"><div class="ft-brand">AI_</div>
+    <div class="acc">
+      <div><span data-zh="市场">Markets</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></div>
+      <div><span data-zh="研习">Learn</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></div>
+      <div><span data-zh="故事">Stories</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></div>
+      <div><span data-zh="实验室">Labs</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></div>
+      <div><span data-zh="关于">Company</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 6 4 4 4-4"/></svg></div>
+    </div></div>
+  <div class="ft-bottom"><div>© 2026 RSI AI<div class="soc"><span></span><span></span><span></span></div></div>
+    <div><h5 data-zh="关于这个站">About this site</h5><span data-zh="墨尔本的软件工程师，用编程智能体设计、构建并上线真实运行的软件。">A software engineer in Melbourne, designing, building and shipping working software with coding agents.</span></div>
+    <div><h5 data-zh="语言">Language</h5><span>English ↗<br>中文 ↗</span></div></div>
+</div></footer>
+
+<script src="i18n.js"></script></body></html>

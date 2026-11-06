@@ -37,7 +37,7 @@ test('without JavaScript the static header still exposes every destination', asy
   const page = await context.newPage();
   await page.goto('/en/sectors.html');
   await expect(page.locator('#af-primary-nav')).toBeVisible();
-  await expect(page.locator('#af-markets a').first()).toBeVisible();
+  await expect(page.locator('#af-analysis a').first()).toBeVisible();
   expect((await page.locator('#afflatus-header').boundingBox()).height).toBeGreaterThan(200);
   await context.close();
 });

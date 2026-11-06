@@ -59,7 +59,8 @@ if (header && !header.dataset.enhanced) {
   function scheduleBrand() { if (!frame) frame = requestAnimationFrame(drawBrand); }
   function setOpen(button, open) {
     button.setAttribute('aria-expanded', String(open));
-    panel(button).hidden = !open;
+    // Compact groups are flat titled sections, so their lists stay open inside the menu.
+    panel(button).hidden = !open && (button === menu || !compact.matches);
     if (button !== menu) {
       button.parentElement.dataset.open = String(open);
       if (open) openGroup = button;
@@ -78,6 +79,7 @@ if (header && !header.dataset.enhanced) {
   function resize() {
     const active = document.activeElement;
     closeAll();
+    groups.forEach(button => setOpen(button, false));
     nav.hidden = compact.matches;
     menu.setAttribute('aria-expanded', 'false');
     if (compact.matches && nav.contains(active)) menu.focus();

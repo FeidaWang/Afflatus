@@ -47,6 +47,26 @@ test.describe('Afflatus reduced motion brand', () => {
 test.describe('Mobile primary navigation', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test('sections stay open in the menu and collapse back to dropdowns across the breakpoint', async ({ page }) => {
+    await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
+    await settlePage(page);
+    const menu = page.locator('#afflatus-header .af-header-menu');
+    const analysis = page.locator('#af-analysis');
+
+    await menu.click();
+    await expect(analysis).toBeVisible();
+    await expect(page.locator('#af-labs')).toBeVisible();
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(analysis).toBeHidden();
+    await expect(page.locator('[aria-controls="af-analysis"]')).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(analysis).toBeHidden();
+    await menu.click();
+    await expect(analysis).toBeVisible();
+  });
+
   for (const route of MOBILE_NAV_ROUTES) {
     test(`${route} keeps every primary action visible and touchable`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
@@ -58,8 +78,9 @@ test.describe('Mobile primary navigation', () => {
 
       const nav = page.locator('#af-primary-nav');
       await expect(nav).toBeVisible();
-      const items = nav.locator(':scope > a, :scope > .af-header-group > button');
-      await expect(items).toHaveCount(7); // Portfolio, Markets, Course, Stories, Astrology, Worlds 2026, About
+      const items = nav.locator('a');
+      await expect(items).toHaveCount(10); // Analysis ×5, Courses, Serials, Labs ×2, About
+      await expect(nav.locator('.af-header-group-title')).toHaveCount(2);
 
       const bounds = await items.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()));
       for (const item of bounds) {

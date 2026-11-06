@@ -103,22 +103,22 @@ test.describe('active-route browser gates', () => {
       }
 
       // Below the desktop breakpoint the primary nav sits behind the header
-      // menu. Escape inside a submenu would close the whole menu by design, so
-      // the menu is opened once and the submenu is exercised inside it.
+      // menu, where groups are flat titled sections with no disclosure.
       const headerMenu = page.locator('#afflatus-header .af-header-menu');
       if (await headerMenu.isVisible()) {
         await headerMenu.click();
         await expect(headerMenu).toHaveAttribute('aria-expanded', 'true');
+        await expect(page.locator('#af-analysis a').first()).toBeVisible();
+      } else {
+        const analysisTrigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-analysis"]');
+        await expect(analysisTrigger).toBeVisible();
+        await analysisTrigger.focus();
+        await page.keyboard.press('Enter');
+        await expect(analysisTrigger).toHaveAttribute('aria-expanded', 'true');
+        await page.keyboard.press('Escape');
+        await expect(analysisTrigger).toHaveAttribute('aria-expanded', 'false');
+        await expect(analysisTrigger).toBeFocused();
       }
-
-      const marketsTrigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-markets"]');
-      await expect(marketsTrigger).toBeVisible();
-      await marketsTrigger.focus();
-      await page.keyboard.press('Enter');
-      await expect(marketsTrigger).toHaveAttribute('aria-expanded', 'true');
-      await page.keyboard.press('Escape');
-      await expect(marketsTrigger).toHaveAttribute('aria-expanded', 'false');
-      await expect(marketsTrigger).toBeFocused();
 
       const routeLinks = page.locator('#af-primary-nav > a[href]');
       const destination = await routeLinks.evaluateAll((links, currentPath) => {

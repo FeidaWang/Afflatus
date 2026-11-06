@@ -35,13 +35,13 @@ describe('siteManifest', () => {
       '/',
       '/portfolio.html',
       '/arena.html',
-      '/sectors.html',
       '/signal.html',
+      '/sectors.html',
       '/elections.html',
+      '/course.html',
+      '/serial.html',
       '/horoscope.html',
       '/worlds.html',
-      '/serial.html',
-      '/course.html',
       '/about.html',
     ]);
     for (const route of NAV_ROUTES) {

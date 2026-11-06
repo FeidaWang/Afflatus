@@ -54,7 +54,7 @@ test.describe('Elections hub', () => {
 
   test('is reachable from the shared header', async ({ page }) => {
     await page.goto('/en/signal.html');
-    await expect(page.locator('#af-markets a[data-header-path="/elections.html"]')).toHaveCount(1);
+    await expect(page.locator('#af-analysis a[data-header-path="/elections.html"]')).toHaveCount(1);
   });
 });
 
