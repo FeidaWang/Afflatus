@@ -149,6 +149,8 @@ function withRescission(race, previous) {
  */
 export async function collectOnce({ source, store, transport, now = Date.now(), force = false }) {
   if (!source.enabled && !source.synthetic) throw new Error(`${source.id} is disabled: ${source.blockedBy || 'no written decision'}`);
+  // Read in the visitor's browser only: this site must never hold a copy.
+  if (source.browserDirect) throw new Error(`${source.id} is read in the browser and is never collected`);
   if (!source.feeds.length) throw new Error(`${source.id} has no verified feed`);
   const root = assertPrivateStore(store);
   const fetchedAt = new Date(now).toISOString();

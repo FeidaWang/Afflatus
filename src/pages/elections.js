@@ -36,7 +36,8 @@ import {
   zoomViewBox,
 } from '../lib/electionGeography.js';
 import { parseState, serializeState, withEvent, withGeography, withOffice, withRace } from '../lib/electionState.js';
-import { ELECTION_FEED_BASE } from '../config/electionSources.js';
+import { ELECTION_FEED_BASE, sourceById } from '../config/electionSources.js';
+import { CIVIC_BASE, createCivicReader } from '../lib/civicApi.js';
 import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates } from '../lib/electionResults.js';
 import { createFeedController } from '../lib/electionFeed.js';
 import { getLocale } from '../lib/localeStore.js';
@@ -624,6 +625,7 @@ function progressText(race, { short = false } = {}) {
   if (reported === null || total === null) return null;
   // The Australian column is headed "Places returned", so its cells need only the numbers.
   if (short) return `${reported}/${total}`;
+  if (unit === 'percent') return short ? `${reported}%` : T(`${reported}% reported (source estimate)`, `已报告 ${reported}%（来源估计）`);
   const words = { polling_places: T('places', '个投票点'), precincts: T('precincts', '个选区'), counties: T('counties', '个县'), localities: T('localities', '个地点'), expected_votes: T('expected votes', '预计票数') };
   return `${reported}/${total} ${words[unit] || ''}`;
 }
@@ -688,7 +690,7 @@ function renderSources(event, seats) {
     <dl class="el-kv">
       <dt>${T('Mode', '模式')}</dt><dd>${L(modeLabel())}</dd>
       <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestCount(seats)}` : DASH}</dd>
-      <dt>${T('Feed', '数据源')}</dt><dd>${feedSource ? esc(feedSource.name) : L(event.feed)}</dd>
+      <dt>${T('Feed', '数据源')}</dt><dd>${feedSource ? (feedSource.url ? `<a href="${esc(feedSource.url)}" target="_blank" rel="noopener noreferrer">${esc(feedSource.name)} ↗</a>` : esc(feedSource.name)) : L(event.feed)}</dd>
       ${source ? `<dt>${T('Feed status', '数据源状态')}</dt><dd>${feedStatusText(source)}</dd>` : ''}
       <dt>${T('Geography', '地理')}</dt><dd>${geography ? L(geography.short) : T('Schematic only · no verified boundaries', '仅示意 · 无经核验的边界')}</dd>
       <dt>${T('Swing', '摆动')}</dt><dd>${L(swingNote(event, office))}</dd>
@@ -733,6 +735,11 @@ const ERROR_WORDS = Object.freeze({
 });
 
 const feedBase = () => (isLocalHost(window.location.hostname) && window.__ELECTION_FEED_BASE__) || ELECTION_FEED_BASE;
+// A source read in the browser stands in for the store, for its own event only.
+const civicSource = sourceById('civicapi');
+const browserFeed = (event) => (!feedBase() && event?.id === civicSource.eventId && civicSource.enabled && civicSource.browserDirect
+  ? { base: CIVIC_BASE, fetchJson: createCivicReader({ fetchJson: fetchCivicJson }) }
+  : null);
 
 function modeLabel() {
   if (!shown) return { en: 'Preview · no live results', zh: '预览 · 无实时结果' };
@@ -751,6 +758,7 @@ function feedStatusText(source) {
 
 function footText() {
   if (shown?.snapshot.isSynthetic) return T('Synthetic test data on this computer only. No real results are loaded, and none of this is published.', '合成测试数据，只在本机显示。未加载任何真实结果，也没有对外发布。');
+  if (shown?.snapshot.sourceIds.includes('civicapi')) return T('Unofficial counts and calls from civicAPI (civicapi.org), read directly by your browser. States certify the official results later.', '非正式计票和判定来自 civicAPI（civicapi.org），由你的浏览器直接读取。正式结果由各州稍后认证。');
   if (shown) return T('Unofficial counts from the named source. Check the official site for declared results.', '来自具名来源的非正式计票。正式结果以官方网站为准。');
   return T('Seat numbers, dates and electorate names were checked against official sources in November 2026. No results are loaded.', '席位数、日期和选区名称已于 2026 年 11 月对照官方来源核对。本页未加载任何结果。');
 }
@@ -834,6 +842,15 @@ function setShown(snapshot, pointer) {
   shown = snapshot ? { snapshot, pointer, states: seatStates(snapshot, pointer), races: raceIndex(snapshot) } : null;
 }
 
+// civicAPI allows any origin, so no cookie or referrer detail needs to go with the read.
+function fetchCivicJson(url) {
+  return fetch(url, { cache: 'no-cache', credentials: 'omit', referrerPolicy: 'no-referrer' }).then((response) => {
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  });
+}
+
 function fetchFeedJson(url) {
   return fetch(url, { cache: 'no-cache' }).then((response) => {
     if (response.status === 404) return null;
@@ -850,13 +867,14 @@ function syncFeed(event) {
   shown = null;
   replayIndex = null;
   feedEventId = event?.id ?? null;
-  const base = feedBase();
+  const direct = browserFeed(event);
+  const base = direct?.base || feedBase();
   if (!event || !base) return;
   feed = createFeedController({
     base,
     eventId: event.id,
     hostname: window.location.hostname,
-    fetchJson: fetchFeedJson,
+    fetchJson: direct?.fetchJson || fetchFeedJson,
     isHidden: () => document.hidden,
     onChange: feedChanged,
   });
@@ -923,7 +941,8 @@ function refreshResults() {
       if (!seat) continue;
       const { className, style, tag } = tileLook(seat, Boolean(tile.closest('.is-compact')));
       tile.className = className;
-      tile.setAttribute('style', style);
+      if (style) tile.setAttribute('style', style);
+      else tile.removeAttribute('style');
       tile.innerHTML = tag;
       tile.setAttribute('aria-label', `${L(seat.label)} · ${seatStatus(seat)}`);
     }
@@ -1010,6 +1029,8 @@ function decisionText(event, race) {
   if (decision.status === 'certified' || decision.status === 'provider_called') {
     const when = decision.decidedAt
       ? formatTime(decision.decidedAt)
+      : decision.callTimeUnpublished
+      ? T(`the source publishes no call time; first read by this page ${formatTime(decision.firstObservedAt)}`, `来源未公布判定时间；本页 ${formatTime(decision.firstObservedAt)} 首次读到`)
       : T(`first seen in the feed ${formatTime(decision.firstObservedAt)}; the feed gives no declaration date`, `${formatTime(decision.firstObservedAt)} 首次在数据中出现；数据未提供宣布日期`);
     // The validator only admits an http(s) address here, so the link cannot run script.
     return `${esc(decision.authority)} · ${when} · <a href="${esc(decision.evidenceUrl)}" target="_blank" rel="noopener noreferrer">${T('Evidence', '依据')} ↗</a>`;

@@ -74,7 +74,7 @@ export const ELECTION_EVENTS = Object.freeze([
     timeLabel: 'AEDT · ET',
     authority: 'State election offices',
     decision: { en: 'Provider call, then state certification', zh: '提供方判定，之后由各州认证' },
-    feed: { en: 'US results sources: not connected', zh: '美国结果来源：尚未接入' },
+    feed: { en: 'civicAPI, read by your browser · unofficial', zh: 'civicAPI，由你的浏览器直接读取 · 非正式' },
     officialUrl: 'https://www.eac.gov/election-officials/election-results-canvass-and-certification',
     officialLabel: { en: 'How results are certified (EAC)', zh: '结果如何认证（EAC）' },
     votingSystem: { en: 'Plurality in most states; some use ranked choice or runoffs', zh: '多数州为简单多数，部分州用排序复选或决选' },

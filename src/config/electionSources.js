@@ -1,8 +1,9 @@
 /* ============================================================
    Written source decisions. A source reaches the public page only when
-   `enabled` and `publicRedistributionAllowed` are both true. Neither is true for
-   any real source today, and ELECTION_FEED_BASE is null, so production fetches
-   nothing. Evidence and dates: docs/elections/M5.md.
+   `enabled` and `publicRedistributionAllowed` are both true. Only civicAPI is,
+   and only as `browserDirect`: the visitor's browser reads it, and this site
+   never stores or re-serves it. ELECTION_FEED_BASE is still null, so nothing is
+   read from a store. Evidence and dates: docs/elections/M5.md, M9.md.
    ============================================================ */
 export const ELECTION_FEED_BASE = null;
 
@@ -49,16 +50,19 @@ export const ELECTION_SOURCES = Object.freeze([
     name: 'civicAPI',
     eventId: 'us-2026',
     url: 'https://www.civicapi.org/api-documentation',
-    enabled: false,
+    // Site owner's decision, 7 November 2026: use civicAPI as published. Its terms allow
+    // commercial use with attribution and say nothing on caching, so it is read in the browser only.
+    enabled: true,
+    browserDirect: true,
     synthetic: false,
-    publicRedistributionAllowed: false,
+    publicRedistributionAllowed: true,
     storeRaw: false,
-    pollSeconds: null,
+    pollSeconds: 60,
+    raceIds: { house: 87524, senate: 87528 },
     liveNotBefore: null,
     expectedEventName: null,
     allowedHosts: [],
     feeds: [],
-    blockedBy: 'Caching and redistribution are not addressed, no race carries its own time, and only North Carolina has been cross-checked, once. See docs/elections/M1.md.',
   },
 ]);
 

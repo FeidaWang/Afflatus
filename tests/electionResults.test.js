@@ -144,12 +144,14 @@ describe('snapshot validation', () => {
 });
 
 describe('publication gate', () => {
-  it('has no feed URL and no source cleared for the public', () => {
+  it('has no feed URL, and clears only civicAPI, read in the browser', () => {
     expect(ELECTION_FEED_BASE).toBeNull();
-    for (const source of ELECTION_SOURCES) {
+    for (const source of ELECTION_SOURCES.filter((item) => item.id !== 'civicapi')) {
       expect(source.publicRedistributionAllowed, source.id).toBe(false);
       expect(source.enabled, source.id).toBe(false);
     }
+    const civic = ELECTION_SOURCES.find((item) => item.id === 'civicapi');
+    expect([civic.enabled, civic.publicRedistributionAllowed, civic.browserDirect, civic.storeRaw]).toEqual([true, true, true, false]);
   });
 
   it('shows synthetic data only on this computer', () => {
@@ -158,9 +160,10 @@ describe('publication gate', () => {
     expect(feedAllowed({ isSynthetic: true, sourceIds: ['vec-sample'] }, 'feida.au')).toBe(false);
   });
 
-  it('refuses every real source until it has a written yes', () => {
+  it('refuses every other real source until it has a written yes', () => {
     for (const hostname of ['feida.au', '127.0.0.1']) {
-      for (const id of ['vec-2026', 'civicapi', 'vec-sample', 'unknown']) {
+      expect(feedAllowed({ isSynthetic: false, sourceIds: ['civicapi'] }, hostname)).toBe(true);
+      for (const id of ['vec-2026', 'vec-sample', 'unknown']) {
         expect(feedAllowed({ isSynthetic: false, sourceIds: [id] }, hostname), `${id} on ${hostname}`).toBe(false);
       }
       expect(feedAllowed({ isSynthetic: false, sourceIds: [] }, hostname)).toBe(false);

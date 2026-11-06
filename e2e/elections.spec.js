@@ -6,12 +6,15 @@ import { expect, test } from '@playwright/test';
 import { sourceById } from '../src/config/electionSources.js';
 import { collectOnce, directoryTransport } from '../scripts/elections/collector.mjs';
 import { contestXml, feedXml, lowerName, zipOf } from '../tests/helpers/electionFixtures.js';
+import { civicHouse, civicRegion, civicSenate } from '../tests/helpers/civicFixture.js';
 
 const HUB = '/en/elections.html';
 const NOW = new Date('2026-11-04T22:00:00+11:00');
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(NOW);
+  // The US pages read civicAPI from the browser. Tests never reach it: unrouted, it fails, and the page stays a preview.
+  await page.route('https://civicapi.org/**', (route) => route.abort());
 });
 
 const console_ = (query) => `${HUB}?${query}`;
@@ -1059,5 +1062,54 @@ test.describe('Elections feed', () => {
     await expect(page.locator('#el-replay-position')).toBeVisible();
     const { violations } = await new AxeBuilder({ page }).include('main').analyze();
     expect(violations.filter((item) => ['serious', 'critical'].includes(item.impact)).map((item) => `${item.id}: ${item.nodes[0]?.target}`)).toEqual([]);
+  });
+});
+
+test.describe('Elections civicAPI', () => {
+  async function serveCivic(page, { house = civicHouse(), senate = civicSenate(), status = 200 } = {}) {
+    const requests = [];
+    await page.unroute('https://civicapi.org/**');
+    await page.route('https://civicapi.org/**', (route) => {
+      const url = route.request().url();
+      requests.push(url);
+      if (status !== 200) return route.fulfill({ status });
+      if (url.endsWith('/race/87524')) return route.fulfill({ json: house, headers: { 'access-control-allow-origin': '*' } });
+      if (url.endsWith('/race/87528')) return route.fulfill({ json: senate, headers: { 'access-control-allow-origin': '*' } });
+      return route.fulfill({ status: 404 });
+    });
+    return requests;
+  }
+
+  test('shows civicAPI counts and calls as unofficial, and credits civicAPI', async ({ page }) => {
+    const requests = await serveCivic(page, { house: civicHouse({ 'ca-12': civicRegion('ca-12', { winner: 'd' }), 'nc-01': civicRegion('nc-01', { votes: [400, 600] }) }) });
+    await page.goto(console_('event=us-2026&office=house'));
+    await expect(page.locator('.el-strip b')).toHaveText('Unofficial results');
+    await expect(page.locator('.el-strip')).toContainText('Coverage 435/435');
+    await expect(page.locator('.el-chamber-svg [data-seat="CA-12"]')).toHaveClass(/is-called/);
+    await expect(page.locator('.el-chamber-svg [data-seat="NC-01"]')).toHaveClass(/is-leading/);
+    await expect(page.locator('.el-sources a[href="https://civicapi.org"]')).toHaveText('civicAPI ↗');
+    await expect(page.locator('#el-foot')).toContainText('civicAPI (civicapi.org)');
+    expect(requests.every((url) => /^https:\/\/civicapi\.org\/api\/v2\/race\/8752[48]$/.test(url))).toBe(true);
+  });
+
+  test('says the call time is not published', async ({ page }) => {
+    await serveCivic(page, { house: civicHouse({ 'ca-12': civicRegion('ca-12', { winner: 'd' }) }) });
+    await page.goto(console_('event=us-2026&office=house&race=CA-12'));
+    await expect(page.locator('#el-drawer')).toContainText('the source publishes no call time');
+    await expect(page.locator('#el-drawer')).toContainText('80% reported (source estimate)');
+  });
+
+  test('stays a preview when civicAPI cannot be read', async ({ page }) => {
+    await serveCivic(page, { status: 503 });
+    await page.goto(console_('event=us-2026&office=house'));
+    await expect(page.locator('.el-strip b')).toHaveText('Preview — no results yet');
+  });
+
+  test('never reads civicAPI for the other events or the hub', async ({ page }) => {
+    const requests = await serveCivic(page);
+    await page.goto(HUB);
+    await page.goto(console_('event=vic-2026'));
+    await expect(page.locator('.el-strip b')).toHaveText('Preview — no results yet');
+    expect(requests).toEqual([]);
   });
 });

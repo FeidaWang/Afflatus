@@ -58,8 +58,9 @@ describe('election rule packs', () => {
     expect(statusVocabulary(eventById('us-2026')).called.en).toBe('Called by provider');
   });
 
-  it('never lists an enabled feed', () => {
-    for (const event of ELECTION_EVENTS) expect(event.feed.en).toMatch(/not connected|No feed connected/);
+  it('lists no connected feed except civicAPI for the US midterms', () => {
+    for (const event of ELECTION_EVENTS.filter((item) => item.id !== 'us-2026')) expect(event.feed.en).toMatch(/not connected|No feed connected/);
+    expect(eventById('us-2026').feed.en).toMatch(/^civicAPI, read by your browser/);
   });
 });
 
