@@ -1,0 +1,18 @@
+{
+ "sourceErrorPanel": "Mode Refreshing · synthetic test data Coverage 66 of 88 Feed VEC sample files (fictitious) Feed status Failing, showing the last good data · malformed file · last good 10 Dec, 12:01 Melbourne Geography District boundaries · 2021 redivision Swing Not computed: no verified baseline is loaded. Polls 28 Nov 2026 · Polls close 18:00 AEDT Voting Assembly: full preferential. Council: proportional (STV), 8 regions × 5 Last check 10 Dec, 13:01 Melbourne Newest source time 10 Dec, 13:00 Melbourne",
+ "sourceErrorFeedNote": null,
+ "evidenceLink": "https://www.vec.vic.gov.au/about-us/media/2026-results-data-feed",
+ "decidedBy": "Status Declared by VEC · Labor Decided by VEC · first seen in the feed 9 Dec, 12:00 Melbourne; the feed gives no declaration date · Evidence ↗ Progress 7/12 places Swing Not computed: no verified baseline is loaded. Source time 10 Dec, 12:00 Melbourne File published 10 Dec, 12:00 Melbourne Retrieved 10 Dec, 12:01 Melbourne",
+ "runoffRow": "LA-01 LA SYNTHETIC Rep 3,999 473/673 precincts Called by provider · SYNTHETIC desk · Democrat · runoff 8 h",
+ "runoffDrawerNote": "Held on 5 Dec 2026, after the main polling day.",
+ "nswCouncil": {
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS NSW 2027 · Legislative Council Coverage 0/21 Source age — AEDT",
+  "off": 21,
+  "keys": "L Labor — C Coalition — G Greens — I Independent — O Other — No result loaded 21 Not on ballot 21"
+ },
+ "auSenate": {
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS AU 2028 · Senate Coverage 0/40 Source age — AEST/AEDT",
+  "off": 36,
+  "keys": "L Labor — C Coalition — G Greens — I Independent — O Other — No result loaded 40 Not on ballot 36"
+ }
+}
