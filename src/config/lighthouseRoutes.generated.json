@@ -22,6 +22,10 @@
       "path": "/signal.html"
     },
     {
+      "id": "elections",
+      "path": "/elections.html"
+    },
+    {
       "id": "horoscope",
       "path": "/horoscope.html"
     },

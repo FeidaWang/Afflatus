@@ -37,6 +37,7 @@ describe('siteManifest', () => {
       '/arena.html',
       '/sectors.html',
       '/signal.html',
+      '/elections.html',
       '/horoscope.html',
       '/worlds.html',
       '/serial.html',

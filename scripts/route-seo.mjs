@@ -3,6 +3,7 @@ import path from 'node:path';
 import { parse } from 'parse5';
 import { courseBookCatalog } from '../src/data/courseBookCatalog.js';
 import { SOCIAL_CARD, SITE_NAME } from '../src/config/siteManifest.js';
+import { ELECTION_EVENTS } from '../src/lib/electionRules.js';
 
 const SITE_URL = 'https://feida.au';
 const PROFILE_ID = `${SITE_URL}/#person`;
@@ -349,6 +350,35 @@ function buildSignalGraph(route, locale, facts, url) {
   ];
 }
 
+// The calendar only: no result, candidate or forecast claims.
+function buildElectionsGraph(route, locale, facts, url) {
+  const key = localeKey(route, locale);
+  const itemListId = `${url}#election-calendar`;
+  const items = ELECTION_EVENTS.map((event, index) =>
+    listItem(index + 1, {
+      '@type': 'WebPage',
+      name: event.name[key],
+      url: `${url}?event=${event.id}`,
+    }),
+  );
+  const page = basePageNode(route, locale, facts, url, 'CollectionPage');
+  page.mainEntity = { '@id': itemListId };
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    page,
+    {
+      '@type': 'ItemList',
+      '@id': itemListId,
+      name: key === 'zh' ? '选举日历' : 'Election calendar',
+      numberOfItems: items.length,
+      itemListElement: items,
+    },
+    breadcrumbNode(route, locale, url),
+  ];
+}
+
 function buildHoroscopeGraph(route, locale, facts, url) {
   const key = localeKey(route, locale);
   const appId = `${url}#application`;
@@ -476,6 +506,7 @@ const BUILDERS = Object.freeze({
   signal: buildSignalGraph,
   horoscope: buildHoroscopeGraph,
   worlds: buildWorldsGraph,
+  elections: buildElectionsGraph,
   serial: buildSerialGraph,
   course: buildCourseGraph,
 });

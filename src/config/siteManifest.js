@@ -165,6 +165,23 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'worlds' },
   },
+  elections: {
+    social: {
+      background: 'assets/og-backgrounds/elections.jpg',
+      eyebrow: { en: 'ELECTIONS · PREVIEW', zh: '选举 · 预览' },
+      title: { en: 'Elections 2026–28', zh: '选举 2026–28' },
+      subtitle: {
+        en: 'A calendar of US and Australian elections, with seat charts per event. No live results.',
+        zh: '美国与澳大利亚选举日历，每场配席位图。无实时结果。',
+      },
+      alt: {
+        en: 'Neutral grey seat marks on an off-white ground, one mark per electoral seat',
+        zh: '米白底色上的中性灰席位标记，每个标记代表一个选举席位',
+      },
+      images: { en: routeOgImage('elections', 'en'), zh: routeOgImage('elections', 'zh') },
+    },
+    structuredData: { kind: 'elections' },
+  },
   serial: {
     social: {
       background: 'assets/og-backgrounds/serial.jpg',
@@ -353,6 +370,32 @@ export const SITE_MANIFEST = Object.freeze([
     },
   },
   {
+    id: 'elections',
+    file: 'elections.html',
+    path: '/elections.html',
+    status: 'active',
+    build: true,
+    sitemap: true,
+    defaultLocale: 'en',
+    nav: { order: 45, group: 'analysis', en: 'Elections', zh: '选举' },
+    themeColor: '#f5f3ee',
+    schema: ['CollectionPage', 'ItemList'],
+    seo: ROUTE_SEO.elections,
+    capabilities: ['svg-viz'],
+    metadata: {
+      title: "Elections 2026–28 — US and Australian calendar · AFFLATUS",
+      description: "A calendar of US and Australian elections from 2026 to 2028, with seat charts and race tables for each event. Preview: no results are loaded yet.",
+      canonical: 'https://feida.au/en/elections.html',
+      ogTitle: "Elections 2026–28 — US and Australian calendar · AFFLATUS",
+      ogDescription: "A calendar of US and Australian elections from 2026 to 2028, with seat charts and race tables for each event. Preview: no results are loaded yet.",
+      ogImage: ROUTE_SEO.elections.social.images.en,
+    },
+    locales: {
+      en: {"title": "Elections 2026–28 — US and Australian calendar · AFFLATUS", "description": "A calendar of US and Australian elections from 2026 to 2028, with seat charts and race tables for each event. Preview: no results are loaded yet."},
+      zh: {"title": "选举 2026–28 — 美国与澳大利亚选举日历 · AFFLATUS", "description": "2026 至 2028 年美国与澳大利亚选举日历，每场配席位图和比赛表。预览：尚未加载任何结果。"},
+    },
+  },
+  {
     id: 'horoscope',
     file: 'horoscope.html',
     path: '/horoscope.html',
@@ -534,6 +577,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
     { routeId: 'signal' },
     { routeId: 'signal', hash: '#treasuryYieldBoard', label: { en: '10Y / 30Y yield monitor', zh: '10年 / 30年期收益率' } },
     { routeId: 'portfolio', hash: '#fy2026Performance', label: { en: 'FY25/26 flight record', zh: 'FY25/26 飞行记录' } },
+    { routeId: 'elections' },
   ] },
   { id: 'lab', label: { en: 'Lab', zh: '实验室' }, items: [
     { routeId: 'arena' },
