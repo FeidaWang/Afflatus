@@ -125,6 +125,35 @@ describe('chamber geometry', () => {
     });
   });
 
+  it('puts a party letter on every coloured mark big enough to read one, and none on a neutral mark', () => {
+    const tag = (party) => party.tag.en;
+    for (const [eventId, officeId] of [['vic-2026', 'assembly'], ['us-2026', 'senate']]) {
+      const result = bound(eventId, officeId);
+      const parties = PARTIES[eventById(eventId).family];
+      const [first, second] = result.slots.filter((slot) => slot.seat.onBallot).map((slot) => slot.seat.seatId);
+      const states = { [first]: { status: 'called', party: parties[0].id }, [second]: { status: 'leading', party: parties[1].id } };
+      const svg = chamberSvg(result, { states, parties, label, ariaLabel: 'Seats', chairLabel: 'Chair', tag });
+      const letters = [...svg.matchAll(/<text class="is-(\w+)"[^>]*>([^<]+)<\/text>/g)].map((match) => [match[1], match[2]]);
+      expect(letters).toEqual(expect.arrayContaining([['called', parties[0].tag.en], ['leading', parties[1].tag.en]]));
+      expect(letters).toHaveLength(2);
+      expect(svg).toMatch(/<g class="el-seat-tags" aria-hidden="true"/);
+      expect(chamberSvg(result, { label, ariaLabel: 'Seats', chairLabel: 'Chair', tag })).not.toMatch(/<text class="is-/);
+    }
+    const house = bound('us-2026', 'house');
+    const states = { [house.slots[0].seat.seatId]: { status: 'called', party: 'dem' } };
+    expect(chamberSvg(house, { states, parties: PARTIES.us, label, ariaLabel: 'Seats', chairLabel: 'Chair', tag })).not.toMatch(/el-seat-tags/);
+  });
+
+  it('gives every party a letter in both languages, unique within its family', () => {
+    for (const parties of Object.values(PARTIES)) {
+      for (const lang of ['en', 'zh']) {
+        const letters = parties.map((party) => party.tag[lang]);
+        expect(letters.every((letter) => [...letter].length === 1)).toBe(true);
+        expect(new Set(letters).size).toBe(parties.length);
+      }
+    }
+  });
+
   it('gives every chamber its own layout', () => {
     const signatures = chambers.map(([eventId, officeId]) => JSON.stringify(createChamberLayout(eventId, officeId).slots.map((slot) => [slot.x, slot.y])));
     expect(new Set(signatures).size).toBe(chambers.length);

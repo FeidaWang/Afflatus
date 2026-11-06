@@ -116,6 +116,7 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-tally-keys{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;font:12.5px/1.4 var(--el-mono)}
 .el-tally-keys li{display:inline-flex;align-items:center;gap:6px}
 .el-tally-keys i{display:inline-block;width:11px;height:11px}
+.elections-body .el-tally-keys .el-party-key{display:inline-grid;place-items:center;width:15px;height:15px;color:#FFF;font:700 10px/1 var(--el-mono);font-style:normal}
 .el-tally-keys b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
 .el-neutral{background:var(--el-unknown);box-shadow:inset 0 0 0 1px var(--el-unknown-line)}
 .el-tally-rows{display:grid;gap:6px}
@@ -147,6 +148,8 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-seat.is-neutral.is-selected,.el-seat.is-off.is-selected,.el-seat.is-unavailable.is-selected{fill:var(--el-ink);stroke:var(--el-ink)}
 .el-seat.is-selected{stroke:var(--el-ink);stroke-width:2.5}
 .elections-body .el-seat:focus-visible{outline:none;stroke:var(--el-focus);stroke-width:3}
+.el-seat-tags{pointer-events:none;fill:#FFF;font-family:var(--el-mono);font-weight:700}
+.el-seat-tags .is-leading{fill:var(--el-ink);paint-order:stroke;stroke:var(--el-bg);stroke-width:3px;stroke-linejoin:round}
 .el-room-chair{fill:var(--el-surface);stroke:var(--el-ink);stroke-width:1;vector-effect:non-scaling-stroke}
 .el-room-detail{fill:none;stroke:var(--el-rule);stroke-width:1;vector-effect:non-scaling-stroke}
 .el-room-label{fill:var(--el-ink);font-family:var(--el-mono);letter-spacing:.04em}
@@ -222,6 +225,8 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .elections-body .el-tile.is-unavailable{background:transparent;box-shadow:inset 0 0 0 1px var(--el-ink)}
 .elections-body .el-tile.is-off{background:transparent;box-shadow:inset 0 0 0 1px var(--el-rule)}
 .elections-body .el-tile.is-selected{background:var(--el-ink);box-shadow:none}
+.elections-body .el-tile span{display:grid;place-items:center;height:100%;color:#FFF;font:700 11px/1 var(--el-mono)}
+.elections-body .el-tile.is-leading span{color:var(--el-ink);text-shadow:0 0 2px var(--el-bg),0 0 2px var(--el-bg)}
 
 .el-drawer{position:absolute;top:0;right:0;bottom:0;width:var(--el-drawer-w);overflow-y:auto;padding:18px 20px;background:var(--el-bg);border-left:1px solid var(--el-ink);box-shadow:-14px 0 24px rgba(22,25,26,.06);animation:el-drawer-in 160ms ease-out}
 .el-drawer[hidden]{display:none}

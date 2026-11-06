@@ -6,17 +6,19 @@
    ============================================================ */
 
 export const PARTIES = Object.freeze({
+  // `tag` is a letter drawn on a mark, so parties never differ by colour alone:
+  // Labor and Greens are almost the same colour to a red-green colour-blind reader.
   us: [
-    { id: 'dem', en: 'Democrat', zh: '民主党', color: '#225DA8' },
-    { id: 'rep', en: 'Republican', zh: '共和党', color: '#A73D3A' },
-    { id: 'other', en: 'Other', zh: '其他', color: '#6E4BA8' },
+    { id: 'dem', en: 'Democrat', zh: '民主党', color: '#225DA8', tag: { en: 'D', zh: '民' } },
+    { id: 'rep', en: 'Republican', zh: '共和党', color: '#A73D3A', tag: { en: 'R', zh: '共' } },
+    { id: 'other', en: 'Other', zh: '其他', color: '#6E4BA8', tag: { en: 'O', zh: '其' } },
   ],
   au: [
-    { id: 'labor', en: 'Labor', zh: '工党', color: '#C8302E' },
-    { id: 'coalition', en: 'Coalition', zh: '联盟党', color: '#1F4E9C' },
-    { id: 'greens', en: 'Greens', zh: '绿党', color: '#4C8A1F' },
-    { id: 'teal', en: 'Independent', zh: '独立', color: '#0F8FA6' },
-    { id: 'other', en: 'Other', zh: '其他', color: '#7B4FB0' },
+    { id: 'labor', en: 'Labor', zh: '工党', color: '#C8302E', tag: { en: 'L', zh: '工' } },
+    { id: 'coalition', en: 'Coalition', zh: '联盟党', color: '#1F4E9C', tag: { en: 'C', zh: '联' } },
+    { id: 'greens', en: 'Greens', zh: '绿党', color: '#4C8A1F', tag: { en: 'G', zh: '绿' } },
+    { id: 'teal', en: 'Independent', zh: '独立', color: '#0F8FA6', tag: { en: 'I', zh: '独' } },
+    { id: 'other', en: 'Other', zh: '其他', color: '#7B4FB0', tag: { en: 'O', zh: '其' } },
   ],
 });
 

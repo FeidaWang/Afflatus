@@ -193,9 +193,22 @@ function hatchPatterns(layout, marks) {
   )).join('')}</defs>`;
 }
 
-/** The chart as a string. `states` maps seatId to verified state; the page passes none. */
-export function chamberSvg(bound, { states = {}, parties = [], label, ariaLabel, chairLabel }) {
+// A party letter on each coloured mark. The 435-seat fan's marks are too small to carry one.
+const TAG_MIN_RADIUS = 12;
+
+function partyTags(layout, marks, tag) {
+  if (!tag || layout.slots[0].radius < TAG_MIN_RADIUS) return '';
+  const size = round(layout.desk ? layout.desk.height * 0.8 : layout.slots[0].radius * 1.05);
+  const tags = layout.slots.map((slot, index) => {
+    const mark = marks[index];
+    return mark.party ? `<text class="is-${mark.status}" x="${slot.x}" y="${slot.y}" dy=".36em">${tag(mark.party)}</text>` : '';
+  }).join('');
+  return `<g class="el-seat-tags" aria-hidden="true" font-size="${size}" text-anchor="middle">${tags}</g>`;
+}
+
+/** The chart as a string. `states` maps seatId to verified state; the page passes none. `tag(party)` gives the letter for a party mark. */
+export function chamberSvg(bound, { states = {}, parties = [], label, ariaLabel, chairLabel, tag = null }) {
   const marks = bound.slots.map((slot) => seatMark(slot.seat, states[slot.seat.seatId], parties));
   const elements = bound.slots.map((slot, index) => markElement(bound, slot, marks[index], label(slot.seat, marks[index].status)));
-  return `<svg class="el-chamber-svg" viewBox="${bound.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-chamber="${bound.kind}">${hatchPatterns(bound, marks)}<g aria-hidden="true">${roomElements(bound, chairLabel)}</g>${elements.join('')}</svg>`;
+  return `<svg class="el-chamber-svg" viewBox="${bound.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-chamber="${bound.kind}">${hatchPatterns(bound, marks)}<g aria-hidden="true">${roomElements(bound, chairLabel)}</g>${elements.join('')}${partyTags(bound, marks, tag)}</svg>`;
 }

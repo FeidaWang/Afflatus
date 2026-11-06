@@ -295,7 +295,7 @@ function renderTally(event, office, seats, unit) {
   const counts = shown ? partyTally(seats, states, parties) : null;
   const keys = parties.map((party) => {
     const count = counts?.[party.id];
-    return `<li><i style="background:${party.color}"></i>${L(party)}<b>${count ? count.decided : DASH}</b>${count?.leading ? `<small>+${count.leading} ${T('leading', '领先')}</small>` : ''}</li>`;
+    return `<li><i class="el-party-key" style="background:${party.color}" aria-hidden="true">${L(party.tag)}</i>${L(party)}<b>${count ? count.decided : DASH}</b>${count?.leading ? `<small>+${count.leading} ${T('leading', '领先')}</small>` : ''}</li>`;
   }).join('');
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
@@ -332,6 +332,7 @@ function chamberMarkup(event, office, seats) {
     label: (seat) => `${L(seat.label)} · ${seatStatus(seat)}`,
     ariaLabel: `${L(office.fullName)} · ${T('seat chart', '席位图')} · ${seats.length}`,
     chairLabel: L(CHAIR_LABELS[bound.chairLabel]),
+    tag: (party) => L(party.tag),
   });
 }
 
@@ -514,10 +515,15 @@ function applyMapView() {
 
 const mapResize = typeof ResizeObserver === 'function' ? new ResizeObserver(() => applyMapView()) : null;
 
-function tileLook(seat) {
-  if (!seat.onBallot) return { className: 'el-tile is-off', style: '' };
+// Big blocks carry the party letter as well as its colour. The 435 compact blocks are too small for one.
+function tileLook(seat, compact) {
+  if (!seat.onBallot) return { className: 'el-tile is-off', style: '', tag: '' };
   const mark = seatMark(seat, currentStates()[seat.seatId], partiesOf(eventById(state.event)));
-  return { className: `el-tile${mark.status === 'neutral' ? '' : ` is-${mark.status}`}${mark.stale ? ' is-stale' : ''}`, style: mark.party ? `--seat:${mark.party.color}` : '' };
+  return {
+    className: `el-tile${mark.status === 'neutral' ? '' : ` is-${mark.status}`}${mark.stale ? ' is-stale' : ''}`,
+    style: mark.party ? `--seat:${mark.party.color}` : '',
+    tag: mark.party && !compact ? `<span aria-hidden="true">${L(mark.party.tag)}</span>` : '',
+  };
 }
 
 function renderTiles(seats) {
@@ -531,8 +537,8 @@ function renderTiles(seats) {
   const blocks = [...groups].map(([group, members]) => `<div class="el-tile-group">
     ${group ? `<span class="el-tile-label">${group}</span>` : ''}
     <div class="el-tiles">${members.map((seat) => {
-    const { className, style } = tileLook(seat);
-    return `<button type="button" class="${className}"${style ? ` style="${style}"` : ''} data-seat="${seat.seatId}" tabindex="-1" aria-label="${L(seat.label)} · ${seatStatus(seat)}" title="${L(seat.label)}"></button>`;
+    const { className, style, tag } = tileLook(seat, compact);
+    return `<button type="button" class="${className}"${style ? ` style="${style}"` : ''} data-seat="${seat.seatId}" tabindex="-1" aria-label="${L(seat.label)} · ${seatStatus(seat)}" title="${L(seat.label)}">${tag}</button>`;
   }).join('')}</div>
   </div>`).join('');
   return `<div class="el-tile-map${compact ? ' is-compact' : ''}${groups.size > 1 ? ' is-grouped' : ''}" data-roving>${blocks}</div>
@@ -863,6 +869,8 @@ function repaintMarks(svg, markup) {
   const defs = next.querySelector(':scope > defs');
   svg.querySelector(':scope > defs')?.remove();
   if (defs) svg.prepend(defs);
+  const tags = next.querySelector(':scope > .el-seat-tags');
+  if (tags) svg.querySelector(':scope > .el-seat-tags')?.replaceWith(tags);
   const byId = new Map([...next.querySelectorAll('[data-seat]')].map((mark) => [mark.dataset.feature || mark.dataset.seat, mark]));
   for (const mark of svg.querySelectorAll('[data-seat]')) {
     const source = byId.get(mark.dataset.feature || mark.dataset.seat);
@@ -901,9 +909,10 @@ function refreshResults() {
     for (const tile of document.querySelectorAll('.el-tile')) {
       const seat = seats.find((item) => item.seatId === tile.dataset.seat);
       if (!seat) continue;
-      const { className, style } = tileLook(seat);
+      const { className, style, tag } = tileLook(seat, Boolean(tile.closest('.is-compact')));
       tile.className = className;
       tile.setAttribute('style', style);
+      tile.innerHTML = tag;
       tile.setAttribute('aria-label', `${L(seat.label)} · ${seatStatus(seat)}`);
     }
     renderRaces();
