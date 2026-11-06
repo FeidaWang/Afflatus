@@ -55,7 +55,9 @@ const CHAIR_LABELS = Object.freeze({
 
 let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
 const T = (en, zh) => (lang === 'zh' ? zh : en);
-const L = (pair) => T(pair.en, pair.zh);
+// A Chinese date such as 2028 年 5 月 keeps its parts on one line.
+const keepDate = (text) => text.replace(/\d+ [年月日](?: \d+ [月日])*/g, (date) => date.replaceAll(' ', '\u00a0'));
+const L = (pair) => (lang === 'zh' ? keepDate(pair.zh) : pair.en);
 
 let state = parseState(window.location.search);
 let table = { key: 'seat', direction: 'asc', expanded: false };
