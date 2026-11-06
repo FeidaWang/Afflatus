@@ -10,6 +10,7 @@ export const SITE_PUBLISH_ARTIFACTS = Object.freeze([
     .map((route) => route.file),
   'public/sitemap.xml',
   'src/config/navRoutes.generated.js',
+  'src/config/homeLatest.generated.js',
   'src/config/performanceRoutes.generated.js',
   'src/config/lighthouseRoutes.generated.json',
 ]);

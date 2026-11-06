@@ -1,16 +1,29 @@
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from '@phosphor-icons/react';
 import { navigationHref, navigationLabel } from '../lib/siteNavigation.js';
 import { getLocale } from '../lib/localeStore.js';
 import { FilmPlayer } from './FilmPlayer.jsx';
+import { HOME_LATEST } from '../config/homeLatest.generated.js';
+import { LATEST_ACTIONS, LATEST_HEADING, LEARN_CARDS, LEARN_HEADING } from './homeCards.js';
 import { PremiereFooter } from './PremiereFooter.jsx';
 
-const work = [
-  { href: '/sectors.html', ...navigationLabel('/sectors.html') },
-  { href: '/course.html', en: 'FDE 0→1', zh: 'FDE 0→1' },
-  { href: '/serial.html', en: 'A library of stories', zh: '原创故事书架' },
-];
 function SiteLink({ href, language, children }) {
   return <a className="text-link" href={navigationHref(href, language)}><span>{children}</span><ArrowRight aria-hidden="true" /></a>;
+}
+// loading="lazy" still fetches these at page load, inside the browser's distance
+// threshold, and those requests delay the film poster's paint.
+function LearnCover({ image, width, height }) {
+  const cover = useRef(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setNear(true); }, { rootMargin: '600px' });
+    observer.observe(cover.current);
+    return () => observer.disconnect();
+  }, []);
+  return <>
+    <img ref={cover} src={near ? image : undefined} width={width} height={height} alt="" decoding="async" />
+    <noscript><img src={image} width={width} height={height} alt="" /></noscript>
+  </>;
 }
 export function App({ language: initialLanguage } = {}) {
   const language = initialLanguage || getLocale(document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
@@ -29,29 +42,23 @@ export function App({ language: initialLanguage } = {}) {
         </div>
         <FilmPlayer language={language} />
       </section>
-      <section className="latest-work section-shell" id="major-releases" aria-labelledby="latest-title">
-        <div className="section-heading"><h2 id="latest-title">{zh ? '最新作品' : 'Latest work'}</h2><p>{zh ? '用想法、研究与作品，走向更开阔的明天。' : 'Ideas, research and projects for a more open tomorrow.'}</p></div>
-        <div className="work-grid">{work.map((item, index) => <a key={item.href} className="work-item" href={navigationHref(item.href, language)}>
-          <span className="work-number">0{index + 1}</span><span className="work-title">{item[language]}</span><ArrowRight aria-hidden="true" />
+      <section className="home-latest section-shell" id="major-releases" aria-labelledby="latest-title">
+        <div className="section-heading"><h2 id="latest-title">{LATEST_HEADING.title[language]}</h2><p>{LATEST_HEADING.note[language]}</p></div>
+        <div className="home-latest-grid">{HOME_LATEST.map(({ href, date, title, summary }) => <article key={href} className="home-card">
+          <p className="home-card-meta"><span>{navigationLabel(href)[language]}</span>{date && <time dateTime={date.iso}>{date.label[language]}</time>}</p>
+          <h3>{title[language]}</h3>
+          <p className="home-card-summary">{summary[language]}</p>
+          <a className="home-card-action" href={navigationHref(href, language)}><span>{LATEST_ACTIONS[href][language]}</span><ArrowRight aria-hidden="true" /></a>
+        </article>)}</div>
+      </section>
+      <section className="home-learn section-shell" id="learn-more" aria-labelledby="learn-title">
+        <h2 id="learn-title">{LEARN_HEADING[language]}</h2>
+        <div className="home-learn-grid">{LEARN_CARDS.map(({ href, image, width, height, title, summary }) => <a key={href} className="home-learn-card" href={navigationHref(href, language)}>
+          <span className="home-learn-label">{navigationLabel(href)[language]}</span>
+          <LearnCover image={image} width={width} height={height} />
+          <h3>{title[language]}</h3>
+          <p>{summary[language]}</p>
         </a>)}</div>
-      </section>
-      <section className="home-essay section-shell" id="key-articles" aria-labelledby="essay-title">
-        <p className="eyebrow">{zh ? '研究笔记' : 'A FIELD NOTE'}</p>
-        <div className="essay-grid"><h2 id="essay-title">{zh ? '每一个判断，都需要被证伪的可能。' : 'Every thesis needs a way to be wrong.'}</h2><div>
-          <p>{zh ? '区分测量、披露、计算与假设，让缺失的证据也清晰可见。' : 'Keep measurements, disclosures, calculations and hypotheses separate, then make the missing evidence visible.'}</p>
-          <SiteLink href="/sectors.html#sources" language={language}>{zh ? '阅读研究' : 'Read the research'}</SiteLink>
-        </div></div>
-      </section>
-      <section className="home-essay section-shell" id="about-me" aria-labelledby="about-me-title">
-        <p className="eyebrow">{zh ? '关于我' : 'ABOUT ME'}</p>
-        <div className="essay-grid"><h2 id="about-me-title">{zh ? '我是王飞达，墨尔本的软件工程师。' : 'I’m Feida Wang, a software engineer in Melbourne.'}</h2><div>
-          <p>{zh ? '我借助编程智能体设计、构建并上线真实运行的软件：AI 产业研究、经济动态、实践课程，还有原创小说。' : 'I design, build and ship working software with coding agents: AI industry research, economic updates, a course and original fiction.'}</p>
-          <SiteLink href="/about.html" language={language}>{zh ? '更多关于我' : 'More about me'}</SiteLink>
-        </div></div>
-      </section>
-      <section className="destinations section-shell" id="destinations" aria-labelledby="destinations-title">
-        <h2 id="destinations-title">{zh ? '找到你的入口。' : 'Find your way in.'}</h2>
-        <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{['/serial.html', '/portfolio.html', '/course.html', '/arena.html'].map(href => <SiteLink key={href} href={href} language={language}>{navigationLabel(href)[language]}</SiteLink>)}</nav>
       </section>
     </main>
     <PremiereFooter language={language} />

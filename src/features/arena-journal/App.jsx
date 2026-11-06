@@ -56,7 +56,7 @@ export function App({researchPanel=null,initialLocale="en"}={}){
     document.documentElement.lang=english?'en':'zh-CN';document.title=JOURNAL_TITLES[locale];
     document.querySelectorAll('#afflatus-header [data-en],.pa-footer [data-en]').forEach(node=>{node.textContent=node.dataset[locale];});
     document.querySelectorAll('#afflatus-header [data-aria-en],.pa-footer [data-aria-en]').forEach(node=>node.setAttribute('aria-label',node.dataset[english?'ariaEn':'ariaZh']));
-    document.querySelectorAll('#afflatus-header a[href],.pa-footer a[href]').forEach(a=>{const href=a.getAttribute('href');if(href.startsWith('/')||href.startsWith('https://feida.au/')){const path=href.replace('https://feida.au','').replace(/^\/(en|zh)(?=\/)/,'');a.href=`/${path==='/serial.html'?'zh':locale}${path}`;}});
+    document.querySelectorAll('#afflatus-header a[href],.pa-footer a[href]:not([data-footer-language])').forEach(a=>{const href=a.getAttribute('href');if(href.startsWith('/')||href.startsWith('https://feida.au/')){const path=href.replace('https://feida.au','').replace(/^\/(en|zh)(?=\/)/,'');a.href=`/${path==='/serial.html'?'zh':locale}${path}`;}});
     const language=document.querySelector('[data-header-language]');language.href=`/${english?'zh':'en'}/arena.html`;language.textContent=english?'中文':'EN';language.setAttribute('aria-label',english?'切换至中文':'Switch to English');
   },[english,locale]);
   useEffect(()=>{const button=document.querySelector('[data-header-language]');const change=event=>{if(['en','zh'].includes(document.documentElement.dataset.afflatusLocale))return;event.preventDefault();setLocale(value=>value==='zh'?'en':'zh');};button.addEventListener('click',change);return()=>button.removeEventListener('click',change);},[]);
