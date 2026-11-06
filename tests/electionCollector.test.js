@@ -217,7 +217,8 @@ describe('VEC adapter, zero files and declarations', () => {
 describe('collector', () => {
   it('refuses a disabled real source', async () => {
     await expect(collectOnce({ source: sourceById('vec-2026'), store, transport: directoryTransport(feedDir) })).rejects.toThrow(/disabled/);
-    await expect(collectOnce({ source: sourceById('civicapi'), store, transport: directoryTransport(feedDir) })).rejects.toThrow(/disabled/);
+    // civicAPI is cleared only for the visitor's browser, never for a stored copy.
+    await expect(collectOnce({ source: sourceById('civicapi'), store, transport: directoryTransport(feedDir) })).rejects.toThrow(/never collected/);
   });
 
   it('refuses to write inside public/ or dist/', () => {
