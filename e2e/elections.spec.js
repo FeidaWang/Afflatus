@@ -30,7 +30,7 @@ test.describe('Elections hub', () => {
     await expect(page.locator('.el-next h2')).toHaveText('Victoria votes on Saturday 28 November');
     await expect(page.locator('.el-countdown strong')).toHaveText('24');
     await expect(page.locator('.el-card')).toHaveCount(4);
-    await expect(page.locator('.el-strip')).toContainText('Design preview — no live results');
+    await expect(page.locator('.el-strip')).toContainText('Preview — no results yet');
     await noOverflow(page);
   });
 
@@ -196,7 +196,7 @@ test.describe('Elections console', () => {
   test('the Chinese document translates the rules', async ({ page }) => {
     await page.goto('/zh/elections.html?event=vic-2026');
     await expect(page.locator('h1')).toContainText('维州 2026');
-    await expect(page.locator('.el-strip')).toContainText('设计预览');
+    await expect(page.locator('.el-strip')).toContainText('预览 · 尚无结果');
     await expect(page.locator('.el-tally-keys')).toContainText('工党');
     await noOverflow(page);
   });
@@ -778,7 +778,7 @@ test.describe('Elections feed', () => {
     await expect(page.locator('.el-chamber-svg .el-seat')).toHaveCount(88);
     await page.waitForLoadState('networkidle');
     expect(urls.filter((url) => /elections-feed|snapshots|civicapi|vec\.vic|latest\.json/.test(url))).toEqual([]);
-    await expect(page.locator('.el-strip b')).toHaveText('Design preview — no live results');
+    await expect(page.locator('.el-strip b')).toHaveText('Preview — no results yet');
     await expect(page.locator('.el-seat.is-leading, .el-seat.is-called, .el-seat.is-final, .el-seat.is-unavailable')).toHaveCount(0);
     await expect(page.locator('#el-feed-toggle')).toHaveCount(0);
     await expect(page.locator('.el-replay button')).toBeDisabled();
@@ -1016,7 +1016,7 @@ test.describe('Elections feed', () => {
     await serve(page, 1);
     await open(page);
     await page.locator('.el-events a', { hasText: 'US 2026' }).click();
-    await expect(page.locator('.el-strip b')).toHaveText('Design preview — no live results');
+    await expect(page.locator('.el-strip b')).toHaveText('Preview — no results yet');
     await expect(page.locator('.el-strip')).toContainText('Coverage 0/435');
     await expect(page.locator('.el-seat.is-leading')).toHaveCount(0);
     await expect(page.locator('#el-feed-toggle')).toHaveCount(0);

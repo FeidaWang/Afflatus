@@ -155,7 +155,7 @@ function renderHub(now) {
   syncFeed(null);
   const strip = document.querySelector('.el-strip');
   strip.dataset.mode = 'preview';
-  setText(strip.querySelector('b'), 'Design preview — no live results', '设计预览 — 无实时结果');
+  setText(strip.querySelector('b'), 'Preview — no results yet', '预览 · 尚无结果');
   setText($('el-title-main'), 'ELECTIONS', '选举');
   setText($('el-title-sub'), '/ 2026–28', '/ 2026–28');
   setText($('el-sub'), 'A clear view of each count, one event at a time.', '一场一场，把每次计票看清楚。');
@@ -814,7 +814,7 @@ function renderConsoleStrip(event, office, seats) {
   const strip = document.querySelector('.el-strip');
   const flag = strip.querySelector('b');
   strip.dataset.mode = isReplay() ? 'replay' : shown ? (shown.snapshot.isSynthetic ? 'synthetic' : 'live') : 'preview';
-  if (!shown) setText(flag, 'Design preview — no live results', '设计预览 — 无实时结果');
+  if (!shown) setText(flag, 'Preview — no results yet', '预览 · 尚无结果');
   else if (isReplay()) setText(flag, 'Replay of recorded snapshots — not live', '回放已记录的快照 — 非实时');
   else if (shown.snapshot.isSynthetic) setText(flag, 'Synthetic test data — not a real result', '合成测试数据 — 不是真实结果');
   else setText(flag, 'Unofficial results', '非正式结果');
