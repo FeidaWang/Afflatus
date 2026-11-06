@@ -45,6 +45,10 @@ export const PERFORMANCE_ROUTES = Object.freeze([
   {
     "id": "about",
     "path": "/about.html"
+  },
+  {
+    "id": "search",
+    "path": "/search.html"
   }
 ]);
 

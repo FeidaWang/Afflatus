@@ -44,6 +44,10 @@
     {
       "id": "about",
       "path": "/about.html"
+    },
+    {
+      "id": "search",
+      "path": "/search.html"
     }
   ]
 }

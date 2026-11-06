@@ -16,6 +16,7 @@ import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
+import { validateTopicsIndex } from '../src/lib/validateTopicsIndex.js';
 import { validateArenaUniverse, validateArenaUniverseArchive } from '../src/lib/validateArenaUniverse.js';
 import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
 import { validateArenaQuantModel } from '../src/lib/validateArenaQuantModel.js';
@@ -79,6 +80,7 @@ const CHECKS = [
   { path: 'data-archive/stats/2026-09-05/leagues-data.json', validate: validateLeaguesData },
   { path: 'data-archive/stats/2026-09-05/games-data.json', validate: validateGamesData },
   { path: 'public/novels-index.json', validate: validateNovelsIndex },
+  { path: 'public/topics-index.json', validate: validateTopicsIndex },
   { path: 'public/arena-universe.json', validate: validateArenaUniverse },
   { path: 'public/arena-universe-s1.json', validate: validateArenaUniverseArchive },
   { path: 'public/arena-picks.json', validate: validateArenaPicks },

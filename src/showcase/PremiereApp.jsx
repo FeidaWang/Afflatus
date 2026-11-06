@@ -6,6 +6,7 @@ import { FilmPlayer } from './FilmPlayer.jsx';
 import { HOME_LATEST } from '../config/homeLatest.generated.js';
 import { LATEST_ACTIONS, LATEST_HEADING, LEARN_CARDS, LEARN_HEADING } from './homeCards.js';
 import { PremiereFooter } from './PremiereFooter.jsx';
+import { RelatedMenu } from './RelatedPopover.jsx';
 
 function SiteLink({ href, language, children }) {
   return <a className="text-link" href={navigationHref(href, language)}><span>{children}</span><ArrowRight aria-hidden="true" /></a>;
@@ -45,6 +46,7 @@ export function App({ language: initialLanguage } = {}) {
       <section className="home-latest section-shell" id="major-releases" aria-labelledby="latest-title">
         <div className="section-heading"><h2 id="latest-title">{LATEST_HEADING.title[language]}</h2><p>{LATEST_HEADING.note[language]}</p></div>
         <div className="home-latest-grid">{HOME_LATEST.map(({ href, date, title, summary }) => <article key={href} className="home-card">
+          <RelatedMenu url={href} label={navigationLabel(href)} language={language} />
           <p className="home-card-meta"><span>{navigationLabel(href)[language]}</span>{date && <time dateTime={date.iso}>{date.label[language]}</time>}</p>
           <h3>{title[language]}</h3>
           <p className="home-card-summary">{summary[language]}</p>
@@ -53,12 +55,15 @@ export function App({ language: initialLanguage } = {}) {
       </section>
       <section className="home-learn section-shell" id="learn-more" aria-labelledby="learn-title">
         <h2 id="learn-title">{LEARN_HEADING[language]}</h2>
-        <div className="home-learn-grid">{LEARN_CARDS.map(({ href, image, width, height, title, summary }) => <a key={href} className="home-learn-card" href={navigationHref(href, language)}>
-          <span className="home-learn-label">{navigationLabel(href)[language]}</span>
-          <LearnCover image={image} width={width} height={height} />
-          <h3>{title[language]}</h3>
-          <p>{summary[language]}</p>
-        </a>)}</div>
+        <div className="home-learn-grid">{LEARN_CARDS.map(({ href, image, width, height, title, summary }) => <div key={href} className="home-learn-item">
+          <RelatedMenu url={href} label={navigationLabel(href)} language={language} />
+          <a className="home-learn-card" href={navigationHref(href, language)}>
+            <span className="home-learn-label">{navigationLabel(href)[language]}</span>
+            <LearnCover image={image} width={width} height={height} />
+            <h3>{title[language]}</h3>
+            <p>{summary[language]}</p>
+          </a>
+        </div>)}</div>
       </section>
     </main>
     <PremiereFooter language={language} />

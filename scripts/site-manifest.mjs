@@ -19,7 +19,8 @@ import {
   findRouteByPath,
   localizedRouteUrl,
 } from '../src/config/siteManifest.js';
-import { readerUrl } from '../src/lib/serialRoutes.js';
+import { COURSE_COMPANIONS, OBSERVATORY_CHAPTERS, ROUTE_TOPICS, TOPIC_GROUPS, TOPICS } from '../src/config/topics.js';
+import { novelSocialCardPath, readerPath, readerUrl } from '../src/lib/serialRoutes.js';
 import { renderHomeCards } from '../src/showcase/homeCards.js';
 import {
   buildRouteStructuredData,
@@ -227,6 +228,103 @@ function generatedHomeLatestModule() {
     `export const HOME_LATEST = Object.freeze(${JSON.stringify(homeLatest(), null, 2)});`,
     '',
   ].join('\n');
+}
+
+// One entry per page: a course page per book and companion, a novel per work
+// (its chapters are reached from the work's landing page). The search route
+// is the view of this index, not an entry in it. Dated records from the data
+// files join as entries too, so a topic's timeline grows with its data; those
+// records and the observatory's undated chapters have no date or cover to claim.
+function generatedTopicsIndex(dates) {
+  const entries = [];
+  const dated = (date) => (date ? dateLabel(date) : null);
+  const bothLocales = (cover) => ({ en: cover, zh: cover });
+  const recordEntry = (parent, topic, fields) => ({ group: parent.group, topic: [topic], cover: null, ...fields });
+  const routeEntry = (route) => {
+    const { group, topic, cover } = ROUTE_TOPICS[route.id];
+    const locale = route.publishedLocales?.[0] || 'en';
+    return {
+      id: route.id,
+      group,
+      topic,
+      title: { en: route.nav.en, zh: route.nav.zh },
+      summary: { en: route.locales.en.description, zh: route.locales.zh.description },
+      url: route.path,
+      cover: bothLocales(cover),
+      date: dated(routeSeoFacts[route.id]?.dateModified || dates[localizedRouteUrl(route, locale)]),
+    };
+  };
+  for (const id of Object.keys(ROUTE_TOPICS)) {
+    const route = SITE_MANIFEST.find((item) => item.id === id);
+    const entry = routeEntry(route);
+    entries.push(entry);
+    if (id === 'sectors') {
+      for (const chapter of OBSERVATORY_CHAPTERS) {
+        entries.push(recordEntry(entry, 'ai-observatory', {
+          id: `sectors-${chapter.id}`,
+          title: chapter.title,
+          summary: chapter.summary,
+          url: `/sectors.html#${chapter.id}`,
+          cover: bothLocales(chapter.cover),
+          date: null,
+        }));
+      }
+      // The observatory renders its newest snapshot, not public/sectors-data.json.
+      for (const event of readPublicJson(routeSeoFacts.sectors.provenance[0].path).events) {
+        entries.push(recordEntry(entry, 'ai-observatory', {
+          id: `sectors-event-${event.id}`,
+          title: event.title,
+          summary: event.body,
+          url: `/sectors.html#event-${event.id}`,
+          date: dated(event.date),
+        }));
+      }
+    }
+    if (id === 'signal') {
+      for (const event of readPublicJson('public/signal-events.json').events) {
+        entries.push(recordEntry(entry, 'fed-watch', {
+          id: `signal-event-${event.id}`,
+          title: event.name,
+          summary: event.print,
+          url: `/signal.html#${event.id}`,
+          date: dated(event.date),
+        }));
+      }
+    }
+    if (id === 'course') {
+      const courseEntry = (page, fields) => recordEntry(entry, 'fde-course', {
+        id: `course-${page}`,
+        url: `/course/${page}.html`,
+        date: dated(dates[courseUrl('en', page)]),
+        ...fields,
+      });
+      for (const book of courseBookCatalog) {
+        const week = Number(book.id);
+        entries.push(courseEntry(`book-${book.id}`, {
+          title: { en: `Week ${week}: ${book.title.en}`, zh: `第 ${week} 周：${book.title.zh}` },
+          summary: book.heading,
+          cover: book.covers,
+        }));
+      }
+      for (const [page, { cover, ...copy }] of Object.entries(COURSE_COMPANIONS)) {
+        entries.push(courseEntry(page, { ...copy, cover: bothLocales(cover) }));
+      }
+    }
+    if (id === 'serial') {
+      for (const { id: bookId, novel, chapterCount } of novelBooks()) {
+        entries.push(recordEntry(entry, 'serials', {
+          id: `novel-${bookId}`,
+          title: { en: novel.title, zh: novel.title },
+          // The update note has no English text and no date; the date is the novel file's last publication.
+          summary: { en: `Original fiction in Chinese, ${chapterCount} chapters.`, zh: novel.updateNote },
+          url: readerPath({ bookId }),
+          cover: bothLocales(novelSocialCardPath({ bookId })),
+          date: dated(dates[readerUrl({ bookId })]),
+        }));
+      }
+    }
+  }
+  return `${JSON.stringify({ groups: TOPIC_GROUPS, topics: TOPICS, entries }, null, 2)}\n`;
 }
 
 function syncHomeCards() {
@@ -480,6 +578,7 @@ const sitemapDates = isShallowClone()
   : contentDates();
 if (!isShallowClone()) syncGeneratedFile(SITEMAP_DATES_PATH, `${JSON.stringify(sitemapDates, null, 2)}\n`);
 syncGeneratedFile('public/sitemap.xml', generatedSitemap(sitemapDates));
+syncGeneratedFile('public/topics-index.json', generatedTopicsIndex(sitemapDates));
 syncGeneratedFile('src/config/navRoutes.generated.js', generatedNavModule());
 syncGeneratedFile('src/config/homeLatest.generated.js', generatedHomeLatestModule());
 syncHomeCards();

@@ -46,6 +46,19 @@ export function mountPolicyIndex() {
     document.getElementById('reset-records').hidden = state.topic === 'all' && state.month === 'all' && state.industry === 'all' && !state.query;
   }
 
+  // Links from other pages name a record that only exists once the data has rendered.
+  function revealLinkedRecord() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const position = filterSignalRecords(data.events, state).findIndex(event => event.id === id);
+    if (position < 0) return;
+    state.limit = Math.max(state.limit, position + 1);
+    renderRecords();
+    const linked = document.getElementById(id);
+    linked.querySelector('details').open = true;
+    linked.classList.add('is-linked');
+    linked.scrollIntoView();
+  }
+
   function renderOverview() {
     const checked = data.checked_at || data.updated;
     document.querySelectorAll('[data-index-updated]').forEach(node => { node.textContent = copy('Checked: ', '核验日期：') + date(checked); });
@@ -141,7 +154,7 @@ export function mountPolicyIndex() {
 
   window.addEventListener('afflatus-lang', () => { if (data) { renderOverview(); renderRecords(); } });
   fetchJson('signal').then(payload => {
-    data = payload; renderOverview(); renderRecords();
+    data = payload; renderOverview(); renderRecords(); revealLinkedRecord();
   }).catch(() => {
     document.querySelector('[data-index-status]').textContent = copy('Research data is unavailable. Reload the page or open the official sources below.', '研究数据暂不可用，请刷新页面或查看下方官方来源。');
   });
