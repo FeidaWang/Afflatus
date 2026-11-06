@@ -131,3 +131,21 @@ Build-time HTML rendering uses `preact-render-to-string`, also MIT licensed.
 OFL Noto Serif SC reading font. The original font and license remain available
 for complete novel text. Reproduction: `scripts/subset-labs-font.py` with
 fontTools 4.67.0 and its WOFF dependencies. No new font or paid service is used.
+
+## Election maps
+
+Files under `public/assets/elections/maps/` are simplified, projected derivatives
+of official boundary data. Each source's URL, retrieval time, licence, boundary
+version, election validity and SHA-256 are recorded in that folder's
+`manifest.json`. They are for display, not legal or boundary-precise use.
+
+- U.S. Census Bureau, TIGER/Line and Cartographic Boundary files (not copyrighted;
+  CC0 1.0 on data.gov; credit the Census Bureau). TIGER/Line is a registered
+  trademark of the Census Bureau, which does not endorse this site.
+- © State Government of Victoria (Victorian Electoral Commission), Vicmap Admin,
+  CC BY 4.0. Electorate names come from the same data.
+- © State of New South Wales (Spatial Services), NSW Administrative Boundaries,
+  CC BY. Electorate names come from the same data.
+
+`scripts/build-election-geography.mjs` reproduces them with mapshaper 0.7.101,
+run through npx. mapshaper is not a dependency of the site.

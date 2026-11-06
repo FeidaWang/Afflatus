@@ -1,12 +1,12 @@
 {
   "tournament": "Worlds 2026",
-  "updated": "2026-11-01",
-  "version": 3,
+  "updated": "2026-11-04",
+  "version": 6,
   "mode": "live",
   "patch": "26.20",
-  "decidedAt": "2026-11-01T05:06:21.126Z",
-  "note_en": "Swiss is done: GEN and DK went 3-0; IG, T1 and TES 3-1; BLG, KC and LYON 3-2. GEN remain clear title favourites at 44.8%. The model and market split hardest on T1 (8.0% vs 21.1%) and TES (11.4% vs 2.9%). TES–IG opens the quarterfinals on 3 November.",
-  "note_zh": "瑞士轮结束：GEN、DK 3-0，IG、T1、TES 3-1，BLG、KC、LYON 3-2 晋级。GEN 以 44.8% 稳居夺冠热门；模型与市场分歧最大在 T1（8.0% 对 21.1%）和 TES（11.4% 对 2.9%）。11 月 3 日 TES 对 IG 揭开八强战。",
+  "decidedAt": "2026-11-04T07:52:38.373Z",
+  "note_en": "IG beat TES 3-1 in the first quarterfinal and now meet the GEN/LYON winner. IG climb to 18.0% for the title, about double the 8.7% market. GEN lead at 43.6%; T1 at 8.2% against a 19.7% market remain the widest gap.",
+  "note_zh": "IG 3-1 击败 TES，半决赛将对阵 GEN/LYON 胜者。IG 夺冠概率升至 18.0%，约为市场 8.7% 的两倍。GEN 以 43.6% 领跑；T1 的 8.2% 对市场 19.7% 仍是最大分歧。",
   "archiveSource": {
     "label_en": "gol.gg Worlds 2026 schedule",
     "label_zh": "gol.gg Worlds 2026 赛程",
@@ -2085,7 +2085,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-28T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LYON",
       "away": "IG",
       "pick": null,
@@ -2163,7 +2162,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-28T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "T1",
       "away": "MKOI",
       "pick": null,
@@ -2241,7 +2239,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-29T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "BLG",
       "away": "TES",
       "pick": null,
@@ -2319,7 +2316,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-29T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "KC",
       "away": "CFO",
       "pick": null,
@@ -2397,7 +2393,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-30T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "G2",
       "away": "HLE",
       "pick": null,
@@ -2475,7 +2470,6 @@
       "round": 4,
       "bo": 3,
       "kickoff": "2026-10-30T20:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LOS",
       "away": "TL",
       "pick": null,
@@ -2553,7 +2547,6 @@
       "round": 5,
       "bo": 3,
       "kickoff": "2026-10-31T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "BLG",
       "away": "HLE",
       "pick": null,
@@ -2631,7 +2624,6 @@
       "round": 5,
       "bo": 3,
       "kickoff": "2026-10-31T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "LYON",
       "away": "LOS",
       "pick": null,
@@ -2709,7 +2701,6 @@
       "round": 5,
       "bo": 3,
       "kickoff": "2026-10-31T17:00:00.000Z",
-      "kickoffEstimated": true,
       "home": "KC",
       "away": "MKOI",
       "pick": null,
@@ -2791,36 +2782,29 @@
       "pick": {
         "side": "home",
         "pWin": [
-          0.51,
-          0.49
+          0.522,
+          0.478
         ],
         "score": "3-1",
-        "pScore": 0.191,
+        "pScore": 0.196,
         "scores": {
-          "3-0": 0.129,
-          "3-1": 0.191,
-          "3-2": 0.189,
-          "2-3": 0.186,
-          "1-3": 0.184,
-          "0-3": 0.121
+          "3-0": 0.134,
+          "3-1": 0.196,
+          "3-2": 0.192,
+          "2-3": 0.183,
+          "1-3": 0.179,
+          "0-3": 0.116
         },
         "pDecider": 0.375,
         "oddsImplied": [
-          1.96,
-          2.04
+          1.92,
+          2.09
         ],
         "adj": 0,
-        "decidedAt": "2026-11-01T05:06:21.126Z"
+        "decidedAt": "2026-11-02T12:34:46.971Z"
       },
       "missed": false,
-      "market": {
-        "pWin": [
-          0.435,
-          0.565
-        ],
-        "src": "polymarket",
-        "liquidity": 76409
-      },
+      "market": null,
       "fearless": {
         "consumed": [],
         "depth": [
@@ -2829,18 +2813,22 @@
         ],
         "delta": 0
       },
-      "result": null,
-      "reason_en": "The closest quarterfinal on paper. The model makes TES a slight 51.0% favourite on Elo; the market leans IG at 56.5%. Both went 3-1 in Swiss, so the pick is a near coin flip with TES 3-1 as the single likeliest score.",
-      "reason_zh": "纸面上最接近的一场八强。模型按 Elo 给 TES 51.0% 微弱优势，市场则偏向 IG（56.5%）。两队瑞士轮均为 3-1，本场近乎五五开，最可能比分 TES 3-1。",
+      "result": {
+        "home": 1,
+        "away": 3,
+        "games": []
+      },
+      "reason_en": "IG beat TES 3-1, per press reports, reaching their first Worlds semifinal since 2019. The pre-match pick of TES at 52.2% missed, as did the TES 3-1 score call.",
+      "reason_zh": "据媒体报道，IG 3-1 击败 TES，时隔七年再进世界赛四强。赛前预测 TES 52.2% 与比分 TES 3-1 均未命中。",
       "factors_en": [
-        "Fearless: both teams have shown 16 unique champions, depth 36 each, so neither side runs out of comfort picks before a game five.",
-        "IG lead every team on GD@15 (1613, top percentile); TES are bottom on first blood (16.7%), so IG should own the early game.",
-        "TES close better late: Baron control 66.7% versus IG's 37.5%, which keeps TES alive if games go long."
+        "Fearless: both teams entered with depth 36; game-by-game drafts for this series are not logged yet.",
+        "IG led every team on GD@15 (1613) coming in; TES had the field's lowest first-blood rate, 16.7%.",
+        "Score comes from press reports because gol.gg lists no score yet; game data will follow when it updates."
       ],
       "factors_zh": [
-        "无畏征召：两队都已用出 16 个不同英雄，深度均为 36，打到第五局前都不缺舒适英雄。",
-        "IG 的 15 分钟经济差 1613 全赛最高；TES 一血率仅 16.7% 垫底，前期 IG 占优。",
-        "TES 后期更稳：大龙控制率 66.7%，IG 仅 37.5%，拖到后期 TES 有翻盘空间。"
+        "无畏征召：两队赛前深度都是 36，本场逐局征召数据尚未录入。",
+        "IG 赛前 GD@15 为 1613 居首；TES 一血率 16.7% 全场最低。",
+        "比分来自媒体报道，gol.gg 尚未更新，逐局数据待补。"
       ]
     },
     {
@@ -2853,35 +2841,35 @@
       "pick": {
         "side": "home",
         "pWin": [
-          0.881,
-          0.119
+          0.866,
+          0.134
         ],
         "score": "3-0",
-        "pScore": 0.408,
+        "pScore": 0.387,
         "scores": {
-          "3-0": 0.407,
-          "3-1": 0.31,
-          "3-2": 0.163,
-          "2-3": 0.062,
-          "1-3": 0.041,
-          "0-3": 0.017
+          "3-0": 0.387,
+          "3-1": 0.308,
+          "3-2": 0.17,
+          "2-3": 0.069,
+          "1-3": 0.046,
+          "0-3": 0.02
         },
-        "pDecider": 0.225,
+        "pDecider": 0.239,
         "oddsImplied": [
-          1.14,
-          8.37
+          1.16,
+          7.44
         ],
         "adj": 0,
-        "decidedAt": "2026-11-01T05:06:21.126Z"
+        "decidedAt": "2026-11-04T07:52:38.373Z"
       },
       "missed": false,
       "market": {
         "pWin": [
-          0.925,
-          0.075
+          0.905,
+          0.095
         ],
         "src": "polymarket",
-        "liquidity": 67166
+        "liquidity": 544359
       },
       "fearless": {
         "consumed": [],
@@ -2892,17 +2880,17 @@
         "delta": -0.05
       },
       "result": null,
-      "reason_en": "GEN went 3-0 and already beat LYON 2-1 in round three; the model gives GEN 88.1% and the market 92.5%. LYON scraped through at 3-2 with the worst early game of the eight (GD@15 −867), so 3-0 is the likeliest single score.",
-      "reason_zh": "GEN 瑞士轮 3-0，且第三轮已 2-1 击败 LYON；模型给 GEN 88.1%，市场 92.5%。LYON 以 3-2 惊险晋级，15 分钟经济差 −867 为八强最差，最可能比分 3-0。",
+      "reason_en": "The widest quarterfinal. The model has GEN at 86.6%, below the market's 90.5%, with 3-0 the likeliest score at 38.7%. GEN went 3-0 in Swiss and LYON 3-2, though LYON took a game off GEN in their Swiss meeting.",
+      "reason_zh": "八强悬殊最大的一场。模型给 GEN 86.6%，低于市场 90.5%，最可能比分 3-0（38.7%）。GEN 瑞士轮 3-0，LYON 3-2，但两队瑞士轮交手时 LYON 拿下过一局。",
       "factors_en": [
-        "Fearless: LYON have the deeper shown pool (19 unique champions, depth 39 vs GEN's 32), their one real edge if the series stretches.",
-        "Canyon leads GEN with 10.5 KDA and +627 GD@15; LYON's best player Berserker sits at −363 GD@15.",
-        "GEN take 80% of dragons, the best rate in the event, while LYON trail at −867 gold by 15 minutes."
+        "Fearless: LYON's depth of 39 tops GEN's 32, and the model trims GEN for it; Syndra, Alistar, Anivia, Ezreal and Rumble sit in both logged pools.",
+        "GEN's 80.0% dragon rate is the best of all teams, while LYON's -867 GD@15 sits at the 0.133 percentile.",
+        "Dot Esports reports GEN beat LYON 2-1 in Swiss, so the 13.4% upset case has some precedent."
       ],
       "factors_zh": [
-        "无畏征召：LYON 已展示 19 个不同英雄，深度 39 高于 GEN 的 32，系列赛拉长时是其唯一优势。",
-        "Canyon KDA 10.5、15 分钟经济差 +627；LYON 最佳选手 Berserker 15 分钟仍落后 363。",
-        "GEN 小龙控制率 80% 全赛第一，LYON 15 分钟平均落后 867 经济。"
+        "无畏征召：LYON 深度 39 高于 GEN 的 32，模型因此略降 GEN。",
+        "GEN 小龙率 80.0% 全场最高，LYON 的 GD@15 为 -867。",
+        "瑞士轮 GEN 仅 2-1 胜 LYON，13.4% 冷门并非无据。"
       ]
     },
     {
@@ -2915,35 +2903,35 @@
       "pick": {
         "side": "away",
         "pWin": [
-          0.403,
-          0.597
+          0.409,
+          0.591
         ],
         "score": "1-3",
-        "pScore": 0.226,
+        "pScore": 0.224,
         "scores": {
-          "3-0": 0.09,
-          "3-1": 0.149,
-          "3-2": 0.164,
-          "2-3": 0.203,
-          "1-3": 0.226,
-          "0-3": 0.168
+          "3-0": 0.092,
+          "3-1": 0.151,
+          "3-2": 0.166,
+          "2-3": 0.202,
+          "1-3": 0.224,
+          "0-3": 0.165
         },
-        "pDecider": 0.367,
+        "pDecider": 0.368,
         "oddsImplied": [
-          2.48,
-          1.68
+          2.44,
+          1.69
         ],
         "adj": 0,
-        "decidedAt": "2026-11-01T05:06:21.126Z"
+        "decidedAt": "2026-11-04T07:52:38.373Z"
       },
       "missed": false,
       "market": {
         "pWin": [
-          0.405,
-          0.595
+          0.415,
+          0.585
         ],
         "src": "polymarket",
-        "liquidity": 102390
+        "liquidity": 187848
       },
       "fearless": {
         "consumed": [],
@@ -2954,17 +2942,17 @@
         "delta": 0
       },
       "result": null,
-      "reason_en": "Model and market agree almost exactly: BLG 59.7% vs 59.5%. DK went 3-0 but BLG's Elo is higher after beating KC and HLE to qualify at 3-2. The likeliest score is BLG 3-1.",
-      "reason_zh": "模型与市场几乎一致：BLG 59.7%，市场 59.5%。DK 瑞士轮 3-0，但 BLG 击败 KC、HLE 以 3-2 晋级后 Elo 更高。最可能比分 BLG 3-1。",
+      "reason_en": "Model and market agree: BLG 59.1% against a 58.5% quote, despite DK's 3-0 Swiss record against BLG's 3-2. BLG 3-1 is the likeliest score at 22.4%. Dplus won their Esports World Cup quarterfinal 2-1, per gol.gg.",
+      "reason_zh": "模型与市场一致：BLG 59.1%，市场 58.5%，尽管 DK 瑞士轮 3-0 优于 BLG 的 3-2。最可能比分 BLG 3-1（22.4%）。据 gol.gg，两队电竞世界杯八强战 DK 2-1 取胜。",
       "factors_en": [
-        "Fearless: dead level on depth (35 each, 15 unique champions shown), so draft attrition should not decide this series.",
-        "Mid matchup headliner: ShowMaker 9.0 KDA, +389 GD@15 against Knight 8.4 KDA, +412 GD@15.",
-        "BLG get first blood 87.5% of the time; DK are better at first tower (75%), so DK must survive the opening skirmishes."
+        "Fearless: both teams show depth 35 and share Vi, Lee Sin, Nautilus, Jarvan IV and Kai'Sa, so neither gains a pool edge.",
+        "BLG's 87.5% first-blood rate is near the top; DK sit at 50.0% but take first tower 75.0% of the time.",
+        "Mid is close: ShowMaker 9.0 KDA and +389 GD@15, Knight 8.4 KDA and +412; Viper's -463 GD@15 is BLG's soft spot."
       ],
       "factors_zh": [
-        "无畏征召：两队深度同为 35、各展示 15 个英雄，英雄消耗不会成为胜负手。",
-        "中路焦点：ShowMaker KDA 9.0、15 分钟 +389，对位 Knight KDA 8.4、+412。",
-        "BLG 一血率 87.5%；DK 一塔率 75% 更高，DK 需扛住开局小规模团战。"
+        "无畏征召：两队深度都是 35，共有蔚、李青、皇子、卡莎等。",
+        "BLG 一血率 87.5% 名列前茅；DK 一血 50.0%、一塔 75.0%。",
+        "中路接近：ShowMaker +389，Knight +412。"
       ]
     },
     {
@@ -2977,35 +2965,35 @@
       "pick": {
         "side": "away",
         "pWin": [
-          0.263,
-          0.737
+          0.27,
+          0.73
         ],
         "score": "1-3",
-        "pScore": 0.276,
+        "pScore": 0.274,
         "scores": {
-          "3-0": 0.047,
-          "3-1": 0.094,
-          "3-2": 0.121,
+          "3-0": 0.049,
+          "3-1": 0.097,
+          "3-2": 0.124,
           "2-3": 0.202,
-          "1-3": 0.277,
-          "0-3": 0.259
+          "1-3": 0.274,
+          "0-3": 0.254
         },
-        "pDecider": 0.323,
+        "pDecider": 0.326,
         "oddsImplied": [
-          3.81,
-          1.36
+          3.71,
+          1.37
         ],
         "adj": 0,
-        "decidedAt": "2026-11-01T05:06:21.126Z"
+        "decidedAt": "2026-11-04T07:52:38.373Z"
       },
       "missed": false,
       "market": {
         "pWin": [
-          0.175,
-          0.825
+          0.185,
+          0.815
         ],
         "src": "polymarket",
-        "liquidity": 60625
+        "liquidity": 119730
       },
       "fearless": {
         "consumed": [],
@@ -3016,204 +3004,204 @@
         "delta": 0.04
       },
       "result": null,
-      "reason_en": "T1 are clear favourites: 73.7% in the model, 82.5% on the market. KC qualified at 3-2; T1 at 3-1 after a clean 2-0 over MKOI. The model is kinder to KC than the market, and T1 3-1 is its likeliest score.",
-      "reason_zh": "T1 明显占优：模型 73.7%，市场 82.5%。KC 以 3-2 晋级；T1 3-1 晋级并 2-0 横扫 MKOI。模型对 KC 比市场更宽容，最可能比分 T1 3-1。",
+      "reason_en": "T1 are clear favourites at 73.0%, though the market goes further at 81.5%. T1 finished Swiss 3-1 and KC 3-2 after coming through Play-In. T1 3-1 is the likeliest score at 27.4%, and KC's deeper pool keeps the upset alive.",
+      "reason_zh": "T1 以 73.0% 明显占优，市场更高（81.5%）。T1 瑞士轮 3-1，KC 从入围赛打到 3-2。最可能比分 T1 3-1（27.4%），KC 更深的英雄池保留了爆冷可能。",
       "factors_en": [
-        "Fearless: KC have shown 19 unique champions (depth 39) to T1's 15 (35), the widest pool among the eight, which helps in games four and five.",
-        "Doran leads T1 at 7.8 KDA and 700 DPM; KC's Caliste deals 763 DPM but trails −147 gold at 15.",
-        "T1 take first tower 80% of the time; KC answer through dragons (64.5%)."
+        "Fearless: KC's depth of 39 beats T1's 35, and the model trims T1 for it; Lee Sin, Jhin, Alistar, Galio, Nautilus and Syndra sit in both logged pools.",
+        "T1 take first tower 80.0% of the time, near the top of the field; KC answer with 64.5% dragon control.",
+        "Lane threats: Doran 7.8 KDA and 700 DPM for T1, Caliste 763 DPM and 77.6% KP for KC, despite his -147 GD@15."
       ],
       "factors_zh": [
-        "无畏征召：KC 已展示 19 个不同英雄（深度 39），T1 为 15 个（35），KC 英雄池八强最宽，利于第四、五局。",
-        "Doran KDA 7.8、分均伤害 700 领跑 T1；KC 的 Caliste 分均伤害 763，但 15 分钟落后 147。",
-        "T1 一塔率 80%；KC 以 64.5% 小龙控制率回应。"
+        "无畏征召：KC 深度 39 高于 T1 的 35；李青、烬、辛德拉等共有。",
+        "T1 一塔率 80.0% 名列前茅；KC 以 64.5% 的小龙率回应。",
+        "Doran DPM 700；Caliste DPM 763。"
       ]
     }
   ],
   "champion": [
     {
       "team": "GEN",
-      "prob": 44.8,
-      "oddsImplied": 2.23,
-      "market": 44.6,
-      "reason_en": "44.8% (implied 2.23) matches the 44.6% market almost exactly. GEN are the only 3-0 team with a soft quarterfinal (88.1% vs LYON) and 80% dragon control; the path still runs through a likely semifinal against the TES/IG winner.",
-      "reason_zh": "44.8%（隐含赔率 2.23）与市场 44.6% 几乎一致。GEN 是 3-0 晋级且八强对手最弱（对 LYON 胜率 88.1%）的队伍，小龙控制率 80%；半决赛大概率面对 TES/IG 胜者。"
+      "prob": 43.6,
+      "oddsImplied": 2.29,
+      "market": 47.1,
+      "reason_en": "43.6% (implied 2.29) sits under the 47.1% market. GEN went 3-0 in Swiss, are 86.6% against LYON and lead every team with an 80.0% dragon rate. The winner of that series now meets IG in the semifinal.",
+      "reason_zh": "43.6%（隐含 2.29）低于市场 47.1%。GEN 瑞士轮 3-0，对 LYON 胜率 86.6%，小龙率 80.0% 全场最高。该场胜者将在半决赛对阵 IG。"
     },
     {
       "team": "BLG",
-      "prob": 19.4,
-      "oddsImplied": 5.15,
-      "market": 14.6,
-      "reason_en": "19.4% (implied 5.15) sits above the 14.6% market. BLG are 59.7% to beat DK and have the strongest Elo of the bottom half; Knight and an 87.5% first-blood rate drive it. A semifinal with T1 or KC is likely.",
-      "reason_zh": "19.4%（隐含 5.15）高于市场 14.6%。BLG 对 DK 胜率 59.7%，下半区 Elo 最高；Knight 与 87.5% 一血率是关键，半决赛大概率遇 T1 或 KC。"
-    },
-    {
-      "team": "TES",
-      "prob": 11.4,
-      "oddsImplied": 8.77,
-      "market": 2.9,
-      "reason_en": "11.4% (implied 8.77) is far above the 2.9% market. The model only sees a coin-flip quarterfinal with IG (51.0%) and TES's Elo; the market appears to price their weak 16.7% first-blood rate and a GEN semifinal more harshly.",
-      "reason_zh": "11.4%（隐含 8.77）远高于市场 2.9%。模型只看到对 IG 五五开（51.0%）和 TES 的 Elo；市场似乎更重视其 16.7% 一血率和半决赛对 GEN 的劣势。"
-    },
-    {
-      "team": "DK",
-      "prob": 8.4,
-      "oddsImplied": 11.9,
-      "market": 7.6,
-      "reason_en": "8.4% (implied 11.9) vs 7.6% on the market. A 3-0 Swiss run, but only 40.3% against BLG, and ShowMaker's 9.0 KDA has to carry them past T1 or KC afterwards.",
-      "reason_zh": "8.4%（隐含 11.9），市场 7.6%。瑞士轮 3-0，但对 BLG 胜率仅 40.3%，之后还需 ShowMaker（KDA 9.0）带队越过 T1 或 KC。"
-    },
-    {
-      "team": "T1",
-      "prob": 8,
-      "oddsImplied": 12.5,
-      "market": 21.1,
-      "reason_en": "8.0% (implied 12.5) is well below the 21.1% market, the biggest gap on the board. The model rates T1 73.7% over KC but then makes them underdogs to BLG on Elo; the market trusts T1's Worlds pedigree, which the model ignores.",
-      "reason_zh": "8.0%（隐含 12.5）远低于市场 21.1%，是全表最大分歧。模型给 T1 对 KC 73.7%，但按 Elo 半决赛不敌 BLG；市场看重 T1 的世界赛底蕴，模型不计入。"
+      "prob": 19.6,
+      "oddsImplied": 5.1,
+      "market": 13.7,
+      "reason_en": "19.6% (implied 5.10) sits above the 13.7% market. BLG are 59.1% over DK, and Knight plus an 87.5% first-blood rate drive the number. A 3-2 Swiss record and Viper's -463 GD@15 explain why the market is cooler.",
+      "reason_zh": "19.6%（隐含 5.10）高于市场 13.7%。BLG 对 DK 胜率 59.1%，Knight 与 87.5% 一血率是支撑。瑞士轮 3-2 和 Viper 的 -463 或是市场更保守的原因。"
     },
     {
       "team": "IG",
-      "prob": 6.6,
-      "oddsImplied": 15.15,
-      "market": 6.6,
-      "reason_en": "6.6% (implied 15.15) equals the 6.6% market. IG are 49.0% against TES with the event's best GD@15 (1613) but weak Baron control (37.5%), and a GEN semifinal likely awaits.",
-      "reason_zh": "6.6%（隐含 15.15）与市场 6.6% 一致。IG 对 TES 胜率 49.0%，15 分钟经济差 1613 全赛最高，但大龙控制率仅 37.5%，半决赛大概率遇 GEN。"
+      "prob": 18,
+      "oddsImplied": 5.56,
+      "market": 8.7,
+      "reason_en": "18.0% (implied 5.56) is about double the 8.7% market after IG beat TES 3-1 to reach the semifinal. Their 1613 GD@15 leads the field, but the GEN/LYON winner comes next, which is why the market stays cooler.",
+      "reason_zh": "18.0%（隐含 5.56）约为市场 8.7% 的两倍。IG 3-1 击败 TES 晋级半决赛，GD@15 为 1613 居首，但下一场对阵 GEN/LYON 胜者，市场因此更保守。"
+    },
+    {
+      "team": "DK",
+      "prob": 9.2,
+      "oddsImplied": 10.87,
+      "market": 8.5,
+      "reason_en": "9.2% (implied 10.87) sits just above the 8.5% market. DK went 3-0 in Swiss and ShowMaker has a 9.0 KDA, but DK are only 40.9% against BLG in the quarterfinal, which caps the title number.",
+      "reason_zh": "9.2%（隐含 10.87）略高于市场 8.5%。DK 瑞士轮 3-0，ShowMaker KDA 9.0，但八强对 BLG 仅 40.9%，压低了夺冠概率。"
+    },
+    {
+      "team": "T1",
+      "prob": 8.2,
+      "oddsImplied": 12.2,
+      "market": 19.7,
+      "reason_en": "8.2% (implied 12.20) is well below the 19.7% market, the largest gap on the board. T1 are 73.0% over KC, but the model then expects a hard semifinal. The market gives T1 far more credit than their 3-1 record alone.",
+      "reason_zh": "8.2%（隐含 12.20）远低于市场 19.7%，是全场最大分歧。T1 对 KC 胜率 73.0%，但模型认为半决赛艰难；市场溢价明显超出其 3-1 战绩。"
     },
     {
       "team": "KC",
       "prob": 0.8,
       "oddsImplied": 125,
-      "market": 1.5,
-      "reason_en": "0.8% (implied 125) vs 1.5% on the market. A 3-2 qualifier at 26.3% against T1, then BLG or DK; the deepest Fearless pool (39) is not enough to offset the Elo gap.",
-      "reason_zh": "0.8%（隐含 125），市场 1.5%。3-2 晋级，对 T1 胜率 26.3%，之后还要过 BLG 或 DK；无畏深度 39 全队最深，仍不足以弥补 Elo 差距。"
+      "market": 1.2,
+      "reason_en": "0.8% (implied 125.00) is under the 1.2% market. KC reached the bracket at 3-2 and are 27.0% against T1. A deep pool of 39 helps, but several straight upsets would be required.",
+      "reason_zh": "0.8%（隐含 125.00）低于市场 1.2%。KC 以 3-2 晋级，对 T1 胜率 27.0%。深度 39 有帮助，但需要连续爆冷。"
     },
     {
       "team": "LYON",
       "prob": 0.6,
       "oddsImplied": 166.67,
       "market": 1.1,
-      "reason_en": "0.6% (implied 166.67) vs 1.1% on the market. LYON already lost to GEN in round three and are 11.9% to win the rematch, with a −867 GD@15 the worst among the eight.",
-      "reason_zh": "0.6%（隐含 166.67），市场 1.1%。LYON 第三轮已负于 GEN，此番复仇胜率 11.9%，15 分钟经济差 −867 为八强最差。"
+      "reason_en": "0.6% (implied 166.67) is just under the 1.1% market. LYON are 13.4% against GEN and carry a -867 GD@15, so even a quarterfinal upset leaves a long road.",
+      "reason_zh": "0.6%（隐含 166.67）略低于市场 1.1%。LYON 对 GEN 仅 13.4%，GD@15 为 -867，即使爆冷后路依然漫长。"
+    },
+    {
+      "team": "TES",
+      "prob": 0,
+      "oddsImplied": null,
+      "market": 0,
+      "reason_en": "Eliminated by IG in the quarterfinal, 1-3; no implied odds, market 0.",
+      "reason_zh": "八强 1-3 负于 IG 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "HLE",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 2-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 2-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "LOS",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 2-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 2-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "MKOI",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 2-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 2-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "CFO",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 1-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 1-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "G2",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 1-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 1-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "TL",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 1-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 1-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "AL",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 0-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 0-3 出局；无隐含赔率，市场为 0。"
     },
     {
       "team": "TSW",
       "prob": 0,
       "oddsImplied": null,
       "market": 0,
-      "reason_en": "",
-      "reason_zh": ""
+      "reason_en": "Eliminated in Swiss at 0-3; no implied odds, market 0.",
+      "reason_zh": "瑞士轮 0-3 出局；无隐含赔率，市场为 0。"
     }
   ],
   "mvp": [
     {
       "player": "Ruler",
       "teamCode": "GEN",
-      "prob": 23.3,
-      "oddsImplied": 4.29,
+      "prob": 22.6,
+      "oddsImplied": 4.42,
       "market": null,
-      "basis_en": "23.3% (implied 4.29): MVP odds follow title odds, and GEN lead at 44.8%. Ruler gets the largest share of GEN's weight as the carry role.",
-      "basis_zh": "23.3%（隐含 4.29）：MVP 概率跟随夺冠概率，GEN 以 44.8% 领先，Ruler 作为核心输出位占 GEN 权重最大。"
+      "basis_en": "22.6% (implied 4.42) tops the list because GEN are 43.6% title favourites. The payload carries no MVP market to compare, so this is a relative weight among listed players, not a market-checked price.",
+      "basis_zh": "22.6%（隐含 4.42）居首，因 GEN 以 43.6% 领跑夺冠。payload 无 MVP 市场可对照，这是所列选手间的相对权重，并非经市场校验的价格。"
     },
     {
       "player": "Canyon",
       "teamCode": "GEN",
-      "prob": 20.6,
-      "oddsImplied": 4.85,
+      "prob": 20,
+      "oddsImplied": 5,
       "market": null,
-      "basis_en": "20.6% (implied 4.85): GEN's best player by the numbers at 10.5 KDA, 79.9% KP and +627 GD@15.",
-      "basis_zh": "20.6%（隐含 4.85）：数据上 GEN 最佳选手，KDA 10.5、参团率 79.9%、15 分钟经济差 +627。"
+      "basis_en": "20.0% (implied 5.00). Canyon is GEN's top-rated player by in-role score, with a 10.5 KDA, 79.9% KP and +627 GD@15. No MVP market exists in the payload to compare.",
+      "basis_zh": "20.0%（隐含 5.00）。Canyon 是 GEN 同位置评分最高的选手，KDA 10.5、参团 79.9%、GD@15 +627。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Chovy",
       "teamCode": "GEN",
-      "prob": 20.2,
-      "oddsImplied": 4.95,
+      "prob": 19.6,
+      "oddsImplied": 5.1,
       "market": null,
-      "basis_en": "20.2% (implied 4.95): carried by GEN's title odds despite the team's lowest in-role score (5.1 KDA, −350 GD@15).",
-      "basis_zh": "20.2%（隐含 4.95）：受 GEN 夺冠概率带动，尽管本届队内同位置评分最低（KDA 5.1、15 分钟 −350）。"
+      "basis_en": "19.6% (implied 5.10) leans on GEN's title odds rather than form: his 5.1 KDA and -350 GD@15 make him GEN's lowest in-role score. No MVP market exists in the payload to compare.",
+      "basis_zh": "19.6%（隐含 5.10）主要依赖 GEN 的夺冠概率而非状态：KDA 5.1、GD@15 -350，是 GEN 同位置评分最低。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Knight",
       "teamCode": "BLG",
-      "prob": 14.4,
-      "oddsImplied": 6.94,
+      "prob": 14.5,
+      "oddsImplied": 6.9,
       "market": null,
-      "basis_en": "14.4% (implied 6.94): BLG's best player (8.4 KDA, +412 GD@15) on the second-favourite team at 19.4%.",
-      "basis_zh": "14.4%（隐含 6.94）：BLG 最佳选手（KDA 8.4、15 分钟 +412），所在队夺冠概率 19.4% 排第二。"
+      "basis_en": "14.5% (implied 6.90). Knight is BLG's best in-role score with an 8.4 KDA, 77.1% KP and +412 GD@15, on a team priced at 19.6% for the title. No MVP market exists in the payload to compare.",
+      "basis_zh": "14.5%（隐含 6.90）。Knight 是 BLG 同位置评分最高，KDA 8.4、参团 77.1%、GD@15 +412；BLG 夺冠概率 19.6%。payload 无 MVP 市场可对照。"
     },
     {
       "player": "Kiin",
       "teamCode": "GEN",
-      "prob": 12.9,
-      "oddsImplied": 7.75,
+      "prob": 12.5,
+      "oddsImplied": 8,
       "market": null,
-      "basis_en": "12.9% (implied 7.75): a top laner's share of GEN's 44.8% title chance.",
-      "basis_zh": "12.9%（隐含 7.75）：作为上单分得 GEN 44.8% 夺冠概率中的一份。"
+      "basis_en": "12.5% (implied 8.00) reflects GEN's 43.6% title odds. The payload holds no statline for Kiin, since he is neither GEN's best nor worst pick, and no MVP market to compare.",
+      "basis_zh": "12.5%（隐含 8.00）反映 GEN 43.6% 的夺冠概率。Kiin 既非 GEN 最强也非最弱选手，payload 无其数据，也无 MVP 市场可对照。"
     },
     {
-      "player": "Viper",
-      "teamCode": "BLG",
-      "prob": 8.6,
-      "oddsImplied": 11.63,
+      "player": "RooKie",
+      "teamCode": "IG",
+      "prob": 10.7,
+      "oddsImplied": 9.35,
       "market": null,
-      "basis_en": "8.6% (implied 11.63): BLG's carry role keeps him on the board despite −463 GD@15 so far.",
-      "basis_zh": "8.6%（隐含 11.63）：BLG 核心输出位，尽管目前 15 分钟落后 463 仍在榜上。"
+      "basis_en": "10.7% (implied 9.35) joins the list because IG's title odds rose to 18.0% after beating TES 3-1. The payload holds no statline for RooKie and no MVP market to compare.",
+      "basis_zh": "10.7%（隐含 9.35）新进榜单，因 IG 3-1 胜 TES 后夺冠概率升至 18.0%。payload 无 RooKie 的数据，也无 MVP 市场可对照。"
     }
   ],
   "fearless": [
@@ -3282,8 +3270,8 @@
           "slug": "Kaisa"
         }
       ],
-      "note_en": "DK have shown 15 unique champions (depth 35), level with BLG.",
-      "note_zh": "DK 已展示 15 个不同英雄（深度 35），与 BLG 持平。"
+      "note_en": "Depth 35, level with BLG in their quarterfinal.",
+      "note_zh": "深度 35，与八强对手 BLG 相同。"
     },
     {
       "team": "GEN",
@@ -3338,8 +3326,8 @@
           "slug": "Anivia"
         }
       ],
-      "note_en": "GEN have shown only 12 unique champions (depth 32), the thinnest pool among the eight.",
-      "note_zh": "GEN 仅展示 12 个不同英雄（深度 32），八强中最浅。"
+      "note_en": "Depth 32 is the lowest of the eight quarterfinalists, the one thin spot in a long series.",
+      "note_zh": "深度 32 为八强最低，是长系列赛中的唯一薄弱处。"
     },
     {
       "team": "IG",
@@ -3410,8 +3398,8 @@
           "slug": "Ornn"
         }
       ],
-      "note_en": "IG have shown 16 unique champions (depth 36), level with TES.",
-      "note_zh": "IG 已展示 16 个不同英雄（深度 36），与 TES 持平。"
+      "note_en": "Depth 36 carried IG past TES 3-1 and into the semifinal; QF1 drafts are not yet logged.",
+      "note_zh": "深度 36，3-1 胜 TES 晋级半决赛；八强首战的征召数据尚未录入。"
     },
     {
       "team": "T1",
@@ -3478,8 +3466,8 @@
           "slug": "Syndra"
         }
       ],
-      "note_en": "T1 have shown 15 unique champions (depth 35).",
-      "note_zh": "T1 已展示 15 个不同英雄（深度 35）。"
+      "note_en": "Depth 35, four below KC's 39 in their quarterfinal.",
+      "note_zh": "深度 35，比八强对手 KC 的 39 少 4。"
     },
     {
       "team": "TES",
@@ -3550,8 +3538,8 @@
           "slug": "Jayce"
         }
       ],
-      "note_en": "TES have shown 16 unique champions (depth 36), level with IG.",
-      "note_zh": "TES 已展示 16 个不同英雄（深度 36），与 IG 持平。"
+      "note_en": "Depth 36 ended with a 1-3 quarterfinal loss to IG.",
+      "note_zh": "深度 36，八强 1-3 负于 IG 出局。"
     },
     {
       "team": "BLG",
@@ -3618,8 +3606,8 @@
           "slug": "Gnar"
         }
       ],
-      "note_en": "BLG have shown 15 unique champions (depth 35), level with DK.",
-      "note_zh": "BLG 已展示 15 个不同英雄（深度 35），与 DK 持平。"
+      "note_en": "Depth 35, level with DK in their quarterfinal.",
+      "note_zh": "深度 35，与八强对手 DK 相同。"
     },
     {
       "team": "KC",
@@ -3702,8 +3690,8 @@
           "slug": "Renekton"
         }
       ],
-      "note_en": "KC have shown 19 unique champions (depth 39), tied for the deepest pool among the eight.",
-      "note_zh": "KC 已展示 19 个不同英雄（深度 39），并列八强最深。"
+      "note_en": "Depth 39 is joint highest among quarterfinalists, with LYON.",
+      "note_zh": "深度 39，与 LYON 并列八强最高。"
     },
     {
       "team": "LYON",
@@ -3786,8 +3774,8 @@
           "slug": "Pantheon"
         }
       ],
-      "note_en": "LYON have shown 19 unique champions (depth 39), tied for the deepest pool among the eight.",
-      "note_zh": "LYON 已展示 19 个不同英雄（深度 39），并列八强最深。"
+      "note_en": "Depth 39 is joint highest among quarterfinalists, seven above GEN's 32.",
+      "note_zh": "深度 39 并列八强最高，比 GEN 的 32 多 7。"
     },
     {
       "team": "HLE",
@@ -3874,8 +3862,8 @@
           "slug": "Rumble"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 40 did not prevent a 2-3 Swiss exit.",
+      "note_zh": "深度 40 仍以 2-3 止步瑞士轮。"
     },
     {
       "team": "LOS",
@@ -3962,8 +3950,8 @@
           "slug": "Aurora"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 40 did not prevent a 2-3 Swiss exit.",
+      "note_zh": "深度 40 仍以 2-3 止步瑞士轮。"
     },
     {
       "team": "MKOI",
@@ -4050,8 +4038,8 @@
           "slug": "Sejuani"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 40 did not prevent a 2-3 Swiss exit.",
+      "note_zh": "深度 40 仍以 2-3 止步瑞士轮。"
     },
     {
       "team": "CFO",
@@ -4114,8 +4102,8 @@
           "slug": "Syndra"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 34 ended with a 1-3 Swiss exit.",
+      "note_zh": "深度 34，瑞士轮 1-3 出局。"
     },
     {
       "team": "G2",
@@ -4190,8 +4178,8 @@
           "slug": "Jhin"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 37 ended with a 1-3 Swiss exit.",
+      "note_zh": "深度 37，瑞士轮 1-3 出局。"
     },
     {
       "team": "TL",
@@ -4270,8 +4258,8 @@
           "slug": "Ambessa"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 38 ended with a 1-3 Swiss exit.",
+      "note_zh": "深度 38，瑞士轮 1-3 出局。"
     },
     {
       "team": "AL",
@@ -4334,8 +4322,8 @@
           "slug": "Skarner"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 34 ended with a 0-3 Swiss exit.",
+      "note_zh": "深度 34，瑞士轮 0-3 出局。"
     },
     {
       "team": "TSW",
@@ -4394,8 +4382,8 @@
           "slug": "Akali"
         }
       ],
-      "note_en": "",
-      "note_zh": ""
+      "note_en": "Depth 33 ended with a 0-3 Swiss exit.",
+      "note_zh": "深度 33，瑞士轮 0-3 出局。"
     }
   ],
   "meta": [
@@ -4496,7 +4484,7 @@
       "winrate": 53
     }
   ],
-  "ddragon": "16.21.1",
+  "ddragon": "16.22.1",
   "teams": [
     {
       "team": "DK",
@@ -4512,7 +4500,7 @@
             "gd15": 389
           },
           "reason_en": "ShowMaker: 9.0 KDA, 687 DPM, 73.4% KP and +389 GD@15.",
-          "reason_zh": "ShowMaker：KDA 9.0、分均伤害 687、参团率 73.4%、15 分钟 +389。"
+          "reason_zh": "ShowMaker：KDA 9.0、DPM 687、参团 73.4%、GD@15 +389。"
         },
         "worst": {
           "player": "Lucid",
@@ -4524,8 +4512,8 @@
             "kp": 73.6,
             "gd15": -53
           },
-          "reason_en": "Lucid: 5.3 KDA and 73.6% KP, but −53 GD@15.",
-          "reason_zh": "Lucid：KDA 5.3、参团率 73.6%，但 15 分钟落后 53。"
+          "reason_en": "Lucid: 5.3 KDA and 73.6% KP, but -53 GD@15.",
+          "reason_zh": "Lucid：KDA 5.3、参团 73.6%，但 GD@15 -53。"
         }
       },
       "tactics": {
@@ -4533,15 +4521,15 @@
           "key": "FT%",
           "value": "75.0",
           "pct": 0.867,
-          "reason_en": "First tower 75.0%, 87th percentile.",
-          "reason_zh": "一塔率 75.0%，位列 87 百分位。"
+          "reason_en": "First tower 75.0%, percentile 0.867.",
+          "reason_zh": "一塔率 75.0%，百分位 0.867。"
         },
         "worst": {
           "key": "FB%",
           "value": "50.0",
           "pct": 0.5,
-          "reason_en": "First blood 50.0%, exactly median.",
-          "reason_zh": "一血率 50.0%，恰为中位。"
+          "reason_en": "First blood 50.0%, percentile 0.5.",
+          "reason_zh": "一血率 50.0%，百分位 0.5。"
         }
       }
     },
@@ -4559,7 +4547,7 @@
             "gd15": 627
           },
           "reason_en": "Canyon: 10.5 KDA, 79.9% KP and +627 GD@15.",
-          "reason_zh": "Canyon：KDA 10.5、参团率 79.9%、15 分钟 +627。"
+          "reason_zh": "Canyon：KDA 10.5、参团 79.9%、GD@15 +627。"
         },
         "worst": {
           "player": "Chovy",
@@ -4571,8 +4559,8 @@
             "kp": 57.9,
             "gd15": -350
           },
-          "reason_en": "Chovy: 5.1 KDA, 57.9% KP and −350 GD@15.",
-          "reason_zh": "Chovy：KDA 5.1、参团率 57.9%、15 分钟 −350。"
+          "reason_en": "Chovy: 5.1 KDA, 57.9% KP and -350 GD@15.",
+          "reason_zh": "Chovy：KDA 5.1、参团 57.9%、GD@15 -350。"
         }
       },
       "tactics": {
@@ -4580,15 +4568,15 @@
           "key": "DRA%",
           "value": "80.0",
           "pct": 1,
-          "reason_en": "Dragon control 80.0%, top of the event.",
-          "reason_zh": "小龙控制率 80.0%，全赛第一。"
+          "reason_en": "Dragon rate 80.0%, the best in the field.",
+          "reason_zh": "小龙率 80.0%，全场最高。"
         },
         "worst": {
           "key": "VGPG",
           "value": "1.2",
           "pct": 0.367,
-          "reason_en": "1.2 void grubs per game, 37th percentile.",
-          "reason_zh": "场均虚空幼虫 1.2，位列 37 百分位。"
+          "reason_en": "Void grubs per game 1.2, percentile 0.367.",
+          "reason_zh": "每局虚空虫 1.2，百分位 0.367。"
         }
       }
     },
@@ -4605,8 +4593,8 @@
             "kp": 79.4,
             "gd15": 434
           },
-          "reason_en": "meiko: 79.4% KP and +434 GD@15 from support.",
-          "reason_zh": "meiko：辅助位参团率 79.4%、15 分钟 +434。"
+          "reason_en": "meiko: 5.4 KDA, 79.4% KP and +434 GD@15.",
+          "reason_zh": "meiko：KDA 5.4、参团 79.4%、GD@15 +434。"
         },
         "worst": {
           "player": "Wei",
@@ -4618,8 +4606,8 @@
             "kp": 73.7,
             "gd15": -384
           },
-          "reason_en": "Wei: 7.1 KDA but −384 GD@15.",
-          "reason_zh": "Wei：KDA 7.1，但 15 分钟落后 384。"
+          "reason_en": "Wei: 7.1 KDA, but -384 GD@15.",
+          "reason_zh": "Wei：KDA 7.1，但 GD@15 -384。"
         }
       },
       "tactics": {
@@ -4627,15 +4615,15 @@
           "key": "GD@15",
           "value": "1613",
           "pct": 1,
-          "reason_en": "GD@15 of 1613, the best in the event.",
-          "reason_zh": "15 分钟经济差 1613，全赛最高。"
+          "reason_en": "GD@15 of 1613, the best in the field.",
+          "reason_zh": "GD@15 为 1613，全场最高。"
         },
         "worst": {
           "key": "NASH%",
           "value": "37.5",
           "pct": 0.2,
-          "reason_en": "Baron control 37.5%, 20th percentile.",
-          "reason_zh": "大龙控制率 37.5%，位列 20 百分位。"
+          "reason_en": "Nashor rate 37.5%, percentile 0.2.",
+          "reason_zh": "大龙率 37.5%，百分位 0.2。"
         }
       }
     },
@@ -4653,7 +4641,7 @@
             "gd15": 443
           },
           "reason_en": "Doran: 7.8 KDA, 700 DPM and +443 GD@15.",
-          "reason_zh": "Doran：KDA 7.8、分均伤害 700、15 分钟 +443。"
+          "reason_zh": "Doran：KDA 7.8、DPM 700、GD@15 +443。"
         },
         "worst": {
           "player": "Oner",
@@ -4665,8 +4653,8 @@
             "kp": 73.7,
             "gd15": 86
           },
-          "reason_en": "Oner: 6.0 KDA, 73.7% KP and +86 GD@15, the team's lowest in-role score.",
-          "reason_zh": "Oner：KDA 6.0、参团率 73.7%、15 分钟 +86，队内同位置评分最低。"
+          "reason_en": "Oner: 6.0 KDA and +86 GD@15; T1's lowest score is still positive.",
+          "reason_zh": "Oner：KDA 6.0、GD@15 +86；T1 最低分仍为正。"
         }
       },
       "tactics": {
@@ -4674,15 +4662,15 @@
           "key": "FT%",
           "value": "80.0",
           "pct": 0.967,
-          "reason_en": "First tower 80.0%, 97th percentile.",
-          "reason_zh": "一塔率 80.0%，位列 97 百分位。"
+          "reason_en": "First tower 80.0%, percentile 0.967.",
+          "reason_zh": "一塔率 80.0%，百分位 0.967。"
         },
         "worst": {
           "key": "VGPG",
           "value": "1.0",
           "pct": 0.133,
-          "reason_en": "1.0 void grubs per game, 13th percentile.",
-          "reason_zh": "场均虚空幼虫 1.0，位列 13 百分位。"
+          "reason_en": "Void grubs per game 1.0, percentile 0.133.",
+          "reason_zh": "每局虚空虫 1.0，百分位 0.133。"
         }
       }
     },
@@ -4699,8 +4687,8 @@
             "kp": 69.9,
             "gd15": 37
           },
-          "reason_en": "Creme: 677 DPM, 69.9% KP and +37 GD@15.",
-          "reason_zh": "Creme：分均伤害 677、参团率 69.9%、15 分钟 +37。"
+          "reason_en": "Creme: 677 DPM and 69.9% KP with +37 GD@15.",
+          "reason_zh": "Creme：DPM 677、参团 69.9%、GD@15 +37。"
         },
         "worst": {
           "player": "Zhuo",
@@ -4712,8 +4700,8 @@
             "kp": 69.5,
             "gd15": -102
           },
-          "reason_en": "Zhuo: 3.8 KDA and −102 GD@15.",
-          "reason_zh": "Zhuo：KDA 3.8、15 分钟 −102。"
+          "reason_en": "Zhuo: 3.8 KDA and -102 GD@15.",
+          "reason_zh": "Zhuo：KDA 3.8、GD@15 -102。"
         }
       },
       "tactics": {
@@ -4721,15 +4709,15 @@
           "key": "NASH%",
           "value": "66.7",
           "pct": 0.8,
-          "reason_en": "Baron control 66.7%, 80th percentile.",
-          "reason_zh": "大龙控制率 66.7%，位列 80 百分位。"
+          "reason_en": "Nashor rate 66.7%, percentile 0.8.",
+          "reason_zh": "大龙率 66.7%，百分位 0.8。"
         },
         "worst": {
           "key": "FB%",
           "value": "16.7",
           "pct": 0,
-          "reason_en": "First blood 16.7%, lowest in the event.",
-          "reason_zh": "一血率 16.7%，全赛最低。"
+          "reason_en": "First blood 16.7%, the lowest in the field.",
+          "reason_zh": "一血率 16.7%，全场最低。"
         }
       }
     },
@@ -4747,7 +4735,7 @@
             "gd15": 412
           },
           "reason_en": "Knight: 8.4 KDA, 77.1% KP and +412 GD@15.",
-          "reason_zh": "Knight：KDA 8.4、参团率 77.1%、15 分钟 +412。"
+          "reason_zh": "Knight：KDA 8.4、参团 77.1%、GD@15 +412。"
         },
         "worst": {
           "player": "Viper",
@@ -4759,8 +4747,8 @@
             "kp": 60.3,
             "gd15": -463
           },
-          "reason_en": "Viper: 4.2 KDA, 60.3% KP and −463 GD@15.",
-          "reason_zh": "Viper：KDA 4.2、参团率 60.3%、15 分钟 −463。"
+          "reason_en": "Viper: 4.2 KDA, 60.3% KP and -463 GD@15.",
+          "reason_zh": "Viper：KDA 4.2、参团 60.3%、GD@15 -463。"
         }
       },
       "tactics": {
@@ -4768,15 +4756,15 @@
           "key": "FB%",
           "value": "87.5",
           "pct": 0.933,
-          "reason_en": "First blood 87.5%, 93rd percentile.",
-          "reason_zh": "一血率 87.5%，位列 93 百分位。"
+          "reason_en": "First blood 87.5%, percentile 0.933.",
+          "reason_zh": "一血率 87.5%，百分位 0.933。"
         },
         "worst": {
           "key": "VGPG",
           "value": "1.1",
           "pct": 0.267,
-          "reason_en": "1.1 void grubs per game, 27th percentile.",
-          "reason_zh": "场均虚空幼虫 1.1，位列 27 百分位。"
+          "reason_en": "Void grubs per game 1.1, percentile 0.267.",
+          "reason_zh": "每局虚空虫 1.1，百分位 0.267。"
         }
       }
     },
@@ -4793,8 +4781,8 @@
             "kp": 77.6,
             "gd15": -147
           },
-          "reason_en": "Caliste: 763 DPM and 77.6% KP, despite −147 GD@15.",
-          "reason_zh": "Caliste：分均伤害 763、参团率 77.6%，尽管 15 分钟 −147。"
+          "reason_en": "Caliste: 6.4 KDA, 763 DPM and 77.6% KP, despite -147 GD@15.",
+          "reason_zh": "Caliste：KDA 6.4、DPM 763、参团 77.6%，GD@15 -147。"
         },
         "worst": {
           "player": "Kyeahoo",
@@ -4806,8 +4794,8 @@
             "kp": 72.8,
             "gd15": 85
           },
-          "reason_en": "Kyeahoo: still solid at 7.1 KDA and +85 GD@15; lowest only within KC.",
-          "reason_zh": "Kyeahoo：KDA 7.1、15 分钟 +85 仍属稳健，只是队内最低。"
+          "reason_en": "Kyeahoo: 7.1 KDA and +85 GD@15; KC's lowest score is still positive.",
+          "reason_zh": "Kyeahoo：KDA 7.1、GD@15 +85；KC 最低分仍为正。"
         }
       },
       "tactics": {
@@ -4815,15 +4803,15 @@
           "key": "DRA%",
           "value": "64.5",
           "pct": 0.8,
-          "reason_en": "Dragon control 64.5%, 80th percentile.",
-          "reason_zh": "小龙控制率 64.5%，位列 80 百分位。"
+          "reason_en": "Dragon rate 64.5%, percentile 0.8.",
+          "reason_zh": "小龙率 64.5%，百分位 0.8。"
         },
         "worst": {
           "key": "VGPG",
           "value": "1.3",
           "pct": 0.467,
-          "reason_en": "1.3 void grubs per game, 47th percentile.",
-          "reason_zh": "场均虚空幼虫 1.3，位列 47 百分位。"
+          "reason_en": "Void grubs per game 1.3, percentile 0.467.",
+          "reason_zh": "每局虚空虫 1.3，百分位 0.467。"
         }
       }
     },
@@ -4840,8 +4828,8 @@
             "kp": 64,
             "gd15": -363
           },
-          "reason_en": "Berserker: 682 DPM, though −363 GD@15.",
-          "reason_zh": "Berserker：分均伤害 682，但 15 分钟 −363。"
+          "reason_en": "Berserker: 682 DPM and 64.0% KP, but -363 GD@15 and a negative score.",
+          "reason_zh": "Berserker：DPM 682、参团 64.0%，但 GD@15 -363，评分仍为负。"
         },
         "worst": {
           "player": "Dhokla",
@@ -4853,8 +4841,8 @@
             "kp": 54.8,
             "gd15": -302
           },
-          "reason_en": "Dhokla: 3.1 KDA, 54.8% KP and −302 GD@15.",
-          "reason_zh": "Dhokla：KDA 3.1、参团率 54.8%、15 分钟 −302。"
+          "reason_en": "Dhokla: 3.1 KDA, 54.8% KP and -302 GD@15.",
+          "reason_zh": "Dhokla：KDA 3.1、参团 54.8%、GD@15 -302。"
         }
       },
       "tactics": {
@@ -4862,15 +4850,15 @@
           "key": "VGPG",
           "value": "2.2",
           "pct": 0.933,
-          "reason_en": "2.2 void grubs per game, 93rd percentile.",
-          "reason_zh": "场均虚空幼虫 2.2，位列 93 百分位。"
+          "reason_en": "Void grubs per game 2.2, percentile 0.933.",
+          "reason_zh": "每局虚空虫 2.2，百分位 0.933。"
         },
         "worst": {
           "key": "GD@15",
           "value": "-867",
           "pct": 0.133,
-          "reason_en": "GD@15 of −867, 13th percentile.",
-          "reason_zh": "15 分钟经济差 −867，位列 13 百分位。"
+          "reason_en": "GD@15 of -867, percentile 0.133.",
+          "reason_zh": "GD@15 为 -867，百分位 0.133。"
         }
       }
     },
@@ -4887,8 +4875,8 @@
             "kp": 57.4,
             "gd15": 65
           },
-          "reason_en": "Zeus: 539 DPM and +65 GD@15.",
-          "reason_zh": "Zeus：分均伤害 539、15 分钟 +65。"
+          "reason_en": "Zeus: 3.0 KDA, 539 DPM and +65 GD@15.",
+          "reason_zh": "Zeus：KDA 3.0、DPM 539、GD@15 +65。"
         },
         "worst": {
           "player": "Delight",
@@ -4900,8 +4888,8 @@
             "kp": 72.8,
             "gd15": -136
           },
-          "reason_en": "Delight: 2.2 KDA and −136 GD@15.",
-          "reason_zh": "Delight：KDA 2.2、15 分钟 −136。"
+          "reason_en": "Delight: 2.2 KDA and -136 GD@15.",
+          "reason_zh": "Delight：KDA 2.2、GD@15 -136。"
         }
       },
       "tactics": {
@@ -4909,15 +4897,15 @@
           "key": "NASH%",
           "value": "71.4",
           "pct": 0.867,
-          "reason_en": "Baron control 71.4%, 87th percentile.",
-          "reason_zh": "大龙控制率 71.4%，位列 87 百分位。"
+          "reason_en": "Nashor rate 71.4%, percentile 0.867.",
+          "reason_zh": "大龙率 71.4%，百分位 0.867。"
         },
         "worst": {
           "key": "GD@15",
           "value": "-299",
           "pct": 0.2,
-          "reason_en": "GD@15 of −299, 20th percentile.",
-          "reason_zh": "15 分钟经济差 −299，位列 20 百分位。"
+          "reason_en": "GD@15 of -299, percentile 0.2.",
+          "reason_zh": "GD@15 为 -299，百分位 0.2。"
         }
       }
     },
@@ -4934,8 +4922,8 @@
             "kp": 51.7,
             "gd15": 201
           },
-          "reason_en": "Zest: 643 DPM and +201 GD@15.",
-          "reason_zh": "Zest：分均伤害 643、15 分钟 +201。"
+          "reason_en": "Zest: 3.2 KDA, 643 DPM and +201 GD@15.",
+          "reason_zh": "Zest：KDA 3.2、DPM 643、GD@15 +201。"
         },
         "worst": {
           "player": "Duduhh",
@@ -4947,8 +4935,8 @@
             "kp": 64.1,
             "gd15": -28
           },
-          "reason_en": "Duduhh: 2.7 KDA and −28 GD@15.",
-          "reason_zh": "Duduhh：KDA 2.7、15 分钟 −28。"
+          "reason_en": "Duduhh: 2.7 KDA and -28 GD@15.",
+          "reason_zh": "Duduhh：KDA 2.7、GD@15 -28。"
         }
       },
       "tactics": {
@@ -4956,15 +4944,15 @@
           "key": "GD@15",
           "value": "210",
           "pct": 0.6,
-          "reason_en": "GD@15 of 210, 60th percentile.",
-          "reason_zh": "15 分钟经济差 210，位列 60 百分位。"
+          "reason_en": "GD@15 of 210, percentile 0.6.",
+          "reason_zh": "GD@15 为 210，百分位 0.6。"
         },
         "worst": {
           "key": "FB%",
           "value": "40.0",
           "pct": 0.3,
-          "reason_en": "First blood 40.0%, 30th percentile.",
-          "reason_zh": "一血率 40.0%，位列 30 百分位。"
+          "reason_en": "First blood 40.0%, percentile 0.3.",
+          "reason_zh": "一血率 40.0%，百分位 0.3。"
         }
       }
     },
@@ -4981,8 +4969,8 @@
             "kp": 84.8,
             "gd15": -12
           },
-          "reason_en": "Alvaro: 84.8% KP from support.",
-          "reason_zh": "Alvaro：辅助位参团率 84.8%。"
+          "reason_en": "Alvaro: 3.3 KDA and 84.8% KP, with -12 GD@15.",
+          "reason_zh": "Alvaro：KDA 3.3、参团 84.8%、GD@15 -12。"
         },
         "worst": {
           "player": "jojopyun",
@@ -4994,8 +4982,8 @@
             "kp": 65.6,
             "gd15": -751
           },
-          "reason_en": "jojopyun: 2.0 KDA and −751 GD@15.",
-          "reason_zh": "jojopyun：KDA 2.0、15 分钟 −751。"
+          "reason_en": "jojopyun: 2.0 KDA and -751 GD@15.",
+          "reason_zh": "jojopyun：KDA 2.0、GD@15 -751。"
         }
       },
       "tactics": {
@@ -5003,15 +4991,15 @@
           "key": "VGPG",
           "value": "1.8",
           "pct": 0.8,
-          "reason_en": "1.8 void grubs per game, 80th percentile.",
-          "reason_zh": "场均虚空幼虫 1.8，位列 80 百分位。"
+          "reason_en": "Void grubs per game 1.8, percentile 0.8.",
+          "reason_zh": "每局虚空虫 1.8，百分位 0.8。"
         },
         "worst": {
           "key": "GD@15",
           "value": "-1581",
           "pct": 0,
-          "reason_en": "GD@15 of −1581, lowest in the event.",
-          "reason_zh": "15 分钟经济差 −1581，全赛最低。"
+          "reason_en": "GD@15 of -1581, the lowest in the field.",
+          "reason_zh": "GD@15 为 -1581，全场最低。"
         }
       }
     },
@@ -5028,8 +5016,8 @@
             "kp": 82.6,
             "gd15": 284
           },
-          "reason_en": "Shad0w: 82.6% KP and +284 GD@15.",
-          "reason_zh": "Shad0w：参团率 82.6%、15 分钟 +284。"
+          "reason_en": "Shad0w: 82.6% KP and +284 GD@15, on a 1.9 KDA.",
+          "reason_zh": "Shad0w：参团 82.6%、GD@15 +284，KDA 1.9。"
         },
         "worst": {
           "player": "Rest",
@@ -5041,8 +5029,8 @@
             "kp": 35.2,
             "gd15": -369
           },
-          "reason_en": "Rest: 0.8 KDA, 35.2% KP and −369 GD@15.",
-          "reason_zh": "Rest：KDA 0.8、参团率 35.2%、15 分钟 −369。"
+          "reason_en": "Rest: 0.8 KDA, 35.2% KP and -369 GD@15.",
+          "reason_zh": "Rest：KDA 0.8、参团 35.2%、GD@15 -369。"
         }
       },
       "tactics": {
@@ -5050,15 +5038,15 @@
           "key": "GD@15",
           "value": "531",
           "pct": 0.8,
-          "reason_en": "GD@15 of 531, 80th percentile.",
-          "reason_zh": "15 分钟经济差 531，位列 80 百分位。"
+          "reason_en": "GD@15 of 531, percentile 0.8.",
+          "reason_zh": "GD@15 为 531，百分位 0.8。"
         },
         "worst": {
           "key": "FT%",
           "value": "20.0",
           "pct": 0,
-          "reason_en": "First tower 20.0%, lowest in the event.",
-          "reason_zh": "一塔率 20.0%，全赛最低。"
+          "reason_en": "First tower 20.0%, the lowest in the field.",
+          "reason_zh": "一塔率 20.0%，全场最低。"
         }
       }
     },
@@ -5075,8 +5063,8 @@
             "kp": 81.3,
             "gd15": 185
           },
-          "reason_en": "SkewMond: 81.3% KP and +185 GD@15.",
-          "reason_zh": "SkewMond：参团率 81.3%、15 分钟 +185。"
+          "reason_en": "SkewMond: 3.7 KDA, 81.3% KP and +185 GD@15.",
+          "reason_zh": "SkewMond：KDA 3.7、参团 81.3%、GD@15 +185。"
         },
         "worst": {
           "player": "Caps",
@@ -5088,8 +5076,8 @@
             "kp": 53.1,
             "gd15": 78
           },
-          "reason_en": "Caps: 1.7 KDA and 53.1% KP.",
-          "reason_zh": "Caps：KDA 1.7、参团率 53.1%。"
+          "reason_en": "Caps: 1.7 KDA and 53.1% KP, despite +78 GD@15.",
+          "reason_zh": "Caps：KDA 1.7、参团 53.1%，GD@15 +78。"
         }
       },
       "tactics": {
@@ -5097,15 +5085,15 @@
           "key": "FT%",
           "value": "80.0",
           "pct": 0.967,
-          "reason_en": "First tower 80.0%, 97th percentile.",
-          "reason_zh": "一塔率 80.0%，位列 97 百分位。"
+          "reason_en": "First tower 80.0%, percentile 0.967.",
+          "reason_zh": "一塔率 80.0%，百分位 0.967。"
         },
         "worst": {
           "key": "DRA%",
           "value": "36.7",
           "pct": 0.067,
-          "reason_en": "Dragon control 36.7%, 7th percentile.",
-          "reason_zh": "小龙控制率 36.7%，位列 7 百分位。"
+          "reason_en": "Dragon rate 36.7%, percentile 0.067.",
+          "reason_zh": "小龙率 36.7%，百分位 0.067。"
         }
       }
     },
@@ -5123,7 +5111,7 @@
             "gd15": 580
           },
           "reason_en": "Yeon: 743 DPM, 79.5% KP and +580 GD@15.",
-          "reason_zh": "Yeon：分均伤害 743、参团率 79.5%、15 分钟 +580。"
+          "reason_zh": "Yeon：DPM 743、参团 79.5%、GD@15 +580。"
         },
         "worst": {
           "player": "Morgan",
@@ -5135,8 +5123,8 @@
             "kp": 47.5,
             "gd15": 10
           },
-          "reason_en": "Morgan: 2.6 KDA and 47.5% KP.",
-          "reason_zh": "Morgan：KDA 2.6、参团率 47.5%。"
+          "reason_en": "Morgan: 2.6 KDA, 47.5% KP and +10 GD@15.",
+          "reason_zh": "Morgan：KDA 2.6、参团 47.5%、GD@15 +10。"
         }
       },
       "tactics": {
@@ -5144,15 +5132,15 @@
           "key": "NASH%",
           "value": "52.4",
           "pct": 0.6,
-          "reason_en": "Baron control 52.4%, 60th percentile.",
-          "reason_zh": "大龙控制率 52.4%，位列 60 百分位。"
+          "reason_en": "Nashor rate 52.4%, percentile 0.6.",
+          "reason_zh": "大龙率 52.4%，百分位 0.6。"
         },
         "worst": {
           "key": "VGPG",
           "value": "0.9",
           "pct": 0,
-          "reason_en": "0.9 void grubs per game, lowest in the event.",
-          "reason_zh": "场均虚空幼虫 0.9，全赛最低。"
+          "reason_en": "Void grubs per game 0.9, the lowest in the field.",
+          "reason_zh": "每局虚空虫 0.9，全场最低。"
         }
       }
     },
@@ -5169,8 +5157,8 @@
             "kp": 76.2,
             "gd15": 77
           },
-          "reason_en": "Shanks: 663 DPM and 76.2% KP.",
-          "reason_zh": "Shanks：分均伤害 663、参团率 76.2%。"
+          "reason_en": "Shanks: 663 DPM, 76.2% KP and +77 GD@15.",
+          "reason_zh": "Shanks：DPM 663、参团 76.2%、GD@15 +77。"
         },
         "worst": {
           "player": "Tarzan",
@@ -5182,8 +5170,8 @@
             "kp": 78.5,
             "gd15": -784
           },
-          "reason_en": "Tarzan: 2.1 KDA and −784 GD@15.",
-          "reason_zh": "Tarzan：KDA 2.1、15 分钟 −784。"
+          "reason_en": "Tarzan: 2.1 KDA and -784 GD@15.",
+          "reason_zh": "Tarzan：KDA 2.1、GD@15 -784。"
         }
       },
       "tactics": {
@@ -5191,15 +5179,15 @@
           "key": "VGPG",
           "value": "2.5",
           "pct": 1,
-          "reason_en": "2.5 void grubs per game, top of the event.",
-          "reason_zh": "场均虚空幼虫 2.5，全赛最高。"
+          "reason_en": "Void grubs per game 2.5, the best in the field.",
+          "reason_zh": "每局虚空虫 2.5，全场最高。"
         },
         "worst": {
           "key": "DRA%",
           "value": "35.7",
           "pct": 0,
-          "reason_en": "Dragon control 35.7%, lowest in the event.",
-          "reason_zh": "小龙控制率 35.7%，全赛最低。"
+          "reason_en": "Dragon rate 35.7%, the lowest in the field.",
+          "reason_zh": "小龙率 35.7%，全场最低。"
         }
       }
     },
@@ -5216,8 +5204,8 @@
             "kp": 71.8,
             "gd15": 376
           },
-          "reason_en": "Dire: 71.8% KP and +376 GD@15.",
-          "reason_zh": "Dire：参团率 71.8%、15 分钟 +376。"
+          "reason_en": "Dire: 71.8% KP and +376 GD@15, on a 1.9 KDA.",
+          "reason_zh": "Dire：参团 71.8%、GD@15 +376，KDA 1.9。"
         },
         "worst": {
           "player": "Bie",
@@ -5229,8 +5217,8 @@
             "kp": 56.2,
             "gd15": -75
           },
-          "reason_en": "Bie: 1.2 KDA and 56.2% KP.",
-          "reason_zh": "Bie：KDA 1.2、参团率 56.2%。"
+          "reason_en": "Bie: 1.2 KDA, 56.2% KP and -75 GD@15.",
+          "reason_zh": "Bie：KDA 1.2、参团 56.2%、GD@15 -75。"
         }
       },
       "tactics": {
@@ -5238,26 +5226,26 @@
           "key": "FB%",
           "value": "100.0",
           "pct": 1,
-          "reason_en": "First blood 100.0%, top of the event.",
-          "reason_zh": "一血率 100.0%，全赛最高。"
+          "reason_en": "First blood 100.0%, the best in the field.",
+          "reason_zh": "一血率 100.0%，全场最高。"
         },
         "worst": {
           "key": "NASH%",
           "value": "20.8",
           "pct": 0.067,
-          "reason_en": "Baron control 20.8%, 7th percentile.",
-          "reason_zh": "大龙控制率 20.8%，位列 7 百分位。"
+          "reason_en": "Nashor rate 20.8%, percentile 0.067.",
+          "reason_zh": "大龙率 20.8%，百分位 0.067。"
         }
       }
     }
   ],
   "record": {
     "since": "2026-10-25",
-    "resolved": 5,
+    "resolved": 6,
     "correctOutcome": 3,
     "exactScore": 3,
-    "winRate": 60,
-    "brier": 0.239,
+    "winRate": 50,
+    "brier": 0.245,
     "log": [
       {
         "id": "r3-tes-g2",
@@ -5303,6 +5291,15 @@
         "pick_zh": "AL 胜",
         "ok": false,
         "exact": false
+      },
+      {
+        "id": "qf1-tes-ig",
+        "label_en": "TES 1-3 IG",
+        "label_zh": "TES 1-3 IG",
+        "pick_en": "TES win",
+        "pick_zh": "TES 胜",
+        "ok": false,
+        "exact": false
       }
     ]
   },
@@ -5310,214 +5307,142 @@
     {
       "label": "gol.gg · Worlds 2026 Main Event schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-11-01T05:06:22.777Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · Worlds 2026 Play-In schedule",
       "url": "https://gol.gg/tournament/tournament-matchlist/Worlds%202026%20Play-In/",
-      "fetchedAt": "2026-11-01T05:06:23.377Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "Polymarket · series markets",
       "url": "https://gamma-api.polymarket.com/events?tag_slug=league-of-legends&active=true&closed=false&limit=100&order=startDate&ascending=false",
-      "fetchedAt": "2026-11-01T05:06:24.821Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "Polymarket · Worlds 2026 winner",
       "url": "https://gamma-api.polymarket.com/events?slug=worlds-2026-winner",
-      "fetchedAt": "2026-11-01T05:06:25.179Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "Kalshi · KXLOL-WORLDS26",
       "url": "https://api.elections.kalshi.com/trade-api/v2/markets?event_ticker=KXLOL-WORLDS26&limit=100",
-      "fetchedAt": "2026-11-01T05:06:25.759Z"
-    },
-    {
-      "label": "gol.gg · game 83659 draft",
-      "url": "https://gol.gg/game/stats/83659/page-game/",
-      "fetchedAt": "2026-11-01T05:06:27.763Z"
-    },
-    {
-      "label": "gol.gg · game 83656 draft",
-      "url": "https://gol.gg/game/stats/83656/page-game/",
-      "fetchedAt": "2026-11-01T05:06:28.165Z"
-    },
-    {
-      "label": "gol.gg · game 83667 draft",
-      "url": "https://gol.gg/game/stats/83667/page-game/",
-      "fetchedAt": "2026-11-01T05:06:28.584Z"
-    },
-    {
-      "label": "gol.gg · game 83664 draft",
-      "url": "https://gol.gg/game/stats/83664/page-game/",
-      "fetchedAt": "2026-11-01T05:06:28.990Z"
-    },
-    {
-      "label": "gol.gg · game 83663 draft",
-      "url": "https://gol.gg/game/stats/83663/page-game/",
-      "fetchedAt": "2026-11-01T05:06:29.412Z"
-    },
-    {
-      "label": "gol.gg · game 83662 draft",
-      "url": "https://gol.gg/game/stats/83662/page-game/",
-      "fetchedAt": "2026-11-01T05:06:29.810Z"
-    },
-    {
-      "label": "gol.gg · game 83672 draft",
-      "url": "https://gol.gg/game/stats/83672/page-game/",
-      "fetchedAt": "2026-11-01T05:06:30.216Z"
-    },
-    {
-      "label": "gol.gg · game 83669 draft",
-      "url": "https://gol.gg/game/stats/83669/page-game/",
-      "fetchedAt": "2026-11-01T05:06:30.604Z"
-    },
-    {
-      "label": "gol.gg · game 83678 draft",
-      "url": "https://gol.gg/game/stats/83678/page-game/",
-      "fetchedAt": "2026-11-01T05:06:31.047Z"
-    },
-    {
-      "label": "gol.gg · game 83675 draft",
-      "url": "https://gol.gg/game/stats/83675/page-game/",
-      "fetchedAt": "2026-11-01T05:06:31.502Z"
-    },
-    {
-      "label": "gol.gg · game 83684 draft",
-      "url": "https://gol.gg/game/stats/83684/page-game/",
-      "fetchedAt": "2026-11-01T05:06:31.985Z"
-    },
-    {
-      "label": "gol.gg · game 83681 draft",
-      "url": "https://gol.gg/game/stats/83681/page-game/",
-      "fetchedAt": "2026-11-01T05:06:32.415Z"
-    },
-    {
-      "label": "gol.gg · game 83692 draft",
-      "url": "https://gol.gg/game/stats/83692/page-game/",
-      "fetchedAt": "2026-11-01T05:06:32.814Z"
-    },
-    {
-      "label": "gol.gg · game 83689 draft",
-      "url": "https://gol.gg/game/stats/83689/page-game/",
-      "fetchedAt": "2026-11-01T05:06:33.216Z"
-    },
-    {
-      "label": "gol.gg · game 83686 draft",
-      "url": "https://gol.gg/game/stats/83686/page-game/",
-      "fetchedAt": "2026-11-01T05:06:33.602Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2848 season pool",
       "url": "https://gol.gg/teams/team-stats/2848/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:34.414Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2849 season pool",
       "url": "https://gol.gg/teams/team-stats/2849/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:35.331Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2880 season pool",
       "url": "https://gol.gg/teams/team-stats/2880/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:36.131Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2802 season pool",
       "url": "https://gol.gg/teams/team-stats/2802/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:37.128Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2897 season pool",
       "url": "https://gol.gg/teams/team-stats/2897/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:38.031Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2804 season pool",
       "url": "https://gol.gg/teams/team-stats/2804/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:39.067Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2805 season pool",
       "url": "https://gol.gg/teams/team-stats/2805/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:39.947Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2850 season pool",
       "url": "https://gol.gg/teams/team-stats/2850/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:40.799Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2899 season pool",
       "url": "https://gol.gg/teams/team-stats/2899/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:41.551Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2895 season pool",
       "url": "https://gol.gg/teams/team-stats/2895/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:42.362Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2954 season pool",
       "url": "https://gol.gg/teams/team-stats/2954/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:43.197Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2900 season pool",
       "url": "https://gol.gg/teams/team-stats/2900/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:43.990Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2809 season pool",
       "url": "https://gol.gg/teams/team-stats/2809/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:44.898Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2813 season pool",
       "url": "https://gol.gg/teams/team-stats/2813/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:45.666Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2887 season pool",
       "url": "https://gol.gg/teams/team-stats/2887/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:46.466Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team 2852 season pool",
       "url": "https://gol.gg/teams/team-stats/2852/split-ALL/tournament-ALL/",
-      "fetchedAt": "2026-11-01T05:06:48.354Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · player statistics",
       "url": "https://gol.gg/players/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-11-01T05:06:49.062Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · champion statistics",
       "url": "https://gol.gg/champion/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-11-01T05:06:49.412Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "Riot Data Dragon · versions",
       "url": "https://ddragon.leagueoflegends.com/api/versions.json",
-      "fetchedAt": "2026-11-01T05:06:49.456Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "Riot Data Dragon · champions",
-      "url": "https://ddragon.leagueoflegends.com/cdn/16.21.1/data/en_US/champion.json",
-      "fetchedAt": "2026-11-01T05:06:49.467Z"
+      "url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion.json",
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     },
     {
       "label": "gol.gg · team statistics",
       "url": "https://gol.gg/teams/list/season-S16/split-ALL/tournament-Worlds%202026%20Main%20Event/",
-      "fetchedAt": "2026-11-01T05:06:49.806Z"
+      "fetchedAt": "2026-11-04T07:52:38.373Z"
     }
   ],
   "notes": [
+    "draft unavailable for game 83694",
     "semifinal halves assumed QF1/QF2 and QF3/QF4 winners",
-    "model: Draft data covers only game 1 of each Swiss Bo3 (gol.gg match rows link the opening game), so Fearless depth undercounts champions used in games 2-3.",
-    "model: Fable sealed no picks for rounds 4-5: the daily run did not publish between 2026-10-27 and 2026-10-31.",
-    "model: No confirmed roster or substitute news for the eight quarterfinalists was found; all adjustments are 0.",
-    "model: Semifinal halves are not confirmed by the sources reached; the title sim assumes QF1/QF2 and QF3/QF4 winners meet."
+    "model: QF1 score 1-3 was entered from press reports (Sports Kyunghyang, esports.gg, DPM.LOL) because gol.gg still lists no score; it was not read from gol.gg.",
+    "model: QF1 game winners, drafts and player stats are unavailable, so result.games is empty and the Fearless, meta and player tables exclude that series.",
+    "model: All adjustments are 0: no new roster, substitute or illness report for a quarterfinalist was found.",
+    "model: News comes from search snippets and one article page; the other articles were not read in full.",
+    "model: The payload has no MVP market, and no statline for Ruler, Kiin or RooKie.",
+    "model: Sports Kyunghyang confirms IG face the GEN/LYON winner; the QF3/QF4 semifinal half is inferred from that."
   ]
 }

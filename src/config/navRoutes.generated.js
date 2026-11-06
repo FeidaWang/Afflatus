@@ -64,6 +64,17 @@ export const NAV_ROUTES = Object.freeze([
     }
   },
   {
+    "id": "elections",
+    "path": "/elections.html",
+    "en": "Elections",
+    "zh": "选举",
+    "group": "analysis",
+    "sublabel": {
+      "en": "2026–28",
+      "zh": "2026–28"
+    }
+  },
+  {
     "id": "course",
     "path": "/course.html",
     "en": "Courses",
@@ -142,6 +153,14 @@ export const HOME_NAV_GROUPS = Object.freeze([
           "zh": "FY25/26 飞行记录"
         },
         "href": "/portfolio.html#fy2026Performance"
+      },
+      {
+        "routeId": "elections",
+        "label": {
+          "en": "Elections",
+          "zh": "选举"
+        },
+        "href": "/elections.html"
       }
     ]
   },

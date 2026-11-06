@@ -1,0 +1,1520 @@
+[
+ {
+  "state": "hub",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS Elections hub · 5 events Coverage — Source age — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · Senate Coverage 0/35 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · SENATE AZ Senate 1 × This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded. Status Not on ballot Source time — Retrieved — Decided by Provider call, then state certification — Not loaded: no verified s",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — AEDT",
+  "drawer": "RACE DETAILS · LEGISLATIVE ASSEMBLY Ashwood × Synthetic test data. Not a real result. Candidate Party Votes % SYNTHETIC, Alpha ELECTED Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victor",
+  "replay": "Replay election night 5 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1440,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — 66 stale AEDT",
+  "drawer": null,
+  "replay": "Replay election night 6 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 选举枢纽 · 5 场 覆盖 — 来源时间 — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 参议院 覆盖 0/35 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 参议院 AZ 参议院 1 × 此席位不在 2026 年改选之列。在任与党团数据未加载。 状态 本届不改选 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — AEDT",
+  "drawer": "比赛详情 · 立法议会 Ashwood × 合成测试数据，不是真实结果。 候选人 党派 票数 % SYNTHETIC, Alpha 当选 Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victorian Division 5,362 39.3% SYNTHETIC, Gamma Australian Greens - Vict",
+  "replay": "回放开票夜 5 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1440,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1440,
+  "innerWidth": 1440,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — 66 场已过时 AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 6 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS Elections hub · 5 events Coverage — Source age — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · Senate Coverage 0/35 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · SENATE AZ Senate 1 × This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded. Status Not on ballot Source time — Retrieved — Decided by Provider call, then state certification — Not loaded: no verified s",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — AEDT",
+  "drawer": "RACE DETAILS · LEGISLATIVE ASSEMBLY Ashwood × Synthetic test data. Not a real result. Candidate Party Votes % SYNTHETIC, Alpha ELECTED Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victor",
+  "replay": "Replay election night 5 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1920,
+  "height": 1080,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — 66 stale AEDT",
+  "drawer": null,
+  "replay": "Replay election night 6 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 选举枢纽 · 5 场 覆盖 — 来源时间 — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 参议院 覆盖 0/35 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 参议院 AZ 参议院 1 × 此席位不在 2026 年改选之列。在任与党团数据未加载。 状态 本届不改选 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — AEDT",
+  "drawer": "比赛详情 · 立法议会 Ashwood × 合成测试数据，不是真实结果。 候选人 党派 票数 % SYNTHETIC, Alpha 当选 Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victorian Division 5,362 39.3% SYNTHETIC, Gamma Australian Greens - Vict",
+  "replay": "回放开票夜 5 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1920,
+  "height": 1080,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1920,
+  "innerWidth": 1920,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — 66 场已过时 AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 6 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS Elections hub · 5 events Coverage — Source age — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-drawer",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · Senate Coverage 0/35 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · SENATE AZ Senate 1 × This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded. Status Not on ballot Source time — Retrieved — Decided by Provider call, then state certification — Not loaded: no verified s",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — AEDT",
+  "drawer": "RACE DETAILS · LEGISLATIVE ASSEMBLY Ashwood × Synthetic test data. Not a real result. Candidate Party Votes % SYNTHETIC, Alpha ELECTED Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victor",
+  "replay": "Replay election night 5 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1024,
+  "height": 768,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — 66 stale AEDT",
+  "drawer": null,
+  "replay": "Replay election night 6 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 选举枢纽 · 5 场 覆盖 — 来源时间 — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-drawer",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 参议院 覆盖 0/35 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 参议院 AZ 参议院 1 × 此席位不在 2026 年改选之列。在任与党团数据未加载。 状态 本届不改选 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — AEDT",
+  "drawer": "比赛详情 · 立法议会 Ashwood × 合成测试数据，不是真实结果。 候选人 党派 票数 % SYNTHETIC, Alpha 当选 Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victorian Division 5,362 39.3% SYNTHETIC, Gamma Australian Greens - Vict",
+  "replay": "回放开票夜 5 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 1024,
+  "height": 768,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 1024,
+  "innerWidth": 1024,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — 66 场已过时 AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 6 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS Elections hub · 5 events Coverage — Source age — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-drawer",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · Senate Coverage 0/35 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · SENATE AZ Senate 1 × This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded. Status Not on ballot Source time — Retrieved — Decided by Provider call, then state certification — Not loaded: no verified s",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [
+   "Source age",
+   "—",
+   "—",
+   "—",
+   "—",
+   "—"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — AEDT",
+  "drawer": "RACE DETAILS · LEGISLATIVE ASSEMBLY Ashwood × Synthetic test data. Not a real result. Candidate Party Votes % SYNTHETIC, Alpha ELECTED Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victor",
+  "replay": "Replay election night 5 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 768,
+  "height": 1024,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [
+   "Source age",
+   "— · stale",
+   "— · stale",
+   "— · stale",
+   "— · stale",
+   "Declared by VEC · Coalition · "
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — 66 stale AEDT",
+  "drawer": null,
+  "replay": "Replay election night 6 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 选举枢纽 · 5 场 覆盖 — 来源时间 — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-drawer",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 参议院 覆盖 0/35 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 参议院 AZ 参议院 1 × 此席位不在 2026 年改选之列。在任与党团数据未加载。 状态 本届不改选 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — AEDT",
+  "drawer": "比赛详情 · 立法议会 Ashwood × 合成测试数据，不是真实结果。 候选人 党派 票数 % SYNTHETIC, Alpha 当选 Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victorian Division 5,362 39.3% SYNTHETIC, Gamma Australian Greens - Vict",
+  "replay": "回放开票夜 5 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 768,
+  "height": 1024,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 768,
+  "innerWidth": 768,
+  "offscreen": [],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — 66 场已过时 AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 6 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS Elections hub · 5 events Coverage — Source age — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS VIC 2026 · Legislative Assembly Coverage 0/88 Source age — AEDT",
+  "drawer": null,
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · House of Representatives Coverage 0/435 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · HOUSE OF REPRESENTATIVES CA-12 × Candidate Party Votes % — — — — Candidates are not loaded. Every candidate will be listed, including independents and same-party contests. Status No result loaded % reporting (unit named by th",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "DESIGN PREVIEW — NO LIVE RESULTS US 2026 · Senate Coverage 0/35 Source age — AEDT · ET",
+  "drawer": "RACE DETAILS · SENATE AZ Senate 1 × This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded. Status Not on ballot Source time — Retrieved — Decided by Provider call, then state certification — Not loaded: no verified s",
+  "replay": "Replay election night Disabled · no timestamped snapshots yet",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — AEDT",
+  "drawer": "RACE DETAILS · LEGISLATIVE ASSEMBLY Ashwood × Synthetic test data. Not a real result. Candidate Party Votes % SYNTHETIC, Alpha ELECTED Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victor",
+  "replay": "Replay election night 5 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 390,
+  "height": 844,
+  "lang": "en",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "AU 2028date not set",
+   "US 20287 Nov 2028",
+   "7 Nov 2028"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "SYNTHETIC TEST DATA — NOT A REAL RESULT VIC 2026 · Legislative Assembly Coverage 66/88 Checked — 66 stale AEDT",
+  "drawer": null,
+  "replay": "Replay election night 6 recorded snapshots. Nothing between them is interpolated.",
+  "tags": 61
+ },
+ {
+  "state": "hub",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [],
+  "clipped": [],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 选举枢纽 · 5 场 覆盖 — 来源时间 — AEDT · ET",
+  "drawer": null,
+  "tags": 0
+ },
+ {
+  "state": "vic-waiting",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "replay-disabled",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 维州 2026 · 立法议会 覆盖 0/88 来源时间 — AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-house-selected",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 众议院 覆盖 0/435 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 众议院 CA-12 × 候选人 党派 票数 % — — — — 候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。 状态 未加载结果 已报告比例（单位以来源为准） — 差距 — 摆动 未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "us-senate-held",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "设计预览 — 无实时结果 美国 2026 · 参议院 覆盖 0/35 来源时间 — AEDT · ET",
+  "drawer": "比赛详情 · 参议院 AZ 参议院 1 × 此席位不在 2026 年改选之列。在任与党团数据未加载。 状态 本届不改选 来源时间 — 获取时间 — 判定方 提供方判定，之后由各州认证 — 未加载：尚无经核验的来源 结果如何认证（EAC） ↗",
+  "replay": "回放开票夜 已禁用 · 尚无带时间戳的快照",
+  "tags": 0
+ },
+ {
+  "state": "vic-selected-SYNTH",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — AEDT",
+  "drawer": "比赛详情 · 立法议会 Ashwood × 合成测试数据，不是真实结果。 候选人 党派 票数 % SYNTHETIC, Alpha 当选 Australian Labor Party - Victorian Branch 5,513 40.4% SYNTHETIC, Beta Liberal Party of Australia - Victorian Division 5,362 39.3% SYNTHETIC, Gamma Australian Greens - Vict",
+  "replay": "回放开票夜 5 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ },
+ {
+  "state": "source-error-SYNTH",
+  "width": 390,
+  "height": 844,
+  "lang": "zh",
+  "errors": [],
+  "pageWidth": 390,
+  "innerWidth": 390,
+  "offscreen": [
+   "澳洲 2028日期未定",
+   "日期未定",
+   "美国 20282028 年 11 月 7 日",
+   "2028 年 11 月 7 日"
+  ],
+  "clipped": [
+   "el-note el-sr",
+   "el-sr",
+   "el-sr",
+   "el-sr"
+  ],
+  "stageCodes": [],
+  "strip": "合成测试数据 — 不是真实结果 维州 2026 · 立法议会 覆盖 66/88 检查 — 66 场已过时 AEDT",
+  "drawer": null,
+  "replay": "回放开票夜 6 个已记录的快照，之间不做任何插值。",
+  "tags": 61
+ }
+]
