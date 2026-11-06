@@ -80,5 +80,43 @@
     "totalBytes": 220063
    }
   ]
+ },
+ "final": {
+  "note": "Third pass on the final M8 build, after the wrap and alignment fixes. Three runs; these medians are the recorded row.",
+  "runs": [
+   {
+    "file": "lhr-1793948432842.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 2102.3959999999997,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1802.396,
+    "scriptBytes": 41855,
+    "totalBytes": 220192
+   },
+   {
+    "file": "lhr-1793948442818.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 2101.3395,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1801.3395,
+    "scriptBytes": 41855,
+    "totalBytes": 220192
+   },
+   {
+    "file": "lhr-1793948452592.json",
+    "runtimeError": null,
+    "performance": 0.98,
+    "lcpMs": 1951.3273,
+    "tbtMs": 0,
+    "cls": 0.04109862355435336,
+    "speedIndexMs": 1651.3273,
+    "scriptBytes": 41855,
+    "totalBytes": 220192
+   }
+  ]
  }
 }
