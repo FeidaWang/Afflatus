@@ -81,7 +81,7 @@ test.describe('Mobile primary navigation', () => {
       const nav = page.locator('#af-primary-nav');
       await expect(nav).toBeVisible();
       const items = nav.locator('a:not(.af-menu-latest-card)');
-      await expect(items).toHaveCount(9); // Analysis ×4, Courses, Serials, Labs ×2, About
+      await expect(items).toHaveCount(10); // Analysis ×5, Courses, Serials, Labs ×2, About
 
       // Groups open one at a time, so measure each with its own links showing.
       for (const group of ['af-analysis', 'af-labs']) {

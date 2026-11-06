@@ -71,7 +71,7 @@ test.describe('compact menu', () => {
   test('opens one group at a time', async ({ page }) => {
     await openMenu(page, '/en/');
     await page.locator('[aria-controls="af-analysis"]').click();
-    await expect(page.locator('#af-analysis a')).toHaveCount(4);
+    await expect(page.locator('#af-analysis a')).toHaveCount(5);
     await expect(page.locator('#af-analysis')).toBeVisible();
     await page.locator('[aria-controls="af-labs"]').click();
     await expect(page.locator('#af-labs')).toBeVisible();

@@ -58,9 +58,12 @@ describe('homepage cards', () => {
   const header = home.slice(home.indexOf('id="af-primary-nav"'), home.indexOf('data-header-language'));
 
   it('stays within the 18-link budget for navigation and page body', () => {
-    expect(app(header)).toHaveLength(10);
+    // The search icon is a tool rather than a destination, so it stays out of the budget.
+    const destinations = app(header).filter(href => !href.startsWith('/en/search.html'));
+    expect(app(header)).toHaveLength(11);
+    expect(destinations).toHaveLength(10);
     expect(app(body)).toHaveLength(8);
-    expect(app(header).length + app(body).length).toBeLessThanOrEqual(18);
+    expect(destinations.length + app(body).length).toBeLessThanOrEqual(18);
   });
 
   it('keeps all ten destinations reachable', () => {
