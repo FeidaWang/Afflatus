@@ -89,6 +89,18 @@
       "totalBytes": 154177
     },
     {
+      "id": "elections",
+      "path": "/elections.html",
+      "performanceScore": 0.98,
+      "lcpMs": 2101,
+      "tbtMs": 0,
+      "cls": 0.041,
+      "clsBudgetBase": 0.1,
+      "speedIndexMs": 1801,
+      "scriptBytes": 41855,
+      "totalBytes": 220192
+    },
+    {
       "id": "horoscope",
       "path": "/horoscope.html",
       "performanceScore": 0.6,
@@ -121,7 +133,7 @@
       "cls": 0.843,
       "clsBudgetBase": 0.843,
       "speedIndexMs": 4681,
-      "scriptBytes": 23611,
+      "scriptBytes": 24819,
       "totalBytes": 3429940
     },
     {
