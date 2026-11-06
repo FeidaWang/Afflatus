@@ -347,5 +347,6 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 
 @media (prefers-reduced-motion:reduce){
   .el-drawer{animation:none}
-  .elections-body *{transition:none}
+  /* Some transitions are set with a more specific selector than the catch-all. */
+  .elections-body *,.elections-body .el-seg button,.elections-body .el-tile,.el-explore>.el-panel{transition:none}
 }

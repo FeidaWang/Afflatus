@@ -605,6 +605,20 @@ test.describe('Elections map', () => {
     }
   });
 
+  test('table columns carry something, the AU 2028 clock is not pinned to summer, and reduced motion stops fades', async ({ page }) => {
+    await page.goto(console_('event=vic-2026'));
+    await expect(page.locator('.el-table thead')).toContainText('Region');
+    await expect(page.locator('[data-row="albert-park"] td').first()).not.toHaveText('—');
+    await expect(page.locator('[data-row="albert-park"] td[title^="Not computed"]')).toHaveCount(1);
+    await page.goto(console_('event=nsw-2027'));
+    await expect(page.locator('.el-table thead')).not.toContainText('Region');
+    await expect(page.locator('.el-table thead')).not.toContainText('State');
+    await page.goto(console_('event=au-2028'));
+    await expect(page.locator('.el-strip')).toContainText('AEST/AEDT');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect.poll(() => page.locator('[data-office]').first().evaluate((button) => getComputedStyle(button).transitionDuration)).toBe('0s');
+  });
+
   test('NSW shows the date set by its Electoral Commission', async ({ page }) => {
     await page.goto(console_('event=nsw-2027'));
     await expect(page.locator('body')).toContainText('13 Mar 2027');
@@ -820,6 +834,10 @@ test.describe('Elections feed', () => {
     await expect(drawer).toContainText('VEC · first seen in the feed');
     await expect(drawer).toContainText('the feed gives no declaration date');
     await expect(drawer.locator('.is-winner')).toContainText('SYNTHETIC, Alpha');
+    // The decision links its own evidence, not only the commission's home page.
+    await expect(drawer.getByRole('link', { name: 'Evidence ↗' })).toHaveAttribute('href', sourceById('vec-sample').url);
+    // The party is told by a letter as well as its colour.
+    await expect(page.locator('.el-chamber-svg .el-seat-tags text.is-final')).toHaveText(['L']);
 
     await toStage(page, control, 4);
     await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);

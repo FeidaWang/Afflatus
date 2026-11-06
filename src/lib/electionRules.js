@@ -196,7 +196,8 @@ export const ELECTION_EVENTS = Object.freeze([
     pollsCloseUtc: null,
     dateLabel: { en: 'Date not set · half-Senate window ends May 2028', zh: '日期未定 · 半数参议院选举窗口至 2028 年 5 月' },
     pollsClose: { en: 'Polls close 18:00 local, state by state', zh: '各州当地 18:00 关门' },
-    timeLabel: 'AEDT',
+    // No date is set and the window runs into May, after daylight saving ends.
+    timeLabel: 'AEST/AEDT',
     authority: 'AEC',
     decision: { en: 'AEC declaration; media projections are labelled', zh: 'AEC 正式宣布；媒体预测单独标注' },
     feed: { en: 'AEC Tally Room and Media Feed: not connected', zh: 'AEC Tally Room 与 Media Feed：尚未接入' },

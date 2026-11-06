@@ -561,6 +561,9 @@ function renderRaces() {
   count.textContent = `${rows.length} ${T('of', '/')} ${seats.length} · ${T('stable order', '顺序稳定')}`;
 
   const us = event.family === 'us';
+  // A region column only where the catalogue has regions; a column that can only ever show a dash says nothing.
+  const grouped = seats.some((seat) => seat.group);
+  const swing = `<td class="el-opt el-num" title="${esc(L(swingNote(event, officeById(event, state.office))))}">${DASH}</td>`;
   const heading = (key, label, optional = false) => {
     const active = table.key === key;
     const sort = active ? (table.direction === 'asc' ? 'ascending' : 'descending') : 'none';
@@ -569,7 +572,7 @@ function renderRaces() {
   const plain = (label, optional = true) => `<th scope="col" class="${optional ? 'el-opt' : ''} el-num">${label}</th>`;
   const head = us
     ? [heading('seat', T('Seat', '席位')), heading('group', T('State', '州'), true), plain(T('Leader', '领先者')), plain(T('Margin', '差距')), plain(T('% reporting', '已报告'), false), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))]
-    : [heading('seat', T('Electorate', '选区')), plain(T('State', '州')), plain(shown ? T('Places', '投票点') : T('% counted', '已计'), false), plain(T('Primary leader', '第一优先票领先')), plain(T('TCP', '两候选人')), plain(T('Swing', '摆动')), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))];
+    : [heading('seat', T('Electorate', '选区')), ...(grouped ? [heading('group', T('Region', '大区'), true)] : []), plain(shown ? T('Places', '投票点') : T('% counted', '已计'), false), plain(T('Primary leader', '第一优先票领先')), plain(T('TCP', '两候选人')), plain(T('Swing', '摆动')), heading('status', T('Status', '状态')), plain(T('Source age', '来源时间'))];
   const races = currentRaces();
   const dash = (optional = true, race = null) => `<td class="${optional ? 'el-opt' : ''} el-num" title="${race ? NOT_PUBLISHED() : NOT_LOADED()}">${DASH}</td>`;
   const value = (text, optional, race) => (text === null ? dash(optional, race) : `<td class="${optional ? 'el-opt' : ''} el-num">${text}</td>`);
@@ -581,7 +584,7 @@ function renderRaces() {
     const age = race ? sourceAgeCell(race) : dash();
     const cells = us
       ? [seatCell, `<td class="el-opt">${seat.group}</td>`, value(race ? leaderName(race) : null, true, race), value(race ? marginText(race) : null, true, race), value(race ? progressText(race) : null, false, race), status, age]
-      : [seatCell, dash(true, race), value(race ? progressText(race, { short: true }) : null, false, race), value(race ? leaderName(race, primaryLeader) : null, true, race), value(race ? tcpText(race) : null, true, race), dash(true, race), status, age];
+      : [seatCell, ...(grouped ? [`<td class="el-opt">${seat.group}</td>`] : []), value(race ? progressText(race, { short: true }) : null, false, race), value(race ? leaderName(race, primaryLeader) : null, true, race), value(race ? tcpText(race) : null, true, race), swing, status, age];
     return `<tr data-row="${seat.seatId}">${cells.join('')}</tr>`;
   }).join('');
 
@@ -997,7 +1000,8 @@ function decisionText(event, race) {
     const when = decision.decidedAt
       ? formatTime(decision.decidedAt)
       : T(`first seen in the feed ${formatTime(decision.firstObservedAt)}; the feed gives no declaration date`, `${formatTime(decision.firstObservedAt)} 首次在数据中出现；数据未提供宣布日期`);
-    return `${esc(decision.authority)} · ${when}`;
+    // The validator only admits an http(s) address here, so the link cannot run script.
+    return `${esc(decision.authority)} · ${when} · <a href="${esc(decision.evidenceUrl)}" target="_blank" rel="noopener noreferrer">${T('Evidence', '依据')} ↗</a>`;
   }
   return T('No decision yet. A lead is not a decision.', '尚无判定。领先不等于判定。');
 }
