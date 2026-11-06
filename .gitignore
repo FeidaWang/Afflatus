@@ -33,3 +33,8 @@ services/vibe-model/**/__pycache__/
 .env
 .env.*
 !.env.example
+
+# Elections screenshots and the design review page stay on this machine (owner decision, 2026-11-06)
+docs/elections/evidence/**/*.png
+docs/elections/evidence/**/*.jpg
+docs/elections-design/

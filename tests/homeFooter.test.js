@@ -63,7 +63,7 @@ describe('homepage cards', () => {
     expect(app(header).length + app(body).length).toBeLessThanOrEqual(18);
   });
 
-  it('keeps all nine destinations reachable', () => {
+  it('keeps all ten destinations reachable', () => {
     const reachable = new Set([...app(header), ...app(body)].map(href => normalizeRoutePath(href)));
     for (const route of NAV_ROUTES.filter(route => route.path !== '/')) expect(reachable).toContain(route.path);
   });

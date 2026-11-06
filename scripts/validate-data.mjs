@@ -11,6 +11,7 @@ import { validateSnapshot } from '../src/sectors/frontier/frontier-core.mjs';
 import { validateObservatory } from '../src/sectors/observatory/validate.js';
 import { validateIndustry } from '../src/sectors/industry/industry-core.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
+import { validateElectionMap, validateElectionMapManifest } from '../src/lib/validateElectionMap.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
@@ -68,6 +69,8 @@ const CHECKS = [
     ));
     return { ok: errors.length === 0, errors };
   } },
+  { path: 'public/assets/elections/maps/2026-11-04/manifest.json', validate: validateElectionMapManifest },
+  ...['us-house', 'us-senate', 'vic-assembly', 'vic-council', 'nsw-assembly'].map((map) => ({ path: `public/assets/elections/maps/2026-11-04/${map}.json`, validate: validateElectionMap })),
   { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
   { path: 'public/assets/globe/earth-land.json', validate: validateGlobeData },
   { path: 'public/sectors-data.json', validate: validateSectorsData },

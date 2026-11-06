@@ -114,14 +114,14 @@ describe('destination labels', () => {
     ]);
     const paths = (id) => elements(elements(nav).find((node) => attr(node, 'id') === id))
       .filter((node) => node.tagName === 'a').map((node) => attr(node, 'data-header-path'));
-    expect(paths('af-analysis')).toEqual(['/portfolio.html', '/arena.html', '/signal.html', '/sectors.html']);
+    expect(paths('af-analysis')).toEqual(['/portfolio.html', '/arena.html', '/signal.html', '/sectors.html', '/elections.html']);
     expect(paths('af-labs')).toEqual(['/horoscope.html', '/worlds.html']);
   });
 
   it('gives every dropdown row a bilingual sublabel and every group a compact title', () => {
     const nodes = elements(parse(headerBlockFor()));
     const rows = nodes.filter((node) => classesOf(node).includes('af-header-dropdown')).flatMap(elements).filter((node) => node.tagName === 'a');
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(7);
     for (const row of rows) {
       const sublabel = byClass(row, 'af-nav-sublabel');
       expect(attr(sublabel, 'data-en')).toBeTruthy();

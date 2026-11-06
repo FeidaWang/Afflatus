@@ -17,6 +17,7 @@ const BASELINES = {
   'public/styles/horoscope.css': 1,
   'public/styles/course-hope.css': 1,
   'public/styles/worlds.css': 0,
+  'public/styles/elections.css': 0,
   'index.html': 2,
 };
 
