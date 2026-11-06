@@ -19,11 +19,11 @@ test.describe('homepage cards and accordion footer', () => {
     await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
     const groups = page.locator('.pa-footer-group');
     await expect(groups).toHaveCount(5);
-    await expect(page.locator('.pa-footer-pages a')).toHaveCount(9);
+    await expect(page.locator('.pa-footer-pages a')).toHaveCount(10);
     const analysis = groups.first();
     await expect(analysis.locator('a').first()).toBeHidden();
     await analysis.locator('summary').click();
-    await expect(analysis.locator('a')).toHaveCount(4);
+    await expect(analysis.locator('a')).toHaveCount(5);
     await expect(analysis.locator('a').first()).toBeVisible();
     await expect(analysis.locator('a').first()).toHaveAttribute('href', '/zh/portfolio.html');
   });

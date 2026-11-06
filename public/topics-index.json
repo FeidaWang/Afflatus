@@ -1685,10 +1685,37 @@
         "zh": "/assets/topics/arena.webp"
       },
       "date": {
-        "iso": "2026-11-02",
+        "iso": "2026-11-07",
         "label": {
-          "en": "2 Nov 2026",
-          "zh": "2026 年 11 月 2 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
+        }
+      }
+    },
+    {
+      "id": "elections",
+      "group": "analysis",
+      "topic": [
+        "about"
+      ],
+      "title": {
+        "en": "Elections",
+        "zh": "选举"
+      },
+      "summary": {
+        "en": "A calendar of US and Australian elections from 2026 to 2028, with seat charts and race tables for each event. Preview: no results are loaded yet.",
+        "zh": "2026 至 2028 年美国与澳大利亚选举日历，每场配席位图和比赛表。预览：尚未加载任何结果。"
+      },
+      "url": "/elections.html",
+      "cover": {
+        "en": "/assets/topics/elections.webp",
+        "zh": "/assets/topics/elections.webp"
+      },
+      "date": {
+        "iso": "2026-11-07",
+        "label": {
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -1712,10 +1739,10 @@
         "zh": "/assets/topics/portfolio.webp"
       },
       "date": {
-        "iso": "2026-11-02",
+        "iso": "2026-11-07",
         "label": {
-          "en": "2 Nov 2026",
-          "zh": "2026 年 11 月 2 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -1740,10 +1767,10 @@
         "zh": "/assets/topics/learn-courses.webp"
       },
       "date": {
-        "iso": "2026-11-02",
+        "iso": "2026-11-07",
         "label": {
-          "en": "2 Nov 2026",
-          "zh": "2026 年 11 月 2 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -2497,10 +2524,10 @@
         "zh": "/assets/topics/serial.webp"
       },
       "date": {
-        "iso": "2026-11-01",
+        "iso": "2026-11-07",
         "label": {
-          "en": "1 Nov 2026",
-          "zh": "2026 年 11 月 1 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -2605,10 +2632,10 @@
         "zh": "/assets/topics/learn-astrology.webp"
       },
       "date": {
-        "iso": "2026-11-01",
+        "iso": "2026-11-07",
         "label": {
-          "en": "1 Nov 2026",
-          "zh": "2026 年 11 月 1 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -2632,10 +2659,10 @@
         "zh": "/assets/topics/learn-worlds.webp"
       },
       "date": {
-        "iso": "2026-11-01",
+        "iso": "2026-11-07",
         "label": {
-          "en": "1 Nov 2026",
-          "zh": "2026 年 11 月 1 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -2659,10 +2686,10 @@
         "zh": "/assets/topics/learn-about.webp"
       },
       "date": {
-        "iso": "2026-11-02",
+        "iso": "2026-11-07",
         "label": {
-          "en": "2 Nov 2026",
-          "zh": "2026 年 11 月 2 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     },
@@ -2686,10 +2713,10 @@
         "zh": "/assets/topics/home.webp"
       },
       "date": {
-        "iso": "2026-11-02",
+        "iso": "2026-11-07",
         "label": {
-          "en": "2 Nov 2026",
-          "zh": "2026 年 11 月 2 日"
+          "en": "7 Nov 2026",
+          "zh": "2026 年 11 月 7 日"
         }
       }
     }

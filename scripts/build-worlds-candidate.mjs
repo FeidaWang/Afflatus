@@ -159,7 +159,17 @@ function settle(group) {
     wins.away += awayScore;
   }
   const target = Math.ceil(group.bo / 2);
-  if (wins.home < target && wins.away < target) return null;
+  if (wins.home < target && wins.away < target) {
+    // gol.gg can lag a finished series; a published result must not revert to open.
+    const published = baseline?.series?.find((s) => s.id === group.baselineId)?.result;
+    if (!published) return null;
+    notes.push(`${group.baselineId}: result kept from the published data; gol.gg lists no final score`);
+    // Rate it as if gol.gg had scored the row; `played` stays false so no draft is fetched.
+    const row = group.rows[0];
+    const sameOrder = row.home === group.home;
+    Object.assign(row, { kept: true, scoreHome: sameOrder ? published.home : published.away, scoreAway: sameOrder ? published.away : published.home });
+    return { ...published };
+  }
   return { home: wins.home, away: wins.away, games: [] };
 }
 
@@ -261,7 +271,7 @@ for (const group of groups) {
     }
     group.games.push(game);
   }
-  if (group.result) group.result.games = group.games;
+  if (group.result && group.games.length) group.result.games = group.games;
 }
 
 // Swiss table.
@@ -277,7 +287,7 @@ const swiss = Object.entries(swissRecord).map(([team, { w, l }]) => ({
 })).sort((a, b) => b.w - a.w || a.l - b.l || a.team.localeCompare(b.team));
 
 // Elo: Play-In first, then Main Event, oldest game first.
-const chronological = (rows) => [...rows].reverse().filter((row) => row.played && row.home && row.away);
+const chronological = (rows) => [...rows].reverse().filter((row) => (row.played || row.kept) && row.home && row.away);
 const eloGames = [...chronological(playInRows), ...chronological(mainRows)].map((row) => ({
   winner: row.scoreHome > row.scoreAway ? row.home : row.away,
   loser: row.scoreHome > row.scoreAway ? row.away : row.home,

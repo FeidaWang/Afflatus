@@ -81,6 +81,7 @@ export const ROUTE_TOPICS = Object.freeze({
   sectors: { group: 'analysis', topic: ['ai-observatory', 'about'], cover: '/assets/topics/sectors.webp' },
   signal: { group: 'analysis', topic: ['fed-watch', 'investing', 'about'], cover: '/assets/topics/signal.webp' },
   arena: { group: 'analysis', topic: ['investing'], cover: '/assets/topics/arena.webp' },
+  elections: { group: 'analysis', topic: ['about'], cover: '/assets/topics/elections.webp' },
   portfolio: { group: 'analysis', topic: ['investing'], cover: '/assets/topics/portfolio.webp' },
   course: { group: 'courses', topic: ['fde-course', 'about'], cover: '/assets/topics/learn-courses.webp' },
   serial: { group: 'serials', topic: ['serials', 'about'], cover: '/assets/topics/serial.webp' },

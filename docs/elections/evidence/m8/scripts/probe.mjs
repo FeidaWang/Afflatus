@@ -1,0 +1,24 @@
+// DOM readings behind the M8 report. Synthetic stores on 127.0.0.1 only. node probe.mjs <repo> <out file>
+import { writeFileSync } from 'node:fs';
+const [root, out] = process.argv.slice(2);
+const { chromium } = await import(`${root}/node_modules/playwright/index.mjs`);
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 1080 }, timezoneId: 'Australia/Melbourne' });
+const text = (selector) => page.locator(selector).innerText().then((value) => value.replace(/\s+/g, ' ').trim());
+const result = {};
+await page.goto('http://127.0.0.1:4181/en/elections.html?event=vic-2026&office=assembly', { waitUntil: 'networkidle' });
+result.sourceErrorPanel = await text('#el-sources dl');
+result.sourceErrorFeedNote = await page.locator('#el-feed-note').count() ? await text('#el-feed-note') : null;
+await page.goto('http://127.0.0.1:4180/en/elections.html?event=vic-2026&office=assembly&race=ashwood', { waitUntil: 'networkidle' });
+result.evidenceLink = await page.locator('#el-drawer a', { hasText: 'Evidence' }).getAttribute('href');
+result.decidedBy = await text('#el-drawer dl');
+await page.goto('http://127.0.0.1:4180/en/elections.html?event=us-2026&office=house&race=LA-01', { waitUntil: 'networkidle' });
+result.runoffRow = await text('[data-row="LA-01"]');
+result.runoffDrawerNote = await page.locator('#el-drawer .el-note', { hasText: 'Held on' }).innerText();
+await page.goto('http://127.0.0.1:4290/en/elections.html?event=nsw-2027&office=council', { waitUntil: 'networkidle' });
+result.nswCouncil = { strip: await text('.el-strip'), off: await page.locator('.el-chamber-svg .el-seat.is-off').count(), keys: await text('.el-tally-keys') };
+await page.goto('http://127.0.0.1:4290/en/elections.html?event=au-2028&office=senate', { waitUntil: 'networkidle' });
+result.auSenate = { strip: await text('.el-strip'), off: await page.locator('.el-chamber-svg .el-seat.is-off').count(), keys: await text('.el-tally-keys') };
+await browser.close();
+writeFileSync(out, `${JSON.stringify(result, null, 1)}\n`);
+console.log(JSON.stringify(result, null, 1));
