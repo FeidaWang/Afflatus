@@ -51,6 +51,14 @@ describe('seat catalogues', () => {
     expect(seatCatalogue('au-2028', 'house')[0].label.en).toBe('Seat 001');
   });
 
+  it.each([['nsw-2027', 'council', 42, 21], ['au-2028', 'senate', 76, 40]])('draws all %s %s seats but puts only the ones up on the ballot', (eventId, officeId, total, up) => {
+    const catalogue = seatCatalogue(eventId, officeId);
+    expect(catalogue).toHaveLength(total);
+    expect(catalogue.filter((seat) => seat.onBallot)).toHaveLength(up);
+    expect(catalogue.filter((seat) => !seat.onBallot).every((seat) => seat.seatId.startsWith('continuing-'))).toBe(true);
+    expect(new Set(catalogue.map((seat) => seat.seatId)).size).toBe(total);
+  });
+
   it.each([['vic-2026', 'assembly'], ['nsw-2027', 'assembly']])('names %s %s from the official boundary file', (eventId, officeId) => {
     const catalogue = seatCatalogue(eventId, officeId);
     expect(catalogue.every((seat) => !seat.placeholder && seat.onBallot)).toBe(true);

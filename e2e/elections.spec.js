@@ -596,9 +596,12 @@ test.describe('Elections map', () => {
   });
 
   test('coverage counts the contests that are up, not the whole chamber', async ({ page }) => {
-    for (const [query, text] of [['event=nsw-2027&office=council', 'Coverage 0/21'], ['event=au-2028&office=senate', 'Coverage 0/40']]) {
+    for (const [query, text, continuing] of [['event=nsw-2027&office=council', 'Coverage 0/21', 21], ['event=au-2028&office=senate', 'Coverage 0/40', 36]]) {
       await page.goto(console_(query));
       await expect(page.locator('.el-strip')).toContainText(text);
+      // The chart agrees with the strip: the members who are not up are drawn as not on this ballot.
+      await expect(page.locator('.el-chamber-svg .el-seat.is-off')).toHaveCount(continuing);
+      await expect(page.locator('.el-tally-keys')).toContainText(`Not on ballot${continuing}`);
     }
   });
 

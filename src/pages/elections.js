@@ -109,8 +109,6 @@ function seatStatus(seat) {
 }
 // Coverage is measured in contests: a seat that is not on the ballot can never report.
 const contestCount = (seats) => seats.filter((seat) => seat.onBallot).length;
-// Which places are up is not listed for NSW Council and the AU Senate, so the office gives the number.
-const contestTotal = (seats, office) => office?.up ?? contestCount(seats);
 const eventHref = (eventId) => serializeState(withEvent(eventId)) || window.location.pathname;
 const hubHref = () => window.location.pathname;
 
@@ -675,7 +673,7 @@ function renderSources(event, seats) {
     <h2 id="el-sources-title" class="el-sr">${T('Sources & status', '来源与状态')}</h2>
     <dl class="el-kv">
       <dt>${T('Mode', '模式')}</dt><dd>${L(modeLabel())}</dd>
-      <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestTotal(seats, officeById(event, state.office))}` : DASH}</dd>
+      <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestCount(seats)}` : DASH}</dd>
       <dt>${T('Feed', '数据源')}</dt><dd>${feedSource ? esc(feedSource.name) : L(event.feed)}</dd>
       ${source ? `<dt>${T('Feed status', '数据源状态')}</dt><dd>${feedStatusText(source)}</dd>` : ''}
       <dt>${T('Geography', '地理')}</dt><dd>${geography ? L(geography.short) : T('Schematic only · no verified boundaries', '仅示意 · 无经核验的边界')}</dd>
@@ -810,7 +808,7 @@ function renderConsoleStrip(event, office, seats) {
   const stale = races.filter((race) => raceFreshness(race, shown.pointer) === 'stale').length;
   const source = shown?.pointer?.sources?.[0];
   renderStrip(`${L(event.short)} · ${L(office.fullName)}`, [
-    seats.length ? `${T('Coverage', '覆盖')} ${coveredSeats(seats, currentRaces())}/${contestTotal(seats, office)}` : T('Coverage —', '覆盖 —'),
+    seats.length ? `${T('Coverage', '覆盖')} ${coveredSeats(seats, currentRaces())}/${contestCount(seats)}` : T('Coverage —', '覆盖 —'),
     ...(shown ? [] : [T('Source age —', '来源时间 —')]),
     ...(source && !isReplay() ? [`${T('Checked', '检查')} ${formatAge(ageSeconds(source.lastCheckedAt, Date.now()))}`] : []),
     ...(stale ? [`<em>${T(`${stale} stale`, `${stale} 场已过时`)}</em>`] : []),
@@ -1032,6 +1030,8 @@ function renderRaceDrawer(event, office, seat, race) {
     <a class="el-btn" href="${event.officialUrl}" target="_blank" rel="noopener noreferrer">${L(event.officialLabel)} ↗</a>`;
 }
 
+const electionYear = (event) => (event.pollDate || event.sortDate).slice(0, 4);
+
 function renderDrawer(event, office, seat) {
   const race = currentRaces().get(seat.seatId);
   if (race) return renderRaceDrawer(event, office, seat, race);
@@ -1054,7 +1054,7 @@ function renderDrawer(event, office, seat) {
         <tbody><tr><td>${DASH}</td><td>${DASH}</td><td class="el-num">${DASH}</td><td class="el-num">${DASH}</td></tr></tbody>
       </table>
       <p class="el-note">${T('Candidates are not loaded. Every candidate will be listed, including independents and same-party contests.', '候选人未加载。接入后会列出全部候选人，包括独立候选人和同党对决。')}</p>`
-    : `<p class="el-note">${T('This seat is not on the 2026 ballot. Held-seat and caucus data are not loaded.', '此席位不在 2026 年改选之列。在任与党团数据未加载。')}</p>`}
+    : `<p class="el-note">${T(`This seat is not on the ${electionYear(event)} ballot. Held-seat and caucus data are not loaded.`, `此席位不在 ${electionYear(event)} 年改选之列。在任与党团数据未加载。`)}</p>`}
     <dl class="el-kv">
       <dt>${T('Status', '状态')}</dt><dd>${seatStatus(seat)}</dd>
       ${onBallot ? `<dt>${progress}</dt><dd>${DASH}</dd>

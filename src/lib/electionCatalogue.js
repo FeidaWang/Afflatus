@@ -6,6 +6,7 @@
    names written from memory would be fabrication. No results live here.
    ============================================================ */
 import { NSW_DISTRICTS, VIC_DISTRICTS, VIC_REGIONS } from '../config/electionElectorates.generated.js';
+import { eventById, officeById } from './electionRules.js';
 
 
 const US_HOUSE_APPORTIONMENT = Object.freeze({
@@ -59,11 +60,16 @@ function usSenate2026() {
   });
 }
 
-function placeholders(total) {
-  const width = String(total).length;
+// When only part of a chamber is up, the rest are continuing members: drawn, but not on this ballot.
+function placeholders(eventId, officeId) {
+  const { seats: total, up = total } = officeById(eventById(eventId), officeId);
+  const width = Math.max(String(total).length, 2);
   return Array.from({ length: total }, (_, index) => {
-    const number = pad(index + 1, Math.max(width, 2));
-    return { seatId: `seat-${number}`, label: { en: `Seat ${number}`, zh: `席位 ${number}` }, group: null, onBallot: true, placeholder: true };
+    const onBallot = index < up;
+    const number = pad(onBallot ? index + 1 : index - up + 1, width);
+    return onBallot
+      ? { seatId: `seat-${number}`, label: { en: `Seat ${number}`, zh: `席位 ${number}` }, group: null, onBallot, placeholder: true }
+      : { seatId: `continuing-${number}`, label: { en: `Continuing ${number}`, zh: `留任 ${number}` }, group: null, onBallot, placeholder: true };
   });
 }
 
@@ -94,9 +100,9 @@ const BUILDERS = Object.freeze({
   'vic-2026/assembly': vicAssembly,
   'vic-2026/council': vicCouncil,
   'nsw-2027/assembly': nswAssembly,
-  'nsw-2027/council': () => placeholders(42),
-  'au-2028/house': () => placeholders(150),
-  'au-2028/senate': () => placeholders(76),
+  'nsw-2027/council': () => placeholders('nsw-2027', 'council'),
+  'au-2028/house': () => placeholders('au-2028', 'house'),
+  'au-2028/senate': () => placeholders('au-2028', 'senate'),
 });
 
 const cache = new Map();
