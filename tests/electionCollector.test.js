@@ -283,6 +283,23 @@ describe('collector', () => {
     expect(latest().changes).toEqual([expect.objectContaining({ type: 'correction', delta: -8 })]);
   });
 
+  it('holds back only the contest that breaks a rule: it keeps its old values, marked stale, and the rest publish', async () => {
+    dropLower('20261128_200500', [albert(), contestXml({ name: 'Bass', id: 101, votes: { a: 20, b: 10 } })]);
+    await run(NOW);
+    const before = race('albert-park');
+    const broken = contestXml({ name: 'Albert Park', votes: { a: 11, b: 5 } }).replace('<NumberOfPositions>1<', '<NumberOfPositions>2<');
+    dropLower('20261128_201000', [broken, contestXml({ name: 'Bass', id: 101, votes: { a: 30, b: 12 } })], { created: '2026-11-28T20:10:00' });
+    const result = await run(NOW + 300000);
+    expect(result).toMatchObject({ outcome: 'partial', kinds: ['schema_drift'], rejected: ['vic-2026/assembly/albert-park'] });
+    expect(race('albert-park')).toEqual({ ...before, coverage: 'stale', provenance: { ...before.provenance, snapshotId: latest().snapshotId } });
+    expect(race('bass').candidates[0].votes).toBe(30);
+    expect(pointer().sources[0].status).toBe('ok');
+    expect(snapshotErrors(latest())).toEqual([]);
+    const quarantined = readdirSync(join(store, 'vic-2026', 'private', 'quarantine'));
+    expect(quarantined).toHaveLength(1);
+    expect(JSON.parse(readFileSync(join(store, 'vic-2026', 'private', 'quarantine', quarantined[0]), 'utf8')).races).toEqual(['vic-2026/assembly/albert-park']);
+  });
+
   it('treats a file that breaks a rule as a failure: quarantined, old data kept, and the pointer says so', async () => {
     dropLower('20261128_200500', [albert()]);
     await run(NOW);

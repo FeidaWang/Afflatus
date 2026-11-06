@@ -30,7 +30,7 @@ npm run build && node scripts/elections/serve-local.mjs --store /tmp/el-store
 | 5 | 选定运行环境和存储（见下），需要站主授权 | 站主 | 11-25 前 |
 | 6 | 11-25 试运行：在**私有存储**里跑通一次，核对时间和字段。条款 5 禁止就试运行数据对外作任何表述，不得公开 | 开发 | 11-25 |
 | 7 | 只有第 2 条得到肯定答复后，才把 `publicRedistributionAllowed` 和 `enabled` 改为 true 并设置 `ELECTION_FEED_BASE` | 站主决定 | 11-28 前 |
-| 8 | 接任何美国来源前：按比赛校验（一场不合规不能拖垮全部）、决选和延后大选的日期、参议院留任席位来源。见 `M7.md` H4、M14–M16 | 开发 | 接美国来源前 |
+| 8 | 接任何美国来源前：参议院留任席位和党团来源（M16），美国列标题（M15 ③），以及用真实美国数据核对决选和延后比赛的 `contestKind`、`electionDate`。按比赛校验和决选日期规则已在 M8 前用合成数据修好（H4），见 `M8.md` | 开发 | 接美国来源前 |
 
 ### 运行环境（尚未选定）
 
@@ -51,7 +51,7 @@ npm run build && node scripts/elections/serve-local.mjs --store /tmp/el-store
 |---|---|---|
 | `published` | 新快照已发布 | 无 |
 | `unchanged` | 没有新内容，只更新 `lastCheckedAt` | 无 |
-| `partial` | 一院更新成功，另一院失败 | 看 `private/quarantine/` |
+| `partial` | 一院更新成功，另一院失败；或个别比赛违反规则，被单独扣下（`rejected` 列出比赛），其余照常发布 | 看 `private/quarantine/`。被扣下的比赛保留旧值并标过时，页面上会显示 |
 | `failed` | 全部失败，上一快照仍在线 | 看 `private/quarantine/`，按 `backoffUntil` 退避 |
 | `backoff` | 还在退避期 | 等待 |
 | `locked` | 上一次还在运行 | 持续出现就检查是否卡住 |

@@ -4,7 +4,7 @@ import { PARTIES } from '../src/lib/electionRules.js';
 import { seatCatalogue } from '../src/lib/electionCatalogue.js';
 import { seatMark, tallySeats } from '../src/lib/chamberLayout.js';
 import {
-  ageSeconds, contestLeader, coveredSeats, feedAllowed, isLocalHost, partyTally, pointerErrors, primaryLeader, raceChanges, raceFreshness, raceIndex, resolveRaces, seatStates, snapshotErrors,
+  ageSeconds, contestLeader, coveredSeats, feedAllowed, isLocalHost, partyTally, pointerErrors, primaryLeader, raceChanges, raceFreshness, raceIndex, resolveRaces, seatStates, snapshotErrors, snapshotProblems,
 } from '../src/lib/electionResults.js';
 import { HIDDEN_CHECK_MS, VISIBLE_CHECK_MS, createFeedController } from '../src/lib/electionFeed.js';
 
@@ -36,6 +36,24 @@ describe('snapshot validation', () => {
     expect(snapshotErrors(snapshot())).toEqual([]);
   });
 
+  it('accepts a runoff or postponed contest on its own later date in the same cycle (synthetic)', () => {
+    const runoff = race({ raceId: 'us-2026/house/LA-01', seatIds: ['LA-01'], contestKind: 'runoff', electionDate: '2026-12-05', counting: { method: 'plurality', status: 'counting', round: null } });
+    const postponed = race({ raceId: 'us-2026/house/LA-02', seatIds: ['LA-02'], contestKind: 'postponed', electionDate: '2026-11-17' });
+    expect(snapshotErrors(snapshot({ races: [race(), runoff, postponed] }))).toEqual([]);
+    // Australian events have no runoff date window.
+    const vic = race({ raceId: 'vic-2026/assembly/kew', eventId: 'vic-2026', office: 'assembly', seatIds: ['kew'], contestKind: 'runoff', electionDate: '2026-12-05' });
+    expect(snapshotErrors(snapshot({ eventId: 'vic-2026', races: [vic] }))).toContain('vic-2026/assembly/kew: wrong election date');
+  });
+
+  it('attributes each problem to its own race, and an unidentified race to the whole snapshot', () => {
+    const good = race();
+    const bad = race({ raceId: 'us-2026/house/NC-02', seatIds: ['NC-02'], electionDate: '2024-11-05' });
+    const { errors, races } = snapshotProblems(snapshot({ races: [good, bad] }));
+    expect(errors).toEqual([]);
+    expect([...races.keys()]).toEqual(['us-2026/house/NC-02']);
+    expect(snapshotProblems(snapshot({ races: [good, { ...bad, raceId: null }] })).errors.length).toBeGreaterThan(0);
+  });
+
   it.each([
     ['synthetic data marked live', { mode: 'live' }],
     ['an unknown schema', { schemaVersion: 2 }],
@@ -60,6 +78,10 @@ describe('snapshot validation', () => {
     ['a numeric string in progress', { races: [race({ progress: { ...race().progress, reported: '10' } })] }],
     ['an RCV count with no round', { races: [race({ counting: { method: 'rcv', status: 'counting', round: null } })] }],
     ['last cycle returned for this one', { races: [race({ electionDate: '2024-11-05' })] }],
+    ['a regular contest dated after polling day', { races: [race({ electionDate: '2026-12-12' })] }],
+    ['a runoff before polling day', { races: [race({ contestKind: 'runoff', electionDate: '2026-10-01' })] }],
+    ['a runoff after the new term begins', { races: [race({ contestKind: 'runoff', electionDate: '2027-01-05' })] }],
+    ['a runoff with a time instead of a date', { races: [race({ contestKind: 'runoff', electionDate: '2026-12-12T00:00:00Z' })] }],
     ['another event in this snapshot', { races: [race({ eventId: 'us-2028' })] }],
     ['an event that does not exist', { eventId: 'us-2024' }],
     ['a seat from outside the catalogue', { races: [race({ seatIds: ['NC-15'] })] }],

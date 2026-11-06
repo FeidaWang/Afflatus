@@ -66,6 +66,8 @@ export const ELECTION_EVENTS = Object.freeze([
     headline: { en: 'The US voted on 3 November', zh: '美国已于 11 月 3 日投票' },
     pollDate: '2026-11-03',
     sortDate: '2026-11-03',
+    // House and Senate terms begin at noon on 3 January (20th Amendment). A runoff or postponed contest must come before.
+    termStarts: '2027-01-03',
     pollsCloseUtc: null,
     dateLabel: { en: '3 Nov 2026', zh: '2026 年 11 月 3 日' },
     pollsClose: { en: 'Polls close by state', zh: '各州关门时间不同' },

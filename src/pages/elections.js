@@ -85,6 +85,11 @@ const COUNTING_WORDS = Object.freeze({
   runoff: { en: 'Runoff', zh: '第二轮' },
 });
 const WITHDRAWN = Object.freeze({ en: 'Decision withdrawn', zh: '判定已撤销' });
+// Contests the validator lets carry their own later date.
+const LATER_CONTEST_WORDS = Object.freeze({
+  runoff: { en: 'runoff', zh: '决选' },
+  postponed: { en: 'postponed', zh: '延期' },
+});
 
 function raceStatusWords(seat, race, event) {
   const words = statusVocabulary(event);
@@ -105,7 +110,8 @@ function seatStatus(seat) {
   const race = currentRaces().get(seat.seatId);
   if (!race) return L(NO_RESULT);
   const stale = raceFreshness(race, shown.pointer) === 'stale';
-  return `${raceStatusWords(seat, race, eventById(state.event))}${stale ? ` · ${T('stale', '已过时')}` : ''}`;
+  const later = LATER_CONTEST_WORDS[race.contestKind];
+  return `${raceStatusWords(seat, race, eventById(state.event))}${later ? ` · ${L(later)}` : ''}${stale ? ` · ${T('stale', '已过时')}` : ''}`;
 }
 // Coverage is measured in contests: a seat that is not on the ballot can never report.
 const contestCount = (seats) => seats.filter((seat) => seat.onBallot).length;
@@ -641,6 +647,9 @@ function formatAge(seconds) {
   return T(`${Math.floor(seconds / 86400)} days`, `${Math.floor(seconds / 86400)} 天`);
 }
 
+// A calendar date, as written: no time zone can move it.
+const formatDay = (isoDate) => new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-AU', { timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(`${isoDate}T00:00:00Z`));
+
 function formatTime(iso) {
   if (!iso) return DASH;
   const { family } = eventById(state.event);
@@ -1020,6 +1029,7 @@ function renderRaceDrawer(event, office, seat, race) {
     ${shown.snapshot.isSynthetic ? `<p class="el-drawer-flag">${T('Synthetic test data. Not a real result.', '合成测试数据，不是真实结果。')}</p>` : ''}
     ${stale ? `<p class="el-drawer-flag">${T(`Stale: last updated ${formatTime(provenance.sourceUpdatedAt)}. The source has not refreshed this contest since.`, `已过时：最后更新于 ${formatTime(provenance.sourceUpdatedAt)}，来源此后未刷新这场比赛。`)}</p>` : ''}
     ${seat.area && seat.feature ? `<p class="el-note">${T('This region elects five members together. The number only counts them.', '这个大区一起选出五席，编号只用于计数。')}</p>` : ''}
+    ${race.electionDate !== event.pollDate ? `<p class="el-note">${T(`Held on ${formatDay(race.electionDate)}, after the main polling day.`, `于 ${formatDay(race.electionDate)} 举行，晚于主投票日。`)}</p>` : ''}
     ${renderCandidates(race)}
     ${renderTwoCandidate(race)}
     <dl class="el-kv">

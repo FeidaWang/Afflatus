@@ -8,7 +8,7 @@ import { dirname, join, resolve, sep } from 'node:path';
 import { FeedError, boundedFetch } from './bounded-fetch.mjs';
 import { readSingleFile } from './safe-zip.mjs';
 import { parseVecFeed } from './vec-adapter.mjs';
-import { raceChanges, resolveRaces, snapshotErrors } from '../../src/lib/electionResults.js';
+import { raceChanges, resolveRaces, snapshotErrors, snapshotProblems } from '../../src/lib/electionResults.js';
 
 const HISTORY_LIMIT = 2000;
 const LOCK_STALE_MS = 10 * 60 * 1000;
@@ -187,17 +187,31 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
 
     const previous = pointer ? await readJson(join(eventRoot, 'snapshots', `${pointer.snapshotId}.json`)) : null;
     const before = new Map((previous?.races || []).map((race) => [race.raceId, race]));
-    // A file can parse and still break a rule. It takes the same failure path: old values stay and the page says so.
+    // A file can parse and still break a rule. A contest that breaks one keeps its last good values, marked
+    // stale, and the rest publish. If the snapshot as a whole, or every new contest, breaks a rule, the file
+    // takes the failure path: old values stay and the page says so.
     let races = [];
+    let rejected = [];
     if (results.length) {
       races = mergeRaces(previous, { [source.id]: results.flatMap(({ parsed }) => parsed.races) }, source.id)
         .map((race) => confirmRecount(withRescission(keepFirstObserved(race, before.get(race.raceId)), before.get(race.raceId)), before.get(race.raceId)))
         .sort((a, b) => a.raceId.localeCompare(b.raceId));
-      const errors = snapshotErrors({ schemaVersion: 1, eventId: source.eventId, snapshotId: 'candidate', mode: source.synthetic ? 'preview' : 'live', isSynthetic: Boolean(source.synthetic), races });
-      if (errors.length) {
+      const problems = snapshotProblems({ schemaVersion: 1, eventId: source.eventId, snapshotId: 'candidate', mode: source.synthetic ? 'preview' : 'live', isSynthetic: Boolean(source.synthetic), races });
+      const freshIds = results.flatMap(({ parsed }) => parsed.races.map((race) => race.raceId));
+      if (problems.errors.length || freshIds.every((id) => problems.races.has(id))) {
+        const errors = [...problems.errors, ...[...problems.races.values()].flat()];
         const error = new FeedError('schema_drift', errors.slice(0, 20).join('; '));
         failures.push(...results.splice(0).map(({ feed }) => ({ feed, error })));
         races = [];
+      } else if (problems.races.size) {
+        rejected = [...problems.races.keys()];
+        races = races.flatMap((race) => {
+          if (!problems.races.has(race.raceId)) return [race];
+          const old = before.get(race.raceId);
+          return old ? [{ ...old, coverage: 'stale' }] : [];
+        });
+        const message = [...problems.races.values()].flat().slice(0, 20).join('; ');
+        await writeJsonAtomic(join(eventRoot, 'private', 'quarantine', `${fetchedAt.replace(/[:.]/g, '-')}-contests.json`), { at: fetchedAt, kind: 'schema_drift', races: rejected, message });
       }
     }
 
@@ -214,7 +228,7 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     let history = pointer?.history ?? [];
     let publishedAt = pointer?.publishedAt ?? null;
     let published = false;
-    const fresh = results.flatMap(({ parsed }) => parsed.races);
+    const fresh = results.flatMap(({ parsed }) => parsed.races).filter((race) => !rejected.includes(race.raceId));
 
     if (fresh.length) {
       const content = sha256(JSON.stringify(races.map((race) => ({ ...race, provenance: { ...race.provenance, fetchedAt: null, publishedAt: null, snapshotId: null, payloadHash: null } }))));
@@ -281,7 +295,8 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
       });
     }
 
-    if (failures.length) return { outcome: published ? 'partial' : 'failed', kinds: failures.map(({ error }) => error.kind), backoffUntil };
+    if (failures.length) return { outcome: published ? 'partial' : 'failed', kinds: failures.map(({ error }) => error.kind), backoffUntil, ...(rejected.length ? { rejected } : {}) };
+    if (rejected.length) return { outcome: published ? 'partial' : 'unchanged', kinds: ['schema_drift'], rejected, snapshotId };
     return { outcome: published ? 'published' : 'unchanged', snapshotId };
   });
 }

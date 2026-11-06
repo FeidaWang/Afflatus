@@ -57,16 +57,25 @@ function raceErrors(race) {
   return errors;
 }
 
-/** Joins each race to the catalogue, so a wrong cycle, seat or term cannot count towards a chamber. */
-function catalogueErrors(snapshot) {
+// A runoff or a postponed contest has its own later date, but still belongs to this cycle:
+// it must fall after polling day and before the term it fills begins.
+const LATER_CONTESTS = new Set(['runoff', 'postponed']);
+const isLaterContest = (race, event) => Boolean(event.termStarts)
+  && LATER_CONTESTS.has(race?.contestKind)
+  && /^\d{4}-\d{2}-\d{2}$/.test(race.electionDate ?? '')
+  && race.electionDate > event.pollDate
+  && race.electionDate < event.termStarts;
+
+/** Joins each race to the catalogue, so a wrong cycle, seat or term cannot count towards a chamber. Calls add(race, errors). */
+function catalogueErrors(snapshot, add) {
   const event = eventById(snapshot.eventId);
   if (!event) return ['unknown event'];
-  const errors = [];
   const taken = new Set();
   for (const race of snapshot.races) {
     const name = race?.raceId || 'race';
+    const errors = [];
     if (race?.eventId !== event.id) errors.push(`${name}: wrong event`);
-    if (race?.electionDate !== event.pollDate) errors.push(`${name}: wrong election date`);
+    if (race?.electionDate !== event.pollDate && !isLaterContest(race, event)) errors.push(`${name}: wrong election date`);
     // An Australian seat is declared by one commission. A US race is certified state by state.
     if (event.family === 'au' && race?.decision?.status === 'certified' && race.decision.authority !== event.authority) errors.push(`${name}: wrong declaring authority`);
     const seats = new Map(seatCatalogue(event.id, race?.office).map((seat) => [seat.seatId, seat]));
@@ -78,25 +87,44 @@ function catalogueErrors(snapshot) {
       if (taken.has(seatId)) errors.push(`${name}: ${seatId} is in two races`);
       taken.add(seatId);
     }
+    add(race, errors);
   }
-  return errors;
+  return [];
 }
 
-export function snapshotErrors(snapshot) {
-  if (!snapshot || snapshot.schemaVersion !== 1) return ['schema version'];
+/**
+ * What is wrong with a snapshot: `errors` for the whole of it, and `races` for each
+ * contest by id, so one bad contest can be held back on its own. A race with no id
+ * cannot be told apart, so its errors count against the whole snapshot.
+ */
+export function snapshotProblems(snapshot) {
+  const races = new Map();
+  if (!snapshot || snapshot.schemaVersion !== 1) return { errors: ['schema version'], races };
   const errors = [];
+  const add = (race, list) => {
+    if (!list.length) return;
+    if (!race?.raceId) errors.push(...list);
+    else races.set(race.raceId, [...(races.get(race.raceId) || []), ...list]);
+  };
   if (!snapshot.snapshotId || !snapshot.eventId) errors.push('identity');
   if (!MODES.has(snapshot.mode)) errors.push('mode');
   if (typeof snapshot.isSynthetic !== 'boolean') errors.push('isSynthetic');
   if (snapshot.mode === 'live' && snapshot.isSynthetic) errors.push('synthetic data cannot be live');
-  if (!Array.isArray(snapshot.races)) return [...errors, 'races'];
+  if (!Array.isArray(snapshot.races)) return { errors: [...errors, 'races'], races };
   for (const change of snapshot.changes || []) {
     if (!CHANGE_TYPES.has(change.type)) errors.push('unknown change');
     if (change.delta !== undefined && change.delta !== null && !Number.isInteger(change.delta)) errors.push('change delta');
   }
   const ids = new Set(snapshot.races.map((race) => race.raceId));
   if (ids.size !== snapshot.races.length) errors.push('duplicate race');
-  return [...errors, ...snapshot.races.flatMap(raceErrors), ...catalogueErrors(snapshot)];
+  for (const race of snapshot.races) add(race, raceErrors(race));
+  errors.push(...catalogueErrors(snapshot, add));
+  return { errors, races };
+}
+
+export function snapshotErrors(snapshot) {
+  const { errors, races } = snapshotProblems(snapshot);
+  return [...errors, ...[...races.values()].flat()];
 }
 
 export function pointerErrors(pointer) {
