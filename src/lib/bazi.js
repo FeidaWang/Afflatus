@@ -167,6 +167,43 @@ export function monthPillar(y, m, d) {
   return { stem: mod(startStem + offsetFromYin, 10), branch: b };
 }
 
+// ---- exact-instant year/month boundaries (Q1, 2026-10-23) -----------------
+// 子平 turns the year at the 立春 INSTANT and the month at each 节 INSTANT.
+// The date-level helpers above stay for date-only callers (hour unknown);
+// computeBazi() uses these when the hour is known.
+const _termJDCache = new Map();
+function termJD(year, term) {
+  const key = year * 1000 + term.lon;
+  if (!_termJDCache.has(key)) _termJDCache.set(key, findSolarTermJD(term.lon, julianDayUTC(year, term.m, term.d, 12)));
+  return _termJDCache.get(key);
+}
+// 节 instants around Gregorian year y (previous 大雪 through this year's 大雪), ascending.
+function termsAround(y) {
+  return [{ jd: termJD(y - 1, MONTH_TERMS[11]), t: MONTH_TERMS[11] }, ...MONTH_TERMS.map((t) => ({ jd: termJD(y, t), t }))]
+    .sort((a, b) => a.jd - b.jd);
+}
+function pillarsAtInstant(y, jd) {
+  const by = jd < termJD(y, MONTH_TERMS[1]) ? y - 1 : y;
+  const yp = { stem: mod(by - 4, 10), branch: mod(by - 4, 12), baziYear: by };
+  let b = 0;
+  for (const { jd: tj, t } of termsAround(y)) if (tj <= jd) b = t.b;
+  const startStem = mod((yp.stem % 5) * 2 + 2, 10);
+  return { yp, mp: { stem: mod(startStem + mod(b - 2, 12), 10), branch: b } };
+}
+// The input hour is the START of a time slot (1 h for 早子/晚子, else 2 h).
+// A 节 inside [start − 15 min, slot end) means the pillar can't be settled
+// from the slot alone (15 min covers this solver's few-minute error).
+// Unknown hour: any 节 on that CST date is unstable.
+function boundaryFlag(y, m, d, hour, jd) {
+  for (const { jd: tj, t } of termsAround(y)) {
+    const hit = hour == null
+      ? (() => { const c = calendarFromJD(tj + 8 / 24); return c.month === m && Math.floor(c.day) === d; })()
+      : tj >= jd - 0.25 / 24 && tj < jd + (hour === 0 || hour === 23 ? 1 : 2) / 24;
+    if (hit) return { pillar: t.lon === 315 ? 'year' : 'month', termLon: t.lon };
+  }
+  return null;
+}
+
 // ---- adjacent solar terms (V21 Phase 2: 大运起运 needs exact instants) ----
 // For a birth given as a CST civil instant, return the birth JD (UTC) and
 // the JD of the nearest 节 (the 12 month-boundary terms) strictly before
@@ -255,8 +292,10 @@ export function hourPillar(dayStemIdx, hour) {
 export function computeBazi({ y, m, d, hour }) {
   let py = y, pm = m, pd = d;
   if (hour === 23) { const s = shiftHours(y, m, d, 23, 1); py = s.y; pm = s.m; pd = s.d; }
-  const yp = yearPillar(py, pm, pd);
-  const mp = monthPillar(py, pm, pd);
+  // Year/month follow the real birth instant (Q1); only the day/hour pillars
+  // take the 晚子 next-day date.
+  const jd = hour == null ? null : julianDayUTC(y, m, d, hour - 8);
+  const { yp, mp } = jd == null ? { yp: yearPillar(y, m, d), mp: monthPillar(y, m, d) } : pillarsAtInstant(y, jd);
   const dp = dayPillar(py, pm, pd);
   const hp = (hour == null) ? null : hourPillar(dp.stem, hour);
   const pillars = [yp, mp, dp, ...(hp ? [hp] : [])];
@@ -268,6 +307,7 @@ export function computeBazi({ y, m, d, hour }) {
     dayMasterElement: STEM_ELEMENT[dp.stem],
     animal: yp.branch,
     elements,
+    boundaryUnstable: boundaryFlag(y, m, d, hour ?? null, jd),
   };
 }
 
