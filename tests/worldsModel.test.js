@@ -158,6 +158,25 @@ describe('worldsModel: simulateChampion', () => {
     expect(out.LYON).toBeGreaterThan(0);
   });
 
+  it('keeps settled semifinals and prices open ones from the series pick', () => {
+    const through = ['GEN', 'DK', 'T1', 'TES', 'IG', 'BLG', 'KC', 'LYON'];
+    const teams = CODES.map((code) => (through.includes(code) ? { code, w: 3, l: 0, status: 'advanced' } : { code, w: 0, l: 3, status: 'eliminated' }));
+    const quarterfinals = [
+      { home: 'TES', away: 'IG', winner: 'IG', pWinHome: null },
+      { home: 'GEN', away: 'LYON', winner: 'GEN', pWinHome: null },
+      { home: 'DK', away: 'BLG', winner: 'BLG', pWinHome: null },
+      { home: 'KC', away: 'T1', winner: 'T1', pWinHome: null },
+    ];
+    const knockouts = [
+      { home: 'IG', away: 'GEN', winner: 'GEN', pWinHome: null },
+      { home: 'BLG', away: 'T1', winner: null, pWinHome: 1 },
+    ];
+    const out = simulateChampion({ teams, ratings, quarterfinals, knockouts, runs: 2000, seed: 11 });
+    expect(out.IG).toBe(0);
+    expect(out.T1).toBe(0);
+    expect(out.GEN + out.BLG).toBeCloseTo(100, 6);
+  });
+
   it('runs 10,000 simulations quickly', () => {
     const t0 = performance.now();
     simulateChampion({ teams: swissTeams(), ratings, runs: 10000, seed: 1 });
