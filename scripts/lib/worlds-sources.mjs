@@ -257,7 +257,8 @@ export function parsePolymarketSeries(events) {
     if (!bo) continue;
     const markets = event.markets ?? [];
     const winner = markets.find((m) => m.question === title);
-    if (!winner) continue;
+    // A settled market prices 0/1 even while its event is still listed open.
+    if (!winner || winner.closed) continue;
     const outcomes = parseJsonList(winner.outcomes);
     const home = teamCode(outcomes[0]);
     const away = teamCode(outcomes[1]);

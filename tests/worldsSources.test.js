@@ -186,6 +186,17 @@ describe('parsePolymarketSeries', () => {
       pGame1Home: 0.835,
     });
   });
+
+  it('skips a series whose winner market has already settled', () => {
+    const title = 'LoL: Invictus Gaming vs Gen.G (BO5) - Worlds Playoffs';
+    const settled = parsePolymarketSeries([{
+      slug: 'lol-ig-gen-2026-11-07',
+      title,
+      closed: false,
+      markets: [{ question: title, outcomes: '["Invictus Gaming", "Gen.G"]', outcomePrices: '["0", "1"]', closed: true }],
+    }]);
+    expect(settled).toEqual([]);
+  });
 });
 
 describe('parsePolymarketWinner', () => {
