@@ -364,7 +364,9 @@ const scheduled = series.filter((s) => s.stage === 'swiss' && !s.result && s.pic
 const quarterfinals = series.filter((s) => s.stage === 'qf').sort((a, b) => (a.kickoff < b.kickoff ? -1 : 1))
   .map((s) => ({ home: s.home, away: s.away, winner: s.result ? (s.result.home > s.result.away ? s.home : s.away) : null, pWinHome: s.pick?.pWin[0] ?? null }));
 if (quarterfinals.length) notes.push('semifinal halves assumed QF1/QF2 and QF3/QF4 winners');
-const championSim = simulateChampion({ teams: swiss.map((t) => ({ code: t.team, w: t.w, l: t.l, status: t.status })), ratings, scheduled, quarterfinals, runs: 10000, seed: 20261025 });
+const knockouts = series.filter((s) => s.stage === 'sf' || s.stage === 'final')
+  .map((s) => ({ home: s.home, away: s.away, winner: s.result ? (s.result.home > s.result.away ? s.home : s.away) : null, pWinHome: s.pick?.pWin[0] ?? null }));
+const championSim = simulateChampion({ teams: swiss.map((t) => ({ code: t.team, w: t.w, l: t.l, status: t.status })), ratings, scheduled, quarterfinals, knockouts, runs: 10000, seed: 20261025 });
 const marketRaw = Object.fromEntries(swiss.map(({ team }) => {
   const quotes = [polyWinner[team], kalshiWinner[team]].filter((v) => Number.isFinite(v));
   return [team, quotes.length ? quotes.reduce((a, b) => a + b, 0) / quotes.length : null];

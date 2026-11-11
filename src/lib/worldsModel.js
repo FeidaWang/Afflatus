@@ -114,7 +114,7 @@ function shuffle(arr, rng) {
 }
 
 /** Seeded Monte Carlo of the remaining Swiss rounds + Bo5 bracket; returns { CODE: percent } summing to 100.0. */
-export function simulateChampion({ teams, ratings, scheduled = [], quarterfinals = [], runs = 10000, seed = 1 }) {
+export function simulateChampion({ teams, ratings, scheduled = [], quarterfinals = [], knockouts = [], runs = 10000, seed = 1 }) {
   const rng = mulberry32(seed);
   const n = teams.length;
   const codes = teams.map((t) => t.code);
@@ -210,7 +210,11 @@ export function simulateChampion({ teams, ratings, scheduled = [], quarterfinals
       for (let i = 0; i + 1 < bracket.length; i += 2) {
         const h = bracket[i];
         const a = bracket[i + 1];
-        next.push(rng() < seriesWinProbFromGame(pGame[h][a], 5) ? h : a);
+        // Post-QF series already drawn: settled ones keep their winner, open ones use the series price.
+        const ko = knockouts.find((k) => (k.home === codes[h] && k.away === codes[a]) || (k.home === codes[a] && k.away === codes[h]));
+        if (ko?.winner && idx.has(ko.winner)) { next.push(idx.get(ko.winner)); continue; }
+        const pKo = ko?.pWinHome == null ? null : (ko.home === codes[h] ? ko.pWinHome : 1 - ko.pWinHome);
+        next.push(rng() < (pKo ?? seriesWinProbFromGame(pGame[h][a], 5)) ? h : a);
       }
       if (bracket.length % 2) next.push(bracket[bracket.length - 1]);
       bracket = next;
