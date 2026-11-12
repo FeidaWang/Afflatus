@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "node scripts/subset-cjk-fonts.mjs && node scripts/generate-course-pages.mjs && npm run data:check && npm run site:check && npm run header:check && npm run css:check && npm run lint:i18n && npm run og:check && node scripts/build-sectors-observatory.mjs --check",
+    "prebuild": "npm run worlds:content && node scripts/subset-cjk-fonts.mjs && node scripts/generate-course-pages.mjs && npm run data:check && npm run site:check && npm run header:check && npm run css:check && npm run lint:i18n && npm run og:check && node scripts/build-sectors-observatory.mjs --check",
     "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/prerender-apps.mjs && node scripts/optimize-static-output.mjs dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
@@ -44,7 +44,8 @@
     "lint:i18n": "node scripts/lint-bilingual.mjs",
     "format:i18n": "node scripts/format-bilingual-content.mjs --write",
     "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au|zhihu.com|tesla.com|investing.com|api/treasury-yields\"",
-    "predev": "node scripts/generate-course-pages.mjs"
+    "predev": "node scripts/generate-course-pages.mjs",
+    "worlds:content": "node scripts/build-worlds-universe.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

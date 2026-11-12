@@ -151,15 +151,15 @@ export const ROUTE_SEO = Object.freeze({
   worlds: {
     social: {
       background: 'assets/og-backgrounds/worlds.jpg',
-      eyebrow: { en: 'WORLDS 2026 · FABLE CALLS', zh: 'WORLDS 2026 · FABLE 研判' },
-      title: { en: 'Worlds 2026 odds & picks', zh: '2026 全球总决赛赔率与竞猜' },
+      eyebrow: { en: 'WORLDS 2026 · RUNETERRA', zh: 'WORLDS 2026 · 符文之地' },
+      title: { en: 'Worlds 2026 & Universe', zh: '2026 全球总决赛与英雄联盟宇宙' },
       subtitle: {
-        en: 'Pre-match win probabilities, champion odds and Fearless Draft pools. Entertainment only.',
-        zh: '赛前胜率、夺冠概率与无畏征召英雄池。仅供娱乐。',
+        en: 'Regions, champions, stories and skin universes, alongside match predictions for entertainment.',
+        zh: '探索区域、英雄、故事与皮肤宇宙，查看仅供娱乐的赛前预测。',
       },
       alt: {
-        en: 'Worlds 2026 odds and picks on an obsidian and aurora backdrop',
-        zh: '曜石黑与极光蓝背景上的 2026 全球总决赛赔率与竞猜',
+        en: 'Blue-and-white Worlds 2026 artwork introducing Runeterra exploration and match predictions',
+        zh: '蓝白世界赛原画与符文之地探索、赛事预测介绍',
       },
       images: { en: routeOgImage('worlds', 'en'), zh: routeOgImage('worlds', 'zh') },
     },
@@ -452,16 +452,16 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.worlds,
     capabilities: ['live-data', 'local-state'],
     metadata: {
-      title: "Worlds 2026 odds & picks — Fable calls · AFFLATUS",
-      description: "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+      title: "Worlds 2026 & Universe · AFFLATUS",
+      description: "Explore Runeterra’s regions, champions, stories, art and skin universes, alongside Fable’s Worlds 2026 match predictions. Predictions are for entertainment only, not betting advice.",
       canonical: 'https://feida.au/en/worlds.html',
-      ogTitle: "Worlds 2026 odds & picks — Fable calls · AFFLATUS",
-      ogDescription: "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice.",
+      ogTitle: "Worlds 2026 & Universe · AFFLATUS",
+      ogDescription: "Explore Runeterra’s regions, champions, stories, art and skin universes, alongside Fable’s Worlds 2026 match predictions. Predictions are for entertainment only, not betting advice.",
       ogImage: ROUTE_SEO.worlds.social.images.en,
     },
     locales: {
-      en: {"title": "Worlds 2026 odds & picks — Fable calls · AFFLATUS", "description": "Pre-match win probabilities, implied odds, champion odds and Fearless Draft pool depth for the 2026 League of Legends World Championship. Entertainment only, not betting advice."},
-      zh: {"title": "2026 全球总决赛赔率与竞猜 — Fable 研判 · AFFLATUS", "description": "2026 英雄联盟全球总决赛每场赛前胜率、隐含赔率、夺冠概率与无畏征召英雄池深度。仅供娱乐，不构成博彩建议。"},
+      en: {"title": "Worlds 2026 & Universe · AFFLATUS", "description": "Explore Runeterra’s regions, champions, stories, art and skin universes, alongside Fable’s Worlds 2026 match predictions. Predictions are for entertainment only, not betting advice."},
+      zh: {"title": "2026 全球总决赛与英雄联盟宇宙 · AFFLATUS", "description": "探索符文之地的区域、英雄、故事、原画与皮肤宇宙，并查看 Fable 对 2026 全球总决赛的赛前预测。预测仅供娱乐，不构成博彩建议。"},
     },
   },
   {

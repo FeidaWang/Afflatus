@@ -1,0 +1,12 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { renderUniverse } from '../src/lib/worldsUniverseTemplates.js';
+const data = JSON.parse(readFileSync('public/worlds-universe/content.json','utf8'));
+const path = 'worlds.html';
+const html = readFileSync(path,'utf8');
+const start = '<!-- worlds-universe:start -->';
+const end = '<!-- worlds-universe:end -->';
+if (!html.includes(start) || !html.includes(end)) throw new Error('Worlds content markers are missing');
+const before = html.slice(0,html.indexOf(start)+start.length);
+const after = html.slice(html.indexOf(end));
+writeFileSync(path,`${before}\n${renderUniverse(data,'en')}\n${after}`);
+console.log(`Worlds Universe: ${data.regions.length} regions, ${data.champions.length} champions, ${data.stories.length} stories, ${data.skinUniverses.length} skin themes.`);
