@@ -14,6 +14,7 @@ import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateElectionMap, validateElectionMapManifest } from '../src/lib/validateElectionMap.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
+import { validateWorldsUniverse, validateWorldsUniverseManifest } from '../src/lib/validateWorldsUniverse.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
 import { validateTopicsIndex } from '../src/lib/validateTopicsIndex.js';
@@ -95,6 +96,8 @@ const CHECKS = [
   { path: 'public/arena-predlog.json', validate: validateArenaPredlog },
   { path: 'public/transits-daily.json', validate: validateDailyTransits },
   { path: 'public/worlds-data.json', validate: validateWorldsData },
+  { path: 'public/worlds-universe/content.json', validate: validateWorldsUniverse },
+  { path: 'public/worlds-universe/assets-manifest.json', validate: validateWorldsUniverseManifest },
   { path: 'public/audio/playlist.json', validate: validateAudioPlaylist },
   { path: 'public/nyse-holidays-2026.json', validate: validateNyseCalendar },
   { path: 'public/signal-release-dates-2026.json', validate: validateSignalReleaseDates },

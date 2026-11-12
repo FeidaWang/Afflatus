@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 function localePrepaintSource() {
   const html = readFileSync('portfolio.html', 'utf8');
   const source = html.match(/<script>([^<]*afflatus:locale:v1[^<]*)<\/script>/i)?.[1];
-  if (!source) throw new Error('Locale pre-paint script is missing from index.html');
+  if (!source) throw new Error('Locale pre-paint script is missing from portfolio.html');
   return source;
 }
 
@@ -17,7 +17,13 @@ test('restored Chinese locale never exposes untranslated rich text', async ({ pa
         <h1 data-en="English first paint" data-zh="<span>中文首屏</span>" data-i18n-html>
           English first paint
         </h1>
-        <script src="/locale-prepaint-delay.js"></script>
+        <script>
+          window.localeBeforeDomReady = {
+            language: document.documentElement.lang,
+            visibility: document.documentElement.style.visibility,
+            heading: document.querySelector('h1').textContent.trim(),
+          };
+        </script>
       </body>
     </html>`;
 
@@ -28,26 +34,15 @@ test('restored Chinese locale never exposes untranslated rich text', async ({ pa
     contentType: 'text/html',
     body: fixture,
   }));
-  await page.route('**/locale-prepaint-delay.js', async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    await route.fulfill({ contentType: 'text/javascript', body: '' });
-  });
-
-  const domReady = page.waitForEvent('domcontentloaded');
-  await page.goto('/locale-prepaint-fixture.html', { waitUntil: 'commit' });
-  await expect(page.locator('h1')).toBeAttached();
-
-  expect(await page.evaluate(() => ({
-    language: document.documentElement.lang,
-    visibility: document.documentElement.style.visibility,
-    heading: document.querySelector('h1')?.textContent.trim(),
-  }))).toEqual({
+  // Capture the parser's state inside the fixture. A driver round trip can
+  // run after DOMContentLoaded even if navigation only waits for commit.
+  await page.goto('/locale-prepaint-fixture.html', { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => window.localeBeforeDomReady)).toEqual({
     language: 'zh-CN',
     visibility: 'hidden',
     heading: 'English first paint',
   });
 
-  await domReady;
   expect(await page.evaluate(() => ({
     visibility: document.documentElement.style.visibility,
     heading: document.querySelector('h1')?.textContent.trim(),

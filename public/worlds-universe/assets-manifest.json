@@ -1,0 +1,2108 @@
+{
+  "copyright": "Artwork, characters, icons and fonts © Riot Games. This fan project is not endorsed by Riot Games.",
+  "source_site": "https://universe.leagueoflegends.com/en_GB/",
+  "downloaded_at": "2026-11-12",
+  "data_dragon_version": "16.22.1",
+  "assets": [
+    {
+      "id": "icon-aatrox",
+      "title": "Aatrox",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Aatrox.png",
+      "category": "champions",
+      "sha256_source": "852d739fb696684549064266851df91ecd03729e06b1a192dc14af01549b7f3f",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/aatrox-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 2918
+    },
+    {
+      "id": "champion-aatrox",
+      "title": "Aatrox",
+      "region": "unaffiliated",
+      "focus": {
+        "x": 1351,
+        "y": 346,
+        "width": 1920,
+        "height": 1080
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/da41f44e7ab5b24f336e8c6198e04fdb13ee5554-1920x1080.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "12bfaca16872e6e44773fa14d930da8fa58f5daeb68a4c5aabefb8894cc7a11f",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/champions/aatrox.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 109996,
+      "thumbnail": {
+        "path": "assets/champions/aatrox-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 30518
+      }
+    },
+    {
+      "id": "icon-ahri",
+      "title": "Ahri",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Ahri.png",
+      "category": "champions",
+      "sha256_source": "8e93368d97e3d302463c4e83ac5980d1f0a3a0aaf92ac44435730fecbd55b565",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/ahri-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3542
+    },
+    {
+      "id": "champion-ahri",
+      "title": "Ahri",
+      "region": "ionia",
+      "focus": {
+        "x": 1296,
+        "y": 158,
+        "width": 1920,
+        "height": 1080
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/9e99dedf6a6e2c1e74bdfb81bd5a0a23b3ff4200-1920x1080.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "e89bcb67ec35957b0c12de0705fb816e9a18112d5523896a9164ee5db94c03aa",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/champions/ahri.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 134604,
+      "thumbnail": {
+        "path": "assets/champions/ahri-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 42686
+      }
+    },
+    {
+      "id": "icon-ashe",
+      "title": "Ashe",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Ashe.png",
+      "category": "champions",
+      "sha256_source": "423666bdb0685355be4576f78eb6406fd49469b4f6e9f780f1c5eb4349fed91f",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/ashe-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4876
+    },
+    {
+      "id": "champion-ashe",
+      "title": "Ashe",
+      "region": "freljord",
+      "focus": {
+        "x": 1333,
+        "y": 53,
+        "width": 1920,
+        "height": 974
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/ea9b9dbb6d0ee8234f67ff97872729a16333acb2-1920x974.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "ea74b44e08af0ead4c83830e4227dcfef62d9c785e729531778b607e5f13c7bc",
+      "source_width": 1920,
+      "source_height": 974,
+      "path": "assets/champions/ashe.webp",
+      "width": 1920,
+      "height": 974,
+      "bytes": 103218,
+      "thumbnail": {
+        "path": "assets/champions/ashe-card.webp",
+        "width": 800,
+        "height": 406,
+        "bytes": 32550
+      }
+    },
+    {
+      "id": "icon-azir",
+      "title": "Azir",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Azir.png",
+      "category": "champions",
+      "sha256_source": "fa90e249ef38adeabd757f24fc4069db8caccdf64353868d9683a5a9c4c81a35",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/azir-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4154
+    },
+    {
+      "id": "champion-azir",
+      "title": "Azir",
+      "region": "shurima",
+      "focus": {
+        "x": 1026,
+        "y": 96,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/869c235b670785d9b5910217f20383812c05e822-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "661731ef72343c9d17b68c4f2d0c4fa24bd55dbc9f9768919d285b5f105a108e",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/azir.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 134466,
+      "thumbnail": {
+        "path": "assets/champions/azir-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 60412
+      }
+    },
+    {
+      "id": "icon-darius",
+      "title": "Darius",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Darius.png",
+      "category": "champions",
+      "sha256_source": "4c73167413335e00b3ece58fadaa495a0c3fe05184b246b0f8b9af923a0d3d81",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/darius-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3474
+    },
+    {
+      "id": "champion-darius",
+      "title": "Darius",
+      "region": "noxus",
+      "focus": {
+        "x": 745,
+        "y": 0,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/bd6bd9efb4295687e683fd97d67a509d3ed6c26f-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "d12183829b8425e1e85680f815424269d4335df96ad5fce9dadc1bee410142e9",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/darius.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 97094,
+      "thumbnail": {
+        "path": "assets/champions/darius-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 48466
+      }
+    },
+    {
+      "id": "icon-ekko",
+      "title": "Ekko",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Ekko.png",
+      "category": "champions",
+      "sha256_source": "6b2219dd6a3888d5572a2b2f2f522c3eeac490578f82f58171adfdf8e647b093",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/ekko-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3328
+    },
+    {
+      "id": "champion-ekko",
+      "title": "Ekko",
+      "region": "zaun",
+      "focus": {
+        "x": 1061,
+        "y": 30,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/582abd081125c2ef8f47609bc42a9f1bb71782fb-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "a6e181ccd3163550f7629ed3711aed6ff5024a4d83c0da4aae23186e08a16530",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/ekko.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 73536,
+      "thumbnail": {
+        "path": "assets/champions/ekko-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 37654
+      }
+    },
+    {
+      "id": "icon-gangplank",
+      "title": "Gangplank",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Gangplank.png",
+      "category": "champions",
+      "sha256_source": "f2bed51abb3d68897a161e152f03e9c9e0bc13039e6b709f551397a52e5aeb39",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/gangplank-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3580
+    },
+    {
+      "id": "champion-gangplank",
+      "title": "Gangplank",
+      "region": "bilgewater",
+      "focus": {
+        "x": 950,
+        "y": 6,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/56398a8fa872cb9b195e5b78b611b3952bf1108a-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "f6cf7e432831f0e2de857d03d5a3fbd51b5ec4c2e457393ff6858bfd7e1873cf",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/gangplank.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 120120,
+      "thumbnail": {
+        "path": "assets/champions/gangplank-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 56466
+      }
+    },
+    {
+      "id": "icon-jax",
+      "title": "Jax",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Jax.png",
+      "category": "champions",
+      "sha256_source": "441e8d865d461bc338a2d2d5a2a09f6151bbfdb4795ec8b59e66ee8654eebcca",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/jax-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3072
+    },
+    {
+      "id": "champion-jax",
+      "title": "Jax",
+      "region": "unaffiliated",
+      "focus": {
+        "x": 1320,
+        "y": 350,
+        "width": 1920,
+        "height": 1080
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/a8d3b960b33b5850f5c3b8e65a0afb54fde80e11-1920x1080.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "c6a96eafa5faca5b3e791f809a80c1ca9b34bab14893cb2dfc6961c67123ccf8",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/champions/jax.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 128174,
+      "thumbnail": {
+        "path": "assets/champions/jax-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 32936
+      }
+    },
+    {
+      "id": "icon-jinx",
+      "title": "Jinx",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Jinx.png",
+      "category": "champions",
+      "sha256_source": "2777d44345974b93f8af378430811670566d0451b6410b2caff2984e93797357",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/jinx-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3894
+    },
+    {
+      "id": "champion-jinx",
+      "title": "Jinx",
+      "region": "zaun",
+      "focus": {
+        "x": 901,
+        "y": 82,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d0550188a6e83cb2e5def4a4a0bf8025baf57a0c-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "df10768bca8fcead68dfb6c51a27d705b568c4909df731e2532decd92e8bc039",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/jinx.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 96252,
+      "thumbnail": {
+        "path": "assets/champions/jinx-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 46846
+      }
+    },
+    {
+      "id": "icon-kaisa",
+      "title": "Kai'Sa",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Kaisa.png",
+      "category": "champions",
+      "sha256_source": "e0e86ccb7143d20bcbd83f192530f9712bf4b1d6306ec07a06992d4b72676443",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/kaisa-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 2928
+    },
+    {
+      "id": "champion-kaisa",
+      "title": "Kai'Sa",
+      "region": "void",
+      "focus": {
+        "x": 950,
+        "y": 200,
+        "width": 1920,
+        "height": 1133
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/33ac4d0acbbdb7f6d3b36520c0a78873052d271a-1920x1133.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "718bc5c48779555485e65a3f0a7cde11b19c9d3bb5b2a92e890f0a13064f94c0",
+      "source_width": 1920,
+      "source_height": 1133,
+      "path": "assets/champions/kaisa.webp",
+      "width": 1920,
+      "height": 1133,
+      "bytes": 108886,
+      "thumbnail": {
+        "path": "assets/champions/kaisa-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 32564
+      }
+    },
+    {
+      "id": "icon-leblanc",
+      "title": "LeBlanc",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Leblanc.png",
+      "category": "champions",
+      "sha256_source": "e48b97ce2451c37d4e4a747b37663bd1095730b4182b2805f397f60fd12c7c5d",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/leblanc-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3028
+    },
+    {
+      "id": "champion-leblanc",
+      "title": "LeBlanc",
+      "region": "noxus",
+      "focus": {
+        "x": 634,
+        "y": 3,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/77ad3202bc6d32f9c03eba63a7ad14e4383bb5b7-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "8a61f22234bbbc1fbbc0fd5587f6c9978e7ddc3bb3fd89a43ce708bb8cdace44",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/leblanc.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 96120,
+      "thumbnail": {
+        "path": "assets/champions/leblanc-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 50332
+      }
+    },
+    {
+      "id": "icon-leona",
+      "title": "Leona",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Leona.png",
+      "category": "champions",
+      "sha256_source": "d7e170e1d5c37b243663e03d480a4befe727d86d0733e3e411b90297cb192461",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/leona-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4788
+    },
+    {
+      "id": "champion-leona",
+      "title": "Leona",
+      "region": "mount-targon",
+      "focus": {
+        "x": 1061,
+        "y": 41,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/bd31d8599bfa6d1a64e1a6ecde13548356ea525c-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "73a40353b96f928af823b199ca343370f418fc57fafa977813abcbbb9632bdf3",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/leona.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 71428,
+      "thumbnail": {
+        "path": "assets/champions/leona-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 39146
+      }
+    },
+    {
+      "id": "icon-lissandra",
+      "title": "Lissandra",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Lissandra.png",
+      "category": "champions",
+      "sha256_source": "ece7fc0269138d30380dbb0420ccf822e7ca95819d7d911a0e29f7d10cf7445d",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/lissandra-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3614
+    },
+    {
+      "id": "champion-lissandra",
+      "title": "Lissandra",
+      "region": "freljord",
+      "focus": {
+        "x": 930,
+        "y": 0,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7f1fa446e45698fa9b6b69c3005871d049293197-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "4c3f2f544f260607a6cc8e8662d2ac9a5024b153f0a8114922a95ffef594b002",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/lissandra.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 87674,
+      "thumbnail": {
+        "path": "assets/champions/lissandra-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 40098
+      }
+    },
+    {
+      "id": "icon-lux",
+      "title": "Lux",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Lux.png",
+      "category": "champions",
+      "sha256_source": "64639bea2aa7d622dd07287de7a7820950e567f0993c7dcc422e1e699fd743fd",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/lux-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4008
+    },
+    {
+      "id": "champion-lux",
+      "title": "Lux",
+      "region": "demacia",
+      "focus": {
+        "x": 784,
+        "y": 51,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7dae022eb3726b7b351cf90ad8351731907229a1-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "194d8d738d2fc1dfe6af191a278e7620759965235877973a0b7f58298acd9253",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/lux.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 118776,
+      "thumbnail": {
+        "path": "assets/champions/lux-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 57564
+      }
+    },
+    {
+      "id": "icon-missfortune",
+      "title": "Miss Fortune",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/MissFortune.png",
+      "category": "champions",
+      "sha256_source": "a8c3048bfb76b4e8b34e00193ed2febe69669918055ffda835ddb24905588733",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/missfortune-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3232
+    },
+    {
+      "id": "champion-missfortune",
+      "title": "Miss Fortune",
+      "region": "bilgewater",
+      "focus": {
+        "x": 983,
+        "y": 231,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7a7dfab84bcd6b60f46152918923ef939b9ddb6a-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "66f5a11d0c6f47a3c329cbc7b2f27bd91834c2a31fce00da6d81ca0012125e9a",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/missfortune.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 92340,
+      "thumbnail": {
+        "path": "assets/champions/missfortune-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 49720
+      }
+    },
+    {
+      "id": "icon-qiyana",
+      "title": "Qiyana",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Qiyana.png",
+      "category": "champions",
+      "sha256_source": "b7bc7f2b7b4acd45b994005e87710c779c1c9bb89343e02f1fd1e98533a1f93f",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/qiyana-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4686
+    },
+    {
+      "id": "champion-qiyana",
+      "title": "Qiyana",
+      "region": "ixtal",
+      "focus": {
+        "x": 2024,
+        "y": 551,
+        "width": 4000,
+        "height": 2348
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/701238dd7451fe3f836ded843c6d869c43f24261-4000x2348.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "219721083976e23ffcd10ccf744e10cb5d66a65185ca75d689b33564fc19a09b",
+      "source_width": 4000,
+      "source_height": 2348,
+      "path": "assets/champions/qiyana.webp",
+      "width": 1920,
+      "height": 1127,
+      "bytes": 168802,
+      "thumbnail": {
+        "path": "assets/champions/qiyana-card.webp",
+        "width": 800,
+        "height": 470,
+        "bytes": 51486
+      }
+    },
+    {
+      "id": "icon-ryze",
+      "title": "Ryze",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Ryze.png",
+      "category": "champions",
+      "sha256_source": "abb747c8b8402625d4cc6b5b3c48950b192823216532c74f26d4b5ccf8851290",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/ryze-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 2932
+    },
+    {
+      "id": "champion-ryze",
+      "title": "Ryze",
+      "region": "unaffiliated",
+      "focus": {
+        "x": 1025,
+        "y": 252,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/c6112f9c04cd531982b94e51b719d359e8755365-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "87ae0bb43dc11e7320c6d1ba659bfa82b3257c71232b6e99bb604abde413422c",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/ryze.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 82134,
+      "thumbnail": {
+        "path": "assets/champions/ryze-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 38974
+      }
+    },
+    {
+      "id": "icon-sylas",
+      "title": "Sylas",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Sylas.png",
+      "category": "champions",
+      "sha256_source": "3e724fcd4fffd0b36ea3dd2a60d7d3ed9aeb20ebc5e2dec2e8019b31c3097647",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/sylas-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3314
+    },
+    {
+      "id": "champion-sylas",
+      "title": "Sylas",
+      "region": "demacia",
+      "focus": {
+        "x": 970,
+        "y": 121,
+        "width": 1920,
+        "height": 1190
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/e653368823aa1fbaf7955ce92bca15a81abc8440-1920x1190.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "0ba62d858a58dbaf8acc4975905da96dc53576c29e0839acf66e4db0175bc2d8",
+      "source_width": 1920,
+      "source_height": 1190,
+      "path": "assets/champions/sylas.webp",
+      "width": 1920,
+      "height": 1190,
+      "bytes": 176378,
+      "thumbnail": {
+        "path": "assets/champions/sylas-card.webp",
+        "width": 800,
+        "height": 496,
+        "bytes": 52564
+      }
+    },
+    {
+      "id": "icon-teemo",
+      "title": "Teemo",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Teemo.png",
+      "category": "champions",
+      "sha256_source": "bbf4b7238b1f62dc02b39208db764588d18a712a7ea96205f5932730c08a62ee",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/teemo-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 4236
+    },
+    {
+      "id": "champion-teemo",
+      "title": "Teemo",
+      "region": "bandle-city",
+      "focus": {
+        "x": 675,
+        "y": 93,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cbec5c5ced03b21b745997294e4a391d77cf6720-1920x1080.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "74cd248cf5e6ddcd9afd716c450eeff85cf1d02dc1b4dd303b9cd3bf0b850f58",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/champions/teemo.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 200324,
+      "thumbnail": {
+        "path": "assets/champions/teemo-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 58878
+      }
+    },
+    {
+      "id": "icon-vi",
+      "title": "Vi",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Vi.png",
+      "category": "champions",
+      "sha256_source": "282bd7a3e6a3bdd309f90eebf03b1fb7009a5357e6f53e158dd8c7df8103b4ab",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/vi-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 5012
+    },
+    {
+      "id": "champion-vi",
+      "title": "Vi",
+      "region": "piltover",
+      "focus": {
+        "x": 926,
+        "y": 135,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/4134b6611e0aab2e9d647d67c8cc75a4639cbda9-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "64333687536973c6cae5117085774d9eb2d8026493f15b9724b2afaa523391d5",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/vi.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 153830,
+      "thumbnail": {
+        "path": "assets/champions/vi-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 70524
+      }
+    },
+    {
+      "id": "icon-viego",
+      "title": "Viego",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Viego.png",
+      "category": "champions",
+      "sha256_source": "582fda91453e711bf45146e75ae7b0db0a2aa148499cffd4919050a1b96e9316",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/viego-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3938
+    },
+    {
+      "id": "champion-viego",
+      "title": "Viego",
+      "region": "shadow-isles",
+      "focus": {
+        "x": 1419,
+        "y": 208,
+        "width": 1900,
+        "height": 1127
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3766d90650c9eddd2e1405489365c1ec7ef9f2be-1900x1127.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "7ef8153cebc65db30a61a4b6a2f03eb2cba030b4a28dccc5cb26383be4037d6a",
+      "source_width": 1900,
+      "source_height": 1127,
+      "path": "assets/champions/viego.webp",
+      "width": 1900,
+      "height": 1127,
+      "bytes": 188382,
+      "thumbnail": {
+        "path": "assets/champions/viego-card.webp",
+        "width": 800,
+        "height": 475,
+        "bytes": 55658
+      }
+    },
+    {
+      "id": "icon-yasuo",
+      "title": "Yasuo",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/16.22.1/img/champion/Yasuo.png",
+      "category": "champions",
+      "sha256_source": "25a7597bfbd3198740b56d369734542f9e7b2100645d9f1199d969c7e1538ffb",
+      "source_width": 128,
+      "source_height": 128,
+      "path": "assets/champions/yasuo-icon.webp",
+      "width": 120,
+      "height": 120,
+      "bytes": 3624
+    },
+    {
+      "id": "champion-yasuo",
+      "title": "Yasuo",
+      "region": "ionia",
+      "focus": {
+        "x": 1069,
+        "y": 225,
+        "width": 1215,
+        "height": 717
+      },
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/0b19bbfa3272f9625762f9b5974429bedc345008-1215x717.jpg?accountingTag=LoL",
+      "category": "champions",
+      "sha256_source": "af00a2ad7bbc5afa1af9c80803638edbb9e5b90900c926c7a3f0b5f82ea5d68b",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/champions/yasuo.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 137700,
+      "thumbnail": {
+        "path": "assets/champions/yasuo-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 67018
+      }
+    },
+    {
+      "id": "crest-bandle-city",
+      "title": "Bandle City crest",
+      "source_url": "https://universe.leagueoflegends.com/images/bandle_city_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "141482169c3b1994fef7f338abc4a22897574b831bcfd0437f905f9462233ac5",
+      "path": "assets/crests/bandle-city.png",
+      "width": 276,
+      "height": 286,
+      "bytes": 29912
+    },
+    {
+      "id": "crest-bilgewater",
+      "title": "Bilgewater crest",
+      "source_url": "https://universe.leagueoflegends.com/images/bilgewater_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "b875fe998afcc3dd6192dfa8af4b16f7ee9a56ca2048a9e1a201b48218dcf692",
+      "path": "assets/crests/bilgewater.png",
+      "width": 160,
+      "height": 334,
+      "bytes": 16349
+    },
+    {
+      "id": "crest-demacia",
+      "title": "Demacia crest",
+      "source_url": "https://universe.leagueoflegends.com/images/demacia_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "b1d9c6801c820474808b9d754c39f814fa3e1db65a6b1517272f331080cbb729",
+      "path": "assets/crests/demacia.png",
+      "width": 168,
+      "height": 330,
+      "bytes": 15359
+    },
+    {
+      "id": "crest-freljord",
+      "title": "The Freljord crest",
+      "source_url": "https://universe.leagueoflegends.com/images/freljord_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "c7a39c79c7c2e9ecd2bc0cc5204ccb66f5154d8756a05018bd1c8c478999416e",
+      "path": "assets/crests/freljord.png",
+      "width": 202,
+      "height": 324,
+      "bytes": 17204
+    },
+    {
+      "id": "crest-ionia",
+      "title": "Ionia crest",
+      "source_url": "https://universe.leagueoflegends.com/images/iona_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "c662815ac375e27dc37f99eb7ac9711e11cf742560c9d5379234c313e2c64a12",
+      "path": "assets/crests/ionia.png",
+      "width": 235,
+      "height": 260,
+      "bytes": 15917
+    },
+    {
+      "id": "crest-ixtal",
+      "title": "Ixtal crest",
+      "source_url": "https://universe.leagueoflegends.com/images/ixtal_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "4837f95e3a7504627678742fb858b4c05f180e63e07d082651194cd0daf22450",
+      "path": "assets/crests/ixtal.png",
+      "width": 276,
+      "height": 286,
+      "bytes": 17993
+    },
+    {
+      "id": "crest-mount-targon",
+      "title": "Targon crest",
+      "source_url": "https://universe.leagueoflegends.com/images/mt_targon_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "1226adee95303206128201ac944b24fe425efdd73870030ee36bd8e9e242f102",
+      "path": "assets/crests/mount-targon.png",
+      "width": 570,
+      "height": 508,
+      "bytes": 40138
+    },
+    {
+      "id": "crest-noxus",
+      "title": "Noxus crest",
+      "source_url": "https://universe.leagueoflegends.com/images/noxus_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "da5fc8c164212dc8e7e7b1f5d4aa196d80c7dd0ce6c25f9249cfea44ee00da39",
+      "path": "assets/crests/noxus.png",
+      "width": 262,
+      "height": 266,
+      "bytes": 18737
+    },
+    {
+      "id": "crest-piltover",
+      "title": "Piltover crest",
+      "source_url": "https://universe.leagueoflegends.com/images/piltover_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "791562b71b37607dc4067d6643d04473f55fa16104713ec13490d67c5baf59a2",
+      "path": "assets/crests/piltover.png",
+      "width": 246,
+      "height": 254,
+      "bytes": 17185
+    },
+    {
+      "id": "crest-shadow-isles",
+      "title": "Shadow Isles crest",
+      "source_url": "https://universe.leagueoflegends.com/images/shadow_isles_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "cec7d5a5cffe714097b5ef05d7f398224bb41f08440c9a05cec2d7c249c22b60",
+      "path": "assets/crests/shadow-isles.png",
+      "width": 170,
+      "height": 324,
+      "bytes": 18504
+    },
+    {
+      "id": "crest-shurima",
+      "title": "Shurima crest",
+      "source_url": "https://universe.leagueoflegends.com/images/shurima_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "587f30c7702a30d32709a3fcde7744f9ce994ef4b6bd0348a80bc6e6e0dae477",
+      "path": "assets/crests/shurima.png",
+      "width": 344,
+      "height": 320,
+      "bytes": 29849
+    },
+    {
+      "id": "crest-void",
+      "title": "The Void crest",
+      "source_url": "https://universe.leagueoflegends.com/images/void_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "ce896af52a86ed19bcb6443750e6814cec812c6deb3689413e3d8d2f7975b149",
+      "path": "assets/crests/void.png",
+      "width": 608,
+      "height": 650,
+      "bytes": 38329
+    },
+    {
+      "id": "crest-zaun",
+      "title": "Zaun crest",
+      "source_url": "https://universe.leagueoflegends.com/images/zaun_crest_icon@2x.png",
+      "category": "crests",
+      "sha256_source": "dd05b89e1a82934ec4585811ae4b7a20ef64d359f6ae0bde8cb25c4f3658ec14",
+      "path": "assets/crests/zaun.png",
+      "width": 274,
+      "height": 328,
+      "bytes": 18234
+    },
+    {
+      "id": "barlow-condensed-italic",
+      "title": "BarlowCondensed 700 italic",
+      "source_url": "https://universe.leagueoflegends.com/93326123e18d745db1b1f22481da4def.woff2",
+      "category": "fonts",
+      "sha256_source": "fc7bc606a8f23ac098556a9a06ceb938afb5af8446c6019cb54d1f6e55f55ba6",
+      "path": "assets/fonts/barlow-condensed-italic.woff2",
+      "bytes": 42548
+    },
+    {
+      "id": "beaufort-bold",
+      "title": "Beaufort for LOL 700 normal",
+      "source_url": "https://universe.leagueoflegends.com/23d6b0340d74cbd584a52fe77ce5a166.woff2",
+      "category": "fonts",
+      "sha256_source": "f5a8a1a7b7394af158b7d460c3d2f83ef71bd75c9137799ba112b8795ae9c5f2",
+      "path": "assets/fonts/beaufort-bold.woff2",
+      "bytes": 29036
+    },
+    {
+      "id": "beaufort-medium",
+      "title": "Beaufort for LOL 500 normal",
+      "source_url": "https://universe.leagueoflegends.com/5b8e55ee0ce2f81de23d967ccb6e4805.woff2",
+      "category": "fonts",
+      "sha256_source": "57dc2b2a61a0b4a1736a343d9fd1241ec9d5e4b6e2c218192d09d9c5afb60631",
+      "path": "assets/fonts/beaufort-medium.woff2",
+      "bytes": 28472
+    },
+    {
+      "id": "beaufort-regular",
+      "title": "Beaufort for LOL 400 normal",
+      "source_url": "https://universe.leagueoflegends.com/e2263194ec33cc76db4d74b36ae9db85.woff2",
+      "category": "fonts",
+      "sha256_source": "b6c4c040bda5edbae5089e92e9ef1d97e6d37d7d8e39c0aa78b69dea3326e034",
+      "path": "assets/fonts/beaufort-regular.woff2",
+      "bytes": 28584
+    },
+    {
+      "id": "industry-bold-italic",
+      "title": "Industry W00 Bold Italic 700 italic",
+      "source_url": "https://universe.leagueoflegends.com/45cfa45395f77e4f1628dc01bfdeda28.woff2",
+      "category": "fonts",
+      "sha256_source": "9a95d0500372be08a16c25177420ba21d9a4b0c91ead0afcb4e7575ed46a6fe7",
+      "path": "assets/fonts/industry-bold-italic.woff2",
+      "bytes": 16808
+    },
+    {
+      "id": "industry-ultra-italic",
+      "title": "Industry W00 Ultra Italic 800 italic",
+      "source_url": "https://universe.leagueoflegends.com/431bb112173012919644cccd3c72fdb8.woff2",
+      "category": "fonts",
+      "sha256_source": "9171845ac6d2db194ce13fb88fd31f1d1cf599b450ab6385e71aa9ee309261b2",
+      "path": "assets/fonts/industry-ultra-italic.woff2",
+      "bytes": 16912
+    },
+    {
+      "id": "riot-sans-regular",
+      "category": "fonts",
+      "title": "Riot Sans Regular, official LoL Esports font",
+      "path": "assets/fonts/riot-sans-regular.woff2",
+      "source_url": "https://lolesports.com/_next/static/media/RiotSans_Regular-s.p.34y3e5meh055_.woff2",
+      "bytes": 51684,
+      "sha256_source": "331756957b2e13431db5d01caf28166db71bf4b38b2b1829aa082a93b18e23bc"
+    },
+    {
+      "id": "spiegel-bold",
+      "title": "Spiegel 700 normal",
+      "source_url": "https://universe.leagueoflegends.com/84c7427658adb1e1b6f6ca981c343700.woff2",
+      "category": "fonts",
+      "sha256_source": "ff837fe0487b1e6aabf6859d247816f6cf578e9239cb493df9787f839422b539",
+      "path": "assets/fonts/spiegel-bold.woff2",
+      "bytes": 32944
+    },
+    {
+      "id": "spiegel-regular",
+      "title": "Spiegel 400 normal",
+      "source_url": "https://universe.leagueoflegends.com/45d45c1a2ebb617abaa9c3b35143db4a.woff2",
+      "category": "fonts",
+      "sha256_source": "97019f373431c6a7e69272b2ea380523f0f426a09ce41531ea7ec57684cff9c2",
+      "path": "assets/fonts/spiegel-regular.woff2",
+      "bytes": 32848
+    },
+    {
+      "id": "spiegel-semibold",
+      "title": "Spiegel 600 normal",
+      "source_url": "https://universe.leagueoflegends.com/8707f628ffcd6158c283e1108cb39d67.woff2",
+      "category": "fonts",
+      "sha256_source": "91df26ea27b3bcc76bc6d96a50c8f4a14d0801fb74470c6f11a80e93d90dd554",
+      "path": "assets/fonts/spiegel-semibold.woff2",
+      "bytes": 33768
+    },
+    {
+      "id": "tungsten-bold",
+      "category": "fonts",
+      "title": "Tungsten Bold, official LoL Esports font",
+      "path": "assets/fonts/tungsten-bold.woff2",
+      "source_url": "https://lolesports.com/_next/static/media/Tungsten_Bold-s.p.07zutwouhbeo6.woff2",
+      "bytes": 15796,
+      "sha256_source": "b0248ac5cd624afebcd9f606e8964a0f90e57a3778efb5ce3f64aaea0906c7fb"
+    },
+    {
+      "id": "gallery-bilgewater-bilgewater-bay",
+      "title": "Bilgewater Bay",
+      "region": "bilgewater",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/e11375ab64f8a8f5c3eb7698b4fc2aa02d738fc4-1920x911.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "7e08ec610dc4d1cfb5bef6299663d1590e020c59acde13e7c0445cb964d6da93",
+      "source_width": 1920,
+      "source_height": 911,
+      "path": "assets/gallery/bilgewater-bilgewater-bay.webp",
+      "width": 1920,
+      "height": 911,
+      "bytes": 142954,
+      "thumbnail": {
+        "path": "assets/gallery/bilgewater-bilgewater-bay-card.webp",
+        "width": 800,
+        "height": 380,
+        "bytes": 32126
+      }
+    },
+    {
+      "id": "gallery-ionia-the-first-lands",
+      "title": "The First Lands",
+      "region": "ionia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/e8a24e6e60fe602dae0b9211b58465ec689a8d03-1920x737.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "9dde9408efbfc4f90fd2b0217527272df8b689723d1688087ed4fb2b40aebd85",
+      "source_width": 1920,
+      "source_height": 737,
+      "path": "assets/gallery/ionia-the-first-lands.webp",
+      "width": 1920,
+      "height": 737,
+      "bytes": 166548,
+      "thumbnail": {
+        "path": "assets/gallery/ionia-the-first-lands-card.webp",
+        "width": 800,
+        "height": 307,
+        "bytes": 42050
+      }
+    },
+    {
+      "id": "gallery-ionia-the-great-monasteries",
+      "title": "The Great Monasteries",
+      "region": "ionia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/72ad1322d9a8b12047f23f9f7d344de6735e54fc-1920x1079.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "5a72a04e1c58ea6784f0249946400d30deebe699c55fa2f4ba1202702703238a",
+      "source_width": 1920,
+      "source_height": 1079,
+      "path": "assets/gallery/ionia-the-great-monasteries.webp",
+      "width": 1920,
+      "height": 1079,
+      "bytes": 230814,
+      "thumbnail": {
+        "path": "assets/gallery/ionia-the-great-monasteries-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 50042
+      }
+    },
+    {
+      "id": "gallery-ionia-the-rainbowed-canyons-of-shi",
+      "title": "The Rainbowed Canyons of Shi",
+      "region": "ionia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/06b68528c3080d7c882118dd8125655cfd000e76-1920x812.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "c2c85a6b4476f3d5222073de3c45ae24ccb0b0a86b3526c67a8c3bdb074c560a",
+      "source_width": 1920,
+      "source_height": 812,
+      "path": "assets/gallery/ionia-the-rainbowed-canyons-of-shi.webp",
+      "width": 1920,
+      "height": 812,
+      "bytes": 194580,
+      "thumbnail": {
+        "path": "assets/gallery/ionia-the-rainbowed-canyons-of-shi-card.webp",
+        "width": 800,
+        "height": 338,
+        "bytes": 57160
+      }
+    },
+    {
+      "id": "gallery-ixtal-ixaocan",
+      "title": "Ixaocan",
+      "region": "ixtal",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/6b7e184e6b82d586d607f6a63261ae610811defa-3840x2160.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "b985253f6ec6fb640323f310e51082d930edf8eaaf4cb3c33fd989417a28d3a3",
+      "source_width": 3840,
+      "source_height": 2160,
+      "path": "assets/gallery/ixtal-ixaocan.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 222740,
+      "thumbnail": {
+        "path": "assets/gallery/ixtal-ixaocan-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 50156
+      }
+    },
+    {
+      "id": "gallery-mount-targon-home-of-the-rakkor",
+      "title": "HOME OF THE RAKKOR",
+      "region": "mount-targon",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/68cbc6b051ee43da9255b97c14ad2bb60d01fe07-1920x959.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "b1b7a547ff4c1e9156bee27f849330ca30370d1d39933e47f8add1fb6d5c046a",
+      "source_width": 1920,
+      "source_height": 959,
+      "path": "assets/gallery/mount-targon-home-of-the-rakkor.webp",
+      "width": 1920,
+      "height": 959,
+      "bytes": 179166,
+      "thumbnail": {
+        "path": "assets/gallery/mount-targon-home-of-the-rakkor-card.webp",
+        "width": 800,
+        "height": 400,
+        "bytes": 43320
+      }
+    },
+    {
+      "id": "gallery-piltover-zindelo-s-incognium-runeterra",
+      "title": "Zindelo’s Incognium Runeterra",
+      "region": "piltover",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f39c550d19ef1db58bcbdc879c872d2c1674e96-1920x1078.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "5265732052d8c5950056ab3e5b65cfb79108b2f1c654ebd8a1d89e05ef2f979f",
+      "source_width": 1920,
+      "source_height": 1078,
+      "path": "assets/gallery/piltover-zindelo-s-incognium-runeterra.webp",
+      "width": 1920,
+      "height": 1078,
+      "bytes": 414240,
+      "thumbnail": {
+        "path": "assets/gallery/piltover-zindelo-s-incognium-runeterra-card.webp",
+        "width": 800,
+        "height": 449,
+        "bytes": 103360
+      }
+    },
+    {
+      "id": "gallery-shurima-the-sands-recede-and-shurima-is-reborn",
+      "title": "The sands recede, and Shurima is reborn.",
+      "region": "shurima",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/c1f3e06c2deead6fbd679d53d1e9467fbd8f801d-1920x995.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "0ca898f532c45ba054b053541a769e148d7a6be6cf36d4354be94991503c6c24",
+      "source_width": 1920,
+      "source_height": 995,
+      "path": "assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn.webp",
+      "width": 1920,
+      "height": 995,
+      "bytes": 192024,
+      "thumbnail": {
+        "path": "assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn-card.webp",
+        "width": 800,
+        "height": 415,
+        "bytes": 47932
+      }
+    },
+    {
+      "id": "gallery-void-the-fall-of-icathia",
+      "title": "The Fall of Icathia",
+      "region": "void",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cff392be16fbc5d58802be94d37be8d40dcca3ef-1920x866.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "0df0283d25b2908e5c3db5f028df47837a620357da6e5c00e8f75ec2722dba47",
+      "source_width": 1920,
+      "source_height": 866,
+      "path": "assets/gallery/void-the-fall-of-icathia.webp",
+      "width": 1920,
+      "height": 866,
+      "bytes": 172830,
+      "thumbnail": {
+        "path": "assets/gallery/void-the-fall-of-icathia-card.webp",
+        "width": 800,
+        "height": 361,
+        "bytes": 43914
+      }
+    },
+    {
+      "id": "gallery-zaun-backstreet-hextech-deals",
+      "title": "Backstreet hextech deals",
+      "region": "zaun",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/84d22902356e7b69fec7dba23703f3a51ed97410-1920x975.jpg?accountingTag=LoL",
+      "category": "gallery",
+      "sha256_source": "fe4a3c0f5d6085a7123e75ed35c19da97f990a294d150e65009cf45328618f59",
+      "source_width": 1920,
+      "source_height": 975,
+      "path": "assets/gallery/zaun-backstreet-hextech-deals.webp",
+      "width": 1920,
+      "height": 975,
+      "bytes": 144868,
+      "thumbnail": {
+        "path": "assets/gallery/zaun-backstreet-hextech-deals-card.webp",
+        "width": 800,
+        "height": 406,
+        "bytes": 39038
+      }
+    },
+    {
+      "id": "region-bandle-city",
+      "title": "Bandle City",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/109f1c35b08e87598eaa1e0755a992e17d9425c2-1920x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "3218d6970549e9fb13e1145acfc6d944635e5b759904b9eb6f8baf6e4bce37b3",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/regions/bandle-city.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 55496,
+      "thumbnail": {
+        "path": "assets/regions/bandle-city-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 15954
+      }
+    },
+    {
+      "id": "region-bilgewater",
+      "title": "Bilgewater",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/9700d7bf76ec15c8c526f7fea2a960e3846e44a6-2825x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "77a57d269ce67f729d64a35906d85e60dc04f40981e454d53c0e8ede32ea0d24",
+      "source_width": 2825,
+      "source_height": 1080,
+      "path": "assets/regions/bilgewater.webp",
+      "width": 1920,
+      "height": 734,
+      "bytes": 138808,
+      "thumbnail": {
+        "path": "assets/regions/bilgewater-card.webp",
+        "width": 800,
+        "height": 306,
+        "bytes": 26170
+      }
+    },
+    {
+      "id": "region-demacia",
+      "title": "Demacia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/5b80fe8ddd3d935c3f258f3e145b8aed4b7460bf-1920x887.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "3e2cb1dc165785f9bfb895bdf5321cbdd8fee01922a22b798f73a95b7a2d805b",
+      "source_width": 1920,
+      "source_height": 887,
+      "path": "assets/regions/demacia.webp",
+      "width": 1920,
+      "height": 887,
+      "bytes": 206312,
+      "thumbnail": {
+        "path": "assets/regions/demacia-card.webp",
+        "width": 800,
+        "height": 370,
+        "bytes": 53520
+      }
+    },
+    {
+      "id": "region-freljord",
+      "title": "The Freljord",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/ee60551d26850cfbff088f571bc5e1688b1a143b-2034x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "a1b7adf0d85e85db5d7fb7ce725f2f4d8f8f1d945231c46b27bf05348c6ef4d4",
+      "source_width": 2034,
+      "source_height": 1080,
+      "path": "assets/regions/freljord.webp",
+      "width": 1920,
+      "height": 1019,
+      "bytes": 364134,
+      "thumbnail": {
+        "path": "assets/regions/freljord-card.webp",
+        "width": 800,
+        "height": 425,
+        "bytes": 79008
+      }
+    },
+    {
+      "id": "region-ionia",
+      "title": "Ionia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/1691574092da433ea3a4c896c96f8c87d5f7e45a-1920x888.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "867d7c91920b5553bb01bd0fc6e1313e360997b8d60492c0659b797914026ab7",
+      "source_width": 1920,
+      "source_height": 888,
+      "path": "assets/regions/ionia.webp",
+      "width": 1920,
+      "height": 888,
+      "bytes": 148638,
+      "thumbnail": {
+        "path": "assets/regions/ionia-card.webp",
+        "width": 800,
+        "height": 370,
+        "bytes": 40530
+      }
+    },
+    {
+      "id": "region-ixtal",
+      "title": "Ixtal",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/1a75d072fa01ec3d0cda3f87fc1bf18dce736424-5000x2811.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "b2d6c927c46454f2c638b1639eed55074f4c7971f026cf4a518552caf752230f",
+      "source_width": 5000,
+      "source_height": 2811,
+      "path": "assets/regions/ixtal.webp",
+      "width": 1920,
+      "height": 1079,
+      "bytes": 210234,
+      "thumbnail": {
+        "path": "assets/regions/ixtal-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 59396
+      }
+    },
+    {
+      "id": "region-mount-targon",
+      "title": "Targon",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/8ad3cfba4b5d7cb812562108a6e90d07e0865b3f-1920x1041.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "5092d012796e415a269a8790b20632444353ffbf332741acbe555c70c1514e63",
+      "source_width": 1920,
+      "source_height": 1041,
+      "path": "assets/regions/mount-targon.webp",
+      "width": 1920,
+      "height": 1041,
+      "bytes": 304940,
+      "thumbnail": {
+        "path": "assets/regions/mount-targon-card.webp",
+        "width": 800,
+        "height": 434,
+        "bytes": 44970
+      }
+    },
+    {
+      "id": "region-noxus",
+      "title": "Noxus",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6310fe5db818f80b84ee784a746cc28ee1273e6b-1920x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "187d546b1fb7ea96aec1449c7b14d27e148bdafcb96c7170a3730aa1e8d385fa",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/regions/noxus.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 115350,
+      "thumbnail": {
+        "path": "assets/regions/noxus-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 31676
+      }
+    },
+    {
+      "id": "region-piltover",
+      "title": "Piltover",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6c77423961def6e3a82d9a36545782f1a06386e0-4681x2114.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "d559292f1e7ed4d4cf8da189e907c2f1e048518af95ba8e20125ae13cefa51e6",
+      "source_width": 4681,
+      "source_height": 2114,
+      "path": "assets/regions/piltover.webp",
+      "width": 1920,
+      "height": 867,
+      "bytes": 243470,
+      "thumbnail": {
+        "path": "assets/regions/piltover-card.webp",
+        "width": 800,
+        "height": 361,
+        "bytes": 52792
+      }
+    },
+    {
+      "id": "region-shadow-isles",
+      "title": "Shadow Isles",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/94e4bf2e1b30ba553b4fc0f93e94983837082210-2503x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "1a726437bbba8554d3e20f6e62f530c1e092cfad3d17e405bbc2986e0c1c1709",
+      "source_width": 2503,
+      "source_height": 1080,
+      "path": "assets/regions/shadow-isles.webp",
+      "width": 1920,
+      "height": 828,
+      "bytes": 206264,
+      "thumbnail": {
+        "path": "assets/regions/shadow-isles-card.webp",
+        "width": 800,
+        "height": 345,
+        "bytes": 41554
+      }
+    },
+    {
+      "id": "region-shurima",
+      "title": "Shurima",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f24f923ba9871dd870c0d3565075ff8140f44b8-1920x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "8d66d9ffd01684490ff6cea4755b185de288d0f379a4c78d03be9051abae2f63",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/regions/shurima.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 190392,
+      "thumbnail": {
+        "path": "assets/regions/shurima-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 48478
+      }
+    },
+    {
+      "id": "region-void",
+      "title": "The Void",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7107e5dbca7887931748e7ae0924e6eda17ef6f4-1920x1064.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "009ec660f26b28f3bd278dc940d5b68cbf8dc07b55d18f99610eb305ab237a17",
+      "source_width": 1920,
+      "source_height": 1064,
+      "path": "assets/regions/void.webp",
+      "width": 1920,
+      "height": 1064,
+      "bytes": 230310,
+      "thumbnail": {
+        "path": "assets/regions/void-card.webp",
+        "width": 800,
+        "height": 443,
+        "bytes": 53678
+      }
+    },
+    {
+      "id": "region-zaun",
+      "title": "Zaun",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/56d6fa8581379d60cc17951edbe3d686e52bf51b-1730x1080.jpg?accountingTag=LoL",
+      "category": "regions",
+      "sha256_source": "281a605259280297527d4cc49396a95e914ffb8cd2036b7aeb498488a429809d",
+      "source_width": 1730,
+      "source_height": 1080,
+      "path": "assets/regions/zaun.webp",
+      "width": 1730,
+      "height": 1080,
+      "bytes": 220892,
+      "thumbnail": {
+        "path": "assets/regions/zaun-card.webp",
+        "width": 800,
+        "height": 499,
+        "bytes": 68666
+      }
+    },
+    {
+      "id": "dark-cosmic-lux",
+      "title": "Dark Cosmic Lux",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lux_17.jpg",
+      "category": "skins",
+      "sha256_source": "b0173b828c640dc015888c0ecadf03d5eaf64e417fcf6576c56dbe2bdd3a6134",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/dark-cosmic-lux.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 75030,
+      "thumbnail": {
+        "path": "assets/skins/dark-cosmic-lux-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 39516
+      }
+    },
+    {
+      "id": "high-noon-lucian",
+      "title": "High Noon Lucian",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lucian_8.jpg",
+      "category": "skins",
+      "sha256_source": "7c64196267bc6d691b34e76f1d9e755561db5f21eb9374699b3138783c5179c7",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/high-noon-lucian.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 68804,
+      "thumbnail": {
+        "path": "assets/skins/high-noon-lucian-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 35012
+      }
+    },
+    {
+      "id": "kda-all-out-ahri",
+      "title": "K/DA ALL OUT Ahri",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_28.jpg",
+      "category": "skins",
+      "sha256_source": "bbe26b21ccacc99d3f7dcb94776053dd98f183b0b7cd221cd7516d8772533ff6",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/kda-all-out-ahri.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 112630,
+      "thumbnail": {
+        "path": "assets/skins/kda-all-out-ahri-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 56128
+      }
+    },
+    {
+      "id": "odyssey-yasuo",
+      "title": "Odyssey Yasuo",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_10.jpg",
+      "category": "skins",
+      "sha256_source": "17197dfc9e12e14697f7609520cc602ab7b5eccbf935087da8dea47a943cfa43",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/odyssey-yasuo.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 126032,
+      "thumbnail": {
+        "path": "assets/skins/odyssey-yasuo-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 65274
+      }
+    },
+    {
+      "id": "project-jhin",
+      "title": "PROJECT: Jhin",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jhin_4.jpg",
+      "category": "skins",
+      "sha256_source": "348e382d8f1cbfdc969d9d6c42466dc11145772ebb9c1a561a8d1e138dbbdcdf",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/project-jhin.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 102940,
+      "thumbnail": {
+        "path": "assets/skins/project-jhin-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 46806
+      }
+    },
+    {
+      "id": "spirit-blossom-ahri",
+      "title": "Spirit Blossom Ahri",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_27.jpg",
+      "category": "skins",
+      "sha256_source": "2a10640ff77178fbb5f4d95d8f4bbf195d1fbb0d39c4094629b8b88e1ee4aaf3",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/spirit-blossom-ahri.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 83518,
+      "thumbnail": {
+        "path": "assets/skins/spirit-blossom-ahri-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 44428
+      }
+    },
+    {
+      "id": "star-guardian-ahri",
+      "title": "Star Guardian Ahri",
+      "source_url": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_14.jpg",
+      "category": "skins",
+      "sha256_source": "a976d5f39168ca7d814aacabffb364295437fe44165fa88e946ba6fb5a3edf7d",
+      "source_width": 1215,
+      "source_height": 717,
+      "path": "assets/skins/star-guardian-ahri.webp",
+      "width": 1215,
+      "height": 717,
+      "bytes": 86058,
+      "thumbnail": {
+        "path": "assets/skins/star-guardian-ahri-card.webp",
+        "width": 800,
+        "height": 472,
+        "bytes": 47238
+      }
+    },
+    {
+      "id": "story-ahri-garden-forgetting",
+      "title": "The Garden of Forgetting",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7a31a4c0593cd4365cce70dafbc8c643507b190b-3757x2237.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "d35df4ffd5892f1aa5dfbf6abdbf976ba018460f11a571d6f736731ea602d42c",
+      "source_width": 3757,
+      "source_height": 2237,
+      "path": "assets/stories/ahri-garden-forgetting.webp",
+      "width": 1920,
+      "height": 1143,
+      "bytes": 239674,
+      "thumbnail": {
+        "path": "assets/stories/ahri-garden-forgetting-card.webp",
+        "width": 800,
+        "height": 476,
+        "bytes": 61074
+      }
+    },
+    {
+      "id": "story-bilgewater-story",
+      "title": "Burning Tides",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/9bc98d4a10f752eb831adb75d64d3d20ae8373db-967x1080.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "74d66722232a29710cea290bf810dc28856b38a0373b12f8f1a187bcfd43ec25",
+      "source_width": 967,
+      "source_height": 1080,
+      "path": "assets/stories/bilgewater-story.webp",
+      "width": 967,
+      "height": 1080,
+      "bytes": 115124,
+      "thumbnail": {
+        "path": "assets/stories/bilgewater-story-card.webp",
+        "width": 800,
+        "height": 893,
+        "bytes": 91898
+      }
+    },
+    {
+      "id": "story-for-demacia",
+      "title": "For Demacia",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cc4058fbee0093a48091af2508aa4fbf1621dda7-2961x2241.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "9fb8e796ec37cafab54cd8e1d7fb827a7e052aa80b68a62e882bcbd6d4254c7a",
+      "source_width": 2961,
+      "source_height": 2241,
+      "path": "assets/stories/for-demacia.webp",
+      "width": 1920,
+      "height": 1453,
+      "bytes": 631462,
+      "thumbnail": {
+        "path": "assets/stories/for-demacia-card.webp",
+        "width": 800,
+        "height": 605,
+        "bytes": 148516
+      }
+    },
+    {
+      "id": "story-from-the-ashes",
+      "title": "From The Ashes",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d44e5e702b78eaa6d887110d549dc519c66c08e9-1920x1080.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "eb208434aac343394af3d2fe4bc588da64f9b2491e715ba13baacc14f8977e0f",
+      "source_width": 1920,
+      "source_height": 1080,
+      "path": "assets/stories/from-the-ashes.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 84888,
+      "thumbnail": {
+        "path": "assets/stories/from-the-ashes-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 28226
+      }
+    },
+    {
+      "id": "story-piltover-progress-day",
+      "title": "Progress Day",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f39c550d19ef1db58bcbdc879c872d2c1674e96-1920x1078.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "5265732052d8c5950056ab3e5b65cfb79108b2f1c654ebd8a1d89e05ef2f979f",
+      "source_width": 1920,
+      "source_height": 1078,
+      "path": "assets/stories/piltover-progress-day.webp",
+      "width": 1920,
+      "height": 1078,
+      "bytes": 414240,
+      "thumbnail": {
+        "path": "assets/stories/piltover-progress-day-card.webp",
+        "width": 800,
+        "height": 449,
+        "bytes": 103360
+      }
+    },
+    {
+      "id": "story-the-eye-in-the-abyss",
+      "title": "The Eye in the Abyss",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6600a5d33dc7d8d62dc987b49657a9af63466d05-5760x3240.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "fc25b3b5b6297911d7541df430c354ba7b2059703cf573bb114dc6780c18936b",
+      "source_width": 5760,
+      "source_height": 3240,
+      "path": "assets/stories/the-eye-in-the-abyss.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 71742,
+      "thumbnail": {
+        "path": "assets/stories/the-eye-in-the-abyss-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 20110
+      }
+    },
+    {
+      "id": "story-twilight-of-the-gods",
+      "title": "Twilight of the Gods",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/efb2c923ef1f8430453cbc7ad09ebf560f1e6614-1469x826.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "0afd8bca1f8ef6d99fba92745c8b873c707374ec3d134ea74bf2508e6fcfb723",
+      "source_width": 1469,
+      "source_height": 826,
+      "path": "assets/stories/twilight-of-the-gods.webp",
+      "width": 1469,
+      "height": 826,
+      "bytes": 78896,
+      "thumbnail": {
+        "path": "assets/stories/twilight-of-the-gods-card.webp",
+        "width": 800,
+        "height": 450,
+        "bytes": 31396
+      }
+    },
+    {
+      "id": "story-where-icathia-once-stood",
+      "title": "Where Icathia Once Stood",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cff392be16fbc5d58802be94d37be8d40dcca3ef-1920x866.jpg?accountingTag=LoL",
+      "category": "stories",
+      "sha256_source": "0df0283d25b2908e5c3db5f028df47837a620357da6e5c00e8f75ec2722dba47",
+      "source_width": 1920,
+      "source_height": 866,
+      "path": "assets/stories/where-icathia-once-stood.webp",
+      "width": 1920,
+      "height": 866,
+      "bytes": 172830,
+      "thumbnail": {
+        "path": "assets/stories/where-icathia-once-stood-card.webp",
+        "width": 800,
+        "height": 361,
+        "bytes": 43914
+      }
+    },
+    {
+      "id": "ui-magnifyingglass",
+      "title": "MagnifyingGlass",
+      "source_url": "https://universe.leagueoflegends.com/images/MagnifyingGlass.png",
+      "category": "ui",
+      "sha256_source": "d7413bae56dff35245cd30397dd0570b18e4b1949b7f9ca80eb29adbdfe534cb",
+      "path": "assets/ui/MagnifyingGlass.png",
+      "width": 59,
+      "height": 62,
+      "bytes": 2108
+    },
+    {
+      "id": "ui-nextarrow",
+      "title": "NextArrow",
+      "source_url": "https://universe.leagueoflegends.com/images/NextArrow.png",
+      "category": "ui",
+      "sha256_source": "98e37fd0fb4031a8aedd2488cd97ef7e3d1b9aa3d9ba2218a796e731c53d0609",
+      "path": "assets/ui/NextArrow.png",
+      "width": 42,
+      "height": 21,
+      "bytes": 706
+    },
+    {
+      "id": "ui-previousarrow",
+      "title": "PreviousArrow",
+      "source_url": "https://universe.leagueoflegends.com/images/PreviousArrow.png",
+      "category": "ui",
+      "sha256_source": "49fa455a226bae750f532b223f6b03cb60b92a1247ad2cefd73a663b53df3fb0",
+      "path": "assets/ui/PreviousArrow.png",
+      "width": 42,
+      "height": 21,
+      "bytes": 723
+    },
+    {
+      "id": "ui-champion",
+      "title": "champion official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_champion__3nwJQ.png",
+      "category": "ui",
+      "sha256_source": "c8863605582d27d8eba31df402ea71939b48b7d392764191dad840958270ed9a",
+      "path": "assets/ui/champion.png",
+      "width": 100,
+      "height": 176,
+      "bytes": 5960
+    },
+    {
+      "id": "ui-close-icon",
+      "title": "close-icon",
+      "source_url": "https://universe.leagueoflegends.com/images/close-icon.png",
+      "category": "ui",
+      "sha256_source": "e6d29d609d619547f84428d40b1d72bc5fd8c67e8e3064b04a68914df422f008",
+      "path": "assets/ui/close-icon.png",
+      "width": 23,
+      "height": 23,
+      "bytes": 214
+    },
+    {
+      "id": "ui-faction",
+      "title": "faction official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_faction__14mjH.png",
+      "category": "ui",
+      "sha256_source": "bf26de5f658c517ea5a7001ab3bd0c4c67406a8b81fdef2d37cbca4a113746de",
+      "path": "assets/ui/faction.png",
+      "width": 55,
+      "height": 56,
+      "bytes": 5265
+    },
+    {
+      "id": "ui-fan_art",
+      "title": "fan_art official content icon",
+      "source_url": "https://universe.leagueoflegends.com/js/app.766338b415c34481d5dc.js",
+      "category": "ui",
+      "sha256_source": "a9efd56e67af16a0f1c861f260131d7058a45d974168944a00b82e1267060112",
+      "path": "assets/ui/fan-art.png",
+      "width": 30,
+      "height": 30,
+      "bytes": 1112,
+      "embedSourceType": "PNG embedded as a base64 data URI in the official JavaScript bundle",
+      "sourceModule": "./js/display/components/ContentTypeIcon/images/content_type_icon_fan_art.png",
+      "sha256_source_note": "SHA-256 of the original decoded PNG bytes, unchanged"
+    },
+    {
+      "id": "ui-latest",
+      "title": "latest official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_latest__1ulWu.png",
+      "category": "ui",
+      "sha256_source": "2bd05817249fcaca3621f6a6508c40e5bc3ea81f5211c38b3617f2fccc154c31",
+      "path": "assets/ui/latest.png",
+      "width": 52,
+      "height": 58,
+      "bytes": 2860
+    },
+    {
+      "id": "ui-photo",
+      "title": "photo official content icon",
+      "source_url": "https://universe.leagueoflegends.com/js/app.766338b415c34481d5dc.js",
+      "category": "ui",
+      "sha256_source": "ec748246a69606a1c8f2b4aff9a2bf0aaf322e74c8326c8b650619f2dc2cdcfa",
+      "path": "assets/ui/photo.png",
+      "width": 27,
+      "height": 27,
+      "bytes": 1278,
+      "embedSourceType": "PNG embedded as a base64 data URI in the official JavaScript bundle",
+      "sourceModule": "./js/display/components/ContentTypeIcon/images/content_type_icon_photo.png",
+      "sha256_source_note": "SHA-256 of the original decoded PNG bytes, unchanged"
+    },
+    {
+      "id": "ui-random",
+      "title": "random official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_random__T3L91.png",
+      "category": "ui",
+      "sha256_source": "90439b622311f78151c4e0c8718a9a279f8454fe607b2fb885d73aa4227e6bac",
+      "path": "assets/ui/random.png",
+      "width": 33,
+      "height": 31,
+      "bytes": 2281
+    },
+    {
+      "id": "ui-story",
+      "title": "story official content icon",
+      "source_url": "https://universe.leagueoflegends.com/js/app.766338b415c34481d5dc.js",
+      "category": "ui",
+      "sha256_source": "3e96133457b17a62ab9c28a1de2c3c573179c72e91a7a90d9477448189efaee3",
+      "path": "assets/ui/story.png",
+      "width": 44,
+      "height": 31,
+      "bytes": 1698,
+      "embedSourceType": "PNG embedded as a base64 data URI in the official JavaScript bundle",
+      "sourceModule": "./js/display/components/ContentTypeIcon/images/content_type_icon_story.png",
+      "sha256_source_note": "SHA-256 of the original decoded PNG bytes, unchanged"
+    },
+    {
+      "id": "ui-trending",
+      "title": "trending official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_trending__2Bld0.png",
+      "category": "ui",
+      "sha256_source": "2f41bc0eb0ed8dc02661ccdfe773851cd61124b6d1c82a47ed23e7f96f56677b",
+      "path": "assets/ui/trending.png",
+      "width": 52,
+      "height": 58,
+      "bytes": 3171
+    },
+    {
+      "id": "ui-universe",
+      "title": "universe official content icon",
+      "source_url": "https://universe.leagueoflegends.com/esimages/content_type_icon_universe__14mjH.png",
+      "category": "ui",
+      "sha256_source": "bf26de5f658c517ea5a7001ab3bd0c4c67406a8b81fdef2d37cbca4a113746de",
+      "path": "assets/ui/universe.png",
+      "width": 55,
+      "height": 56,
+      "bytes": 5265
+    },
+    {
+      "id": "ui-video",
+      "title": "video official content icon",
+      "source_url": "https://universe.leagueoflegends.com/js/app.766338b415c34481d5dc.js",
+      "category": "ui",
+      "sha256_source": "07669a1814b1c9039c620f785885ff6e3c15e96281ff62b5890c72fdfc7051bd",
+      "path": "assets/ui/video.png",
+      "width": 50,
+      "height": 32,
+      "bytes": 1487,
+      "embedSourceType": "PNG embedded as a base64 data URI in the official JavaScript bundle",
+      "sourceModule": "./js/display/components/ContentTypeIcon/images/content_type_icon_video.png",
+      "sha256_source_note": "SHA-256 of the original decoded PNG bytes, unchanged"
+    },
+    {
+      "id": "video-demacia",
+      "path": "assets/videos/demacia.webm",
+      "source_url": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/universe/36c564338d66ac2000a3d6c091dd78c443230623.webm?accountingTag=LoL",
+      "category": "videos",
+      "bytes": 1272496,
+      "sha256_source": "97d9d4eb8030cd02f5840a64ca953d53c463f9189c7bd273eb63267e84cf1018",
+      "title": "Demacia animated region vista",
+      "width": 1920,
+      "height": 1080,
+      "duration_seconds": 10.04
+    },
+    {
+      "id": "video-ionia",
+      "path": "assets/videos/ionia.webm",
+      "source_url": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/universe/a9b6b551e2589189615eb4f7d56a17862ff3a882.webm?accountingTag=LoL",
+      "category": "videos",
+      "bytes": 1905593,
+      "sha256_source": "044a2f34d0a2e8cec544871b4ffb0fc09b00dc43afc0f6bb1af337301227c581",
+      "title": "Ionia animated region vista",
+      "width": 1920,
+      "height": 1080,
+      "duration_seconds": 15.04
+    },
+    {
+      "id": "video-noxus",
+      "path": "assets/videos/noxus.webm",
+      "source_url": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/universe/329c91313054076a869a6ceb95c995107320e334.webm?accountingTag=LoL",
+      "category": "videos",
+      "bytes": 1878876,
+      "sha256_source": "7d52a4651465e68a78bfde8c48b452cec5bac64ce1285ccc517d60d3c34dab88",
+      "title": "Noxus animated region vista",
+      "width": 1920,
+      "height": 1080,
+      "duration_seconds": 15.04
+    },
+    {
+      "id": "worlds-brand",
+      "category": "worlds",
+      "title": "Worlds 2026 official primer visual",
+      "path": "assets/worlds/brand.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/0286cc9daee206f55cf722a3b2830ca3fdad7d59-1600x900.jpg",
+      "source_width": 1600,
+      "source_height": 900,
+      "width": 1600,
+      "height": 900,
+      "bytes": 82832,
+      "sha256_source": "0c4b28a7279af8f8f6cb0dbb3f6628b2c2210cedadb2202431c4fe24c5ef3f1c"
+    },
+    {
+      "id": "worlds-ceremony",
+      "category": "worlds",
+      "title": "Worlds 2026 official opening ceremony visual",
+      "path": "assets/worlds/ceremony.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/c758bf0981ffdd7e3d45c3a5590386eece6da317-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 1920,
+      "height": 1080,
+      "bytes": 373814,
+      "sha256_source": "14f83d5ad60a7eb615c2d5904592c06f6593ef640a70e3a848d03ba8887b2cf1"
+    },
+    {
+      "id": "worlds-keyvisual",
+      "category": "worlds",
+      "title": "Worlds 2026 official key visual",
+      "path": "assets/worlds/keyvisual.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/a57a2226c2721c242aaf53c771ad13d4e505962f-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 1920,
+      "height": 1080,
+      "bytes": 520840,
+      "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
+    },
+    {
+      "id": "worlds-keyvisual-768",
+      "category": "worlds",
+      "title": "Worlds 2026 official key visual",
+      "path": "assets/worlds/keyvisual-768.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/a57a2226c2721c242aaf53c771ad13d4e505962f-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 768,
+      "height": 432,
+      "bytes": 51422,
+      "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
+    },
+    {
+      "id": "worlds-keyvisual-1280",
+      "category": "worlds",
+      "title": "Worlds 2026 official key visual",
+      "path": "assets/worlds/keyvisual-1280.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/a57a2226c2721c242aaf53c771ad13d4e505962f-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 1280,
+      "height": 720,
+      "bytes": 116138,
+      "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
+    }
+  ],
+  "failed": []
+}

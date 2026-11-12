@@ -1,0 +1,2329 @@
+{
+  "meta": {
+    "checkedAt": "2026-11-12",
+    "source": "Riot Games Universe JSON and Data Dragon 16.22.1",
+    "scope": "13 regions, 18 curated champions, 8 curated stories, 6 alternate skin universes plus Spirit Blossom folklore",
+    "copy": "All summaries are original editorial paraphrases, not copied story prose.",
+    "caveats": [
+      "Universe region descriptions and biographies may retain older continuity alongside newer updates; avoid claiming this is an authoritative unified timeline.",
+      "English en_GB canonical URLs supplied; use official English page when a Chinese original cannot be verified.",
+      "Seven Chinese story titles verified against official zh_cn JSON. For Demacia remains an editorial translation because its Chinese JSON title is blank.",
+      "Worlds esports branding is a presentation layer, not a canonical Runeterra region or parallel skin universe."
+    ],
+    "assetBasePath": "/worlds-universe/assets/",
+    "localArtCount": 10,
+    "assetManifest": "assets-manifest.json"
+  },
+  "regions": [
+    {
+      "id": "demacia",
+      "name": {
+        "en": "Demacia",
+        "zh": "德玛西亚"
+      },
+      "tagline": {
+        "en": "Order and light",
+        "zh": "秩序与光"
+      },
+      "summary": {
+        "en": "A kingdom of pale stone, military honor and duty, confronting the divisions created by its fear of magic.",
+        "zh": "白石城邦以荣誉与秩序为根基，对魔法的恐惧也让它的理想遭遇考验。"
+      },
+      "image": "/worlds-universe/assets/regions/demacia.webp",
+      "video": "/worlds-universe/assets/videos/demacia.webm",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/demacia/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/demacia/index.json",
+      "gallery": [
+        {
+          "title": "The Hall of Valor, where fallen Demacian Warriors are remembered for their sacrifice",
+          "url": "/worlds-universe/assets/regions/demacia.webp",
+          "section": "Visions of Demacia",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/demacia/",
+          "region": "demacia",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/5b80fe8ddd3d935c3f258f3e145b8aed4b7460bf-1920x887.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/regions/demacia-card.webp"
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/5b80fe8ddd3d935c3f258f3e145b8aed4b7460bf-1920x887.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/demacia-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 887,
+      "crest": "/worlds-universe/assets/crests/demacia.png",
+      "detail": {
+        "en": [
+          "Demacia grew from a refuge established after the Rune Wars. Its pale petricite architecture expresses a promise of protection, while a disciplined army and proud noble families defend the kingdom’s towns, fields and forests. Honor is a public ideal, woven into both civic life and military tradition.",
+          "That promise has a difficult boundary: magic. The same society that values duty and justice treats magical ability with suspicion. Lux and Sylas reveal opposing responses to this tension, making Demacia a setting for questions about belonging, authority and the meaning of protecting one’s people."
+        ],
+        "zh": [
+          "德玛西亚的起点，是符文战争后建立的避难所。白色禁魔石建筑、纪律严明的军队与世代效忠的贵族，共同构成了守护家园的承诺。荣誉与责任不仅属于战场，也渗透在城镇、农田与森林中的日常生活。",
+          "这份承诺却在魔法面前显出裂痕。一个推崇正义的国度，也可能让拥有魔法的子民感到恐惧。拉克丝与塞拉斯代表不同回应，让归属、权威与保护人民的含义成为德玛西亚故事的重要问题。"
+        ]
+      },
+      "relatedChampions": [
+        "lux",
+        "sylas"
+      ]
+    },
+    {
+      "id": "noxus",
+      "name": {
+        "en": "Noxus",
+        "zh": "诺克萨斯"
+      },
+      "tagline": {
+        "en": "Strength and ambition",
+        "zh": "力量与野心"
+      },
+      "summary": {
+        "en": "An expansionist empire where talent can earn power, while armies, noble houses and hidden factions compete to shape its future.",
+        "zh": "扩张的帝国推崇各种形式的力量；军团、贵族与隐秘结社共同塑造它的命运。"
+      },
+      "image": "/worlds-universe/assets/regions/noxus.webp",
+      "video": "/worlds-universe/assets/videos/noxus.webm",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/noxus/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/noxus/index.json",
+      "gallery": [],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6310fe5db818f80b84ee784a746cc28ee1273e6b-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/noxus-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "crest": "/worlds-universe/assets/crests/noxus.png",
+      "detail": {
+        "en": [
+          "Noxus measures people by the strength they can contribute, whether through battle, strategy or magic. This ideal offers paths to advancement beyond inherited status, yet conquest remains central to the empire’s expansion. The ancient Immortal Bastion anchors a capital built around layers of accumulated history.",
+          "The empire is also a contest of competing interests. Military leaders, established families and hidden powers pursue different versions of its future. Darius embodies its public self-assurance in force, while the Black Rose reveals how much influence can operate beyond the battlefield."
+        ],
+        "zh": [
+          "诺克萨斯重视一个人能够贡献的力量：武力、谋略与魔法，都可能带来地位。这种理想为出身之外的晋升留下空间，但征服仍是帝国扩张的重要方式。古老的不朽堡垒屹立在首都中心，见证层层叠加的历史。",
+          "帝国内部并非只有一种声音。军队统帅、传统贵族与隐秘势力，各自争取塑造未来的权力。德莱厄斯展示正面的军事力量，黑色玫瑰则提醒人们，许多关键斗争发生在战场之外。"
+        ]
+      },
+      "relatedChampions": [
+        "darius",
+        "leblanc"
+      ]
+    },
+    {
+      "id": "ionia",
+      "name": {
+        "en": "Ionia",
+        "zh": "艾欧尼亚"
+      },
+      "tagline": {
+        "en": "The First Lands",
+        "zh": "初生之土"
+      },
+      "summary": {
+        "en": "A land where the material and spirit realms meet, and the aftermath of invasion tests ancient ideas of harmony.",
+        "zh": "物质与精神领域在这里交汇。战争打破了古老的平衡，也改变了人们守护家园的方式。"
+      },
+      "image": "/worlds-universe/assets/regions/ionia.webp",
+      "video": "/worlds-universe/assets/videos/ionia.webm",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/ionia/index.json",
+      "gallery": [
+        {
+          "title": "The First Lands",
+          "url": "/worlds-universe/assets/gallery/ionia-the-first-lands.webp",
+          "section": "Life in Ionia",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+          "region": "ionia",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/e8a24e6e60fe602dae0b9211b58465ec689a8d03-1920x737.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/ionia-the-first-lands-card.webp",
+          "name": {
+            "en": "The First Lands",
+            "zh": "初生之土"
+          }
+        },
+        {
+          "title": "The Great Monasteries",
+          "url": "/worlds-universe/assets/gallery/ionia-the-great-monasteries.webp",
+          "section": "Life in Ionia",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+          "region": "ionia",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/72ad1322d9a8b12047f23f9f7d344de6735e54fc-1920x1079.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/ionia-the-great-monasteries-card.webp",
+          "name": {
+            "en": "The Great Monasteries",
+            "zh": "群山修道院"
+          }
+        },
+        {
+          "title": "The Rainbowed Canyons of Shi",
+          "url": "/worlds-universe/assets/gallery/ionia-the-rainbowed-canyons-of-shi.webp",
+          "section": "Environments of Ionia",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+          "region": "ionia",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/06b68528c3080d7c882118dd8125655cfd000e76-1920x812.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/ionia-the-rainbowed-canyons-of-shi-card.webp",
+          "name": {
+            "en": "The Rainbowed Canyons of Shi",
+            "zh": "虹彩峡谷"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/1691574092da433ea3a4c896c96f8c87d5f7e45a-1920x888.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/ionia-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 888,
+      "crest": "/worlds-universe/assets/crests/ionia.png",
+      "detail": {
+        "en": [
+          "Across Ionia’s islands, magic is part of the landscape rather than an isolated craft. Forests, mountains and settlements exist close to the spirit realm, and traditions of balance shape how communities live with their surroundings. Its monasteries and diverse peoples share a homeland without speaking with one voice.",
+          "The Noxian invasion broke the expectation that this balance could protect itself. Some groups seek to preserve older ways; others argue that survival requires organized resistance and stronger use of magic. That disagreement gives Ionia’s beauty an enduring political and spiritual tension."
+        ],
+        "zh": [
+          "在艾欧尼亚，魔法存在于土地本身，而非少数人的技艺。森林、山岭与村落紧邻精神领域，人们以平衡的传统理解自己和环境的关系。修道院与不同族群共享这片家园，却并不拥有完全一致的立场。",
+          "诺克萨斯的入侵打破了平衡可以自行维持的想象。有人希望守护旧日生活，也有人主张组织抵抗、运用更强大的魔法。不同答案让初生之土的美丽始终伴随着政治与精神上的张力。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri",
+        "yasuo"
+      ]
+    },
+    {
+      "id": "freljord",
+      "name": {
+        "en": "The Freljord",
+        "zh": "弗雷尔卓德"
+      },
+      "tagline": {
+        "en": "Winter and old gods",
+        "zh": "凛冬与古神"
+      },
+      "summary": {
+        "en": "In the frozen north, rival tribes, ancient gods and Iceborn leaders contend with a harsh land and its buried secrets.",
+        "zh": "冰雪中的部族各自寻找生存之道；远古神祇、寒冰血脉与深藏地下的秘密仍影响北境。"
+      },
+      "image": "/worlds-universe/assets/regions/freljord.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/freljord/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/freljord/index.json",
+      "gallery": [],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/ee60551d26850cfbff088f571bc5e1688b1a143b-2034x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/freljord-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1019,
+      "crest": "/worlds-universe/assets/crests/freljord.png",
+      "detail": {
+        "en": [
+          "Life in the Freljord demands endurance, and its tribes have developed distinct answers to scarcity, danger and winter. Iceborn leaders wield powers unavailable to most mortals, while stories of ancient gods and spirit walkers remain part of the land’s living traditions. The past survives in both belief and ice.",
+          "Ashe’s coalition pursues a more united future, the Winter’s Claw advances through strength and raiding, and the Frostguard guard their own secrets. These competing visions make the north more than a frozen wilderness: it is a struggle over who may lead and what must be remembered."
+        ],
+        "zh": [
+          "弗雷尔卓德的生活考验耐力，不同部族也形成了应对匮乏、危险与寒冬的方式。寒冰血脉的领袖掌握常人无法驾驭的力量，古神与灵行者的传说则延续在土地与信仰之中。过去既被讲述，也被冰雪封存。",
+          "艾希的联盟追求团结，凛冬之爪信奉战斗与掠夺，冰霜守卫保管自己的秘密。北境因此不只是冰原，而是关于谁有资格领导、哪些记忆必须保存的一场长期争论。"
+        ]
+      },
+      "relatedChampions": [
+        "ashe",
+        "lissandra"
+      ]
+    },
+    {
+      "id": "shurima",
+      "name": {
+        "en": "Shurima",
+        "zh": "恕瑞玛"
+      },
+      "tagline": {
+        "en": "Empire beneath the sands",
+        "zh": "黄沙中的帝国"
+      },
+      "summary": {
+        "en": "The Sun Disc recalls an empire lost to catastrophe. Azir’s return brings its inheritance back into the lives of desert peoples.",
+        "zh": "太阳圆盘见证过帝国的辉煌与毁灭。阿兹尔的归来，让荒漠中的人们重新面对古老的遗产。"
+      },
+      "image": "/worlds-universe/assets/regions/shurima.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/shurima/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/shurima/index.json",
+      "gallery": [
+        {
+          "title": "The sands recede, and Shurima is reborn.",
+          "url": "/worlds-universe/assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn.webp",
+          "section": "Visions of Shurima",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/shurima/",
+          "region": "shurima",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/c1f3e06c2deead6fbd679d53d1e9467fbd8f801d-1920x995.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn-card.webp",
+          "name": {
+            "en": "The sands recede, and Shurima is reborn.",
+            "zh": "恕瑞玛重生"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f24f923ba9871dd870c0d3565075ff8140f44b8-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/shurima-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "crest": "/worlds-universe/assets/crests/shurima.png",
+      "detail": {
+        "en": [
+          "Shurima’s former empire united vast southern territories under rulers supported by Ascended warriors. Its ruined monuments and the Sun Disc preserve the scale of that ambition. After the capital’s destruction, desert communities adapted through trade, travel, mercenary service and the protection of scattered oases.",
+          "Azir’s return brings imperial history into the present, but the people living among the ruins have histories of their own. Stories of Ascension, betrayal, Icathia and the darkin connect Shurima to threats whose consequences reach far beyond the desert."
+        ],
+        "zh": [
+          "恕瑞玛曾依靠飞升战士支撑的统治，将广阔的南方疆域纳入帝国。遗迹与太阳圆盘保留着那份雄心的尺度。首都毁灭后，荒漠中的人们通过贸易、迁徙、雇佣战斗和守护绿洲延续生活。",
+          "阿兹尔的归来让帝国历史重新进入现实，但生活在遗迹之间的人们也拥有自己的过去。飞升、背叛、艾卡西亚与暗裔的故事，把恕瑞玛和影响整个符文之地的威胁紧密相连。"
+        ]
+      },
+      "relatedChampions": [
+        "azir"
+      ]
+    },
+    {
+      "id": "piltover",
+      "name": {
+        "en": "Piltover",
+        "zh": "皮尔特沃夫"
+      },
+      "tagline": {
+        "en": "City of progress",
+        "zh": "进步之城"
+      },
+      "summary": {
+        "en": "Trade, craftsmanship and hextech propel a prosperous city whose ambitions are inseparable from the undercity below.",
+        "zh": "贸易、工艺与海克斯科技汇聚于这座繁荣之城，创新带来的财富也塑造着它与下层城市的关系。"
+      },
+      "image": "/worlds-universe/assets/regions/piltover.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/piltover/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/piltover/index.json",
+      "gallery": [
+        {
+          "title": "Zindelo’s Incognium Runeterra",
+          "url": "/worlds-universe/assets/stories/piltover-progress-day.webp",
+          "section": "Visions of Piltover",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/piltover/",
+          "region": "piltover",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f39c550d19ef1db58bcbdc879c872d2c1674e96-1920x1078.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/stories/piltover-progress-day-card.webp",
+          "name": {
+            "en": "Zindelo’s Incognium Runeterra",
+            "zh": "符文之地观测仪"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6c77423961def6e3a82d9a36545782f1a06386e0-4681x2114.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/piltover-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 867,
+      "crest": "/worlds-universe/assets/crests/piltover.png",
+      "detail": {
+        "en": [
+          "Piltover’s influence comes from commerce and invention. Ships passing through its vast sea gates carry goods and ideas, while wealthy merchant clans fund research, craftsmanship and monumental architecture. Hextech offers new possibilities, drawing talented makers toward a city that presents progress as its defining promise.",
+          "Its brilliance depends on more than elegant towers. Trade routes, social standing and the relationship with Zaun shape who benefits from innovation. Stories set here often place ingenious devices beside political calculation, asking who controls a discovery and whose work makes it possible."
+        ],
+        "zh": [
+          "皮尔特沃夫的影响力来自商业与发明。穿过巨型海闸的船只带来商品和观念，富有的商人家族资助研究、工艺与宏伟建筑。海克斯科技不断打开新的可能，吸引能工巧匠来到这座以进步为承诺的城市。",
+          "城市的繁荣也依赖高塔之外的关系。航路、社会地位与祖安共同决定谁能分享创新成果。这里的故事常把精巧装置与权力算计并置，追问谁掌握发现，又是谁付出了使其成为现实的劳动。"
+        ]
+      },
+      "relatedChampions": [
+        "vi"
+      ]
+    },
+    {
+      "id": "zaun",
+      "name": {
+        "en": "Zaun",
+        "zh": "祖安"
+      },
+      "tagline": {
+        "en": "Life beneath the smog",
+        "zh": "烟雾中的生命"
+      },
+      "summary": {
+        "en": "Beneath industrial haze, inventive communities build lives amid hazardous experiments, powerful chem-barons and deep inequality.",
+        "zh": "工业烟雾笼罩下，发明家与街区居民在危险和不平等之间开辟自己的生活。"
+      },
+      "image": "/worlds-universe/assets/regions/zaun.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/zaun/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/zaun/index.json",
+      "gallery": [
+        {
+          "title": "Backstreet hextech deals",
+          "url": "/worlds-universe/assets/gallery/zaun-backstreet-hextech-deals.webp",
+          "section": "Visions of Zaun",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/zaun/",
+          "region": "zaun",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/84d22902356e7b69fec7dba23703f3a51ed97410-1920x975.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/zaun-backstreet-hextech-deals-card.webp",
+          "name": {
+            "en": "Backstreet hextech deals",
+            "zh": "后街的海克斯交易"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/56d6fa8581379d60cc17951edbe3d686e52bf51b-1730x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/zaun-card.webp",
+      "imageWidth": 1730,
+      "imageHeight": 1080,
+      "crest": "/worlds-universe/assets/crests/zaun.png",
+      "detail": {
+        "en": [
+          "Zaun spreads through the canyons beneath Piltover, with industrial pipes, stained glass and chemical haze shaping its streets. Its markets and workshops welcome experiments that the city above may reject. Innovation flourishes here, but so do the hazards imposed on workers and neighborhoods.",
+          "The undercity is not defined only by pollution or powerful chem-barons. Its people build rich communities, distinctive cultures and inventions from limited resources. Ekko’s attachment to his home and Jinx’s disruptive imagination offer very different views of a place determined to make itself heard."
+        ],
+        "zh": [
+          "祖安延伸在皮尔特沃夫下方的沟壑之中，工业管道、彩色玻璃与化学烟雾塑造着街景。市场与工坊接纳上层城市不愿容纳的实验，创造力因此蓬勃生长，工人与街区也承担着相应的危险。",
+          "地下城市并不只有污染和炼金男爵。居民利用有限资源建立社群、文化与自己的发明。艾克对家园的依恋和金克丝充满破坏性的想象，展示了这片土地争取被看见的不同方式。"
+        ]
+      },
+      "relatedChampions": [
+        "ekko",
+        "jinx"
+      ]
+    },
+    {
+      "id": "bilgewater",
+      "name": {
+        "en": "Bilgewater",
+        "zh": "比尔吉沃特"
+      },
+      "tagline": {
+        "en": "Salt, powder and tides",
+        "zh": "盐、火药与海潮"
+      },
+      "summary": {
+        "en": "A crowded port of sea-monster hunters, captains and smugglers, where opportunity and danger share the same waterfront.",
+        "zh": "海兽猎人、船长与走私者聚集的港口，财富与危险只隔一条潮湿的街巷。"
+      },
+      "image": "/worlds-universe/assets/regions/bilgewater.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/bilgewater/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/bilgewater/index.json",
+      "gallery": [
+        {
+          "title": "Bilgewater Bay",
+          "url": "/worlds-universe/assets/gallery/bilgewater-bilgewater-bay.webp",
+          "section": "Visions of Bilgewater",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/bilgewater/",
+          "region": "bilgewater",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/e11375ab64f8a8f5c3eb7698b4fc2aa02d738fc4-1920x911.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/bilgewater-bilgewater-bay-card.webp",
+          "name": {
+            "en": "Bilgewater Bay",
+            "zh": "比尔吉沃特海湾"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/9700d7bf76ec15c8c526f7fea2a960e3846e44a6-2825x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/bilgewater-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 734,
+      "crest": "/worlds-universe/assets/crests/bilgewater.png",
+      "detail": {
+        "en": [
+          "Bilgewater grew among the Blue Flame Isles as a meeting place for sailors, hunters and people seeking another beginning. Its economy ranges from sea-monster harvesting to smuggling and illicit trade. Almost anything can find a buyer, but formal protection is scarce and personal alliances matter.",
+          "Captains and gangs compete for influence through reputation, violence and negotiated bargains. The fall of an established ruler can therefore unsettle the entire waterfront. Stories such as Burning Tides show how private grievances and fragile partnerships can reshape the city’s public order."
+        ],
+        "zh": [
+          "比尔吉沃特坐落于蓝焰群岛，是水手、猎人与寻求新生活之人的汇聚之地。从海兽加工到走私与地下交易，港口几乎容得下任何生意。这里缺少稳定的制度保护，个人声望与同盟因此格外重要。",
+          "船长与帮派凭借名声、暴力和交易争夺影响力，一位统治者的倒下也可能震动整座港口。《焰浪之潮》等故事，让私人恩怨与脆弱合作如何改变城市秩序变得具体可见。"
+        ]
+      },
+      "relatedChampions": [
+        "missfortune"
+      ]
+    },
+    {
+      "id": "shadow-isles",
+      "name": {
+        "en": "Shadow Isles",
+        "zh": "暗影岛"
+      },
+      "tagline": {
+        "en": "Beneath the Black Mist",
+        "zh": "黑雾之下"
+      },
+      "summary": {
+        "en": "A magical catastrophe transformed the Blessed Isles into a haunted land, and its Black Mist carries that tragedy beyond its shores.",
+        "zh": "曾经的福光岛在魔法灾难中毁灭；如今黑雾与不死幽魂将那场悲剧延续到远方。"
+      },
+      "image": "/worlds-universe/assets/regions/shadow-isles.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/shadow-isles/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/shadow-isles/index.json",
+      "gallery": [],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/94e4bf2e1b30ba553b4fc0f93e94983837082210-2503x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/shadow-isles-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 828,
+      "crest": "/worlds-universe/assets/crests/shadow-isles.png",
+      "detail": {
+        "en": [
+          "Before the catastrophe, the Blessed Isles sheltered an enlightened civilization. The Ruination tore the separation between material and spirit realms, leaving a place where death no longer offers a natural ending. Buildings, landscapes and inhabitants carry the damage of a disaster that never fully subsided.",
+          "The Black Mist consumes life and binds the dead to its horror, sometimes carrying that danger to distant shores. Viego’s obsession is one route into this history; the island’s other spirits reveal grief, cruelty and resistance shaped by the same continuing curse."
+        ],
+        "zh": [
+          "灾难之前的福光岛孕育着崇尚知识的文明。破败之咒撕裂物质与精神领域的边界，让死亡也失去自然终点。建筑、土地与居民身上，都留下了一场从未真正结束的灾难。",
+          "黑雾夺走生命，将亡者束缚于恐怖之中，并把威胁带向遥远海岸。佛耶戈的执念提供了理解这段历史的入口，其他幽魂则呈现同一诅咒之下不同的悲伤、残忍与反抗。"
+        ]
+      },
+      "relatedChampions": [
+        "viego"
+      ]
+    },
+    {
+      "id": "mount-targon",
+      "name": {
+        "en": "Targon",
+        "zh": "巨神峰"
+      },
+      "tagline": {
+        "en": "A path to the stars",
+        "zh": "通往群星的路"
+      },
+      "summary": {
+        "en": "Pilgrims climb an almost unreachable mountain where celestial Aspects and the traditions of sun and moon shape mortal destinies.",
+        "zh": "凡人攀登难以企及的高峰，追寻启示与命运；烈阳、皎月与星灵的力量在此交错。"
+      },
+      "image": "/worlds-universe/assets/regions/mount-targon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/mount-targon/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/mount-targon/index.json",
+      "gallery": [
+        {
+          "title": "HOME OF THE RAKKOR",
+          "url": "/worlds-universe/assets/gallery/mount-targon-home-of-the-rakkor.webp",
+          "section": "Art Gallery",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/mount-targon/",
+          "region": "mount-targon",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/68cbc6b051ee43da9255b97c14ad2bb60d01fe07-1920x959.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/mount-targon-home-of-the-rakkor-card.webp",
+          "name": {
+            "en": "HOME OF THE RAKKOR",
+            "zh": "拉阔尔的家园"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/8ad3cfba4b5d7cb812562108a6e90d07e0865b3f-1920x1041.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/mount-targon-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1041,
+      "crest": "/worlds-universe/assets/crests/mount-targon.png",
+      "detail": {
+        "en": [
+          "Targon’s mountain is both a physical challenge and a focus of spiritual longing. Rakkor communities live among its slopes, adapting their journeys and customs to the difficult terrain. Pilgrims from farther away arrive seeking revelation, but reaching the summit can test far more than endurance.",
+          "Celestial Aspects may transform the rare mortals who survive the ascent. Below them, the Solari and Lunari preserve conflicting traditions of sun and moon. Leona and Diana connect these vast powers to human loyalty, belief and the consequences of religious division."
+        ],
+        "zh": [
+          "巨神峰既是现实中的险峻高山，也是精神追寻的中心。拉阔尔人的生活、迁徙与习俗顺应山势，远方朝圣者则为启示而来。然而，通往峰顶的路考验的不仅是体力与意志。",
+          "极少数登顶的凡人，可能因星灵的力量而彻底改变。山下的烈阳与皎月信仰保留彼此冲突的传统，蕾欧娜与黛安娜的故事则把宏大的天体力量，与忠诚、信念及宗教分裂的代价连接起来。"
+        ]
+      },
+      "relatedChampions": [
+        "leona"
+      ]
+    },
+    {
+      "id": "ixtal",
+      "name": {
+        "en": "Ixtal",
+        "zh": "以绪塔尔"
+      },
+      "tagline": {
+        "en": "An elemental realm",
+        "zh": "丛林深处的元素国度"
+      },
+      "summary": {
+        "en": "An ancient civilization sheltered by jungle, preserving sophisticated elemental magic and rigid traditions behind its isolation.",
+        "zh": "精通元素魔法的古老文明以丛林为屏障，在与世隔绝中保存知识与等级秩序。"
+      },
+      "image": "/worlds-universe/assets/regions/ixtal.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ixtal/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/ixtal/index.json",
+      "gallery": [
+        {
+          "title": "Ixaocan",
+          "url": "/worlds-universe/assets/gallery/ixtal-ixaocan.webp",
+          "section": "Ancient Secrets",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ixtal/",
+          "region": "ixtal",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/6b7e184e6b82d586d607f6a63261ae610811defa-3840x2160.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/gallery/ixtal-ixaocan-card.webp",
+          "name": {
+            "en": "Ixaocan",
+            "zh": "以绪奥肯"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/1a75d072fa01ec3d0cda3f87fc1bf18dce736424-5000x2811.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/ixtal-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1079,
+      "crest": "/worlds-universe/assets/crests/ixtal.png",
+      "detail": {
+        "en": [
+          "Ixtal’s elemental traditions reach back to an age before many neighboring powers. Its mages protected their civilization by withdrawing from outside conflicts and using the surrounding jungle as a barrier. At the heart of this isolation stands Ixaocan, a sophisticated city organized around magical disciplines.",
+          "The Axiomata provide a framework for understanding and manipulating material forces. Mastery brings prestige, while the ruling Yun Tal preserve authority and carefully manage contact with outsiders. Qiyana’s ambition exposes the friction between extraordinary talent, inherited succession and a society committed to keeping its secrets."
+        ],
+        "zh": [
+          "以绪塔尔的元素传统比许多邻邦更为古老。法师们以远离外界冲突、借丛林屏障隐藏文明的方式保存知识。这份隔绝的中心，是按魔法学科组织起来的精密城市以绪奥肯。",
+          "当地的元素法师通过公理体系理解并操纵物质力量，修习的深度与声望紧密相连。统治阶层控制权力，也谨慎约束与外界的接触。奇亚娜的野心揭示了卓越天赋、继承顺序与守密传统之间的冲突。"
+        ]
+      },
+      "relatedChampions": [
+        "qiyana"
+      ]
+    },
+    {
+      "id": "bandle-city",
+      "name": {
+        "en": "Bandle City",
+        "zh": "班德尔城"
+      },
+      "tagline": {
+        "en": "Wonder beyond the pathways",
+        "zh": "门径之外的奇境"
+      },
+      "summary": {
+        "en": "The elusive home of the yordles lies beyond the material realm, reached through strange pathways where ordinary expectations of time falter.",
+        "zh": "约德尔人的家园隐藏在物质领域之外。通往这里的路径难以捉摸，时间也似乎另有规则。"
+      },
+      "image": "/worlds-universe/assets/regions/bandle-city.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/bandle-city/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/bandle-city/index.json",
+      "gallery": [],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/109f1c35b08e87598eaa1e0755a992e17d9425c2-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/bandle-city-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "crest": "/worlds-universe/assets/crests/bandle-city.png",
+      "detail": {
+        "en": [
+          "Bandle City is reached through hidden pathways rather than an ordinary border. Accounts describe a magical home beyond the material realm, with heightened colors, abundant harvests and a strange relationship to time. Visitors disagree about what they experienced, making certainty part of its mystery.",
+          "Its yordle inhabitants travel throughout Runeterra, connecting this elusive place to very different societies. Teemo’s scouting journeys offer a playful way into that movement between worlds. Wonder is central here, but a traveler cannot assume that a pleasant landscape follows familiar rules."
+        ],
+        "zh": [
+          "班德尔城的入口是隐秘门径，而非普通边境。访客讲述物质领域之外的魔法家园：更鲜明的色彩、丰盛的收获，以及难以理解的时间感。不同人的描述并不一致，这份不确定本身也是它的魅力。",
+          "约德尔人游历符文之地，让这个隐秘家园与不同社会保持联系。提莫的斥候旅程提供了一种轻快的观察角度。这里充满奇妙事物，但旅人不能因为景色宜人，就假定一切遵循熟悉的规则。"
+        ]
+      },
+      "relatedChampions": [
+        "teemo"
+      ]
+    },
+    {
+      "id": "void",
+      "name": {
+        "en": "The Void",
+        "zh": "虚空"
+      },
+      "tagline": {
+        "en": "Hunger beyond reality",
+        "zh": "现实之外的饥渴"
+      },
+      "summary": {
+        "en": "An unknowable force beyond reality, whose constructed creatures threaten to erase the world of Runeterra.",
+        "zh": "虚空不是普通疆域，而是现实之外的可怖力量；它的造物将毁灭带入符文之地。"
+      },
+      "image": "/worlds-universe/assets/regions/void.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/void/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/factions/void/index.json",
+      "gallery": [
+        {
+          "title": "An Unknowable power",
+          "url": "/worlds-universe/assets/regions/void.webp",
+          "section": "Facing the Void",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/void/",
+          "region": "void",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7107e5dbca7887931748e7ae0924e6eda17ef6f4-1920x1064.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/regions/void-card.webp"
+        },
+        {
+          "title": "The Fall of Icathia",
+          "url": "/worlds-universe/assets/stories/where-icathia-once-stood.webp",
+          "section": "Facing the Void",
+          "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/void/",
+          "region": "void",
+          "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cff392be16fbc5d58802be94d37be8d40dcca3ef-1920x866.jpg?accountingTag=LoL",
+          "thumbnail": "/worlds-universe/assets/stories/where-icathia-once-stood-card.webp",
+          "name": {
+            "en": "The Fall of Icathia",
+            "zh": "艾卡西亚的陨落"
+          }
+        }
+      ],
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7107e5dbca7887931748e7ae0924e6eda17ef6f4-1920x1064.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/regions/void-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1064,
+      "crest": "/worlds-universe/assets/crests/void.png",
+      "detail": {
+        "en": [
+          "The Void is not another kingdom waiting beyond a mountain range. It is an unknowable absence beyond reality, associated with the Watchers and a drive toward total unmaking. The creatures encountered in Runeterra are manifestations built for this purpose, rather than an ordinary natural ecosystem.",
+          "Contact with its power can damage minds as well as landscapes. Icathia shows the devastation of releasing it into a mortal conflict, while Kai’Sa’s survival gives the threat a personal scale. Resistance begins with understanding that what emerges is only part of something far larger."
+        ],
+        "zh": [
+          "虚空并不是山脉另一侧的陌生国家。它是现实之外无法理解的空无，与监视者和吞噬存在的欲望相连。符文之地遭遇的虚空造物，为这种目的而形成，并非普通自然生态的一部分。",
+          "接触虚空会摧毁土地，也会侵蚀心智。艾卡西亚展示将它引入凡人战争的灾难，卡莎的生存则让威胁具有个人尺度。面对它，首先需要明白：眼前出现的怪物，只是更巨大力量的一部分。"
+        ]
+      },
+      "relatedChampions": [
+        "kaisa"
+      ]
+    }
+  ],
+  "champions": [
+    {
+      "id": "lux",
+      "ddragonId": "Lux",
+      "name": {
+        "en": "Lux",
+        "zh": "拉克丝"
+      },
+      "title": {
+        "en": "the Lady of Luminosity",
+        "zh": "光辉女郎"
+      },
+      "region": "demacia",
+      "summary": {
+        "en": "A light mage seeking acceptance for her gift and greater understanding in a kingdom that fears sorcery.",
+        "zh": "在畏惧魔法的国度里，她学习接纳自己的光，也试图改变他人看待魔法的方式。"
+      },
+      "roles": [
+        "Mage",
+        "Support"
+      ],
+      "image": "/worlds-universe/assets/champions/lux.webp",
+      "portrait": "/worlds-universe/assets/champions/lux-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/lux/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/lux/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7dae022eb3726b7b351cf90ad8351731907229a1-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/lux-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        64.53,
+        7.11
+      ],
+      "detail": {
+        "en": [
+          "Luxanna Crownguard was raised in High Silvermere within a family closely tied to Demacia’s rulers. Her brother Garen embraced military service, while her own developing light magic placed her at odds with the expectations surrounding her. Concealing that gift protected both her safety and her family’s reputation.",
+          "Her encounters with charitable work and the wider world broadened her understanding of what Demacia could become. Rather than abandoning her homeland, she hopes to make its ideals more generous, holding love for her country alongside a desire for acceptance."
+        ],
+        "zh": [
+          "拉克丝成长于德玛西亚的秘银城，冕卫家族世代与王室关系密切。哥哥盖伦走向军旅，她逐渐显现的光明魔法却与周围期待相冲突。隐藏天赋，既是保护自己，也是维护家族声望。",
+          "接触慈善工作与更广阔的世界，让她开始想象另一种德玛西亚。她没有因此放弃家园，而是希望国家的理想能够更加包容，让忠诚与接受法师的愿望同时成立。"
+        ]
+      },
+      "relatedChampions": [
+        "sylas",
+        "garen",
+        "jarvaniv",
+        "galio"
+      ]
+    },
+    {
+      "id": "sylas",
+      "ddragonId": "Sylas",
+      "name": {
+        "en": "Sylas",
+        "zh": "塞拉斯"
+      },
+      "title": {
+        "en": "the Unshackled",
+        "zh": "解脱者"
+      },
+      "region": "demacia",
+      "summary": {
+        "en": "A former prisoner of the mageseekers who turns borrowed magic against the kingdom’s established order.",
+        "zh": "昔日被搜魔人囚禁的法师，以他人的魔法挣脱枷锁，成为反抗德玛西亚秩序的革命者。"
+      },
+      "roles": [
+        "Mage",
+        "Support"
+      ],
+      "image": "/worlds-universe/assets/champions/sylas.webp",
+      "portrait": "/worlds-universe/assets/champions/sylas-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/sylas/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/sylas/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/e653368823aa1fbaf7955ce92bca15a81abc8440-1920x1190.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/sylas-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1190,
+      "focalPoint": [
+        50.52,
+        10.17
+      ],
+      "detail": {
+        "en": [
+          "Sylas was born into poverty with a gift for sensing magic. Demacia’s mageseekers first used that ability to uncover other mages, then imprisoned him when his powers turned against them. Years of captivity changed his understanding of the nation he had once believed he could serve.",
+          "After escaping through magic absorbed by his petricite shackles, he gathered followers among persecuted mages. His search for allies eventually carried him toward the Freljord. For Sylas, freedom means dismantling the structures that made imprisonment possible, even when that demands violent confrontation."
+        ],
+        "zh": [
+          "塞拉斯出身贫寒，却能够感知魔法。搜魔人先利用他的能力寻找其他法师，后来又在力量失控后将他囚禁。长年的牢狱生活，改变了他对那个曾经希望效忠的国家的理解。",
+          "借助禁魔石镣铐积蓄的魔法逃脱后，他在受迫害的法师中召集追随者，并远赴弗雷尔卓德寻找盟友。对他而言，自由意味着拆除制造牢笼的制度，即使这条路通向激烈冲突。"
+        ]
+      },
+      "relatedChampions": [
+        "lux",
+        "galio"
+      ]
+    },
+    {
+      "id": "darius",
+      "ddragonId": "Darius",
+      "name": {
+        "en": "Darius",
+        "zh": "德莱厄斯"
+      },
+      "title": {
+        "en": "the Hand of Noxus",
+        "zh": "诺克萨斯之手"
+      },
+      "region": "noxus",
+      "summary": {
+        "en": "A commander who rose from poverty and embodies Noxian strength through conviction and ruthless military resolve.",
+        "zh": "从贫寒出身走向军团统帅，他以毫不动摇的信念与战斧诠释诺克萨斯的力量。"
+      },
+      "roles": [
+        "Fighter",
+        "Tank"
+      ],
+      "image": "/worlds-universe/assets/champions/darius.webp",
+      "portrait": "/worlds-universe/assets/champions/darius-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/darius/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/darius/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/bd6bd9efb4295687e683fd97d67a509d3ed6c26f-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/darius-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        61.32,
+        0.0
+      ],
+      "detail": {
+        "en": [
+          "Darius learned survival while protecting his younger brother Draven on the streets of Basilich. Military service gave him a route from that childhood into the empire’s highest ranks. His reputation rests on discipline, endurance and a refusal to spare those he believes threaten Noxus.",
+          "His loyalty belongs to the empire rather than a single ruler. When Swain established the Trifarix, Darius accepted the seat representing Might and leadership of the elite Trifarian Legion. His story makes Noxian advancement concrete, while exposing the severity of the convictions that sustain it."
+        ],
+        "zh": [
+          "德莱厄斯在贝西利科的街头保护弟弟德莱文，从很小的时候就学会生存。军旅生活让他从这种童年走向帝国高位，纪律、耐力与对敌人的严酷，构成了他的声望。",
+          "他的誓言属于诺克萨斯，而非某一个统治者。斯维因建立崔法利议会后，他代表武力并领导精锐军团。他的经历让帝国推崇的晋升道路变得具体，也展示支撑这条道路的信念有多么冷酷。"
+        ]
+      },
+      "relatedChampions": [
+        "draven",
+        "katarina",
+        "swain",
+        "vladimir"
+      ]
+    },
+    {
+      "id": "leblanc",
+      "ddragonId": "Leblanc",
+      "name": {
+        "en": "LeBlanc",
+        "zh": "乐芙兰"
+      },
+      "title": {
+        "en": "the Deceiver",
+        "zh": "诡术妖姬"
+      },
+      "region": "noxus",
+      "summary": {
+        "en": "An elusive sorceress behind the Black Rose, shaping imperial power through illusions, shifting identities and long plans.",
+        "zh": "黑色玫瑰背后的幻术师，用层叠身份与长久布局影响帝国的权力。"
+      },
+      "roles": [
+        "Assassin",
+        "Mage"
+      ],
+      "image": "/worlds-universe/assets/champions/leblanc.webp",
+      "portrait": "/worlds-universe/assets/champions/leblanc-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/leblanc/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/leblanc/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/77ad3202bc6d32f9c03eba63a7ad14e4383bb5b7-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/leblanc-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        52.18,
+        0.42
+      ],
+      "detail": {
+        "en": [
+          "LeBlanc leads the Black Rose, a secretive order whose roots precede the Noxian empire. Her many appearances and identities make it difficult to separate the sorceress from her reflections. Even those drawn into her organization may understand little of the motives behind its long campaigns.",
+          "She works through influential people, concealed knowledge and conflicts arranged from the shadows. Swain’s rise challenged that influence by placing a different vision at the empire’s center. LeBlanc’s story invites attention to who benefits from an event, rather than only who appears to cause it."
+        ],
+        "zh": [
+          "乐芙兰执掌黑色玫瑰，这一秘密结社的根源早于诺克萨斯帝国。层叠的化身与身份，让人难以分辨本人和幻影。即使加入组织的人，也未必理解她漫长布局背后的动机。",
+          "她借助权贵、隐秘知识与暗中安排的冲突施加影响。斯维因的崛起把另一种帝国愿景带到权力中心，也对她构成挑战。阅读她的故事时，谁从事件中获益，往往与谁站在台前同样重要。"
+        ]
+      },
+      "relatedChampions": [
+        "vladimir",
+        "mel",
+        "mordekaiser"
+      ]
+    },
+    {
+      "id": "ahri",
+      "ddragonId": "Ahri",
+      "name": {
+        "en": "Ahri",
+        "zh": "阿狸"
+      },
+      "title": {
+        "en": "the Nine-Tailed Fox",
+        "zh": "九尾妖狐"
+      },
+      "region": "ionia",
+      "summary": {
+        "en": "A vastaya linked to spirit magic, searching for her ancestry and a life shaped by memories of her own.",
+        "zh": "与精神魔法相连的瓦斯塔亚，在他人的记忆之外寻找属于自己的身世与未来。"
+      },
+      "roles": [
+        "Mage",
+        "Assassin"
+      ],
+      "image": "/worlds-universe/assets/champions/ahri.webp",
+      "portrait": "/worlds-universe/assets/champions/ahri-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/ahri/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/ahri/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/9e99dedf6a6e2c1e74bdfb81bd5a0a23b3ff4200-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/ahri-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "focalPoint": [
+        67.5,
+        14.63
+      ],
+      "detail": {
+        "en": [
+          "Ahri’s connection to spirit magic allows her to influence emotions and absorb another being’s essence, bringing fragments of memory with it. Those borrowed experiences once shaped much of her understanding of people, while her own ancestry remained uncertain and difficult to recover.",
+          "Her search eventually revealed the Vesani, a lost vastayan lineage associated with magical innovation. She now follows traces of that inheritance across the world. Her central struggle is not simply controlling a dangerous gift, but choosing what to carry forward and building a life from experiences that belong to her."
+        ],
+        "zh": [
+          "阿狸与精神魔法相连，能够影响情绪、吸收生命精魄，也因此获得记忆碎片。那些借来的经历一度塑造她对人类的理解，她自己的身世却始终模糊难寻。",
+          "追寻最终让她发现已经消逝的瓦斯塔亚族群瓦萨尼，以及他们留下的魔法与创造。她继续在世界各地寻找这份遗产。她面对的不仅是如何控制危险天赋，更是选择带着什么前行，并创造真正属于自己的记忆。"
+        ]
+      },
+      "relatedChampions": [
+        "yasuo",
+        "lillia",
+        "monkeyking"
+      ]
+    },
+    {
+      "id": "yasuo",
+      "ddragonId": "Yasuo",
+      "name": {
+        "en": "Yasuo",
+        "zh": "亚索"
+      },
+      "title": {
+        "en": "the Unforgiven",
+        "zh": "疾风剑豪"
+      },
+      "region": "ionia",
+      "summary": {
+        "en": "A wandering swordsman whose command of the wind cannot easily silence the guilt of his past.",
+        "zh": "背负误解与手足悲剧的御风剑客，在漂泊中寻找与过去共处的方法。"
+      },
+      "roles": [
+        "Fighter",
+        "Assassin"
+      ],
+      "image": "/worlds-universe/assets/champions/yasuo.webp",
+      "portrait": "/worlds-universe/assets/champions/yasuo-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/yasuo/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/yasuo/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/0b19bbfa3272f9625762f9b5974429bedc345008-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/yasuo-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        87.98,
+        31.38
+      ],
+      "detail": {
+        "en": [
+          "Yasuo’s skill with the wind marked him as an exceptional student, but leaving his post during the Noxian invasion led to an accusation he could not disprove. Pursued as his master’s killer, he was forced into a confrontation with his own brother, Yone.",
+          "The eventual discovery of the truth did not erase his guilt over those choices. Even Yone’s unexpected return could not simply restore their former lives. Yasuo continues traveling with remarkable power and unresolved regret, making his journey a search for direction as much as redemption."
+        ],
+        "zh": [
+          "亚索的御风天赋使他成为出众的学生，但在诺克萨斯入侵期间擅离职守，让他背上无法洗清的弑师指控。追捕之中，他不得不与亲哥哥永恩拔剑相向。",
+          "后来揭晓的真相并没有抹去他的自责，永恩意外归来也无法让一切回到从前。亚索带着强大的剑术与未解的悔意继续漂泊，他寻找的不只是救赎，也是今后应该走向何处。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri",
+        "yone",
+        "taliyah",
+        "riven"
+      ]
+    },
+    {
+      "id": "ashe",
+      "ddragonId": "Ashe",
+      "name": {
+        "en": "Ashe",
+        "zh": "艾希"
+      },
+      "title": {
+        "en": "the Frost Archer",
+        "zh": "寒冰射手"
+      },
+      "region": "freljord",
+      "summary": {
+        "en": "The Avarosan warmother carries a True Ice bow and a vision of unity for the divided Freljord.",
+        "zh": "阿瓦罗萨的战母以臻冰之弓守护族人，期待让分裂的北境走向团结。"
+      },
+      "roles": [
+        "Marksman",
+        "Support"
+      ],
+      "image": "/worlds-universe/assets/champions/ashe.webp",
+      "portrait": "/worlds-universe/assets/champions/ashe-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/ashe/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/ashe/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/ea9b9dbb6d0ee8234f67ff97872729a16333acb2-1920x974.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/ashe-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 974,
+      "focalPoint": [
+        69.43,
+        5.44
+      ],
+      "detail": {
+        "en": [
+          "Ashe was born Iceborn and raised to inherit a warlike tradition she did not entirely welcome. Her ability to wield True Ice gives her unusual power, but leadership also requires managing the expectations of people who associate her with the legendary Avarosa.",
+          "She has gathered a large coalition of tribes around the possibility of cooperation. Her bond with Tryndamere began as a political alliance and deepened into affection. Keeping that coalition together means confronting rival leaders, internal suspicion and the gap between a peaceful ambition and the realities of northern survival."
+        ],
+        "zh": [
+          "艾希生而具有寒冰血脉，却并不向往家族期待她继承的好战传统。驾驭臻冰带来力量，领袖身份也意味着面对族人把她视作阿瓦罗萨再世的期待。",
+          "她以合作的可能性团结众多部族，与泰达米尔的政治联盟也逐渐生出感情。维持这份团结，需要同时面对竞争者、内部猜疑，以及和平理想与北境生存现实之间的距离。"
+        ]
+      },
+      "relatedChampions": [
+        "lissandra",
+        "sejuani",
+        "tryndamere",
+        "braum"
+      ]
+    },
+    {
+      "id": "lissandra",
+      "ddragonId": "Lissandra",
+      "name": {
+        "en": "Lissandra",
+        "zh": "丽桑卓"
+      },
+      "title": {
+        "en": "the Ice Witch",
+        "zh": "冰霜女巫"
+      },
+      "region": "freljord",
+      "summary": {
+        "en": "The Frostguard’s secluded leader conceals ancient choices whose consequences still threaten the frozen north.",
+        "zh": "冰霜守卫的领袖将秘密埋入寒冰，她的古老选择仍牵动北境的命运。"
+      },
+      "roles": [
+        "Mage"
+      ],
+      "image": "/worlds-universe/assets/champions/lissandra.webp",
+      "portrait": "/worlds-universe/assets/champions/lissandra-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/lissandra/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/lissandra/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7f1fa446e45698fa9b6b69c3005871d049293197-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/lissandra-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        76.54,
+        0.0
+      ],
+      "detail": {
+        "en": [
+          "Lissandra’s history reaches back to an age when old powers contested the boundaries of the world. Alongside her sisters Avarosa and Serylda, she sought forces far beyond ordinary mortal reach. The consequences left her with secrets that the Frostguard’s public traditions do not openly explain.",
+          "From her citadel she manipulates memory, belief and rival claims to leadership. The rise of Ashe and Sejuani keeps older legends alive despite her efforts to control them. Beneath these political maneuvers lies an urgent concern: what has been buried in ice may not remain contained forever."
+        ],
+        "zh": [
+          "丽桑卓的历史可以追溯到古老力量争夺世界边界的年代。她与姐妹阿瓦罗萨、赛瑞尔达追寻远超凡人的力量，也因此留下冰霜守卫公开教义未曾解释的秘密。",
+          "她从堡垒中操纵记忆、信仰与领袖之间的竞争。艾希和瑟庄妮的崛起，让她试图压制的旧传说重新生长。而在政治布局之下，更迫切的问题始终存在：埋在冰层中的东西，未必能永远被封住。"
+        ]
+      },
+      "relatedChampions": [
+        "ashe",
+        "sejuani",
+        "nunu"
+      ]
+    },
+    {
+      "id": "azir",
+      "ddragonId": "Azir",
+      "name": {
+        "en": "Azir",
+        "zh": "阿兹尔"
+      },
+      "title": {
+        "en": "the Emperor of the Sands",
+        "zh": "沙漠皇帝"
+      },
+      "region": "shurima",
+      "summary": {
+        "en": "A resurrected Ascended emperor seeking to restore Shurima after the catastrophe that destroyed his reign.",
+        "zh": "重新归来的飞升皇帝，从黄沙与废墟中追寻恕瑞玛的复兴。"
+      },
+      "roles": [
+        "Mage",
+        "Marksman"
+      ],
+      "image": "/worlds-universe/assets/champions/azir.webp",
+      "portrait": "/worlds-universe/assets/champions/azir-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/azir/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/azir/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/869c235b670785d9b5910217f20383812c05e822-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/azir-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        84.44,
+        13.39
+      ],
+      "detail": {
+        "en": [
+          "Azir ruled Shurima as a mortal before a betrayed Ascension destroyed both his life and the imperial capital. His relationship with Xerath lies at the heart of that disaster, joining personal trust to the unequal structures of an empire built around conquest and divine power.",
+          "Returned after millennia as an Ascended being, Azir commands sand soldiers and raises the city from its burial. Restoration, however, means confronting a world that continued without him. His ambition links the grandeur of the old empire to the unresolved costs of its history."
+        ],
+        "zh": [
+          "阿兹尔曾以凡人之身统治恕瑞玛，直到一次遭到背叛的飞升仪式摧毁他的生命与帝都。他和泽拉斯的关系处于灾难中心，把私人信任与帝国中的不平等紧紧缠在一起。",
+          "千年之后，他以飞升者之身归来，唤起沙兵，让埋没的城市重见天日。但复兴也意味着面对一个早已继续向前的世界。他的雄心连接着古帝国的壮丽，以及尚未偿清的历史代价。"
+        ]
+      },
+      "relatedChampions": [
+        "nasus",
+        "sivir",
+        "xerath",
+        "renekton",
+        "taliyah",
+        "cassiopeia"
+      ]
+    },
+    {
+      "id": "jinx",
+      "ddragonId": "Jinx",
+      "name": {
+        "en": "Jinx",
+        "zh": "金克丝"
+      },
+      "title": {
+        "en": "the Loose Cannon",
+        "zh": "暴走萝莉"
+      },
+      "region": "zaun",
+      "summary": {
+        "en": "An inventive force of chaos whose homemade weapons shake the twin cities and inspire resistance among the disenfranchised.",
+        "zh": "祖安的发明天赋化作喧嚣武器；她让双城的街道充满爆炸，也让边缘者看见反抗。"
+      },
+      "roles": [
+        "Marksman"
+      ],
+      "image": "/worlds-universe/assets/champions/jinx.webp",
+      "portrait": "/worlds-universe/assets/champions/jinx-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/jinx/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/jinx/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d0550188a6e83cb2e5def4a4a0bf8025baf57a0c-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/jinx-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        74.16,
+        11.44
+      ],
+      "detail": {
+        "en": [
+          "Jinx turns inventive talent into weapons and public spectacle. Her homemade arsenal gives her a distinctive presence in the streets of Piltover and Zaun, where explosions, mocking gestures and unpredictable plans challenge anyone trying to impose control. The disruption also carries the weight of a troubled past.",
+          "Her actions can inspire those who feel excluded, even while leaving real destruction behind. That combination makes her difficult to reduce to a single symbol. Around Jinx, personal pain, technical imagination and the anger of divided cities repeatedly become entangled."
+        ],
+        "zh": [
+          "金克丝把发明天赋变成武器与街头奇观。自制装备、爆炸、嘲弄和难以预测的行动，让双城试图维持秩序的人头痛不已。喧嚣之下，也有她无法轻易摆脱的过去。",
+          "她的行动可能让被排除在外的人获得反抗的想象，也会留下真实的破坏。这种矛盾让她无法被归结为单一象征。个人伤痛、技术想象与分裂城市的愤怒，总在她身上相互纠缠。"
+        ]
+      },
+      "relatedChampions": [
+        "vi",
+        "ekko",
+        "caitlyn"
+      ]
+    },
+    {
+      "id": "vi",
+      "ddragonId": "Vi",
+      "name": {
+        "en": "Vi",
+        "zh": "蔚"
+      },
+      "title": {
+        "en": "the Piltover Enforcer",
+        "zh": "皮城执法官"
+      },
+      "region": "piltover",
+      "summary": {
+        "en": "A fighter raised in Zaun who brings formidable hextech gauntlets and an unruly spirit to Piltover’s Enforcers.",
+        "zh": "出身祖安街头的斗士戴上海克斯拳套，成为皮城执法体系中不循常规的一员。"
+      },
+      "roles": [
+        "Fighter",
+        "Assassin"
+      ],
+      "image": "/worlds-universe/assets/champions/vi.webp",
+      "portrait": "/worlds-universe/assets/champions/vi-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/vi/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/vi/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/4134b6611e0aab2e9d647d67c8cc75a4639cbda9-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/vi-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        76.21,
+        18.83
+      ],
+      "detail": {
+        "en": [
+          "Vi’s survival instincts were formed in Zaun, where quick judgment and physical courage mattered more than respect for authority. Her formidable hextech gauntlets amplify a direct approach to danger: she would rather confront an obstacle than accept that it cannot be moved.",
+          "Working alongside Caitlyn places that temperament inside Piltover’s system of enforcement. It also leaves her connected to the undercity from which she came. Vi’s stories explore what changes when someone accustomed to resisting authority begins carrying its power, without losing the habits that kept her alive."
+        ],
+        "zh": [
+          "祖安塑造了蔚的生存本能：迅速判断与敢于出手，比服从权威更能保住性命。强大的海克斯拳套放大了她直面危险的方式。她通常会先迎上障碍，而不是接受它无法被移动。",
+          "与凯特琳合作，让这种性格进入皮尔特沃夫的执法体系，她与地下城的联系却仍然存在。蔚的故事追问：一个习惯反抗权威的人开始掌握权力时，会发生什么，又能保留多少曾经保护自己的本能。"
+        ]
+      },
+      "relatedChampions": [
+        "jinx",
+        "ekko",
+        "caitlyn"
+      ]
+    },
+    {
+      "id": "ekko",
+      "ddragonId": "Ekko",
+      "name": {
+        "en": "Ekko",
+        "zh": "艾克"
+      },
+      "title": {
+        "en": "the Boy Who Shattered Time",
+        "zh": "时间刺客"
+      },
+      "region": "zaun",
+      "summary": {
+        "en": "A young inventor who uses the Z-Drive to reshape crucial moments and protect his community alongside the Firelights.",
+        "zh": "年轻发明家用Z型驱动改变关键瞬间，与野火帮一同守护自己在乎的人。"
+      },
+      "roles": [
+        "Assassin",
+        "Fighter"
+      ],
+      "image": "/worlds-universe/assets/champions/ekko.webp",
+      "portrait": "/worlds-universe/assets/champions/ekko-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/ekko/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/ekko/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/582abd081125c2ef8f47609bc42a9f1bb71782fb-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/ekko-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        87.33,
+        4.18
+      ],
+      "detail": {
+        "en": [
+          "Ekko sees possibility in discarded machinery and in the streets other people dismiss. His Z-Drive lets him revisit short stretches of time, testing different choices until an impossible-looking result becomes achievable. The device turns experimentation into a physical skill, with limits his body still has to bear.",
+          "That ingenuity is rooted in loyalty to Zaun. He values the people and resourcefulness of his home rather than treating escape as the only measure of success. With the Firelights, his concern is practical: how can extraordinary invention protect friends and make a better future possible?"
+        ],
+        "zh": [
+          "艾克能在废弃机械与被人轻视的街道里看见可能。Z型驱动让他重新经历短暂时间，反复尝试不同选择，把看似不可能的结果变为现实。这种实验也需要身体承受代价。",
+          "他的创造力扎根于对祖安的忠诚。他珍视家园的人们与生存智慧，不把离开当成成功的唯一标准。与野火帮一起，他关心的是一个具体问题：非凡的发明，能否守护朋友并创造更好的未来？"
+        ]
+      },
+      "relatedChampions": [
+        "jinx",
+        "vi",
+        "camille",
+        "viktor",
+        "caitlyn",
+        "jayce",
+        "janna"
+      ]
+    },
+    {
+      "id": "missfortune",
+      "ddragonId": "MissFortune",
+      "name": {
+        "en": "Miss Fortune",
+        "zh": "厄运小姐"
+      },
+      "title": {
+        "en": "the Bounty Hunter",
+        "zh": "赏金猎人"
+      },
+      "region": "bilgewater",
+      "summary": {
+        "en": "Sarah Fortune turns a family tragedy into vengeance, forging her own authority among Bilgewater’s dangerous captains.",
+        "zh": "莎拉·厄运将家族悲剧化为复仇，在比尔吉沃特的船长之间建立自己的威望。"
+      },
+      "roles": [
+        "Marksman"
+      ],
+      "image": "/worlds-universe/assets/champions/missfortune.webp",
+      "portrait": "/worlds-universe/assets/champions/missfortune-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/missfortune/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/missfortune/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7a7dfab84bcd6b60f46152918923ef939b9ddb6a-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/missfortune-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        80.91,
+        32.22
+      ],
+      "detail": {
+        "en": [
+          "Sarah Fortune grew up around her mother’s craft of making exceptional firearms. The destruction of that family gave her a personal reason to challenge Gangplank, but surviving Bilgewater required more than anger: she learned to cultivate a reputation, loyal allies and careful timing.",
+          "Her success did not remove the city’s violence. Rival captains and gangs still compete for control, leaving her to defend an uneasy order from aboard the Syren. Miss Fortune’s story moves from private vengeance toward the harder question of what follows when a feared ruler is brought down."
+        ],
+        "zh": [
+          "莎拉·厄运从小接触母亲精湛的制枪技艺。家庭的毁灭成为她挑战普朗克的私人动因，但在比尔吉沃特活下来，仅有愤怒远远不够。她也学会经营声望、招揽盟友并等待时机。",
+          "胜利没有让城市摆脱暴力，船长与帮派依然争夺控制权。她必须以塞壬号船长的身份维持脆弱秩序。她的故事从私人复仇走向更难的问题：推倒令人畏惧的统治者之后，接下来怎么办？"
+        ]
+      },
+      "relatedChampions": [
+        "gangplank",
+        "illaoi",
+        "twistedfate",
+        "graves",
+        "lucian",
+        "olaf",
+        "hecarim",
+        "ryze"
+      ]
+    },
+    {
+      "id": "viego",
+      "ddragonId": "Viego",
+      "name": {
+        "en": "Viego",
+        "zh": "佛耶戈"
+      },
+      "title": {
+        "en": "the Ruined King",
+        "zh": "破败之王"
+      },
+      "region": "shadow-isles",
+      "summary": {
+        "en": "A king whose refusal to accept loss unleashed the Ruination, leaving his obsession bound to the spreading Black Mist.",
+        "zh": "不肯接受失去的国王引发了破败之咒，他对王后的执念仍随黑雾蔓延。"
+      },
+      "roles": [
+        "Assassin"
+      ],
+      "image": "/worlds-universe/assets/champions/viego.webp",
+      "portrait": "/worlds-universe/assets/champions/viego-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/viego/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/viego/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3766d90650c9eddd2e1405489365c1ec7ef9f2be-1900x1127.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/viego-card.webp",
+      "imageWidth": 1900,
+      "imageHeight": 1127,
+      "focalPoint": [
+        74.68,
+        18.46
+      ],
+      "detail": {
+        "en": [
+          "Viego inherited a crown he had not expected and showed little interest in the responsibilities attached to it. His attachment to Isolde became the center of his life, and losing her drove him to seek a reversal of death regardless of the consequences for others.",
+          "That pursuit led to the Ruination and transformed him into an undead ruler bound to the Black Mist. His immense power does not bring perspective or restraint. The tragedy of Viego lies in an obsession that turns a deeply personal loss into suffering imposed on the wider world."
+        ],
+        "zh": [
+          "佛耶戈意外继承王位，却很少关心王冠附带的责任。他把伊苏尔德放在生命中心，失去她之后，便不顾他人的代价，执意寻找逆转死亡的方法。",
+          "这场追寻引发破败之咒，也让他成为与黑雾相连的不死国王。强大的力量并没有带来清醒或克制。他的悲剧在于，一份极其私人的失去，被执念转化为整个世界必须承受的痛苦。"
+        ]
+      },
+      "relatedChampions": [
+        "hecarim",
+        "kalista",
+        "senna",
+        "thresh",
+        "vladimir",
+        "yorick"
+      ]
+    },
+    {
+      "id": "leona",
+      "ddragonId": "Leona",
+      "name": {
+        "en": "Leona",
+        "zh": "蕾欧娜"
+      },
+      "title": {
+        "en": "the Radiant Dawn",
+        "zh": "曙光女神"
+      },
+      "region": "mount-targon",
+      "summary": {
+        "en": "A Solari warrior bearing the sun’s celestial power, defending her faith with radiant sword and shield.",
+        "zh": "承载烈阳之力的战士，以剑与盾践行巨神峰烈阳教派的信仰。"
+      },
+      "roles": [
+        "Tank",
+        "Support"
+      ],
+      "image": "/worlds-universe/assets/champions/leona.webp",
+      "portrait": "/worlds-universe/assets/champions/leona-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/leona/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/leona/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/bd31d8599bfa6d1a64e1a6ecde13548356ea525c-1215x717.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/leona-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "focalPoint": [
+        87.33,
+        5.72
+      ],
+      "detail": {
+        "en": [
+          "Leona grew within the Solari tradition on Mount Targon, finding purpose in its devotion to the sun. Discipline and faith made her an exceptional warrior before celestial power transformed her responsibilities. Her sword and shield now express a commitment she had already built through years of training.",
+          "Diana’s connection to the moon challenges the certainty of that upbringing. Their intertwined stories place personal bonds against religious authority and powers larger than either woman. Leona must navigate what it means to protect her people when the truth may be broader than the teachings she inherited."
+        ],
+        "zh": [
+          "蕾欧娜在巨神峰的烈阳传统中成长，从对太阳的信仰里获得方向。纪律与虔诚先使她成为优秀战士，星灵之力随后才改变她承担的责任。剑与盾承载的，是多年训练形成的承诺。",
+          "黛安娜与月亮的联系，挑战了她成长过程中坚信的秩序。两人的故事把私人情感、宗教权威与超越凡人的力量并置。当真相比继承的教义更广阔时，保护族人究竟意味着什么？"
+        ]
+      },
+      "relatedChampions": [
+        "diana",
+        "taric",
+        "aurelionsol",
+        "pantheon"
+      ]
+    },
+    {
+      "id": "qiyana",
+      "ddragonId": "Qiyana",
+      "name": {
+        "en": "Qiyana",
+        "zh": "奇亚娜"
+      },
+      "title": {
+        "en": "The Empress of Elements",
+        "zh": "元素女皇"
+      },
+      "region": "ixtal",
+      "summary": {
+        "en": "An elemental prodigy unwilling to accept her place in the succession, determined to claim authority through exceptional power.",
+        "zh": "掌握元素的年轻继承者不愿接受末位身份，决心以力量夺取自己的统治权。"
+      },
+      "roles": [
+        "Assassin"
+      ],
+      "image": "/worlds-universe/assets/champions/qiyana.webp",
+      "portrait": "/worlds-universe/assets/champions/qiyana-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/qiyana/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/qiyana/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/701238dd7451fe3f836ded843c6d869c43f24261-4000x2348.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/qiyana-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1127,
+      "focalPoint": [
+        50.6,
+        23.47
+      ],
+      "detail": {
+        "en": [
+          "Qiyana is the youngest of ten daughters in Ixaocan’s ruling family. The succession placed her behind her sisters, but her extraordinary command of elemental magic offered a different measure of worth. She quickly came to see inherited position as an obstacle rather than a settled limit.",
+          "Her ambition tests a society that values disciplined knowledge while protecting established authority and isolation. Admirers recognize her ability; her elders fear the consequences of her choices. Qiyana’s self-assurance therefore carries a political demand: that exceptional power should entitle its possessor to rule."
+        ],
+        "zh": [
+          "奇亚娜是以绪奥肯统治家族十位女儿中最年幼的一位，继承顺序把她排在姐姐们之后。超常的元素天赋却提供了另一种衡量价值的方法。她很快把既定位置视作障碍，而非必须接受的终点。",
+          "她的野心考验着这个崇尚知识、同时守护权威与隔绝传统的社会。追随者认可她的能力，长辈则担忧她的选择。她的自信因而包含一种政治主张：卓越的力量，应该使拥有者获得统治资格。"
+        ]
+      },
+      "relatedChampions": [
+        "malphite",
+        "rengar",
+        "zyra"
+      ]
+    },
+    {
+      "id": "kaisa",
+      "ddragonId": "Kaisa",
+      "name": {
+        "en": "Kai'Sa",
+        "zh": "卡莎"
+      },
+      "title": {
+        "en": "Daughter of the Void",
+        "zh": "虚空之女"
+      },
+      "region": "void",
+      "summary": {
+        "en": "A survivor bonded to a living Void carapace, fighting monstrous threats even when others mistake her for one.",
+        "zh": "从虚空中生还的猎手与活体甲壳共生，在怪物般的外表下继续保护人类。"
+      },
+      "roles": [
+        "Marksman"
+      ],
+      "image": "/worlds-universe/assets/champions/kaisa.webp",
+      "portrait": "/worlds-universe/assets/champions/kaisa-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/kaisa/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/kaisa/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/33ac4d0acbbdb7f6d3b36520c0a78873052d271a-1920x1133.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/kaisa-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1133,
+      "focalPoint": [
+        49.48,
+        17.65
+      ],
+      "detail": {
+        "en": [
+          "Kai’Sa began as an ordinary child in southern Shurima before a disaster trapped her beneath the ground. Survival required adaptation, including an uneasy bond with a living Void shell. Over time, that second skin grew with her and helped transform vulnerability into a hunter’s strength.",
+          "Returning toward the human world did not guarantee acceptance. The same armor that allows her to fight Void creatures can make frightened people see her as another monster. Her determination to keep the two worlds apart gives her survival a purpose beyond saving herself."
+        ],
+        "zh": [
+          "卡莎原本只是恕瑞玛南部的普通孩子，一场灾难却让她被困地下。为了生存，她必须不断适应，并与活着的虚空甲壳建立危险的共生。第二层皮肤随她成长，也把弱小逐渐转化为猎手的力量。",
+          "重新接近人类世界，并不意味着能够被接纳。帮助她猎杀虚空造物的外壳，也可能让恐惧的人们把她当成怪物。她决心阻止两个世界相互侵吞，让生存拥有了超越自救的意义。"
+        ]
+      },
+      "relatedChampions": [
+        "malzahar"
+      ]
+    },
+    {
+      "id": "teemo",
+      "ddragonId": "Teemo",
+      "name": {
+        "en": "Teemo",
+        "zh": "提莫"
+      },
+      "title": {
+        "en": "the Swift Scout",
+        "zh": "迅捷斥候"
+      },
+      "region": "bandle-city",
+      "summary": {
+        "en": "The Bandle Scouts’ fearless leader explores Runeterra with relentless curiosity, collecting experience and leaving surprising mushrooms behind.",
+        "zh": "班德尔斥候的领袖带着好奇心与冒险精神穿越世界，收集经验，也留下危险的蘑菇。"
+      },
+      "roles": [
+        "Marksman"
+      ],
+      "image": "/worlds-universe/assets/champions/teemo.webp",
+      "portrait": "/worlds-universe/assets/champions/teemo-icon.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/champion/teemo/",
+      "dataUrl": "https://universe-meeps.leagueoflegends.com/v1/en_us/champions/teemo/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cbec5c5ced03b21b745997294e4a391d77cf6720-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/champions/teemo-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "focalPoint": [
+        55.56,
+        12.97
+      ],
+      "detail": {
+        "en": [
+          "Teemo’s life as a Bandle Scout takes him through portals and across Runeterra in pursuit of new challenges. Merit badges, helpful missions and additions to the Scout Handbook give structure to an enthusiasm that can turn almost any encounter into an expedition. His long history is not always clear even to him.",
+          "Good intentions do not make his methods predictable. Protecting unusual creatures or spreading exploding mushrooms can create very different experiences for everyone nearby. Teemo brings the perspective of Bandle City into unfamiliar places, treating danger and discovery with the same persistent curiosity."
+        ],
+        "zh": [
+          "提莫以班德尔斥候的身份穿过传送门，在符文之地寻找新挑战。荣誉徽章、助人任务与不断增订的斥候手册，让旺盛的热情有了方向。几乎任何遭遇都能变成一次探险，悠久经历却连他自己也未必记得清楚。",
+          "良好意图并不意味着方法总能被理解。保护奇特生物或传播会爆炸的蘑菇，都可能给周围的人带来意外体验。提莫把班德尔城的视角带向远方，以同样持久的好奇面对危险与发现。"
+        ]
+      },
+      "relatedChampions": [
+        "tristana",
+        "lulu",
+        "corki"
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "id": "bilgewater-story",
+      "title": {
+        "en": "Burning Tides",
+        "zh": "焰浪之潮"
+      },
+      "author": "by Scott Hawkes, George Krstic, Anthony Reynolds, and John O'Bryan",
+      "region": "bilgewater",
+      "summary": {
+        "en": "Revenge and an old partnership collide in a night that transforms the balance of power in Bilgewater.",
+        "zh": "复仇与旧日搭档的恩怨，在海盗之城交织成改变权力格局的一夜。"
+      },
+      "image": "/worlds-universe/assets/stories/bilgewater-story.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/bilgewater-story/",
+      "minutes": 34,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/bilgewater-story/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/9bc98d4a10f752eb831adb75d64d3d20ae8373db-967x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/bilgewater-story-card.webp",
+      "imageWidth": 967,
+      "imageHeight": 1080,
+      "detail": {
+        "en": [
+          "Bilgewater’s waterfront becomes the meeting point for a dangerous job, an old betrayal and a carefully held ambition. Twisted Fate and Graves bring the weight of their shared past into a city where another person’s plans may already be moving.",
+          "Read for its shifting perspectives and sharp sense of place. The story shows how personal grudges can become public upheaval without giving any participant complete control."
+        ],
+        "zh": [
+          "一桩危险差事、旧日背叛与暗藏的野心，在比尔吉沃特的码头交汇。崔斯特和格雷福斯带着共同往事走进局中，而这座城市里，别人的计划可能早已展开。",
+          "值得留意不断切换的视角与鲜明的港口气息。故事让人看见，私人恩怨如何变成公共动荡，而局中的任何人都未必掌握全部。"
+        ]
+      },
+      "relatedChampions": [
+        "missfortune",
+        "twistedfate",
+        "graves",
+        "gangplank"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/bilgewater-story/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/bilgewater-story/"
+        }
+      ]
+    },
+    {
+      "id": "where-icathia-once-stood",
+      "title": {
+        "en": "Where Icathia Once Stood",
+        "zh": "艾卡西亚曾屹立的土地"
+      },
+      "author": "by Graham McNeill",
+      "region": "void",
+      "summary": {
+        "en": "A warrior witnesses a rebellion’s hopes collapse when an unimaginable weapon is unleashed against Shurima.",
+        "zh": "一位战士见证反抗帝国的希望如何因虚空的降临走向灾难。"
+      },
+      "image": "/worlds-universe/assets/stories/where-icathia-once-stood.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/where-icathia-once-stood/",
+      "minutes": 22,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/where-icathia-once-stood/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cff392be16fbc5d58802be94d37be8d40dcca3ef-1920x866.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/where-icathia-once-stood-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 866,
+      "detail": {
+        "en": [
+          "An Icathian warrior carries a name, a duty and the hope that his homeland can reclaim independence. Facing Shurima’s Ascended armies, that hope depends on a power his people do not fully understand.",
+          "The story is a ground-level view of an event that echoes through Runeterra’s history. Its force comes from the distance between heroic expectations and the human experience of catastrophe."
+        ],
+        "zh": [
+          "一位艾卡西亚战士带着自己的姓名、职责，以及家园重获独立的希望走向战场。面对恕瑞玛的飞升大军，这份希望却寄托在同胞尚未真正理解的力量之上。",
+          "故事从个人视角接近一场影响符文之地历史的事件。它的力量来自英雄式期待与凡人真实遭遇灾难之间的距离。"
+        ]
+      },
+      "relatedChampions": [
+        "jax"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/where-icathia-once-stood/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/where-icathia-once-stood/"
+        }
+      ]
+    },
+    {
+      "id": "twilight-of-the-gods",
+      "title": {
+        "en": "Twilight of the Gods",
+        "zh": "诸神的薄暮"
+      },
+      "author": "by Graham McNeill",
+      "region": "shurima",
+      "summary": {
+        "en": "Former god-warriors turn on one another, and a secret gathering becomes a turning point in the fate of the darkin.",
+        "zh": "曾为帝国作战的飞升者陷入彼此厮杀，一场秘密集会改变了暗裔的命运。"
+      },
+      "image": "/worlds-universe/assets/stories/twilight-of-the-gods.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/twilight-of-the-gods/",
+      "minutes": 25,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/twilight-of-the-gods/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/efb2c923ef1f8430453cbc7ad09ebf560f1e6614-1469x826.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/twilight-of-the-gods-card.webp",
+      "imageWidth": 1469,
+      "imageHeight": 826,
+      "detail": {
+        "en": [
+          "Warriors once raised above humanity gather in a ruined city, carrying the pride, injuries and resentments of immense lifetimes. A proposed answer to their endless conflict forces old companions to assess what remains of their former purpose.",
+          "This is a story of power after the institutions that once directed it have collapsed. Watch the fragile negotiation between shared memory, rivalry and the possibility of betrayal."
+        ],
+        "zh": [
+          "曾经超越凡人的战士聚集在废墟之城，带来漫长生命中的骄傲、创伤与怨恨。一个终结无休争斗的提议，迫使旧日同伴重新衡量自己还保留多少昔日使命。",
+          "当曾经指引力量的秩序已经崩塌，力量会走向何处？共享记忆、竞争与背叛的可能性，在这场脆弱的协商中不断拉扯。"
+        ]
+      },
+      "relatedChampions": [
+        "nasus"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/twilight-of-the-gods/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/twilight-of-the-gods/"
+        }
+      ]
+    },
+    {
+      "id": "for-demacia",
+      "title": {
+        "en": "For Demacia",
+        "zh": "为了德玛西亚"
+      },
+      "author": "by Graham McNeill",
+      "region": "demacia",
+      "summary": {
+        "en": "Lux and Garen confront a town’s nightmare, revealing different ideas about duty, fear and understanding.",
+        "zh": "拉克丝与盖伦来到被噩梦笼罩的小镇，在恐惧、责任与理解之间面对不同的答案。"
+      },
+      "image": "/worlds-universe/assets/stories/for-demacia.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/for-demacia/",
+      "minutes": 28,
+      "chineseTitleNote": "Editorial translation: the official Chinese story JSON currently has a blank title.",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cc4058fbee0093a48091af2508aa4fbf1621dda7-2961x2241.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/for-demacia-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1453,
+      "detail": {
+        "en": [
+          "Lux returns to Fossbarrow with Garen, expecting a familiar northern town and finding a community gripped by disturbing events. Their different instincts shape how they respond to fear and to people whose actions are not easily explained.",
+          "The adventure works as a close view of Demacia’s moral tensions. Beneath the immediate danger lies a question about whether protecting a community requires certainty, understanding or both."
+        ],
+        "zh": [
+          "拉克丝与盖伦回到北方小镇福斯拜罗，却发现熟悉之地正被不安的事件笼罩。两人不同的直觉，影响了他们如何回应恐惧，以及那些难以简单解释的行为。",
+          "这段冒险近距离呈现德玛西亚的道德矛盾。在眼前危险之下，另一个问题逐渐浮现：守护群体，需要确信、理解，还是两者兼备？"
+        ]
+      },
+      "relatedChampions": [
+        "lux",
+        "garen"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/for-demacia/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/for-demacia/"
+        }
+      ]
+    },
+    {
+      "id": "the-eye-in-the-abyss",
+      "title": {
+        "en": "The Eye in the Abyss",
+        "zh": "深渊中的独眼"
+      },
+      "author": "by Anthony Reynolds",
+      "region": "freljord",
+      "summary": {
+        "en": "A Frostguard descent into the Howling Abyss uncovers a terrible presence stirring beneath ancient beliefs.",
+        "zh": "冰霜守卫深入嚎哭深渊，发现古老信仰之下仍有醒来的恐怖。"
+      },
+      "image": "/worlds-universe/assets/stories/the-eye-in-the-abyss.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/the-eye-in-the-abyss/",
+      "minutes": 35,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/the-eye-in-the-abyss/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/6600a5d33dc7d8d62dc987b49657a9af63466d05-5760x3240.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/the-eye-in-the-abyss-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "detail": {
+        "en": [
+          "A small Frostguard party descends beneath the fortress into a darkness that tests more than martial courage. Sigvar’s achievements above ground offer little reassurance when inherited beliefs meet something far harder to comprehend.",
+          "The setting turns distance, cold and uncertainty into growing pressure. This is a useful doorway into the secrets beneath the Freljord, with the scale of its danger revealed through the limits of ordinary perception."
+        ],
+        "zh": [
+          "一支冰霜守卫小队深入堡垒下方的黑暗，接受的不仅是武勇的考验。当地上的功勋遇见远超理解的事物，西格瓦尔所熟悉的信念也难以带来安慰。",
+          "距离、严寒与未知在下降过程中持续累积。故事是进入北境深处秘密的入口，也通过凡人感知的局限，让危险的尺度逐渐显露。"
+        ]
+      },
+      "relatedChampions": [
+        "lissandra",
+        "velkoz"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/the-eye-in-the-abyss/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/the-eye-in-the-abyss/"
+        }
+      ]
+    },
+    {
+      "id": "ahri-garden-forgetting",
+      "title": {
+        "en": "The Garden of Forgetting",
+        "zh": "忘忧花园"
+      },
+      "author": "by Rayla Heide",
+      "region": "ionia",
+      "summary": {
+        "en": "Ahri encounters the promise of escape from painful memories and confronts what forgetting might cost her.",
+        "zh": "阿狸面对一个看似可以摆脱痛苦记忆的机会，也必须衡量遗忘会带走什么。"
+      },
+      "image": "/worlds-universe/assets/stories/ahri-garden-forgetting.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/ahri-garden-forgetting/",
+      "minutes": 8,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/ahri-garden-forgetting/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/7a31a4c0593cd4365cce70dafbc8c643507b190b-3757x2237.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/ahri-garden-forgetting-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1143,
+      "detail": {
+        "en": [
+          "Ahri encounters a garden that offers a tempting response to painful memory. For someone whose life has been shaped by the experiences of others, the possibility of forgetting raises questions that reach beyond immediate relief.",
+          "This is an intimate story rather than a grand historical turning point. Read it for the relationship between memory, responsibility and identity, and for the way its setting makes an emotional choice tangible."
+        ],
+        "zh": [
+          "阿狸来到一座花园，那里似乎提供了摆脱痛苦记忆的诱人方法。对一个深受他人经历影响的人而言，遗忘意味着什么，远比片刻解脱更加复杂。",
+          "这是一篇贴近内心的故事，而非宏大历史的转折点。记忆、责任与身份相互交织，花园的环境让抽象的情感选择变得具体。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/ahri-garden-forgetting/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/ahri-garden-forgetting/"
+        }
+      ]
+    },
+    {
+      "id": "piltover-progress-day",
+      "title": {
+        "en": "Progress Day",
+        "zh": "进化日"
+      },
+      "author": "by Graham McNeill",
+      "region": "piltover",
+      "summary": {
+        "en": "A celebration of invention in Piltover provides the stage for hidden loyalties and a contest of espionage.",
+        "zh": "皮尔特沃夫庆祝创新的节日里，精巧发明与暗中的谍报较量同时展开。"
+      },
+      "image": "/worlds-universe/assets/stories/piltover-progress-day.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/piltover-progress-day/",
+      "minutes": 27,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/piltover-progress-day/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f39c550d19ef1db58bcbdc879c872d2c1674e96-1920x1078.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/piltover-progress-day-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1078,
+      "detail": {
+        "en": [
+          "Piltover prepares to celebrate invention while a young craftswoman tries to secure her place within its workshops and influential families. Skill can open doors, but the city’s opportunities also attract people with less visible objectives.",
+          "The story pairs detailed everyday life with a developing contest of observation. Pay attention to what characters reveal through professional ambition, casual conversation and the routes they choose through the city."
+        ],
+        "zh": [
+          "皮尔特沃夫准备庆祝创新，一名年轻工匠则努力在工坊与有影响力的家族之间争取机会。技艺可以打开门，但城市的诱惑也吸引着怀有隐秘目的的人。",
+          "细致的日常生活与逐渐展开的观察较量并行。职业抱负、随口交谈，以及在城市里选择的路线，都可能透露比表面更多的信息。"
+        ]
+      },
+      "relatedChampions": [
+        "vi",
+        "caitlyn"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/piltover-progress-day/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/piltover-progress-day/"
+        }
+      ]
+    },
+    {
+      "id": "from-the-ashes",
+      "title": {
+        "en": "From The Ashes",
+        "zh": "飞灰"
+      },
+      "author": "by Aaron Dembski-Bowden",
+      "region": "freljord",
+      "summary": {
+        "en": "Ryze’s journey with the young Kegan Rodhe exposes the dangerous distance between seeking knowledge and craving control.",
+        "zh": "瑞兹与年轻学徒凯根·罗德的旅途，揭示求知欲与渴求掌控之间危险的距离。"
+      },
+      "image": "/worlds-universe/assets/stories/from-the-ashes.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/story/from-the-ashes/",
+      "minutes": 32,
+      "chineseTitleNote": "Official title verified in Riot Universe zh_cn JSON.",
+      "localizedDataUrl": "https://universe-meeps.leagueoflegends.com/v1/zh_cn/story/from-the-ashes/index.json",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d44e5e702b78eaa6d887110d549dc519c66c08e9-1920x1080.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/stories/from-the-ashes-card.webp",
+      "imageWidth": 1920,
+      "imageHeight": 1080,
+      "detail": {
+        "en": [
+          "A young Kegan Rodhe studies under Ryze, struggling with lessons that demand more than an appetite for magical strength. Memories of his earlier life shadow the journey and shape what he expects knowledge to provide.",
+          "The tension grows through teaching, frustration and small differences in how master and apprentice understand power. It offers a personal entry into the dangers behind Runeterra’s greater magical history."
+        ],
+        "zh": [
+          "年轻的凯根·罗德跟随瑞兹学习，却发现课程要求的远不只是对魔法力量的渴望。早年生活的记忆伴随旅程，也塑造了他希望从知识中得到的东西。",
+          "师徒之间对力量理解的细小差异，在教导与挫折中逐渐放大。故事从个人经历进入符文之地更宏大的魔法历史，以及隐藏其中的危险。"
+        ]
+      },
+      "relatedChampions": [
+        "ryze",
+        "brand"
+      ],
+      "sourceLinks": [
+        {
+          "locale": "en",
+          "url": "https://universe.leagueoflegends.com/en_GB/story/from-the-ashes/"
+        },
+        {
+          "locale": "zh",
+          "url": "https://universe.leagueoflegends.com/zh_CN/story/from-the-ashes/"
+        }
+      ]
+    }
+  ],
+  "skinUniverses": [
+    {
+      "id": "star-guardian",
+      "name": {
+        "en": "Star Guardian",
+        "zh": "星之守护者"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "Chosen young guardians balance friendship with the burden of defending their world from cosmic darkness.",
+        "zh": "被选中的年轻守护者以友情与勇气对抗宇宙黑暗。"
+      },
+      "champion": "Ahri",
+      "skinName": "Star Guardian Ahri",
+      "skinNum": 14,
+      "image": "/worlds-universe/assets/skins/star-guardian-ahri.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_US/star-guardian/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Ahri.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_14.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/star-guardian-ahri-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "Star Guardian gives familiar champions the responsibilities of young cosmic defenders. Team relationships and everyday vulnerabilities remain important even when the stakes reach across the stars. Lux’s group and Ahri’s fellow guardians offer different approaches to that shared burden.",
+          "Its stories place bright transformation imagery beside uncertainty and sacrifice. The appeal lies in watching friendship become both a source of strength and something that the struggle may threaten."
+        ],
+        "zh": [
+          "星之守护者让熟悉的英雄成为年轻的宇宙守护者。即使危机延伸到群星之间，团队关系与日常的脆弱仍然重要。拉克丝的小队与阿狸的伙伴，以不同方式面对共同的责任。",
+          "明亮的变身意象与不确定、牺牲并存。友情既提供力量，也可能成为战斗威胁的对象，这种关系构成系列的重要吸引力。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri",
+        "lux",
+        "jinx"
+      ]
+    },
+    {
+      "id": "odyssey",
+      "name": {
+        "en": "Odyssey",
+        "zh": "奥德赛"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "An unlikely starship crew crosses a galaxy shaped by imperial ambition and a mysterious source of power.",
+        "zh": "性格迥异的船员踏上星际冒险，穿行于帝国与神秘能量的纷争之间。"
+      },
+      "champion": "Yasuo",
+      "skinName": "Odyssey Yasuo",
+      "skinNum": 10,
+      "image": "/worlds-universe/assets/skins/odyssey-yasuo.webp",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_US/odyssey/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Yasuo.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_10.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/odyssey-yasuo-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "Odyssey shifts its cast into a space adventure of imperial ambition, strange energy and improbable companions. The Morning Star’s crew brings clashing personalities together around a journey that is larger than any one member expected.",
+          "Colorful science-fiction designs preserve recognizable traits while giving them new motives and roles. The result can be approached as an ensemble adventure, where the friction between shipmates matters alongside the galaxy’s competing powers."
+        ],
+        "zh": [
+          "奥德赛把角色带入充满帝国野心、神秘能量与意外伙伴的太空冒险。晨星号船员性格各异，却卷入一场超过个人预期的旅程。",
+          "鲜明的科幻设计保留英雄的辨识度，也赋予他们新的动机与身份。理解这个世界，可以从船员之间的摩擦与合作入手，再看向银河中的不同势力。"
+        ]
+      },
+      "relatedChampions": [
+        "yasuo",
+        "jinx",
+        "sona",
+        "malphite",
+        "kayn"
+      ]
+    },
+    {
+      "id": "kda",
+      "name": {
+        "en": "K/DA",
+        "zh": "K/DA"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "Ahri, Akali, Evelynn and Kai’Sa reimagine themselves through pop music, performance and distinct stage identities.",
+        "zh": "阿狸、阿卡丽、伊芙琳与卡莎在音乐舞台上重塑身份，用流行音乐呈现另一种英雄想象。"
+      },
+      "champion": "Ahri",
+      "skinName": "K/DA ALL OUT Ahri",
+      "skinNum": 28,
+      "image": "/worlds-universe/assets/skins/kda-all-out-ahri.webp",
+      "sourceUrl": "https://www.leagueoflegends.com/en-us/news/tags/kda/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Ahri.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_28.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/kda-all-out-ahri-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "K/DA brings Ahri, Akali, Evelynn and Kai’Sa together as a pop group. Their identities are developed through vocals, choreography, fashion and stage presence, allowing the same familiar figures to express ambition through performance rather than battle.",
+          "Music videos and related artwork provide the clearest entrance into this world. Each member retains a distinct persona, while shared styling and synchronized presentation turn those differences into the group’s identity."
+        ],
+        "zh": [
+          "K/DA让阿狸、阿卡丽、伊芙琳与卡莎组成流行乐团。声音、舞蹈、时装与舞台表现共同塑造身份，让熟悉的角色通过表演而非战斗表达野心。",
+          "音乐视频与相关美术是进入这个世界最直接的方式。每位成员保持鲜明个性，统一造型与共同演出则把差异凝聚为乐团的形象。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri",
+        "kaisa",
+        "akali",
+        "evelynn"
+      ]
+    },
+    {
+      "id": "project",
+      "name": {
+        "en": "PROJECT",
+        "zh": "源计划"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "Cybernetic augmentation and corporate power shape a neon city where rebels fight for autonomy.",
+        "zh": "霓虹都市与机械改造交织，反抗者追问被企业力量改写的人性与自由。"
+      },
+      "champion": "Jhin",
+      "skinName": "PROJECT: Jhin",
+      "skinNum": 4,
+      "image": "/worlds-universe/assets/skins/project-jhin.webp",
+      "sourceUrl": "https://www.leagueoflegends.com/en-us/news/tags/project-skins/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Jhin.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jhin_4.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/project-jhin-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "PROJECT places augmented humans and artificial beings inside a future shaped by corporate control. Mechanical bodies and altered capabilities offer power, but also raise questions about ownership, memory and the ability to choose a life beyond an assigned purpose.",
+          "The visual language is deliberately sharp: armor, luminous edges and dense urban structures make the body part of the city’s machinery. Rebellious castoffs turn those same technologies back against the systems that discarded them."
+        ],
+        "zh": [
+          "源计划把机械改造的人类与人工生命置于企业控制的未来。被强化的身体带来力量，也提出关于所有权、记忆与自主选择的问题：一个人能否活出被分配用途之外的人生？",
+          "盔甲、发光边缘与密集都市建筑，让身体仿佛成为城市机械的一部分。被抛弃的改造者，则试图用同样的技术反过来挑战制造并遗弃他们的体系。"
+        ]
+      },
+      "relatedChampions": [
+        "jinx",
+        "vi",
+        "yasuo",
+        "jhin",
+        "lucian"
+      ]
+    },
+    {
+      "id": "high-noon",
+      "name": {
+        "en": "High Noon",
+        "zh": "西部魔影"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "Gunslingers, demons and angels turn the western frontier into a battleground of supernatural conflict.",
+        "zh": "荒野枪手、恶魔与天使让西部边境成为超自然冲突的舞台。"
+      },
+      "champion": "Lucian",
+      "skinName": "High Noon Lucian",
+      "skinNum": 8,
+      "image": "/worlds-universe/assets/skins/high-noon-lucian.webp",
+      "sourceUrl": "https://www.leagueoflegends.com/en-us/news/tags/high-noon-skins/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Lucian.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lucian_8.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/high-noon-lucian-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "High Noon combines frontier imagery with supernatural conflict. Guns, dust and outlaw silhouettes share the landscape with demons and angelic powers, turning familiar western confrontations into struggles with forces beyond ordinary human law.",
+          "The chosen skins emphasize different sides of that mixture: a gunslinger’s recognizable stance can carry something far more dangerous beneath it. Warm firelight, dark leather and infernal details make the frontier feel both physically harsh and spiritually unsettled."
+        ],
+        "zh": [
+          "西部魔影把边境意象与超自然冲突结合。枪械、尘土与亡命徒的轮廓，同恶魔和天使的力量出现在同一片荒野，让熟悉的西部对决超出凡人法律的范围。",
+          "不同皮肤强调这种结合的不同侧面：看似熟悉的枪手姿态之下，可能藏着更危险的本质。火光、深色皮革与地狱细节，共同营造严酷而不安的边境。"
+        ]
+      },
+      "relatedChampions": [
+        "lucian",
+        "senna",
+        "yasuo",
+        "jhin"
+      ]
+    },
+    {
+      "id": "cosmic",
+      "name": {
+        "en": "Cosmic / Dark Cosmic",
+        "zh": "星辰与暗星"
+      },
+      "kind": "alternate-universe",
+      "summary": {
+        "en": "Cosmic duty and dark ambition collide as familiar champions take on the scale of celestial beings.",
+        "zh": "星辰的秩序与黑暗野心相互拉扯，英雄以宇宙尺度重新登场。"
+      },
+      "champion": "Lux",
+      "skinName": "Dark Cosmic Lux",
+      "skinNum": 17,
+      "image": "/worlds-universe/assets/skins/dark-cosmic-lux.webp",
+      "sourceUrl": "https://www.leagueoflegends.com/en-us/news/tags/dark-cosmic-lux/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Lux.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Lux_17.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/dark-cosmic-lux-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "Cosmic and Dark Cosmic designs reimagine champions as beings whose decisions are measured against stars and vast celestial spaces. In Lux’s story, the pressure between duty and ambition gives that scale an emotional center rather than leaving it as spectacle alone.",
+          "Radiant forms and consuming darkness create opposing visual impulses. These skins are best explored through their individual artwork and stories, where familiar personalities become ways to consider creation, restraint and the lure of overwhelming power."
+        ],
+        "zh": [
+          "星辰与暗星把英雄想象为活动于群星和浩瀚天体之间的存在。拉克丝故事中的责任与野心，让宇宙尺度拥有情感中心，而不仅是宏大的视觉奇观。",
+          "璀璨形态与吞噬性的黑暗形成不同方向。结合每张原画与对应故事观看，会更容易理解熟悉性格如何转化为对创造、克制与强大力量诱惑的探索。"
+        ]
+      },
+      "relatedChampions": [
+        "lux",
+        "jhin",
+        "lissandra"
+      ]
+    },
+    {
+      "id": "spirit-blossom",
+      "name": {
+        "en": "Spirit Blossom",
+        "zh": "灵魂莲华"
+      },
+      "kind": "runeterra-folklore",
+      "summary": {
+        "en": "Ionian festival folklore represented through skins, exploring spirits, memory and farewell.",
+        "zh": "艾欧尼亚节庆中的民间传说，以英雄皮肤演绎灵魂、记忆与告别。"
+      },
+      "champion": "Ahri",
+      "skinName": "Spirit Blossom Ahri",
+      "skinNum": 27,
+      "image": "/worlds-universe/assets/skins/spirit-blossom-ahri.webp",
+      "sourceUrl": "https://www.leagueoflegends.com/en-gb/news/dev/crafting-spirit-blossom/",
+      "assetDataUrl": "https://ddragon.leagueoflegends.com/cdn/16.22.1/data/en_US/champion/Ahri.json",
+      "sourceImageUrl": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_27.jpg",
+      "thumbnail": "/worlds-universe/assets/skins/spirit-blossom-ahri-card.webp",
+      "imageWidth": 1215,
+      "imageHeight": 717,
+      "detail": {
+        "en": [
+          "Spirit Blossom belongs to Ionian festival folklore within Runeterra. The celebration is part of the world’s lore, while the skins portray figures from oral traditions and performances, using familiar champions to embody ideas such as salvation, obsession and loss.",
+          "This distinction matters: the costumes do not relocate every depicted champion into a separate canonical life. They invite a different reading, closer to encountering a play or legend through which a community remembers, mourns and explains the spirit world."
+        ],
+        "zh": [
+          "灵魂莲华属于符文之地内部的艾欧尼亚节庆民俗。节日本身存在于世界设定中，皮肤则演绎口述传统与表演中的人物，以熟悉的英雄承载救赎、执念与失去等观念。",
+          "这并不意味着所有登场英雄都在另一条正史里拥有了新人生。更适合的理解方式，是观看一场戏剧或聆听一个传说：社群借此纪念、哀悼，并解释精神世界。"
+        ]
+      },
+      "relatedChampions": [
+        "ahri",
+        "yasuo",
+        "teemo",
+        "thresh"
+      ]
+    }
+  ],
+  "artGallery": [
+    {
+      "title": "The First Lands",
+      "url": "/worlds-universe/assets/gallery/ionia-the-first-lands.webp",
+      "section": "Life in Ionia",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+      "region": "ionia",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/e8a24e6e60fe602dae0b9211b58465ec689a8d03-1920x737.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/ionia-the-first-lands-card.webp",
+      "id": "gallery-ionia-the-first-lands",
+      "name": {
+        "en": "The First Lands",
+        "zh": "初生之土"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "The Great Monasteries",
+      "url": "/worlds-universe/assets/gallery/ionia-the-great-monasteries.webp",
+      "section": "Life in Ionia",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+      "region": "ionia",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/72ad1322d9a8b12047f23f9f7d344de6735e54fc-1920x1079.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/ionia-the-great-monasteries-card.webp",
+      "id": "gallery-ionia-the-great-monasteries",
+      "name": {
+        "en": "The Great Monasteries",
+        "zh": "群山修道院"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "The Rainbowed Canyons of Shi",
+      "url": "/worlds-universe/assets/gallery/ionia-the-rainbowed-canyons-of-shi.webp",
+      "section": "Environments of Ionia",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ionia/",
+      "region": "ionia",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/06b68528c3080d7c882118dd8125655cfd000e76-1920x812.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/ionia-the-rainbowed-canyons-of-shi-card.webp",
+      "id": "gallery-ionia-the-rainbowed-canyons-of-shi",
+      "name": {
+        "en": "The Rainbowed Canyons of Shi",
+        "zh": "虹彩峡谷"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "The sands recede, and Shurima is reborn.",
+      "url": "/worlds-universe/assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn.webp",
+      "section": "Visions of Shurima",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/shurima/",
+      "region": "shurima",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/c1f3e06c2deead6fbd679d53d1e9467fbd8f801d-1920x995.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/shurima-the-sands-recede-and-shurima-is-reborn-card.webp",
+      "id": "gallery-shurima-the-sands-recede-and-shurima-is-reborn",
+      "name": {
+        "en": "The sands recede, and Shurima is reborn.",
+        "zh": "恕瑞玛重生"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "Zindelo’s Incognium Runeterra",
+      "url": "/worlds-universe/assets/gallery/piltover-zindelo-s-incognium-runeterra.webp",
+      "section": "Visions of Piltover",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/piltover/",
+      "region": "piltover",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/3f39c550d19ef1db58bcbdc879c872d2c1674e96-1920x1078.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/piltover-zindelo-s-incognium-runeterra-card.webp",
+      "id": "gallery-piltover-zindelo-s-incognium-runeterra",
+      "name": {
+        "en": "Zindelo’s Incognium Runeterra",
+        "zh": "符文之地观测仪"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "Backstreet hextech deals",
+      "url": "/worlds-universe/assets/gallery/zaun-backstreet-hextech-deals.webp",
+      "section": "Visions of Zaun",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/zaun/",
+      "region": "zaun",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/84d22902356e7b69fec7dba23703f3a51ed97410-1920x975.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/zaun-backstreet-hextech-deals-card.webp",
+      "id": "gallery-zaun-backstreet-hextech-deals",
+      "name": {
+        "en": "Backstreet hextech deals",
+        "zh": "后街的海克斯交易"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "Bilgewater Bay",
+      "url": "/worlds-universe/assets/gallery/bilgewater-bilgewater-bay.webp",
+      "section": "Visions of Bilgewater",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/bilgewater/",
+      "region": "bilgewater",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/e11375ab64f8a8f5c3eb7698b4fc2aa02d738fc4-1920x911.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/bilgewater-bilgewater-bay-card.webp",
+      "id": "gallery-bilgewater-bilgewater-bay",
+      "name": {
+        "en": "Bilgewater Bay",
+        "zh": "比尔吉沃特海湾"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "HOME OF THE RAKKOR",
+      "url": "/worlds-universe/assets/gallery/mount-targon-home-of-the-rakkor.webp",
+      "section": "Art Gallery",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/mount-targon/",
+      "region": "mount-targon",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/68cbc6b051ee43da9255b97c14ad2bb60d01fe07-1920x959.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/mount-targon-home-of-the-rakkor-card.webp",
+      "id": "gallery-mount-targon-home-of-the-rakkor",
+      "name": {
+        "en": "HOME OF THE RAKKOR",
+        "zh": "拉阔尔的家园"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "Ixaocan",
+      "url": "/worlds-universe/assets/gallery/ixtal-ixaocan.webp",
+      "section": "Ancient Secrets",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/ixtal/",
+      "region": "ixtal",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe_live/6b7e184e6b82d586d607f6a63261ae610811defa-3840x2160.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/ixtal-ixaocan-card.webp",
+      "id": "gallery-ixtal-ixaocan",
+      "name": {
+        "en": "Ixaocan",
+        "zh": "以绪奥肯"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    },
+    {
+      "title": "The Fall of Icathia",
+      "url": "/worlds-universe/assets/gallery/void-the-fall-of-icathia.webp",
+      "section": "Facing the Void",
+      "sourceUrl": "https://universe.leagueoflegends.com/en_GB/region/void/",
+      "region": "void",
+      "sourceImageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/cff392be16fbc5d58802be94d37be8d40dcca3ef-1920x866.jpg?accountingTag=LoL",
+      "thumbnail": "/worlds-universe/assets/gallery/void-the-fall-of-icathia-card.webp",
+      "id": "gallery-void-the-fall-of-icathia",
+      "name": {
+        "en": "The Fall of Icathia",
+        "zh": "艾卡西亚的陨落"
+      },
+      "chineseTitleNote": "Editorial translation for this fan gallery."
+    }
+  ]
+}

@@ -589,6 +589,7 @@ function attachFont(key, href) {
 }
 // The CJK serif is only fetched for Chinese readers (it is ~140 KB with its slice list).
 function loadDisplayFont() {
+  if (document.body.classList.contains('worlds-body--universe')) return;
   attachFont('latin', FONT_CSS);
   if (lang === 'zh') attachFont('zh', FONT_CSS_ZH);
 }
@@ -655,8 +656,13 @@ function wirePanels() {
     if (step) { setPanel(PANELS[(i + step + PANELS.length) % PANELS.length], { focus: true }); e.preventDefault(); }
     else if (e.key === 'Home' || e.key === 'End') { setPanel(PANELS[e.key === 'Home' ? 0 : PANELS.length - 1], { focus: true }); e.preventDefault(); }
   });
-  window.addEventListener('hashchange', () => setPanel(location.hash.slice(1)));
-  if (location.hash) setPanel(location.hash.slice(1));
+  // The page also has region, champion, story and artwork anchors. Only
+  // tournament panel hashes may change the selected prediction panel.
+  window.addEventListener('hashchange', () => {
+    const id = location.hash.slice(1);
+    if (PANELS.includes(id)) setPanel(id);
+  });
+  if (PANELS.includes(location.hash.slice(1))) setPanel(location.hash.slice(1));
 }
 
 function renderMini() {
@@ -782,7 +788,30 @@ buildScrub();
 wirePanels();
 wireCards();
 paint();
-load();
+
+const competition = $('competition');
+const panel = location.hash.slice(1);
+// Readers opening the tournament directly need data immediately. From the
+// Universe landing page, fetch it as the tournament approaches the viewport.
+if (competition && 'IntersectionObserver' in window && panel !== 'competition' && !PANELS.includes(panel)) {
+  let requested = false;
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) loadTournament();
+  }, { rootMargin: '1200px 0px' });
+
+  function loadTournament() {
+    if (requested) return;
+    requested = true;
+    observer.disconnect();
+    competition.removeEventListener('focusin', loadTournament);
+    void load();
+  }
+
+  competition.addEventListener('focusin', loadTournament);
+  observer.observe(competition);
+} else {
+  void load();
+}
 setInterval(tick, 1000);
 window.addEventListener('afflatus-lang', (e) => {
   lang = e.detail || getLocale('en');
