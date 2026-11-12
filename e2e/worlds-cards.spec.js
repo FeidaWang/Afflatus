@@ -2,13 +2,19 @@ import { expect, settlePage, test } from './site-fixture.js';
 
 // The fixture pins the clock to 2026-07-25, before every Worlds kickoff, so
 // every open series in the current stage can still be picked.
+async function enterTournament(page) {
+  await page.goto('/worlds.html');
+  await settlePage(page);
+  await page.getByRole('link', { name: 'Enter Worlds', exact: true }).click();
+  const deck = page.locator('#carousel');
+  await expect(deck.locator('.mcard.center')).toHaveCount(1);
+  await deck.scrollIntoViewIfNeeded();
+}
+
 test.describe('Worlds 2026 card deck', () => {
   test('drawing the front card and picking a side flips it at once', async ({ page }) => {
-    await page.goto('/worlds.html');
-    await settlePage(page);
+    await enterTournament(page);
     const deck = page.locator('#carousel');
-    await deck.scrollIntoViewIfNeeded();
-    await expect(deck.locator('.mcard.center')).toHaveCount(1);
 
     await deck.locator('.mcard.center').click();
     await expect(page.locator('#drawn article.card')).toHaveAttribute('data-state', 'pick');
@@ -33,9 +39,7 @@ test.describe('Worlds 2026 card deck', () => {
   });
 
   test('arrow keys on a drawn card do not seal a pick', async ({ page }) => {
-    await page.goto('/worlds.html');
-    await settlePage(page);
-    await page.locator('#carousel').scrollIntoViewIfNeeded();
+    await enterTournament(page);
     await page.locator('#carousel .mcard.center').click();
     await page.locator('#drawn article.card').focus();
     await page.keyboard.press('ArrowRight');
@@ -43,9 +47,7 @@ test.describe('Worlds 2026 card deck', () => {
   });
 
   test('an interrupted spin still settles on a whole card', async ({ page }) => {
-    await page.goto('/worlds.html');
-    await settlePage(page);
-    await page.locator('#carousel').scrollIntoViewIfNeeded();
+    await enterTournament(page);
     const angle = await page.evaluate(async () => {
       const el = document.getElementById('carousel');
       const r = el.getBoundingClientRect();
@@ -76,9 +78,7 @@ test.describe('Worlds 2026 card deck', () => {
       }
       await route.fulfill({ json: data });
     });
-    await page.goto('/worlds.html');
-    await settlePage(page);
-    await page.locator('#carousel').scrollIntoViewIfNeeded();
+    await enterTournament(page);
     await page.locator('#carousel .mcard.center').click();
     await expect(page.locator('#drawn article.card')).toHaveAttribute('data-state', 'locked-missed');
     await expect(page.locator('#drawn article.card')).toHaveClass(/flipped/);

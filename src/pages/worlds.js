@@ -788,7 +788,30 @@ buildScrub();
 wirePanels();
 wireCards();
 paint();
-load();
+
+const competition = $('competition');
+const panel = location.hash.slice(1);
+// Readers opening the tournament directly need data immediately. From the
+// Universe landing page, fetch it as the tournament approaches the viewport.
+if (competition && 'IntersectionObserver' in window && panel !== 'competition' && !PANELS.includes(panel)) {
+  let requested = false;
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) loadTournament();
+  }, { rootMargin: '1200px 0px' });
+
+  function loadTournament() {
+    if (requested) return;
+    requested = true;
+    observer.disconnect();
+    competition.removeEventListener('focusin', loadTournament);
+    void load();
+  }
+
+  competition.addEventListener('focusin', loadTournament);
+  observer.observe(competition);
+} else {
+  void load();
+}
 setInterval(tick, 1000);
 window.addEventListener('afflatus-lang', (e) => {
   lang = e.detail || getLocale('en');

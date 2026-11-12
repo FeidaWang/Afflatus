@@ -1,5 +1,5 @@
 import { getLocale, localeSwitchHref } from '../lib/localeStore.js';
-import { assetRoot, escapeHtml as esc, localized as local, copy, aria, icon, heroSlides, renderUniverse, renderHero, renderRegion, renderChampions, renderStory, renderSkin, renderGallery, renderDialog } from '../lib/worldsUniverseTemplates.js';
+import { escapeHtml as esc, localized as local, copy, aria, icon, renderUniverse, renderHero, renderRegion, renderChampions, renderStory, renderSkin, renderGallery, renderDialog } from '../lib/worldsUniverseTemplates.js';
 
 const root = document.getElementById('wu-universe-content');
 const detailDialog = document.getElementById('wu-detail');
@@ -17,7 +17,6 @@ let lastFocus;
 let returnHash = '#top';
 let artIndex = 0;
 let activeArtSet = [];
-let observing;
 const t = (en,zh) => lang === 'zh' ? zh : en;
 const byId = id => document.getElementById(id);
 const entityHash = () => /^#(region|champion|story|skin)\/([a-z0-9-]+)$/.exec(location.hash);
@@ -83,7 +82,7 @@ function selectSkin(id) {
   feature.innerHTML=renderSkin(data,lang,id);
   feature.setAttribute('aria-labelledby',`wu-skin-tab-${id}`);
 }
-function filterChampions() {
+export function filterChampions() {
   const query=byId('wu-champion-search').value;
   const region=byId('wu-champion-region').value;
   const result=renderChampions(data,lang,{query,region,expanded:championsExpanded});
@@ -126,22 +125,7 @@ function renderSearch(query='') {
   const title=normalized?t(`${matches.length} RESULTS`,`${matches.length} 个结果`):t('START EXPLORING','从这里开始探索');
   byId('wu-search-results').innerHTML=`<h3>${esc(title)}</h3>${matches.length?matches.map(m=>`<a href="#${m.type}/${m.item.id}"><span>${esc(local(m.name,lang))}</span><small>${esc(m.label)}</small></a>`).join(''):`<p class="wu-search-empty">${copy('No results. Try a champion, region or skin world.','没有找到结果。试试英雄名、区域或皮肤系列。',lang)}</p>`}`;
 }
-function observeSections() {
-  observing?.disconnect();
-  if (!('IntersectionObserver' in window)) return;
-  observing=new IntersectionObserver(entries=>{
-    for(const entry of entries) if(entry.isIntersecting){
-      root.querySelectorAll('.wu-nav-links a').forEach(link=>{
-        if(link.hash===`#${entry.target.id}`)link.setAttribute('aria-current','location');
-        else link.removeAttribute('aria-current');
-      });
-    }
-  },{rootMargin:'-22% 0px -60% 0px',threshold:0});
-  for(const id of ['regions','champions','stories','skins','art','competition']){
-    const target=byId(id);if(target)observing.observe(target);
-  }
-}
-function handleClick(event) {
+export function handleClick(event) {
   const target=event.target.closest('button,a');
   if(!target || !data)return;
   if(target.matches('a[href^="#"]')){
@@ -195,7 +179,7 @@ function handleClick(event) {
     }else{video.pause();target.textContent=t('Animate landscape','播放动态风景');target.setAttribute('aria-label',t('Play landscape animation','播放风景动画'));target.setAttribute('aria-pressed','false');}
   }
 }
-function handleKey(event) {
+export function handleKey(event) {
   if(!data)return;
   if(event.key==='/'&&!event.ctrlKey&&!event.metaKey&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)&&!detailDialog.open&&!artDialog.open){event.preventDefault();showSearch();return;}
   if(artDialog.open&&['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();shiftArt(event.key==='ArrowRight'?1:-1);return;}
@@ -210,39 +194,32 @@ function handleKey(event) {
     if(next!==undefined){event.preventDefault();tabs[next].click();tabs[next].focus({preventScroll:true});tabs[next].scrollIntoView({block:'nearest',inline:'nearest'});}
   }
 }
-async function init() {
-  if(!root)return;
-  try{
-    const response=await fetch('/worlds-universe/content.json');
-    if(!response.ok)throw new Error(`Content ${response.status}`);
-    data=await response.json();
-    root.innerHTML=renderUniverse(data,lang);
-    document.addEventListener('click',handleClick);
-    document.addEventListener('keydown',handleKey);
-    document.addEventListener('input',event=>{
-      if(event.target.id==='wu-champion-search')filterChampions();
-      if(event.target.id==='wu-global-search')renderSearch(event.target.value);
+export async function initWorldsUniverse() {
+  const response=await fetch('/worlds-universe/content.json');
+  if(!response.ok)throw new Error(`Content ${response.status}`);
+  data=await response.json();
+  lang = getLocale('en');
+  document.addEventListener('click',handleClick);
+  document.addEventListener('keydown',handleKey);
+  document.addEventListener('input',event=>{
+    if(event.target.id==='wu-champion-search')filterChampions();
+    if(event.target.id==='wu-global-search')renderSearch(event.target.value);
+  });
+  document.addEventListener('change',event=>{if(event.target.id==='wu-champion-region')filterChampions();});
+  detailDialog.addEventListener('cancel',event=>{event.preventDefault();closeDetail();});
+  for(const dialog of [detailDialog,artDialog,searchDialog]){
+    dialog.addEventListener('close',syncDialogScroll);
+    dialog.addEventListener('click',event=>{
+      if(event.target!==dialog)return;
+      const bounds=dialog.getBoundingClientRect();
+      if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom){if(dialog===detailDialog)closeDetail();else dialog.close();}
     });
-    document.addEventListener('change',event=>{if(event.target.id==='wu-champion-region')filterChampions();});
-    detailDialog.addEventListener('cancel',event=>{event.preventDefault();closeDetail();});
-    for(const dialog of [detailDialog,artDialog,searchDialog]){
-      dialog.addEventListener('close',syncDialogScroll);
-      dialog.addEventListener('click',event=>{
-        if(event.target!==dialog)return;
-        const bounds=dialog.getBoundingClientRect();
-        if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom){if(dialog===detailDialog)closeDetail();else dialog.close();}
-      });
-    }
-    window.addEventListener('hashchange',followHash);
-    document.addEventListener('visibilitychange',()=>{if(document.hidden)root.querySelectorAll('video').forEach(video=>{video.pause();const button=video.closest('.wu-region-feature')?.querySelector('[data-motion]');if(button){button.textContent=t('Animate landscape','播放动态风景');button.setAttribute('aria-label',t('Play landscape animation','播放风景动画'));button.setAttribute('aria-pressed','false');}});});
-    window.addEventListener('afflatus-lang',event=>{
-      lang=event.detail;storiesExpanded=false;galleryExpanded=false;root.innerHTML=renderUniverse(data,lang);selectHero(heroIndex);selectRegion(regionId);selectSkin(skinId);filterChampions();followHash();observeSections();
-    });
-    refreshLanguageLinks();observeSections();followHash();
-    root.dataset.ready='true';
-  }catch(error){
-    console.warn('[worlds-universe] Unable to load interactive content',error);
-    const note=document.createElement('p');note.className='wu-empty';note.textContent=t('Interactive content could not load. Refresh to try again.','互动内容未能加载，请刷新重试。');root.append(note);
   }
+  window.addEventListener('hashchange',followHash);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)root.querySelectorAll('video').forEach(video=>{video.pause();const button=video.closest('.wu-region-feature')?.querySelector('[data-motion]');if(button){button.textContent=t('Animate landscape','播放动态风景');button.setAttribute('aria-label',t('Play landscape animation','播放风景动画'));button.setAttribute('aria-pressed','false');}});});
+  window.addEventListener('afflatus-lang',event=>{
+    lang=event.detail;storiesExpanded=false;galleryExpanded=false;root.innerHTML=renderUniverse(data,lang);selectHero(heroIndex);selectRegion(regionId);selectSkin(skinId);filterChampions();followHash();
+  });
+  followHash();
+  root.dataset.ready='true';
 }
-init();

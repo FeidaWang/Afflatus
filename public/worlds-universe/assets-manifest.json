@@ -2076,6 +2076,32 @@
       "height": 1080,
       "bytes": 520840,
       "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
+    },
+    {
+      "id": "worlds-keyvisual-768",
+      "category": "worlds",
+      "title": "Worlds 2026 official key visual",
+      "path": "assets/worlds/keyvisual-768.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/a57a2226c2721c242aaf53c771ad13d4e505962f-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 768,
+      "height": 432,
+      "bytes": 51422,
+      "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
+    },
+    {
+      "id": "worlds-keyvisual-1280",
+      "category": "worlds",
+      "title": "Worlds 2026 official key visual",
+      "path": "assets/worlds/keyvisual-1280.webp",
+      "source_url": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/a57a2226c2721c242aaf53c771ad13d4e505962f-1920x1080.jpg",
+      "source_width": 1920,
+      "source_height": 1080,
+      "width": 1280,
+      "height": 720,
+      "bytes": 116138,
+      "sha256_source": "219a45afcda982e1c2d30197e74dac79554298a22a1de112ada489ebe386d99c"
     }
   ],
   "failed": []
