@@ -1,11 +1,10 @@
-import { getLocale, localeSwitchHref } from '../lib/localeStore.js';
 import { escapeHtml as esc, localized as local, copy, aria, icon, renderUniverse, renderHero, renderRegion, renderChampions, renderStory, renderSkin, renderGallery, renderDialog } from '../lib/worldsUniverseTemplates.js';
 
 const root = document.getElementById('wu-universe-content');
 const detailDialog = document.getElementById('wu-detail');
 const artDialog = document.getElementById('wu-lightbox');
 const searchDialog = document.getElementById('wu-search');
-let lang = getLocale('en');
+let lang;
 let data;
 let heroIndex = 0;
 let regionId = 'ionia';
@@ -26,10 +25,6 @@ function syncDialogScroll() {
   const open = detailDialog.open || artDialog.open || searchDialog.open;
   document.documentElement.style.overflow = open ? 'hidden' : '';
 }
-function refreshLanguageLinks() {
-  const anchor = document.querySelector('[data-header-language]');
-  if (anchor) anchor.href = localeSwitchHref(location,lang==='zh'?'en':'zh');
-}
 function openDetail(type,id) {
   const markup = renderDialog(data,lang,type,id);
   if (!markup) return;
@@ -44,8 +39,10 @@ function openDetail(type,id) {
 }
 function closeDetail(updateHash = true) {
   if (detailDialog.open) detailDialog.close();
-  if (updateHash && entityHash()) history.replaceState(null,'',`${location.pathname}${location.search}${returnHash}`);
-  refreshLanguageLinks();
+  if (updateHash && entityHash()) {
+    history.replaceState(null, '', `${location.pathname}${location.search}${returnHash}`);
+    window.dispatchEvent(new Event('afflatus-locationchange'));
+  }
   syncDialogScroll();
   if (lastFocus?.isConnected) lastFocus.focus({preventScroll:true});
 }
@@ -53,7 +50,6 @@ function followHash() {
   const entity = selectedEntity();
   if (entity) openDetail(entity.type,entity.id);
   else if (detailDialog.open) closeDetail(false);
-  refreshLanguageLinks();
 }
 function selectHero(index) {
   heroIndex = (index + 3) % 3;
@@ -198,7 +194,7 @@ export async function initWorldsUniverse() {
   const response=await fetch('/worlds-universe/content.json');
   if(!response.ok)throw new Error(`Content ${response.status}`);
   data=await response.json();
-  lang = getLocale('en');
+  lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
   document.addEventListener('click',handleClick);
   document.addEventListener('keydown',handleKey);
   document.addEventListener('input',event=>{

@@ -23,6 +23,8 @@ test('Worlds loads the catalogue on first use and keeps the selected entry acros
   await detail.getByRole('link', { name: '用英文阅读此条目' }).click();
   await expect(page).toHaveURL(/\/en\/worlds\.html#champion\/ahri$/);
   await expect(detail.getByRole('heading', { name: 'Ahri', exact: true })).toBeVisible();
+  await detail.getByRole('button', { name: 'Close detail' }).click();
+  await expect(page.locator('[data-header-language]')).toHaveAttribute('href', '/zh/worlds.html#top');
 });
 
 test('Worlds handles the first region keyboard action before the catalogue is loaded', async ({ page }) => {
