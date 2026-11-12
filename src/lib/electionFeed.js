@@ -11,7 +11,7 @@ export const HIDDEN_CHECK_MS = 5 * 60 * 1000;
 const MAX_CHECK_MS = 15 * 60 * 1000;
 
 export function createFeedController({
-  base, eventId, hostname, fetchJson, onChange, isHidden = () => false, now = Date.now, schedule = setTimeout, cancel = clearTimeout,
+  base, eventId, hostname, serverApprovedSource, fetchJson, onChange, isHidden = () => false, now = Date.now, schedule = setTimeout, cancel = clearTimeout,
 }) {
   const state = { status: 'idle', pointer: null, snapshot: null, paused: false, lastAttemptAt: null, error: null };
   const snapshots = new Map();
@@ -38,7 +38,7 @@ export function createFeedController({
     const errors = snapshotErrors(snapshot);
     if (errors.length) throw new Error(`Invalid snapshot: ${errors[0]}`);
     if (snapshot.snapshotId !== snapshotId || snapshot.eventId !== eventId) throw new Error('Snapshot does not match its pointer');
-    if (!feedAllowed(snapshot, hostname)) throw new Error('Snapshot is not cleared for this host');
+    if (!feedAllowed(snapshot, hostname, { serverApprovedSource })) throw new Error('Snapshot is not cleared for this host');
     snapshots.set(snapshotId, snapshot);
     return snapshot;
   }
@@ -50,17 +50,20 @@ export function createFeedController({
     try {
       const pointer = await fetchJson(`${base}${eventId}/latest.json`);
       if (pointer === null) {
-        // No feed for this event: the page stays exactly as it is without one.
+        if (state.snapshot) throw new Error('The results feed is unavailable');
         failures = 0;
-        state.status = state.snapshot ? 'error' : 'unavailable';
+        state.status = 'unavailable';
         return;
       }
       const errors = pointerErrors(pointer);
       if (errors.length) throw new Error(`Invalid pointer: ${errors[0]}`);
       if (pointer.eventId !== eventId) throw new Error('Pointer is for another event');
-      if (!feedAllowed(pointer, hostname)) throw new Error('Feed is not cleared for this host');
+      if (!feedAllowed(pointer, hostname, { serverApprovedSource })) throw new Error('Feed is not cleared for this host');
       // A cached older pointer must not move the page backwards.
       if (state.pointer && pointer.revision < state.pointer.revision) return;
+      if (state.pointer && pointer.revision === state.pointer.revision && pointer.snapshotId !== state.pointer.snapshotId) {
+        throw new Error('Pointer changed without a new revision');
+      }
       const snapshot = await loadSnapshot(pointer.snapshotId);
       state.pointer = pointer;
       state.snapshot = snapshot;

@@ -763,6 +763,16 @@
       "permanent": false
     }
   ],
+  "rewrites": [
+    {
+      "source": "/elections-feed/vic-2026/latest.json",
+      "destination": "/api/election-feed?event=vic-2026&file=latest.json"
+    },
+    {
+      "source": "/elections-feed/vic-2026/snapshots/:file",
+      "destination": "/api/election-feed?event=vic-2026&file=snapshots/:file"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

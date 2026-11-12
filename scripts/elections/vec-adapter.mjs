@@ -48,6 +48,7 @@ export function melbourneToUtc(naive) {
   if (!match) return null;
   const [, year, month, day, hour, minute, second] = match.map(Number);
   const wall = Date.UTC(year, month - 1, day, hour, minute, second);
+  if (new Date(wall).toISOString().slice(0, 19) !== naive) return null;
   for (const offset of [11, 10]) {
     const guess = new Date(wall - offset * 3600000);
     const parts = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', hourCycle: 'h23', hour: 'numeric' }).format(guess);
@@ -56,7 +57,9 @@ export function melbourneToUtc(naive) {
   return null;
 }
 
-// Pending the VEC affiliation file due 10 November. Exact names only, so "Liberal Democrats" is not the Coalition.
+// VEC's published 2026 RPP AffiliationIdentifier IDs. The public synthetic
+// samples can use mock IDs, so name rules below remain for those samples.
+const VEC_PARTY_IDS = new Map([['4', 'greens'], ['5', 'labor'], ['8', 'coalition'], ['9', 'coalition']]);
 const PARTY_RULES = [
   [/^Australian Labor Party\b/i, 'labor'],
   [/^Liberal Party of Australia\b/i, 'coalition'],
@@ -77,7 +80,7 @@ function seatsFor(office, contestName) {
   return seatCatalogue('vic-2026', office).filter((seat) => (office === 'assembly' ? seat.label.en === name : seat.group === name));
 }
 
-function assemblyCandidates(first, nothingCounted) {
+function assemblyCandidates(first, nothingCounted, useAffiliationIds) {
   return childrenOf(first, 'Candidate').map((node) => {
     const identifier = child(node, 'CandidateIdentifier');
     const affiliation = child(child(node, 'Affiliation'), 'AffiliationIdentifier');
@@ -88,7 +91,9 @@ function assemblyCandidates(first, nothingCounted) {
       candidateId: `vec-${identifier?.attributes.Id}`,
       name: child(identifier, 'CandidateName')?.text.trim() || null,
       party,
-      partyId: partyIdFor(party, independent),
+      partyId: useAffiliationIds && !independent && affiliation?.attributes.Id
+        ? VEC_PARTY_IDS.get(affiliation.attributes.Id) ?? 'other'
+        : partyIdFor(party, independent),
       independent,
       caucus: null,
       ballotPosition: integer(child(node, 'BallotPosition'), 'Ballot position'),
@@ -145,7 +150,7 @@ function normaliseContest(contest, { office, publishedAt, fetchedAt, payloadHash
   const nothingCounted = !reported && !sourceFormal;
   // A recount publishes contest totals only: returned falls to 0 while the votes stay. See the 2 Oct sample files.
   const recount = reported === 0 && Boolean(sourceFormal);
-  const candidates = office === 'assembly' ? assemblyCandidates(first, nothingCounted) : councilCandidates(first, nothingCounted);
+  const candidates = office === 'assembly' ? assemblyCandidates(first, nothingCounted, Boolean(source.expectedEventId)) : councilCandidates(first, nothingCounted);
   if (!candidates.length) throw drift(`${contestName} has no candidates`);
   const ids = new Set(candidates.map((item) => item.candidateId));
   if (ids.size !== candidates.length || ids.has('vec-undefined')) throw drift(`${contestName} repeats a candidate`);
@@ -200,8 +205,8 @@ function normaliseContest(contest, { office, publishedAt, fetchedAt, payloadHash
   };
 }
 
-/** Turns one feed file into races, after checking it is the election and house it should be. */
-export function parseVecFeed(xml, { feed, source, fetchedAt, payloadHash, fileName }) {
+/** Metadata for preflight inspection. The collector separately checks the pinned identity. */
+export function vecFeedHeader(xml) {
   let root;
   try {
     root = parseXml(xml);
@@ -209,17 +214,35 @@ export function parseVecFeed(xml, { feed, source, fetchedAt, payloadHash, fileNa
     throw new FeedError('malformed', error.message);
   }
   if (root.name !== 'MediaFeed') throw drift(`Root element is ${root.name}`);
-  const eventName = child(child(root, 'EventIdentifier'), 'EventName')?.text.trim();
-  if (!source.expectedEventName || eventName !== source.expectedEventName) {
-    throw new FeedError('wrong_identity', `Event is "${eventName}", expected "${source.expectedEventName}"`);
-  }
+  const event = child(root, 'EventIdentifier');
   const election = child(root, 'Election');
   const identifier = child(election, 'ElectionIdentifier');
-  const category = child(identifier, 'ElectionCategory')?.text.trim();
-  if (category !== feed.category) throw new FeedError('wrong_identity', `File is ${category}, expected ${feed.category}`);
-  if (!/2026/.test(child(identifier, 'ElectionName')?.text || '')) throw new FeedError('wrong_identity', 'Election name does not say 2026');
+  return {
+    election,
+    header: {
+      eventId: event?.attributes.Id ?? null,
+      eventName: child(event, 'EventName')?.text.trim() ?? null,
+      category: child(identifier, 'ElectionCategory')?.text.trim() ?? null,
+      electionName: child(identifier, 'ElectionName')?.text.trim() ?? null,
+      verbose: root.attributes.Verbose === 'true',
+      publishedAt: melbourneToUtc(root.attributes.Created),
+      phase: root.attributes.Phase ?? null,
+    },
+  };
+}
 
-  const publishedAt = melbourneToUtc(root.attributes.Created);
+/** Turns one feed file into races, after checking it is the election and house it should be. */
+export function parseVecFeed(xml, { feed, source, fetchedAt, payloadHash, fileName }) {
+  const { election, header } = vecFeedHeader(xml);
+  const { eventName, eventId, category, electionName, publishedAt, phase } = header;
+  if (!source.expectedEventName || eventName !== source.expectedEventName ||
+      (source.expectedEventId && eventId !== source.expectedEventId)) {
+    throw new FeedError('wrong_identity', 'VEC event identity does not match the configured election');
+  }
+  if (category !== feed.category || !/2026/.test(electionName ?? '')) {
+    throw new FeedError('wrong_identity', 'VEC house or election year does not match the feed');
+  }
+  if (!header.verbose) throw drift('Expected a Verbose VEC result file');
   // Lower House contests sit under House, Upper House under Senate.
   const contests = childrenOf(child(child(election, feed.category === 'UpperHouse' ? 'Senate' : 'House'), 'Contests'), 'Contest');
   if (!contests.length) throw drift('File has no contests');
@@ -230,5 +253,5 @@ export function parseVecFeed(xml, { feed, source, fetchedAt, payloadHash, fileNa
     seen.add(race.raceId);
     return race;
   });
-  return { eventName, publishedAt, phase: root.attributes.Phase ?? null, races };
+  return { eventName, publishedAt, phase, races };
 }

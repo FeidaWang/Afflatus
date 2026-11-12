@@ -1,11 +1,7 @@
-/* ============================================================
-   Written source decisions. A source reaches the public page only when
-   `enabled` and `publicRedistributionAllowed` are both true. Only civicAPI is,
-   and only as `browserDirect`: the visitor's browser reads it, and this site
-   never stores or re-serves it. ELECTION_FEED_BASE is still null, so nothing is
-   read from a store. Evidence and dates: docs/elections/M5.md, M9.md.
-   ============================================================ */
-export const ELECTION_FEED_BASE = null;
+// Public VEC snapshots can only be read through the server-gated endpoint.
+export const ELECTION_FEED_BASE = null; // Generic sources are off.
+export const VEC_PUBLIC_FEED_BASE = '/elections-feed/';
+export const VEC_POLLS_CLOSE = '2026-11-28T07:00:00Z';
 
 export const ELECTION_SOURCES = Object.freeze([
   {
@@ -19,12 +15,15 @@ export const ELECTION_SOURCES = Object.freeze([
     storeRaw: false,
     pollSeconds: 300,
     // The Wednesday 25 November trial publishes fictitious data, so nothing earlier than polls closing is a result.
-    liveNotBefore: '2026-11-28T07:00:00Z',
-    // Unknown until the zero files arrive on 10 November. While null, the collector refuses this source.
+    liveNotBefore: VEC_POLLS_CLOSE,
+    serverGated: true,
+    // The operator pins the EMS event name and ID after inspecting VEC's zero ZIP.
     expectedEventName: null,
-    allowedHosts: [],
-    feeds: [],
-    blockedBy: 'Needs signed VEC terms, a token, and written confirmation that public display is allowed.',
+    feeds: [
+      { key: 'assembly', office: 'assembly', category: 'LowerHouse', pattern: /^State2026mediafileverboselhv2_(\d{8})_(\d{6})\.zip$/i },
+      { key: 'council', office: 'council', category: 'UpperHouse', pattern: /^State2026mediafileverboseuhv2_(\d{8})_(\d{6})\.zip$/i },
+    ],
+    blockedBy: 'Use the operator CLI with a verified VEC event identity.',
   },
   {
     // VEC's published sample files: fictitious results named "Test State Election 2026".

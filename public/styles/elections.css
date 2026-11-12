@@ -350,3 +350,31 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
   /* Some transitions are set with a more specific selector than the catch-all. */
   .elections-body *,.elections-body .el-seg button,.elections-body .el-tile,.el-explore>.el-panel{transition:none}
 }
+
+/* The Assembly's at-a-glance panel also serves as the pre-count landing view. */
+.el-vic-summary{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,1fr) auto;align-items:center;
+  gap:16px 28px;margin:0 0 22px;padding:clamp(18px,2.6vw,34px);
+  color:#172424;background:#e4ebe6;border:1px solid #aebdb4;border-top:3px solid #3b5d51;
+}
+.el-vic-summary h2{margin:3px 0 4px;font-size:clamp(26px,3vw,44px);line-height:1.03;letter-spacing:-.035em}
+.el-vic-status{font:700 11px/1.4 var(--el-mono);color:#33564a;text-transform:uppercase;letter-spacing:.065em}
+.el-vic-status.is-delayed{color:#783b0a}
+.el-vic-detail{font-size:14px;color:#465852}
+.el-vic-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.el-vic-metrics div{display:flex;flex-direction:column-reverse;gap:3px;border-left:1px solid #aebdb4;padding-left:14px}
+.el-vic-metrics dt{font-size:13px;color:#465852}
+.el-vic-metrics dd{font:700 clamp(27px,3.2vw,44px)/1 var(--el-sans);font-variant-numeric:tabular-nums}
+.el-vic-metrics dd small{margin-left:6px;font:400 13px/1 var(--el-mono);white-space:nowrap;color:#465852}
+.el-vic-actions{display:grid;justify-items:center;gap:8px}
+.el-vic-actions .el-btn{background:#233b34;color:#fff}
+.el-vic-actions a{display:grid;place-items:center;min-height:36px;font-size:14px;text-underline-offset:.18em}
+.el-search input{scroll-margin-top:calc(var(--af-header-height,68px) + 12px)}
+@media(max-width:840px){
+  .el-vic-summary{grid-template-columns:minmax(0,1fr) minmax(190px,.8fr)}
+  .el-vic-actions{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px}
+}
+@media(max-width:480px){
+  .el-vic-summary{grid-template-columns:minmax(0,1fr);gap:15px;padding:16px}
+  .el-vic-metrics{gap:10px}
+}

@@ -710,7 +710,7 @@ test.describe('Elections accessibility', () => {
 });
 
 /* Everything below is synthetic, built by the real collector in a temp folder and
-   served by a test route. The site itself has no feed address, as the first test proves. */
+   served by a test route. The public route starts checking at polls close. */
 test.describe('Elections feed', () => {
   const FEED = '/elections-feed/';
   const at = (time) => `2026-11-04T${time}:00+11:00`;
@@ -774,7 +774,7 @@ test.describe('Elections feed', () => {
     await expect(page.locator('.el-strip b')).toHaveText('Synthetic test data — not a real result');
   };
 
-  test('the production path asks for no feed and shows no results', async ({ page }) => {
+  test('before polls close the production path asks for no feed and shows no results', async ({ page }) => {
     const urls = [];
     page.on('request', (request) => urls.push(request.url()));
     await page.goto(console_('event=vic-2026'));
@@ -786,6 +786,44 @@ test.describe('Elections feed', () => {
     await expect(page.locator('#el-feed-toggle')).toHaveCount(0);
     await expect(page.locator('.el-replay button')).toBeDisabled();
     await expect(page.locator('.el-tally-seg')).toHaveCount(0);
+  });
+
+  test('opens the district search from the Assembly summary', async ({ page }) => {
+    await page.goto(console_('event=vic-2026&office=assembly'));
+    await expect(page.locator('#el-vic-summary')).toContainText('Saturday 28 November');
+    await page.getByRole('button', { name: 'Find a district' }).click();
+    const search = page.getByLabel('Find a seat');
+    await expect(search).toBeFocused();
+    await search.fill('Albert Park');
+    await search.press('Enter');
+    await expect(page.locator('#el-drawer-title')).toHaveText('Albert Park');
+  });
+
+  test('reads the same-origin VEC feed at polls close and shows delays', async ({ page }) => {
+    const close = '2026-11-28T07:00:00.000Z';
+    await page.clock.setFixedTime(new Date(close));
+    const sourceIds = ['vec-2026'];
+    const fixture = stages[1];
+    const pointer = {
+      ...fixture, publishedAt: close, isSynthetic: false, sourceIds,
+      sources: fixture.sources.map((source) => ({ ...source, sourceId: sourceIds[0], lastCheckedAt: close })),
+    };
+    const snapshot = JSON.parse(readFileSync(join(root, 'store', 'vic-2026', 'snapshots', `${fixture.snapshotId}.json`), 'utf8'));
+    let available = true;
+    await page.route('**/elections-feed/vic-2026/**', (route) => {
+      if (!available) return route.fulfill({ status: 503 });
+      return route.fulfill({ json: route.request().url().endsWith('/latest.json')
+        ? pointer
+        : { ...snapshot, publishedAt: close, isSynthetic: false, mode: 'live', sourceIds } });
+    });
+    await page.goto(console_('event=vic-2026&office=assembly'));
+    await expect(page.locator('#el-vic-summary')).toContainText('Counting updates');
+    await expect(page.locator('#el-vic-summary')).toContainText('districts reporting');
+    await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
+    available = false;
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+    await expect(page.locator('#el-vic-summary')).toContainText('Updates delayed');
+    await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
   });
 
   test('labels synthetic data everywhere it appears', async ({ page, isMobile }) => {

@@ -55,7 +55,7 @@ export async function boundedFetch(url, {
   } catch (error) {
     if (error instanceof FeedError) throw error;
     if (error.name === 'AbortError') throw new FeedError('timeout', `No complete response in ${timeoutMs} ms`);
-    throw new FeedError('network', error.message);
+    throw new FeedError('network', 'Upstream connection failed');
   } finally {
     clearTimeout(timer);
   }

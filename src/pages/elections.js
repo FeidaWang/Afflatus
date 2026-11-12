@@ -36,7 +36,7 @@ import {
   zoomViewBox,
 } from '../lib/electionGeography.js';
 import { parseState, serializeState, withEvent, withGeography, withOffice, withRace } from '../lib/electionState.js';
-import { ELECTION_FEED_BASE, sourceById } from '../config/electionSources.js';
+import { ELECTION_FEED_BASE, VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, sourceById } from '../config/electionSources.js';
 import { CIVIC_BASE, createCivicReader } from '../lib/civicApi.js';
 import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates } from '../lib/electionResults.js';
 import { createFeedController } from '../lib/electionFeed.js';
@@ -69,6 +69,7 @@ const mapRequests = new Map();
 // The feed for the open event, what is on screen from it, and the replay position. All null without a feed.
 let feed = null;
 let feedEventId = null;
+let vecStartTimer;
 let shown = null;
 let replayIndex = null;
 
@@ -237,11 +238,15 @@ function renderConsole(now) {
 
   setText($('el-title-main'), 'ELECTION', '选举');
   setText($('el-title-sub'), `/ ${event.short.en}`, `/ ${event.short.zh}`);
-  setText(
-    $('el-sub'),
-    `${event.name.en} · ${office.fullName.en} · ${office.seats} ${office.unit ? office.unit.en : 'seats'} · ${office.majorityLabel.en}`,
-    `${event.name.zh} · ${office.fullName.zh} · ${office.seats} ${office.unit ? office.unit.zh : '席'} · ${office.majorityLabel.zh}`,
-  );
+  if (event.id === 'vic-2026' && office.id === 'assembly') {
+    setText($('el-sub'), 'Victorian state election · Legislative Assembly', '维多利亚州选举 · 立法议会');
+  } else {
+    setText(
+      $('el-sub'),
+      `${event.name.en} · ${office.fullName.en} · ${office.seats} ${office.unit ? office.unit.en : 'seats'} · ${office.majorityLabel.en}`,
+      `${event.name.zh} · ${office.fullName.zh} · ${office.seats} ${office.unit ? office.unit.zh : '席'} · ${office.majorityLabel.zh}`,
+    );
+  }
   $('el-hero-controls').innerHTML = `<div class="el-seg" role="group" aria-label="${T('Office', '议院')}">
     ${event.offices.map((item) => `<button type="button" data-office="${item.id}" aria-pressed="${item.id === office.id}">${L(item.name)}</button>`).join('')}
   </div>`;
@@ -254,6 +259,7 @@ function renderConsole(now) {
       <a class="el-events-all" href="${hubHref()}" data-nav>← ${T('All elections', '全部选举')}</a>
       <ul>${ELECTION_EVENTS.map((item) => `<li><a href="${eventHref(item.id)}" data-nav ${item.id === event.id ? 'aria-current="page"' : ''}>${L(item.short)}<small>${phaseLabel(item, now)}</small></a></li>`).join('')}</ul>
     </nav>
+    ${renderVicSummary(event, office, now)}
     ${renderTally(event, office, seats, unit)}
     <div class="el-console">
       <div class="el-row el-row-top">
@@ -293,6 +299,50 @@ function renderConsole(now) {
   renderRaces();
   syncSelection();
   showMap();
+}
+
+function renderVicSummary(event, office, now = Date.now()) {
+  if (event.id !== 'vic-2026' || office.id !== 'assembly') return '';
+  const races = shown?.snapshot.races.filter((race) => race.office === office.id) ?? [];
+  const hasResults = races.length > 0;
+  const source = shown?.pointer?.sources?.[0];
+  const assembly = source?.feeds?.find((item) => item.office === office.id);
+  const delayed = !isReplay() && !feed?.state.paused && source && ageSeconds(source.lastCheckedAt, now) >= 20 * 60;
+  const failed = !isReplay() && (feed?.state.status === 'error' || assembly?.status === 'error');
+  const beforeClose = now < Date.parse(VEC_POLLS_CLOSE);
+  const title = hasResults ? T('Assembly results', '下议院计票结果')
+    : beforeClose ? T('Saturday 28 November', '11 月 28 日，星期六') : T('Awaiting Assembly results', '等待下议院计票结果');
+  let status;
+  if (isReplay()) status = T('Recorded snapshot', '历史快照');
+  else if (shown?.snapshot.isSynthetic) status = T('Synthetic test data', '合成测试数据');
+  else if (failed || delayed) status = hasResults ? T('Updates delayed', '更新延迟') : T('Feed unavailable', '暂时无法获取结果');
+  else if (feed?.state.paused) status = T('Updates paused', '更新已暂停');
+  else if (hasResults) status = T('Counting updates', '计票更新');
+  else status = beforeClose ? T('Election day', '投票日') : T('Polls closed', '投票已结束');
+
+  const counting = races.filter((race) => race.counting.status !== 'no_votes' || race.decision.status === 'certified').length;
+  const declared = races.filter((race) => race.decision.status === 'certified').length;
+  const updatedAt = races.map((race) => race.provenance.publishedAt).filter(Boolean).sort().at(-1);
+  const metrics = hasResults
+    ? [[counting, T('districts reporting', '选区已报票')], [declared, T('seats declared', '席已宣布结果')]]
+    : [[office.seats, T('districts', '个选区')], [office.majority, T('seats for a majority', '席过半')]];
+  const detail = hasResults
+    ? (updatedAt ? T(`VEC file · ${formatTime(updatedAt)}`, `VEC 文件 · ${formatTime(updatedAt)}`) : '')
+    : beforeClose ? T('Voting closes at 6 pm Melbourne time.', '墨尔本时间下午 6 点结束投票。')
+      : T('Check the Victorian Electoral Commission for the latest official updates.', '请到维多利亚州选举委员会查看最新官方消息。');
+
+  return `<section class="el-vic-summary" id="el-vic-summary" aria-labelledby="el-vic-summary-title">
+    <div>
+      <p class="el-vic-status${failed || delayed ? ' is-delayed' : ''}">${status}</p>
+      <h2 id="el-vic-summary-title">${title}</h2>
+      ${detail ? `<p class="el-vic-detail">${detail}</p>` : ''}
+    </div>
+    <dl class="el-vic-metrics">${metrics.map(([value, label]) => `<div><dt>${label}</dt><dd>${value}${hasResults ? `<small>/ ${office.seats}</small>` : ''}</dd></div>`).join('')}</dl>
+    <div class="el-vic-actions">
+      <button type="button" class="el-btn" id="el-find-district">${T('Find a district', '查找选区')}</button>
+      <a id="el-vic-official" href="${beforeClose && !hasResults ? 'https://www.vec.vic.gov.au/electoral-boundaries/state-districts' : event.officialUrl}">${beforeClose && !hasResults ? T('Candidates on VEC', 'VEC 候选人名单') : T('Official VEC updates', 'VEC 官方消息')} ↗</a>
+    </div>
+  </section>`;
 }
 
 function renderTally(event, office, seats, unit) {
@@ -734,10 +784,10 @@ const ERROR_WORDS = Object.freeze({
   gone: { en: 'file gone', zh: '文件消失' },
 });
 
-const feedBase = () => (isLocalHost(window.location.hostname) && window.__ELECTION_FEED_BASE__) || ELECTION_FEED_BASE;
+const localFeedBase = () => (isLocalHost(window.location.hostname) && window.__ELECTION_FEED_BASE__) || ELECTION_FEED_BASE;
 // A source read in the browser stands in for the store, for its own event only.
 const civicSource = sourceById('civicapi');
-const browserFeed = (event) => (!feedBase() && event?.id === civicSource.eventId && civicSource.enabled && civicSource.browserDirect
+const browserFeed = (event) => (!localFeedBase() && event?.id === civicSource.eventId && civicSource.enabled && civicSource.browserDirect
   ? { base: CIVIC_BASE, fetchJson: createCivicReader({ fetchJson: fetchCivicJson }) }
   : null);
 
@@ -852,28 +902,40 @@ function fetchCivicJson(url) {
 }
 
 function fetchFeedJson(url) {
-  return fetch(url, { cache: 'no-cache' }).then((response) => {
+  return fetch(url, { cache: 'no-cache', signal: AbortSignal.timeout(20000) }).then((response) => {
     if (response.status === 404) return null;
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   });
 }
 
-// One controller per event. Nothing is created without a cleared base URL, which production does not have.
+// One controller per event. The public VEC endpoint opens at polls close.
 function syncFeed(event) {
   if (feedEventId === event?.id) return;
   feed?.stop();
+  clearTimeout(vecStartTimer);
   feed = null;
   shown = null;
   replayIndex = null;
   feedEventId = event?.id ?? null;
   const direct = browserFeed(event);
-  const base = direct?.base || feedBase();
+  const local = localFeedBase();
+  const vec = event?.id === 'vic-2026';
+  const untilClose = Date.parse(VEC_POLLS_CLOSE) - Date.now();
+  const base = direct?.base || local || (vec && untilClose <= 0 ? VEC_PUBLIC_FEED_BASE : null);
+  if (vec && !base) {
+    vecStartTimer = setTimeout(() => {
+      feedEventId = null;
+      syncFeed(event);
+      refreshResults();
+    }, Math.min(untilClose, 2147483647));
+  }
   if (!event || !base) return;
   feed = createFeedController({
     base,
     eventId: event.id,
     hostname: window.location.hostname,
+    serverApprovedSource: vec && (!local || window.__VEC_PRIVATE_PREVIEW__ === true) ? 'vec-2026' : undefined,
     fetchJson: direct?.fetchJson || fetchFeedJson,
     isHidden: () => document.hidden,
     onChange: feedChanged,
@@ -916,7 +978,7 @@ function repaintMarks(svg, markup) {
 // Marks stay the same nodes, so focus on them is untouched. Whatever is rebuilt gets focus back by name.
 function keepFocus(update) {
   const active = document.activeElement;
-  const host = active?.closest?.('#el-races-table, #el-sources, #el-drawer, #el-replay, #el-tally');
+  const host = active?.closest?.('#el-races-table, #el-sources, #el-drawer, #el-replay, #el-tally, #el-vic-summary');
   const attribute = active && ['data-seat', 'data-sort', 'data-replay', 'data-close', 'data-expand'].find((name) => active.hasAttribute?.(name));
   const name = !host || !active ? null
     : active.id ? `#${active.id}`
@@ -933,6 +995,8 @@ function refreshResults() {
   const unit = office.unit ? L(office.unit) : T('seats', '席');
   keepFocus(() => {
     renderConsoleStrip(event, office, seats);
+    const summary = $('el-vic-summary');
+    if (summary) summary.outerHTML = renderVicSummary(event, office);
     $('el-tally').outerHTML = renderTally(event, office, seats, unit);
     if (office.geometry) repaintMarks(document.querySelector('.el-chamber-svg'), chamberMarkup(event, office, seats));
     if (activeMap) repaintMarks(document.querySelector('.el-map-svg'), mapMarkup(event, office, activeMap.geography, activeMap.map, activeMap.binding));
@@ -1250,7 +1314,7 @@ function closeDrawer() {
 }
 
 document.addEventListener('click', (event) => {
-  const target = event.target.closest('[data-nav], [data-office], [data-geo], #el-zoom-seat, [data-seat], [data-sort], [data-expand], [data-close], #el-explore-toggle, #el-feed-toggle, [data-replay]');
+  const target = event.target.closest('[data-nav], [data-office], [data-geo], #el-zoom-seat, [data-seat], [data-sort], [data-expand], [data-close], #el-explore-toggle, #el-feed-toggle, #el-find-district, [data-replay]');
   if (!target) return;
   if (target.matches('[data-nav]')) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
@@ -1281,6 +1345,11 @@ document.addEventListener('click', (event) => {
     document.querySelector('[data-expand]')?.focus();
   } else if (target.matches('[data-close]')) {
     closeDrawer();
+  } else if (target.matches('#el-find-district')) {
+    const search = $('el-search');
+    const toggle = $('el-explore-toggle');
+    if (search && !search.getClientRects().length) toggle?.click();
+    search?.focus();
   } else if (target.matches('#el-feed-toggle')) {
     if (feed.state.paused) feed.resume();
     else feed.pause();

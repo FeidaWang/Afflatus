@@ -7,12 +7,12 @@ import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/p
 import { dirname, join, resolve, sep } from 'node:path';
 import { FeedError, boundedFetch } from './bounded-fetch.mjs';
 import { readSingleFile } from './safe-zip.mjs';
-import { parseVecFeed } from './vec-adapter.mjs';
+import { melbourneToUtc, parseVecFeed } from './vec-adapter.mjs';
 import { raceChanges, resolveRaces, snapshotErrors, snapshotProblems } from '../../src/lib/electionResults.js';
 
 const HISTORY_LIMIT = 2000;
 const LOCK_STALE_MS = 10 * 60 * 1000;
-const MAX_ZIP_BYTES = 64 * 1024 * 1024;
+export const MAX_ZIP_BYTES = 64 * 1024 * 1024;
 const MAX_XML_BYTES = 256 * 1024 * 1024;
 const TIMEOUT_MS = 30000;
 const MAX_BACKOFF_SECONDS = 3600;
@@ -77,8 +77,14 @@ export function directoryTransport(directory, { asOf = null } = {}) {
       .sort((a, b) => stamp(a, feed.pattern).localeCompare(stamp(b, feed.pattern)));
     const latest = names.at(-1);
     if (!latest) throw new FeedError('gone', `No ${feed.key} file in the folder`);
-    if (latest === feedState?.fileName) return { status: 304 };
-    return { status: 200, fileName: latest, bytes: await readFile(join(directory, latest)) };
+    const path = join(directory, latest);
+    const { size, mtimeMs } = await stat(path);
+    if (size > MAX_ZIP_BYTES) throw new FeedError('too_large', 'Local ZIP exceeds the size limit');
+    const etag = `"local-${size}-${mtimeMs}"`;
+    if (latest === feedState?.fileName && etag === feedState.etag) return { status: 304 };
+    const bytes = await readFile(path);
+    if (bytes.length > MAX_ZIP_BYTES) throw new FeedError('too_large', 'Local ZIP exceeds the size limit');
+    return { status: 200, fileName: latest, etag, bytes };
   };
 }
 
@@ -98,15 +104,41 @@ function backoffSeconds(error, failures, pollSeconds) {
   return Math.max(exponential, error.retryAfterSeconds ?? 0);
 }
 
-function readFeed(bytes, { feed, source, fetchedAt, fileName }) {
-  const payloadHash = sha256(bytes);
-  let xml;
+export function readVecZip(bytes) {
   try {
-    xml = readSingleFile(bytes, { maxBytes: MAX_XML_BYTES }).bytes.toString('utf8');
+    const entry = readSingleFile(bytes, { maxBytes: MAX_XML_BYTES });
+    if (!/\.xml$/i.test(entry.name)) throw new Error('ZIP contains no XML entry');
+    return entry.bytes.toString('utf8');
   } catch (error) {
     throw new FeedError('malformed', error.message);
   }
-  return { payloadHash, ...parseVecFeed(xml, { feed, source, fetchedAt, payloadHash, fileName }) };
+}
+
+function readFeed(bytes, { feed, source, fetchedAt, fileName }) {
+  const payloadHash = sha256(bytes);
+  return { payloadHash, ...parseVecFeed(readVecZip(bytes), { feed, source, fetchedAt, payloadHash, fileName }) };
+}
+
+function checkPublicationTime(parsed, source, now, feed, fileName) {
+  const created = Date.parse(parsed.publishedAt);
+  if (source.liveNotBefore && (!Number.isFinite(created) || created < Date.parse(source.liveNotBefore))) {
+    throw new FeedError('wrong_identity', 'File was created before the approved feed window');
+  }
+  if (source.liveBefore && created >= Date.parse(source.liveBefore)) {
+    throw new FeedError('wrong_identity', 'File was created after the approved feed window');
+  }
+  if (source.expectedEventId) {
+    const match = feed.pattern.exec(fileName ?? '');
+    const fileTime = match && stampTime(`${match[1]}${match[2]}`);
+    // The public samples have a filename up to one second later than Created.
+    if (!fileTime || Math.abs(created - Date.parse(fileTime)) > 120000 || created > now + 120000) {
+      throw new FeedError('wrong_identity', 'File creation time does not match its filename or the collection clock');
+    }
+  }
+}
+
+export function stampTime(stamp) {
+  return melbourneToUtc(`${stamp.slice(0, 4)}-${stamp.slice(4, 6)}-${stamp.slice(6, 8)}T${stamp.slice(8, 10)}:${stamp.slice(10, 12)}:${stamp.slice(12, 14)}`);
 }
 
 // A contest a new file omits keeps its last good values and real time, marked stale.
@@ -161,6 +193,9 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     const pointerPath = join(eventRoot, 'latest.json');
     const sourceState = (await readJson(statePath)) || { feeds: {}, failures: 0, backoffUntil: null };
     const pointer = await readJson(pointerPath);
+    if (pointer && (pointer.isSynthetic !== Boolean(source.synthetic) || !pointer.sourceIds.includes(source.id))) {
+      throw new Error('Use a different store for each VEC collection mode');
+    }
 
     if (!force && sourceState.backoffUntil && now < Date.parse(sourceState.backoffUntil)) {
       return { outcome: 'backoff', until: sourceState.backoffUntil };
@@ -174,9 +209,7 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
         const response = await transport(feed, feeds[feed.key]);
         if (response.status === 304) continue;
         const parsed = readFeed(response.bytes, { feed, source, fetchedAt, fileName: response.fileName ?? null });
-        if (source.liveNotBefore && (!parsed.publishedAt || Date.parse(parsed.publishedAt) < Date.parse(source.liveNotBefore))) {
-          throw new FeedError('wrong_identity', `File dated ${parsed.publishedAt} is before polls closed`);
-        }
+        checkPublicationTime(parsed, source, now, feed, response.fileName);
         // A cache can serve an older file with a 200. It must not roll anything back.
         const lastPublished = feeds[feed.key]?.publishedAt;
         if (lastPublished && parsed.publishedAt && parsed.publishedAt < lastPublished) continue;
@@ -267,8 +300,6 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     for (const { feed, parsed, response } of results) {
       feeds[feed.key] = { fileName: response.fileName ?? null, etag: response.etag ?? null, lastModified: response.lastModified ?? null, publishedAt: parsed.publishedAt ?? null };
     }
-    await writeJsonAtomic(statePath, { feeds, failures: nextFailures, backoffUntil });
-
     if (snapshotId) {
       // Newest source time ever seen: a run that refreshed only the older house must not move it back.
       const sourceUpdatedAt = [...fresh.map((race) => race.provenance.sourceUpdatedAt), previousSource?.sourceUpdatedAt].filter(Boolean).sort().at(-1) ?? null;
@@ -296,6 +327,8 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
         }],
       });
     }
+
+    await writeJsonAtomic(statePath, { feeds, failures: nextFailures, backoffUntil });
 
     if (failures.length) return { outcome: published ? 'partial' : 'failed', kinds: failures.map(({ error }) => error.kind), backoffUntil, ...(rejected.length ? { rejected } : {}) };
     if (rejected.length) return { outcome: published ? 'partial' : 'unchanged', kinds: ['schema_drift'], rejected, snapshotId };

@@ -113,7 +113,7 @@ export const ELECTION_EVENTS = Object.freeze([
     authority: 'VEC',
     decision: { en: 'VEC declaration; media projections are labelled', zh: 'VEC 正式宣布；媒体预测单独标注' },
     feed: { en: 'VEC results feed: not connected', zh: 'VEC 结果数据：尚未接入' },
-    officialUrl: 'https://www.vec.vic.gov.au/',
+    officialUrl: 'https://www.vec.vic.gov.au/voting/2026-state-election',
     officialLabel: { en: 'Victorian Electoral Commission', zh: '维多利亚州选举委员会' },
     votingSystem: { en: 'Assembly: full preferential. Council: proportional (STV), 8 regions × 5', zh: '下院：全优先制。上院：比例制（STV），8 个大区各 5 席' },
     note: { en: 'A lead on TCP is not a declaration. The VEC declares results; media projections are labelled as such.', zh: '两候选人优先票领先不等于当选。结果由 VEC 宣布，媒体预测会单独标注。' },

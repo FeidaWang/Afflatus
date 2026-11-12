@@ -148,8 +148,10 @@ export const isLocalHost = (hostname) => LOCAL_HOSTS.has(hostname);
  * The publication gate. On a public host a snapshot must be real and every source
  * in it must have a written yes. Synthetic data only ever renders on this computer.
  */
-export function feedAllowed(document, hostname) {
+export function feedAllowed(document, hostname, { serverApprovedSource } = {}) {
   if (document.isSynthetic) return isLocalHost(hostname);
+  if (serverApprovedSource && sourceById(serverApprovedSource)?.serverGated &&
+      document.sourceIds?.length === 1 && document.sourceIds[0] === serverApprovedSource) return true;
   return (document.sourceIds || []).length > 0 && document.sourceIds.every((id) => {
     const source = sourceById(id);
     return Boolean(source?.enabled && source.publicRedistributionAllowed && !source.synthetic);

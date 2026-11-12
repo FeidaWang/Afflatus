@@ -16,7 +16,7 @@ if (!values.store) {
 }
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.png': 'image/png', '.woff2': 'font/woff2', '.webp': 'image/webp', '.avif': 'image/avif' };
 const FEED_PREFIX = '/elections-feed/';
-const HOOK = `<script>window.__ELECTION_FEED_BASE__=${JSON.stringify(FEED_PREFIX)};</script>`;
+const HOOK = `<script>window.__ELECTION_FEED_BASE__=${JSON.stringify(FEED_PREFIX)};window.__VEC_PRIVATE_PREVIEW__=true;</script>`;
 const distRoot = resolve(values.dist);
 const storeRoot = resolve(values.store);
 
