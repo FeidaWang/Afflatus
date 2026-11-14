@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Astrology for fun · almanac prototype</title>
+<script>
+try{var t=localStorage.getItem('almanac-proto:theme');}catch(e){}
+document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'night':'light');
+</script>
+<style>
+@font-face{font-family:"Anthropic Sans";src:url("../../public/assets/fonts/anthropic-sans-roman.woff2") format("woff2");font-weight:300 800;font-display:swap}
+@font-face{font-family:"Newsreader";src:url("../../public/assets/fonts/newsreader-var.woff2") format("woff2");font-weight:200 800;font-display:swap}
+:root{
+  --paper:#efeeea;--panel:#e4e3de;--ink:#1c1c1a;--mid:#5f5e59;--lo:#a9a8a2;
+  --lit:#ff4f00;--lit-ink:#b23800;--on-lit:#1c1c1a;
+  --face:#f7f6f3;--top:#fcfcfa;--side:#d8d7d1;
+  --wood:#2c7a4e;--fire:#c2362f;--earth:#8a6614;--metal:#6a6c74;--water:#2a55b8;
+  --sans:"Anthropic Sans",system-ui,-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif;
+  --serif:"Newsreader","Songti SC","Noto Serif SC",Georgia,serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  color-scheme:light;
+}
+:root[data-theme="night"]{
+  --paper:#121211;--panel:#1c1c1a;--ink:#ecebe6;--mid:#a3a29c;--lo:#4a4945;
+  --lit:#ff5a1f;--lit-ink:#ff7a45;--on-lit:#121211;
+  --face:#2a2a27;--top:#33332f;--side:#20201e;
+  --wood:#5cc28a;--fire:#f0736b;--earth:#d4a94a;--metal:#a9abb3;--water:#7da2f0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%}
+body{margin:0;font:400 17px/1.55 var(--serif);background:var(--paper);color:var(--ink)}
+button,a{font:inherit;color:inherit}
+a{text-decoration-thickness:1px;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--lit-ink);outline-offset:2px}
+.ui{font-family:var(--sans)}
+.num{font-variant-numeric:tabular-nums}
+.zh{font-family:var(--serif)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* site header stand-in (the real one is the shared AFFLATUS header) */
+.site{display:flex;align-items:center;gap:24px;max-width:1180px;margin:0 auto;padding:14px 16px;font:500 15px/1 var(--sans)}
+.site .brand{font-weight:700;letter-spacing:.02em;text-decoration:none}
+.site nav{display:flex;gap:22px;margin-left:auto;color:var(--mid)}
+.site nav b{color:var(--ink);font-weight:500}
+.site .lang{border-radius:4px;background:var(--panel);padding:8px 10px}
+@media(max-width:860px){.site nav{display:none}.site .lang{margin-left:auto}}
+
+/* device bar + keys (teenage engineering) */
+.devicebar{display:flex;align-items:center;gap:12px;max-width:1180px;margin:0 auto;padding:10px 16px;font:400 13px/1 var(--sans);color:var(--mid)}
+.devicebar .name{color:var(--ink);font-weight:500}
+.devicebar .ver{margin-left:auto;white-space:nowrap}
+.devicebar .name{white-space:nowrap}
+@media(max-width:600px){.devicebar .extra{display:none}}
+.key{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 14px;border:0;border-radius:4px;background:var(--panel);color:var(--ink);font:500 13px/1 var(--sans);cursor:pointer;text-decoration:none;transition:transform 140ms var(--ease),background 180ms var(--ease)}
+.key:hover{background:color-mix(in srgb,var(--panel),var(--ink) 6%)}
+.key:active{transform:translateY(1px)}
+.key:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.key--lit{background:var(--lit);color:var(--on-lit)}
+.key--lit:hover{background:var(--lit)}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--paper);position:fixed;left:0;right:0;bottom:0;z-index:20}
+.keys a{flex-direction:column;gap:6px;min-height:58px;padding:8px 0}
+.keys .led{width:6px;height:6px;border-radius:50%;background:var(--lo)}
+.keys a[aria-current="page"] .led{background:var(--lit)}
+.ic{width:20px;height:20px;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+@media(min-width:1024px){
+  .keys{position:sticky;top:0;bottom:auto;max-width:1180px;margin:0 auto;padding:8px 16px;grid-template-columns:repeat(4,120px)}
+  .keys a{flex-direction:row;min-height:44px}
+}
+
+/* deck */
+.deck{max-width:1180px;margin:0 auto;padding:8px 16px 140px}
+@media(min-width:1024px){.deck{padding-bottom:64px}}
+.view{display:none}
+.view.on{display:block}
+.split{display:grid;gap:28px}
+.today-split{grid-template-areas:"head" "inst" "read"}
+.today-head{grid-area:head}.today-split>.instrument{grid-area:inst}.today-split>.reading{grid-area:read}
+@media(min-width:1024px){
+  .split{grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:56px;align-items:start}
+  .split>.instrument{position:sticky;top:72px}
+  .today-split{grid-template-areas:"inst head" "inst read";grid-template-rows:auto 1fr;row-gap:0}
+}
+
+/* fig card (anatomy) */
+.fig{position:relative;margin:0;background:var(--panel);padding:40px 16px 40px}
+.fig svg{display:block;width:100%;height:auto;overflow:visible;max-width:520px;margin:0 auto}
+.fig .c{position:absolute;font:400 12px/1 var(--sans);color:var(--mid);font-variant-numeric:tabular-nums}
+.fig .tl{top:16px;left:16px}.fig .tr{top:16px;right:16px}
+.fig .bl{bottom:16px;left:16px}.fig .br{bottom:16px;right:16px;color:var(--ink)}
+.fig + .fig{margin-top:16px}
+@media(max-width:480px){.fig{padding-bottom:60px}.fig .bl{bottom:36px}}
+.track{fill:none;stroke:var(--lo);stroke-width:.6}
+.tick{stroke:var(--mid);stroke-width:.6}
+.glyph{fill:var(--mid);font:400 11px var(--sans);text-anchor:middle;dominant-baseline:central}
+.bead{fill:var(--ink);stroke:var(--panel);stroke-width:1.5;cursor:pointer}
+.bead.lit{fill:var(--lit);stroke:var(--ink);stroke-width:.8}
+.bead-label{fill:var(--ink);font:400 10px var(--sans);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.moon-dark{fill:var(--side)}
+.moon-lit{fill:var(--top);stroke:var(--mid);stroke-width:.6}
+.aspect{stroke:var(--mid);stroke-width:.8;fill:none}
+.aspect.lit{stroke:var(--lit);stroke-width:1.6}
+.axis{stroke:var(--ink);stroke-width:.8}
+.hit{cursor:pointer}
+.hit:focus-visible{outline:none}
+.hit:focus-visible .front,.hit:focus-visible.bead{stroke:var(--lit-ink);stroke-width:2}
+
+/* jog wheel */
+.jog{position:relative;height:56px;margin-top:12px;overflow:hidden;background:var(--panel);touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
+.jog-track{position:absolute;top:0;left:50%;height:100%;will-change:transform}
+.jog-tick{position:absolute;top:8px;width:28px;margin-left:-14px;text-align:center;font:400 12px/1 var(--sans);color:var(--mid);font-variant-numeric:tabular-nums}
+.jog-tick::before{content:"";display:block;width:1px;height:10px;margin:0 auto 6px;background:var(--lo)}
+.jog-tick.m::before{height:16px;background:var(--mid);margin-bottom:0}
+.jog-tick.m span{display:block;margin-top:2px;color:var(--ink)}
+.jog-index{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--lit);pointer-events:none}
+.jog-keys{display:flex;gap:6px;margin-top:6px}
+.jog-keys .key{flex:1}
+
+/* reading layer (taste) */
+.dateline{font:400 14px/1.5 var(--sans);color:var(--mid);margin:4px 0 20px}
+.dateline b{color:var(--ink);font-weight:500}
+.display{font:400 40px/1.04 var(--serif);letter-spacing:-.02em;margin:0 0 16px;max-width:16ch;text-wrap:balance}
+.display.long{font-size:32px;max-width:20ch}
+@media(min-width:1024px){.display{font-size:56px}.display.long{font-size:40px}}
+.lede{font-size:19px;color:var(--ink);max-width:38ch;margin:0 0 24px}
+.why{margin:0 0 40px}
+.areas{list-style:none;padding:0;margin:0 0 40px;display:grid;gap:14px}
+.areas li{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:baseline}
+.areas .k{font:500 13px/1.3 var(--sans);color:var(--mid)}
+.areas .tone{font:500 13px var(--sans);color:var(--ink);margin-right:8px}
+.areas .pending{color:var(--mid);font-style:italic}
+.yiji{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 0 40px;padding:20px 0 0;background:linear-gradient(var(--panel),var(--panel)) top/100% 6px no-repeat}
+.yiji h3{font:500 13px/1 var(--sans);color:var(--mid);margin:0 0 8px}
+.yiji p{margin:0}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.note{font:400 13px/1.5 var(--sans);color:var(--mid);max-width:60ch}
+.section-title{font:400 40px/1.05 var(--serif);letter-spacing:-.02em;margin:24px 0 8px}
+@media(min-width:1024px){.section-title{font-size:56px}}
+.subtle{font:400 14px/1.5 var(--sans);color:var(--mid);margin:0 0 28px}
+
+/* you: grid of figs */
+.figgrid{display:grid;gap:16px}
+@media(min-width:1024px){.figgrid{grid-template-columns:1fr 1fr}.figgrid .wide{grid-column:1/-1}}
+.tally{display:flex;flex-wrap:wrap;gap:8px 20px;margin:14px 0 0;font:400 13px/1 var(--sans);color:var(--mid)}
+.tally span{display:inline-flex;align-items:center;gap:6px}
+.tally i{display:inline-block;height:8px;background:currentColor}
+
+/* ziwei keypad */
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(78px,auto));gap:5px}
+.zkey{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:6px;padding:9px 8px;border:0;border-radius:4px;background:var(--face);color:var(--ink);text-align:left;cursor:pointer;min-width:0}
+.zkey .p{font:400 11px/1.2 var(--sans);color:var(--mid)}
+.zkey .s{font:400 16px/1.15 var(--serif)}
+.zkey .s.empty{color:var(--mid)}
+.zkey .led{position:absolute;top:9px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--lo)}
+.zkey.lit{background:var(--lit);color:var(--on-lit)}
+.zkey.lit .p{color:var(--on-lit)}
+.zkey.lit .led{background:var(--on-lit)}
+.zkey .shen{position:absolute;bottom:8px;right:8px;font:500 10px var(--sans);color:var(--mid)}
+.zcenter{grid-column:2/4;grid-row:2/4;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:12px;font:400 13px/1.45 var(--sans);color:var(--mid)}
+.zcenter b{font:400 22px/1.2 var(--serif);color:var(--ink)}
+.keypad.off .zkey{opacity:.45;cursor:default}
+
+/* luck sequencer */
+.seq{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+@media(min-width:640px){.seq{grid-template-columns:repeat(8,1fr)}}
+.step{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 8px 14px;border:0;border-radius:4px;background:var(--face);color:var(--ink);text-align:left;cursor:pointer}
+.step b{font:400 20px/1 var(--serif)}
+.step span{font:400 11px/1.2 var(--sans);color:var(--mid)}
+.step.lit{background:var(--lit);color:var(--on-lit)}
+.step.lit span{color:var(--on-lit)}
+.step .bar{position:absolute;left:8px;right:8px;bottom:6px;height:2px;background:color-mix(in srgb,var(--on-lit) 30%,transparent)}
+.step .bar i{display:block;height:100%;background:var(--on-lit)}
+
+/* two */
+.carts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px}
+.carts .key{justify-content:flex-start;padding:0 16px}
+.list{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:12px;max-width:60ch}
+.list li::before{content:"";display:inline-block;width:6px;height:6px;margin:0 10px 2px 0;border-radius:50%;background:var(--ink)}
+.list .flag{display:block;margin:4px 0 0 16px;font:400 13px/1.45 var(--sans);color:var(--lit-ink)}
+h3.small{font:500 13px/1 var(--sans);color:var(--mid);margin:28px 0 12px}
+
+/* log */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:520px;font:400 13px/1 var(--sans)}
+.cal .h{color:var(--mid);padding:6px 0;text-align:center}
+.cal .d{position:relative;aspect-ratio:1;display:flex;align-items:flex-start;justify-content:flex-start;padding:6px;background:var(--panel);color:var(--ink);font-variant-numeric:tabular-nums}
+.cal .d.we{background:color-mix(in srgb,var(--panel),var(--ink) 5%)}
+.cal .d.today{box-shadow:inset 0 0 0 1px var(--lit)}
+.cal .d.has::after{content:"";position:absolute;bottom:6px;left:6px;width:5px;height:5px;border-radius:50%;background:var(--ink)}
+.cal .d.blank{background:transparent}
+textarea{width:100%;min-height:140px;padding:14px;border:0;border-radius:0;background:var(--panel);color:var(--ink);font:400 17px/1.55 var(--serif);resize:vertical}
+.logsplit{display:grid;gap:28px}
+@media(min-width:1024px){.logsplit{grid-template-columns:520px 1fr;gap:56px}}
+
+/* passport drawer (archify) */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 30%,transparent);z-index:40;opacity:0;transition:opacity 240ms var(--ease)}
+.scrim.on{opacity:1}
+.passport{position:fixed;z-index:41;left:0;right:0;bottom:0;max-height:82vh;overflow:auto;background:var(--paper);padding:20px 16px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgb(0 0 0 / .18);transform:translateY(100%);transition:transform 240ms var(--ease)}
+.passport.on{transform:none}
+@media(min-width:1024px){.passport{left:auto;top:0;width:440px;max-height:none;padding:28px;transform:translateX(100%)}.passport.on{transform:none}}
+.passport header{display:flex;align-items:flex-start;gap:12px;margin:0 0 16px}
+.passport h2{font:400 28px/1.1 var(--serif);letter-spacing:-.01em;margin:0}
+.passport header .key{margin-left:auto}
+.passport .eyebrowless{font:400 13px/1.4 var(--sans);color:var(--mid);margin:6px 0 0}
+.passport dl{margin:0;display:grid;gap:14px}
+.passport .entry{padding:14px 0 0;background:linear-gradient(var(--panel),var(--panel)) top/100% 4px no-repeat}
+.passport dt{font:500 12px/1 var(--sans);color:var(--mid);margin:0 0 6px}
+.passport dd{margin:0;font-size:16px}
+.passport .entry+.entry{margin-top:6px}
+.passport .reason{font:500 13px/1 var(--sans);color:var(--ink);margin:18px 0 4px}
+
+footer{max-width:1180px;margin:40px auto 0;padding:24px 16px 120px;font:400 12px/1.6 var(--sans);color:var(--mid)}
+@media(min-width:1024px){footer{padding-bottom:40px}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="#today">AFFLATUS</a>
+  <nav aria-label="Primary navigation (stand-in)"><span>Portfolio</span><span>Markets</span><span>Course</span><span>Stories</span><b>Astrology for fun</b><span>About</span></nav>
+  <span class="lang">中文</span>
+</header>
+<div class="devicebar">
+  <span class="name">astrology for fun</span>
+  <span class="ver num">ver 3.0<span class="extra"> · prototype · sample data</span></span>
+  <button class="key" id="themeKey" type="button" aria-pressed="false">night</button>
+</div>
+<nav class="keys" aria-label="Astrology for fun">
+  <a class="key" href="#today" data-view="today"><span class="led"></span><i class="ic" style="--ic:url(../../public/assets/labs/icons/sun.svg)"></i><span>today</span></a>
+  <a class="key" href="#you" data-view="you"><span class="led"></span><i class="ic" style="--ic:url(../../public/assets/labs/icons/user.svg)"></i><span>you</span></a>
+  <a class="key" href="#two" data-view="two"><span class="led"></span><i class="ic" style="--ic:url(../../public/assets/labs/icons/people.svg)"></i><span>two</span></a>
+  <a class="key" href="#log" data-view="log"><span class="led"></span><i class="ic" style="--ic:url(../../public/assets/labs/icons/note.svg)"></i><span>log</span></a>
+</nav>
+
+<main class="deck">
+  <!-- TODAY -->
+  <section class="view" id="v-today" aria-labelledby="todayTitle">
+    <div class="split today-split">
+      <div class="today-head">
+        <p class="dateline num" id="dateline"></p>
+        <h1 class="display" id="todayTitle"></h1>
+      </div>
+      <div class="instrument">
+        <figure class="fig" aria-label="Today's sky: the zodiac with the Sun, Moon and five planets">
+          <span class="c tl">fig. 1</span><span class="c tr">today’s sky</span>
+          <svg id="sky" viewBox="0 0 400 400" role="group" aria-label="Sky dial"></svg>
+          <span class="c bl" id="skyHint">drag the strip to wind the date</span><span class="c br" id="skyReadout"></span>
+        </figure>
+        <div class="jog" id="jog" role="slider" tabindex="0" aria-label="Date" aria-valuemin="-30" aria-valuemax="30" aria-valuenow="0">
+          <div class="jog-track" id="jogTrack"></div>
+          <div class="jog-index"></div>
+        </div>
+        <div class="jog-keys">
+          <button class="key" type="button" data-step="-1">− 1 day</button>
+          <button class="key" type="button" data-step="0">today</button>
+          <button class="key" type="button" data-step="1">+ 1 day</button>
+        </div>
+        <p class="note" id="phaseLive" aria-live="polite"></p>
+      </div>
+      <div class="reading">
+        <p class="lede" id="lede"></p>
+        <div class="why"><button class="key" type="button" id="whyKey">why this reading · 3 reasons</button></div>
+        <ul class="areas" id="areas" aria-label="Four areas"></ul>
+        <div class="yiji" id="yiji"></div>
+        <div class="row">
+          <button class="key" type="button" id="drawKey">draw today’s card</button>
+          <a class="key" href="#log" id="noteKey">leave a note</a>
+        </div>
+        <p class="note" style="margin-top:20px">Reading for <b>Sample A</b> (fictitious, 1995-05-15 08:00). Without a birth date, this column shows a sky-only reading and asks for a date.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOU -->
+  <section class="view" id="v-you" aria-labelledby="youTitle">
+    <h1 class="section-title" id="youTitle">Your chart, part by part.</h1>
+    <p class="subtle">Sample A · 1995-05-15 · 08:00 (UTC+8) · Shanghai · fictitious. Tap any part.</p>
+    <div class="figgrid">
+      <figure class="fig wide" aria-label="Four pillars">
+        <span class="c tl">fig. 2</span><span class="c tr">four pillars</span>
+        <svg id="pillars" viewBox="0 0 400 290" role="group" aria-label="Four pillars, tap a part"></svg>
+        <div class="tally" id="tally"></div>
+        <span class="c bl">tap a cap, a body or a root</span><span class="c br" id="pillarReadout"></span>
+      </figure>
+      <figure class="fig" aria-label="Birth chart: Sun, Moon and Ascendant">
+        <span class="c tl">fig. 3</span><span class="c tr">birth sky</span>
+        <svg id="natal" viewBox="0 0 400 400" role="group" aria-label="Birth chart dial"></svg>
+        <span class="c bl">tap a body</span><span class="c br" id="natalReadout"></span>
+      </figure>
+      <figure class="fig" aria-label="Ziwei twelve palaces">
+        <span class="c tl">fig. 4</span><span class="c tr">ziwei palaces</span>
+        <div class="keypad" id="keypad"></div>
+        <span class="c bl">tap a palace</span><span class="c br" id="zwReadout"></span>
+      </figure>
+      <figure class="fig wide" aria-label="Luck cycles">
+        <span class="c tl">fig. 5</span><span class="c tr">luck cycles · 10 years a step</span>
+        <div class="seq" id="seq"></div>
+        <span class="c bl">luck-cycle direction needs a gender; sample uses F</span><span class="c br" id="seqReadout"></span>
+      </figure>
+    </div>
+  </section>
+
+  <!-- TWO -->
+  <section class="view" id="v-two" aria-labelledby="twoTitle">
+    <h1 class="section-title" id="twoTitle">Two skies, side by side.</h1>
+    <p class="subtle">People you save stay on this device. Nothing here predicts how a relationship turns out.</p>
+    <div class="carts"><button class="key key--lit" type="button" aria-pressed="true">Sample M · 1993 · hour unknown</button><button class="key" type="button" disabled>+ add a person</button></div>
+    <div class="split">
+      <div class="instrument">
+        <figure class="fig" aria-label="Two charts interlocked">
+          <span class="c tl">fig. 6</span><span class="c tr">interlock</span>
+          <svg id="pair" viewBox="0 0 400 400" role="group" aria-label="Cross aspects between two charts"></svg>
+          <span class="c bl">outer ring A · inner ring M</span><span class="c br" id="pairReadout"></span>
+        </figure>
+      </div>
+      <div class="reading">
+        <h3 class="small">what draws you together</h3>
+        <ul class="list" id="draws"></ul>
+        <h3 class="small">worth watching</h3>
+        <ul class="list" id="watch"></ul>
+        <button class="key" type="button" id="pairWhy">how this is worked out</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOG -->
+  <section class="view" id="v-log" aria-labelledby="logTitle">
+    <h1 class="section-title" id="logTitle">Your days, in words.</h1>
+    <p class="subtle" id="logMonth"></p>
+    <div class="logsplit">
+      <div>
+        <div class="cal" id="cal"></div>
+        <p class="note">Today is outlined. A dot marks a day with a note. No streaks to keep.</p>
+      </div>
+      <div>
+        <label class="sr" for="noteText">Today’s note</label>
+        <textarea id="noteText" placeholder="Right now, I want to remember…"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="key key--lit" type="button" id="saveNote">save this moment</button>
+          <button class="key" type="button" id="drawKey2">draw today’s card</button>
+          <button class="key" type="button" disabled>export notes</button>
+        </div>
+        <p class="note" id="saveStatus" role="status">Prototype: notes stay in this tab only.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Astrology for fun · for entertainment only. This is not divination, medical, relationship or financial advice. Everything is calculated in your browser, and birth details never enter page links.
+  Planet positions come from a daily precomputed window (astronomy-engine, Melbourne noon). The Moon is drawn as seen from the southern hemisphere.
+  ver 3.0 prototype · sample births are fictitious · engines: bazi.js, horoscopeEngine.js, astro.js, ziwei.js, dayun.js.
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="passport" id="passport" role="dialog" aria-modal="true" aria-labelledby="ppTitle" hidden>
+  <header><div><h2 id="ppTitle"></h2><p class="eyebrowless" id="ppSub"></p></div><button class="key" type="button" id="ppClose">close</button></header>
+  <div id="ppBody"></div>
+</aside>
+
+<script src="prototype-data.js"></script>
+<script>
+(() => {
+'use strict';
+const D = window.PROTO;
+const $ = (id) => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const mod = (n, m) => ((n % m) + m) % m;
+const DEG = Math.PI / 180;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const zh = (s) => `<span lang="zh" class="zh">${esc(s)}</span>`;
+
+const STEMS = '甲乙丙丁戊己庚辛壬癸'.split('');
+const BRANCHES = '子丑寅卯辰巳午未申酉戌亥'.split('');
+const STEM_EL = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4];
+const BRANCH_EL = [4, 2, 0, 0, 2, 1, 1, 2, 3, 3, 2, 4];
+const EL = ['wood', 'fire', 'earth', 'metal', 'water'];
+const SIGNS = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+const SIGN_G = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'].map((g) => g + '︎');
+const BODY_G = { Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄' };
+const ZW_STARS = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞', '天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
+const TERMS = [['春分', 'Spring Equinox'], ['清明', 'Clear and Bright'], ['谷雨', 'Grain Rain'], ['立夏', 'Start of Summer'], ['小满', 'Grain Buds'], ['芒种', 'Grain in Ear'], ['夏至', 'Summer Solstice'], ['小暑', 'Minor Heat'], ['大暑', 'Major Heat'], ['立秋', 'Start of Autumn'], ['处暑', 'End of Heat'], ['白露', 'White Dew'], ['秋分', 'Autumn Equinox'], ['寒露', 'Cold Dew'], ['霜降', 'Frost’s Descent'], ['立冬', 'Start of Winter'], ['小雪', 'Minor Snow'], ['大雪', 'Major Snow'], ['冬至', 'Winter Solstice'], ['小寒', 'Minor Cold'], ['大寒', 'Major Cold'], ['立春', 'Start of Spring'], ['雨水', 'Rain Water'], ['惊蛰', 'Awakening of Insects']];
+const PHASES = [
+  ['new moon', 'a blank page: name one intention'], ['waxing crescent', 'start small and keep it going'],
+  ['first quarter', 'a decision point: commit or cut'], ['waxing gibbous', 'refine before you finish'],
+  ['full moon', 'what has been growing is visible'], ['waning gibbous', 'share what you have learned'],
+  ['last quarter', 'clear something away'], ['waning crescent', 'rest before the next start'],
+];
+const REL = {
+  feeds: ['today’s stem generates your day master', 'resource day', '印'],
+  same: ['today’s stem is your day master’s own element', 'companion day', '比劫'],
+  drains: ['your day master generates today’s stem', 'output day', '食伤'],
+  prize: ['your day master controls today’s stem', 'wealth day', '财'],
+  presses: ['today’s stem controls your day master', 'pressure day', '官杀'],
+};
+const TONE = { up: 'open', flat: 'steady', down: 'quiet' };
+const AREA = { career: 'work', love: 'love', wealth: 'money', health: 'rest' };
+const CARDS = ['Leave one thing unfinished on purpose.', 'Ask the question you have been rehearsing.', 'Choose the slower route home.', 'Return something you borrowed: an object or a favour.', 'Write down what you would keep if today repeated.'];
+const ASPECTS = [['conjunction', 0, 8], ['sextile', 60, 4], ['square', 90, 6], ['trine', 120, 6], ['opposition', 180, 8]];
+
+/* ---------- sky model (truth first: one model drives drawing, readouts and text) ---------- */
+const W = D.window, BODIES = W.bodies;
+const C = W.days.findIndex((r) => r[0] === W.center);
+const lerpAngle = (a, b, f) => mod(a + (mod(b - a + 540, 360) - 180) * f, 360);
+function skyAt(t) {
+  const i = Math.max(0, Math.min(W.days.length - 1.0001, C + t));
+  const i0 = Math.floor(i), f = i - i0, r0 = W.days[i0], r1 = W.days[Math.min(i0 + 1, W.days.length - 1)];
+  const lon = {}, retro = {};
+  BODIES.forEach((b, k) => {
+    lon[b] = lerpAngle(r0[k + 1], r1[k + 1], f);
+    const prev = W.days[Math.max(0, i0 - 1)][k + 1], next = r1[k + 1];
+    retro[b] = b !== 'Sun' && b !== 'Moon' && mod(next - prev + 540, 360) - 180 < 0;
+  });
+  const elong = mod(lon.Moon - lon.Sun, 360);
+  const illum = (1 - Math.cos(elong * DEG)) / 2;
+  const phase = Math.round(elong / 45) % 8;
+  return { day: W.days[Math.round(i)][0], lon, retro, elong, illum, phase };
+}
+const signOf = (l) => Math.floor(mod(l, 360) / 30);
+const degIn = (l) => Math.floor(mod(l, 30));
+const signStr = (l) => `${SIGN_G[signOf(l)]} ${degIn(l)}°`;
+
+/* solar terms: ported from src/lib/bazi.js (Meeus low-precision sun, bisection) */
+function jdUTC(y, m, d, h) { if (m <= 2) { y -= 1; m += 12; } const A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4); return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + h / 24 + B - 1524.5; }
+function sunLon(jd) {
+  const T = (jd - 2451545) / 36525, L0 = 280.46646 + 36000.76983 * T + .0003032 * T * T, M = (357.52911 + 35999.05029 * T - .0001537 * T * T) * DEG;
+  const Cc = (1.914602 - .004817 * T - .000014 * T * T) * Math.sin(M) + (.019993 - .000101 * T) * Math.sin(2 * M) + .000289 * Math.sin(3 * M);
+  return mod(L0 + Cc - .00569 - .00478 * Math.sin((125.04 - 1934.136 * T) * DEG), 360);
+}
+const delta = (l, t) => { const a = mod(l - t, 360); return a > 180 ? a - 360 : a; };
+function termJD(target, approx) {
+  let lo = approx - 8, hi = approx + 8;
+  for (let i = 0; i < 50; i++) { const mid = (lo + hi) / 2; if (delta(sunLon(mid), target) < 0) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+const melDate = (jd) => new Date((jd - 2440587.5) * 864e5).toLocaleDateString('en-CA', { timeZone: 'Australia/Melbourne' });
+const melTime = (jd) => new Date((jd - 2440587.5) * 864e5).toLocaleTimeString('en-AU', { timeZone: 'Australia/Melbourne', hour: '2-digit', minute: '2-digit', hour12: false });
+function termInfo(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const jd = jdUTC(y, m, d, 1); // ≈ Melbourne noon (AEDT)
+  const lon = sunLon(jd), k = Math.floor(lon / 15);
+  const startJD = termJD(k * 15, jd - (lon - k * 15) / .9856);
+  const nextJD = termJD(mod((k + 1) * 15, 360), jd + ((k + 1) * 15 - lon) / .9856);
+  const cur = TERMS[k], next = TERMS[(k + 1) % 24];
+  const dayN = (s) => Date.UTC(...s.split('-').map((v, i) => i === 1 ? v - 1 : +v)) / 864e5;
+  const toNext = dayN(melDate(nextJD)) - dayN(day);
+  if (melDate(startJD) === day) return { cur, next, html: `${zh(cur[0])} ${cur[1]} began today, ${melTime(startJD)}`, startsToday: cur, at: melTime(startJD), lon };
+  if (toNext === 0) return { cur, next, html: `${zh(cur[0])} ${cur[1]} → ${zh(next[0])} ${next[1]} begins today, ${melTime(nextJD)}`, startsToday: next, at: melTime(nextJD), lon };
+  return { cur, next, html: `${zh(cur[0])} ${cur[1]} · ${zh(next[0])} in ${toNext} day${toNext > 1 ? 's' : ''}`, toNext, lon };
+}
+const fmtDay = (day, opt) => new Date(day + 'T12:00:00').toLocaleDateString('en-AU', opt);
+
+/* ---------- svg helpers ---------- */
+const el = (name, attrs = {}, parent) => { const n = document.createElementNS(NS, name); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (parent) parent.appendChild(n); return n; };
+const pt = (cx, cy, r, lon) => { const a = (180 + lon) * DEG; return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; };
+
+function buildRing(svg, cx, cy, R0, R1) {
+  el('circle', { cx, cy, r: R0, class: 'track' }, svg);
+  el('circle', { cx, cy, r: R1, class: 'track' }, svg);
+  for (let d = 0; d < 360; d += 5) {
+    const major = d % 30 === 0, [x1, y1] = pt(cx, cy, R1, d), [x2, y2] = pt(cx, cy, major ? R0 : R1 + (d % 10 ? 4 : 7), d);
+    el('line', { x1, y1, x2, y2, class: 'tick' }, svg);
+  }
+  SIGN_G.forEach((g, i) => { const [x, y] = pt(cx, cy, (R0 + R1) / 2 + 2, i * 30 + 15); el('text', { x, y, class: 'glyph' }, svg).textContent = g; });
+}
+
+/* ---------- passport (one drawer for the whole page) ---------- */
+let lastFocus = null;
+function openPassport(title, sub, entries) {
+  lastFocus = document.activeElement;
+  $('ppTitle').innerHTML = title; $('ppSub').innerHTML = sub || '';
+  $('ppBody').innerHTML = entries.map((e) => e.reason
+    ? `<p class="reason">${e.reason}</p>`
+    : `<div class="entry"><dt>${e.k}</dt><dd>${e.v}</dd></div>`).join('');
+  const pp = $('passport'), sc = $('scrim');
+  pp.hidden = false; sc.hidden = false;
+  requestAnimationFrame(() => { pp.classList.add('on'); sc.classList.add('on'); $('ppClose').focus(); });
+}
+function closePassport() {
+  const pp = $('passport'), sc = $('scrim');
+  pp.classList.remove('on'); sc.classList.remove('on');
+  setTimeout(() => { pp.hidden = true; sc.hidden = true; }, reduced ? 0 : 240);
+  if (lastFocus) lastFocus.focus();
+}
+$('ppClose').addEventListener('click', closePassport);
+$('scrim').addEventListener('click', closePassport);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('passport').hidden) closePassport(); });
+const asButton = (node, label, fn) => {
+  node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button'); node.setAttribute('aria-label', label);
+  node.classList.add('hit');
+  node.addEventListener('click', fn);
+  node.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+};
+
+/* ---------- fig.1 sky dial ---------- */
+const sky = $('sky'), CX = 200, CY = 200;
+const ORBIT = { Moon: 70, Mercury: 86, Venus: 100, Sun: 114, Mars: 128, Jupiter: 141, Saturn: 154 };
+buildRing(sky, CX, CY, 192, 168);
+Object.values(ORBIT).forEach((r) => el('circle', { cx: CX, cy: CY, r, class: 'track' }, sky));
+const moonG = el('g', { transform: `translate(${CX} ${CY}) scale(-1 1)` }, sky); // southern hemisphere: mirrored
+el('circle', { cx: 0, cy: 0, r: 46, class: 'moon-dark' }, moonG);
+const moonLit = el('path', { class: 'moon-lit' }, moonG);
+const beads = {};
+for (const b of BODIES) {
+  const g = el('g', {}, sky);
+  const c = el('circle', { r: b === 'Sun' ? 8 : b === 'Moon' ? 7 : 5.5, class: 'bead' + (b === 'Moon' ? ' lit' : '') }, g);
+  const t = el('text', { class: 'bead-label' }, g);
+  beads[b] = { g, c, t };
+  asButton(c, b, () => bodyPassport(b));
+}
+function moonPath(elong, R) {
+  const k = Math.cos(elong * DEG), rx = Math.abs(k) * R;
+  if (elong <= 180) return `M0 ${-R} A${R} ${R} 0 0 1 0 ${R} A${rx} ${R} 0 0 ${elong < 90 ? 0 : 1} 0 ${-R}Z`;
+  return `M0 ${-R} A${R} ${R} 0 0 0 0 ${R} A${rx} ${R} 0 0 ${elong > 270 ? 1 : 0} 0 ${-R}Z`;
+}
+let S = null;
+function drawSky(t) {
+  S = skyAt(t);
+  for (const b of BODIES) {
+    const [x, y] = pt(CX, CY, ORBIT[b], S.lon[b]);
+    beads[b].c.setAttribute('cx', x); beads[b].c.setAttribute('cy', y);
+    const [lx, ly] = pt(CX, CY, ORBIT[b], S.lon[b] + (b === 'Moon' ? 13 : 9));
+    beads[b].t.setAttribute('x', lx); beads[b].t.setAttribute('y', ly);
+    beads[b].t.textContent = BODY_G[b] + (S.retro[b] ? '℞' : '');
+    beads[b].c.setAttribute('aria-label', `${b} ${SIGNS[signOf(S.lon[b])]} ${degIn(S.lon[b])} degrees${S.retro[b] ? ', retrograde' : ''}`);
+  }
+  moonLit.setAttribute('d', moonPath(S.elong, 46));
+  $('skyReadout').textContent = `moon ${Math.round(S.illum * 100)}% · ${signStr(S.lon.Moon)}`;
+}
+
+/* ---------- jog wheel (the one live thing) ---------- */
+const PX = 36, jog = $('jog'), track = $('jogTrack');
+W.days.forEach((r, i) => {
+  const [, , dd] = r[0].split('-').map(Number);
+  const tick = document.createElement('div');
+  tick.className = 'jog-tick num' + (dd === 1 ? ' m' : '');
+  tick.style.left = ((i - C) * PX) + 'px';
+  tick.innerHTML = dd === 1 ? `<span>${fmtDay(r[0], { month: 'short' }).toLowerCase()}</span>` : String(dd);
+  track.appendChild(tick);
+});
+let cur = 0, target = 0, lastInt = null, raf = 0, lastT = 0, windup = false;
+function render() {
+  track.style.transform = `translateX(${-cur * PX}px)`;
+  drawSky(cur);
+  const n = Math.round(cur);
+  if (n !== lastInt && !windup) { lastInt = n; onDay(n); }
+}
+function tick(now) {
+  const dt = Math.min(64, now - (lastT || now)); lastT = now;
+  cur += (target - cur) * (1 - Math.exp(-dt / (windup ? 320 : 200)));
+  if (Math.abs(target - cur) < .002) { cur = target; windup = false; }
+  render();
+  raf = cur === target ? 0 : requestAnimationFrame(tick);
+}
+function goTo(v, instant) {
+  windup = false;
+  target = Math.max(-30, Math.min(30, v));
+  if (instant || reduced) { cur = target; render(); return; }
+  if (!raf) { lastT = 0; raf = requestAnimationFrame(tick); }
+}
+let drag = null;
+jog.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, start: target }; jog.setPointerCapture(e.pointerId); });
+jog.addEventListener('pointermove', (e) => { if (drag) goTo(drag.start - (e.clientX - drag.x) / PX); });
+const endDrag = () => { if (drag) { drag = null; goTo(Math.round(target)); } };
+jog.addEventListener('pointerup', endDrag); jog.addEventListener('pointercancel', endDrag);
+jog.addEventListener('keydown', (e) => {
+  const step = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageDown: -7, PageUp: 7 }[e.key];
+  if (step) { e.preventDefault(); goTo(Math.round(target) + step); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+});
+document.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => goTo(+b.dataset.step === 0 ? 0 : Math.round(target) + +b.dataset.step)));
+
+/* ---------- today: text driven by the same model ---------- */
+let lastPhase = null;
+// Stand-in until the engine ships a ≤32-character `headline` (roadmap M4):
+// a phrase after an em dash becomes the headline, else the shortest sentence.
+function splitLine(s) {
+  const dash = /^([^.]*?) — ([^.]{4,32})\.\s*(.*)$/.exec(s);
+  if (dash) return { head: dash[2][0].toUpperCase() + dash[2].slice(1) + '.', lede: `${dash[1]}. ${dash[3]}`.trim() };
+  const parts = s.split(/(?<=[.!?])\s+/);
+  const head = parts.reduce((a, b) => (b.length < a.length ? b : a));
+  return { head, lede: parts.filter((p) => p !== head).join(' ') };
+}
+function onDay(n) {
+  const sk = skyAt(n), day = sk.day, f = D.days[day], ti = termInfo(day);
+  const wd = fmtDay(day, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).toLowerCase();
+  $('dateline').innerHTML = `<b>${esc(wd)}</b>${n === 0 ? ' · today' : ` · ${n > 0 ? '+' : '−'}${Math.abs(n)} day${Math.abs(n) > 1 ? 's' : ''}`} · ${zh(f.gz + '日')} · ${ti.html}`;
+  const { head, lede } = splitLine(f.en);
+  $('todayTitle').textContent = head; $('lede').textContent = lede;
+  $('todayTitle').classList.toggle('long', head.length > 34);
+  $('areas').innerHTML = f.dom.map(([id, tone, txt]) => `<li><span class="k">${AREA[id]}</span><span><span class="tone">${TONE[tone]}</span>${esc(txt)}</span></li>`).join('');
+  $('yiji').innerHTML = `<div><h3>good for <span lang="zh">宜</span></h3><p>${f.yi.map(esc).join(' · ')}</p></div><div><h3>go easy on <span lang="zh">忌</span></h3><p>${f.ji.map(esc).join(' · ')}</p></div>`;
+  jog.setAttribute('aria-valuenow', n);
+  jog.setAttribute('aria-valuetext', `${fmtDay(day, { day: 'numeric', month: 'long', year: 'numeric' })}, moon ${Math.round(sk.illum * 100)}% ${PHASES[sk.phase][0]} in ${SIGNS[signOf(sk.lon.Moon)]}`);
+  if (lastPhase !== null && lastPhase !== sk.phase) $('phaseLive').textContent = `Moon reaches ${PHASES[sk.phase][0]}.`;
+  else if (ti.startsToday) $('phaseLive').textContent = `Solar term ${ti.startsToday[1]} begins on this day.`;
+  else $('phaseLive').textContent = '';
+  lastPhase = sk.phase;
+}
+
+function whyPassport() {
+  const day = S.day, f = D.days[day], ti = termInfo(day), rel = REL[f.rel], me = D.me;
+  const dm = me.pillars[2].stem, ts = f.stem;
+  openPassport(`Why this reading`, `${esc(fmtDay(day, { weekday: 'long', day: 'numeric', month: 'long' }))} · Sample A`, [
+    { reason: '1 · the day pillar' },
+    { k: 'fact', v: `Today’s day pillar is ${zh(f.gz)}: ${EL[STEM_EL[ts]]} over ${EL[BRANCH_EL[BRANCHES.indexOf(f.gz[1])]]}.` },
+    { k: 'precision', v: 'Calendar fact · exact (sexagenary day count).' },
+    { k: 'rule', v: `Your day master ${zh(STEMS[dm])} is ${EL[STEM_EL[dm]]}; ${rel[0]}, so this is a ${rel[1]} (${zh(rel[2])}). Ten god of the day: ${zh(f.tg[0])} ${esc(f.tg[1])}.` },
+    { k: 'reading', v: esc(f.en) },
+    { k: 'source', v: 'Ziping ten-god relations · cultural tradition, not a validated forecast · rule id bazi.relation.' + f.rel },
+    { reason: '2 · the moon' },
+    { k: 'fact', v: `Moon ${Math.round(S.illum * 100)}% lit, ${PHASES[S.phase][0]}, in ${SIGNS[signOf(S.lon.Moon)]} ${degIn(S.lon.Moon)}°.` },
+    { k: 'precision', v: 'Astronomy · ±0.05° (sampled at Melbourne noon).' },
+    { k: 'rule', v: 'Western lunar-phase symbolism.' },
+    { k: 'reading', v: `${PHASES[S.phase][1]}. <i>(draft copy, to be sourced in M4)</i>` },
+    { reason: '3 · the season' },
+    { k: 'fact', v: `Sun at ${ti.lon.toFixed(1)}° ecliptic longitude. ${ti.html}.` },
+    { k: 'precision', v: 'Astronomy · the 24 solar terms are the Sun crossing every 15°.' },
+    { k: 'reading', v: 'A calendar fact, not a forecast. It sets the month pillar in Bazi.' },
+    { k: 'source', v: '<a href="https://www.hko.gov.hk/en/gts/time/conversion.htm" rel="noopener">Hong Kong Observatory calendar reference</a>' },
+  ]);
+}
+$('whyKey').addEventListener('click', whyPassport);
+function bodyPassport(b) {
+  const l = S.lon[b];
+  openPassport(`${BODY_G[b]} ${b}`, fmtDay(S.day, { day: 'numeric', month: 'long', year: 'numeric' }), [
+    { k: 'fact', v: `${SIGNS[signOf(l)]} ${degIn(l)}° (${l.toFixed(2)}° ecliptic longitude)${S.retro[b] ? ', moving backwards (retrograde)' : ''}.` },
+    { k: 'precision', v: b === 'Sun' || b === 'Moon' ? 'Astronomy · ±0.05°.' : 'Astronomy · daily precomputed window, interpolated between noons.' },
+    { k: 'source', v: 'astronomy-engine (geocentric, apparent) · same formula as scripts/gen-transits-daily.mjs' },
+  ]);
+}
+const cardOf = (day) => CARDS[[...day].reduce((a, c) => a + c.charCodeAt(0), 0) % CARDS.length];
+function drawCard() {
+  openPassport('Today’s card', fmtDay(S.day, { day: 'numeric', month: 'long' }) + ' · stays the same all day on this device', [
+    { k: 'card', v: `<span style="font-size:24px;line-height:1.25">${esc(cardOf(S.day))}</span>` },
+    { k: 'what this is', v: 'An original card, picked at random for the date. It is not a temple slip and is not calculated from your chart.' },
+  ]);
+}
+$('drawKey').addEventListener('click', drawCard);
+$('drawKey2').addEventListener('click', drawCard);
+
+/* ---------- fig.2 pillars ---------- */
+function block(svg, x, y, w, h, fill, label, onTap, d = 8, e = 6) {
+  const g = el('g', {}, svg);
+  el('path', { d: `M${x} ${y}L${x + d} ${y - e}L${x + w + d} ${y - e}L${x + w} ${y}Z`, fill: 'var(--top)', stroke: 'var(--mid)', 'stroke-width': .6 }, g);
+  el('path', { d: `M${x + w} ${y}L${x + w + d} ${y - e}L${x + w + d} ${y + h - e}L${x + w} ${y + h}Z`, fill: 'var(--side)', stroke: 'var(--mid)', 'stroke-width': .6 }, g);
+  el('rect', { x, y, width: w, height: h, fill, stroke: 'var(--mid)', 'stroke-width': .6, class: 'front' }, g);
+  asButton(g, label, onTap);
+  return g;
+}
+function pillarFig() {
+  const svg = $('pillars'), me = D.me, dm = me.pillars[2].stem, names = ['year', 'month', 'day', 'hour'];
+  const tgName = (i) => i == null ? 'day master' : `${D.tenGod.en[i]} ${D.tenGod.zh[i]}`;
+  me.pillars.forEach((p, i) => {
+    const x = 26 + i * 92, w = 70;
+    const isDM = i === 2;
+    const cap = block(svg, x, 42, w, 64, isDM ? 'var(--lit)' : 'var(--face)', `${names[i]} stem ${STEMS[p.stem]}`, () => openPassport(
+      `${zh(STEMS[p.stem])} · ${names[i]} stem`, isDM ? 'the day master: the chart reads everything from here' : '', [
+        { k: 'fact', v: `${p.stem % 2 ? 'yin' : 'yang'} ${EL[STEM_EL[p.stem]]}` },
+        { k: 'relation to you', v: isDM ? 'This is you in the chart.' : `${tgName(p.tenGod)} (ten god relative to your day master ${zh(STEMS[dm])})` },
+        { k: 'precision', v: i === 3 ? 'Needs the birth hour · sample hour 08:00.' : 'Calendar fact · exact.' },
+        { k: 'source', v: 'Ziping ten-god table · cultural tradition' }]));
+    el('rect', { x: x + 4, y: 46, width: 4, height: 56, fill: `var(--${EL[STEM_EL[p.stem]]})` }, cap);
+    el('text', { x: x + w / 2 + 2, y: 76, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 32, 'font-family': 'var(--serif)', fill: isDM ? 'var(--on-lit)' : 'var(--ink)', 'pointer-events': 'none' }, cap).textContent = STEMS[p.stem];
+    const body = block(svg, x, 118, w, 78, 'var(--face)', `${names[i]} branch ${BRANCHES[p.branch]}`, () => openPassport(
+      `${zh(BRANCHES[p.branch])} · ${names[i]} branch`, '', [
+        { k: 'fact', v: `${EL[BRANCH_EL[p.branch]]} · hidden stems ${p.hidden.map((h) => zh(STEMS[h])).join(' ')}` },
+        { k: 'precision', v: i === 3 ? 'Needs the birth hour.' : 'Calendar fact · exact.' },
+        { k: 'source', v: 'Earthly branches and hidden-stem table · cultural tradition' }]));
+    el('rect', { x: x + 4, y: 122, width: 4, height: 70, fill: `var(--${EL[BRANCH_EL[p.branch]]})` }, body);
+    el('text', { x: x + w / 2 + 2, y: 157, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 32, 'font-family': 'var(--serif)', fill: 'var(--ink)', 'pointer-events': 'none' }, body).textContent = BRANCHES[p.branch];
+    const hw = (w - (p.hidden.length - 1) * 6) / p.hidden.length;
+    p.hidden.forEach((h, j) => {
+      const hx = x + j * (hw + 6);
+      const root = block(svg, hx, 214, hw, 34, 'var(--face)', `hidden stem ${STEMS[h]}`, () => openPassport(
+        `${zh(STEMS[h])} · hidden in ${zh(BRANCHES[p.branch])}`, '', [
+          { k: 'fact', v: `${h % 2 ? 'yin' : 'yang'} ${EL[STEM_EL[h]]}` },
+          { k: 'relation to you', v: h === dm ? 'Same stem as your day master.' : `${D.tenGod.en[tenGod(dm, h)]} ${zh(D.tenGod.zh[tenGod(dm, h)])}` },
+          { k: 'source', v: 'Hidden-stem table · cultural tradition' }]), 4, 3);
+      el('rect', { x: hx + 3, y: 244, width: hw - 6, height: 2, fill: `var(--${EL[STEM_EL[h]]})` }, root);
+      el('text', { x: hx + hw / 2, y: 231, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 15, 'font-family': 'var(--serif)', fill: 'var(--ink)', 'pointer-events': 'none' }, root).textContent = STEMS[h];
+    });
+    el('text', { x: x + w / 2 + 4, y: 274, 'text-anchor': 'middle', 'font-size': 12, 'font-family': 'var(--sans)', fill: 'var(--mid)' }, svg).textContent = names[i];
+  });
+  const counts = me.elements;
+  $('tally').innerHTML = EL.map((e, i) => `<span style="color:var(--${e})"><i style="width:${Math.max(2, counts[i] * 14)}px"></i><span style="color:var(--mid)">${e} ${counts[i]}</span></span>`).join('');
+  $('pillarReadout').innerHTML = `day master ${zh(STEMS[dm])} · ${EL[STEM_EL[dm]]} ×${counts[STEM_EL[dm]]}`;
+}
+function tenGod(dm, other) { // same table as src/lib/ziping.js
+  const a = STEM_EL[dm], b = STEM_EL[other], same = (dm % 2) === (other % 2);
+  const r = mod(b - a, 5); // 0 same,1 I generate,2 I control,3 controls me,4 generates me
+  return [same ? 0 : 1, same ? 2 : 3, same ? 4 : 5, same ? 6 : 7, same ? 8 : 9][r];
+}
+
+/* ---------- fig.3 natal ---------- */
+function natalFig() {
+  const svg = $('natal'), me = D.me;
+  buildRing(svg, CX, CY, 192, 168);
+  [150, 110].forEach((r) => el('circle', { cx: CX, cy: CY, r, class: 'track' }, svg));
+  const [ax1, ay1] = pt(CX, CY, 168, me.asc), [ax2, ay2] = pt(CX, CY, 168, me.asc + 180);
+  el('line', { x1: ax1, y1: ay1, x2: ax2, y2: ay2, class: 'axis' }, svg);
+  const sp = pt(CX, CY, 150, me.sun), mp = pt(CX, CY, 110, me.moon);
+  const sep = Math.abs(mod(me.sun - me.moon + 180, 360) - 180), asp = ASPECTS.find(([, a, o]) => Math.abs(sep - a) <= o);
+  if (asp) el('line', { x1: sp[0], y1: sp[1], x2: mp[0], y2: mp[1], class: 'aspect lit' }, svg);
+  const mk = (p, r, label, lit, info) => { const c = el('circle', { cx: p[0], cy: p[1], r, class: 'bead' + (lit ? ' lit' : '') }, svg); asButton(c, label, info); };
+  mk(sp, 8, 'Sun', false, () => openPassport('☉ Sun at birth', 'Sample A', [{ k: 'fact', v: `${SIGNS[signOf(me.sun)]} ${degIn(me.sun)}° (${me.sun}°)` }, { k: 'precision', v: 'Astronomy · ±0.01°.' }, { k: 'source', v: 'src/lib/astro.js (Meeus)' }]));
+  mk(mp, 7, 'Moon', false, () => openPassport('☽ Moon at birth', 'Sample A', [{ k: 'fact', v: `${SIGNS[signOf(me.moon)]} ${degIn(me.moon)}° (${me.moon}°)` }, { k: 'precision', v: 'Needs the birth hour: the Moon moves about 0.5° an hour.' }, { k: 'source', v: 'src/lib/astro.js (Meeus, truncated lunar series)' }]));
+  const ap = pt(CX, CY, 176, me.asc);
+  el('text', { x: ap[0] - 12, y: ap[1], class: 'glyph', style: 'fill:var(--ink)' }, svg).textContent = 'asc';
+  const axHit = el('circle', { cx: ax1, cy: ay1, r: 9, fill: 'transparent' }, svg);
+  asButton(axHit, 'Ascendant', () => openPassport('Ascendant', 'Sample A', [{ k: 'fact', v: `${SIGNS[signOf(me.asc)]} ${degIn(me.asc)}° (${me.asc}°)` }, { k: 'precision', v: 'Needs birth time and place · sample uses 08:00 in Shanghai. Without them this shows “—”.' }, { k: 'source', v: 'src/lib/astro.js (sidereal time + ascendant formula)' }]));
+  $('natalReadout').textContent = `sun ${signStr(me.sun)} · moon ${signStr(me.moon)} · asc ${signStr(me.asc)}${asp ? ' · ' + asp[0] : ''}`;
+}
+
+/* ---------- fig.4 ziwei keypad ---------- */
+function ziweiFig() {
+  const z = D.me.ziwei, pad = $('keypad');
+  const POS = { 5: [1, 1], 6: [1, 2], 7: [1, 3], 8: [1, 4], 4: [2, 1], 9: [2, 4], 3: [3, 1], 10: [3, 4], 2: [4, 1], 1: [4, 2], 0: [4, 3], 11: [4, 4] };
+  z.palaces.forEach((p) => {
+    const k = document.createElement('button');
+    k.type = 'button'; k.className = 'zkey' + (p.b === z.ming ? ' lit' : '');
+    const [r, c] = POS[p.b]; k.style.gridArea = `${r}/${c}`;
+    const stars = p.s.map((i) => ZW_STARS[i]);
+    k.innerHTML = `<span class="led"></span><span class="p">${zh(BRANCHES[p.b])} ${esc(p.ne.toLowerCase())}</span><span class="s ${stars.length ? '' : 'empty'}" lang="zh">${stars.length ? stars.join(' ') : '—'}</span>${p.b === z.shen ? '<span class="shen" title="body palace">body</span>' : ''}`;
+    k.setAttribute('aria-label', `${p.ne} palace${p.b === z.ming ? ', life palace' : ''}${p.b === z.shen ? ', body palace' : ''}, ${stars.length ? 'stars ' + stars.join(', ') : 'no main star'}`);
+    k.addEventListener('click', () => openPassport(`${zh(p.n)} · ${esc(p.ne)} palace`, `branch ${zh(BRANCHES[p.b])}${p.b === z.ming ? ' · life palace' : ''}${p.b === z.shen ? ' · body palace' : ''}`, [
+      ...(stars.length ? stars.map((s) => ({ k: zh(s), v: esc(D.starReads[s] || '') })) : [{ k: 'main stars', v: 'None. Tradition borrows the stars of the opposite palace; the current engine does not, and says so.' }]),
+      { k: 'precision', v: 'Needs the birth hour · sample hour 08:00 (辰).' },
+      { k: 'source', v: 'src/lib/ziwei.js · main-star placement · cultural tradition' }]));
+    pad.appendChild(k);
+  });
+  const ctr = document.createElement('div'); ctr.className = 'zcenter';
+  ctr.innerHTML = `<b lang="zh">${esc(z.lunar.lYear)} ${esc(z.lunar.monthZh)}${esc(z.lunar.dayZh)}</b><span>lunar birth date</span><span><span lang="zh">${['', '', '水二局', '木三局', '金四局', '土五局', '火六局'][z.ju]}</span> · life palace ${zh(BRANCHES[z.ming])}</span>`;
+  pad.appendChild(ctr);
+  $('zwReadout').innerHTML = `life ${zh(BRANCHES[z.ming])} · body ${zh(BRANCHES[z.shen])}`;
+}
+
+/* ---------- fig.5 luck sequencer ---------- */
+function luckFig() {
+  const seq = $('seq'), year = +W.center.slice(0, 4);
+  D.me.dayun.forEach((p) => {
+    const now = year >= p.fy && year <= p.ty, b = document.createElement('button');
+    b.type = 'button'; b.className = 'step' + (now ? ' lit' : '');
+    b.innerHTML = `<b lang="zh">${esc(p.gz)}</b><span class="num">age ${p.from}–${p.to}</span><span class="num">${p.fy}–${p.ty}</span>${now ? `<span class="bar"><i style="width:${(year - p.fy + 1) * 10}%"></i></span>` : ''}`;
+    b.setAttribute('aria-label', `luck cycle ${p.gz}, age ${p.from} to ${p.to}${now ? ', current' : ''}`);
+    b.addEventListener('click', () => openPassport(`${zh(p.gz)} · luck cycle`, `age ${p.from}–${p.to} · ${p.fy}–${p.ty}`, [
+      { k: 'fact', v: `${EL[STEM_EL[STEMS.indexOf(p.gz[0])]]} over ${EL[BRANCH_EL[BRANCHES.indexOf(p.gz[1])]]}` },
+      { k: 'precision', v: 'Start age depends on the gap to the nearest solar term (3 days = 1 year) and on gender for direction. Sample: F.' },
+      { k: 'source', v: 'src/lib/dayun.js · cultural tradition' }]));
+    seq.appendChild(b);
+    if (now) $('seqReadout').innerHTML = `${zh(p.gz)} · year ${year - p.fy + 1} of 10`;
+  });
+}
+
+/* ---------- fig.6 interlock ---------- */
+function pairFig() {
+  const svg = $('pair'), A = D.me, M = D.other;
+  buildRing(svg, CX, CY, 192, 168);
+  [150, 104].forEach((r) => el('circle', { cx: CX, cy: CY, r, class: 'track' }, svg));
+  const bodiesA = [['Sun', A.sun, 150], ['Moon', A.moon, 150]], bodiesM = [['Sun', M.sun, 104], ['Moon', M.moon, 104]];
+  const found = [];
+  const aspectOf = (la, lm) => { const sep = Math.abs(mod(la - lm + 180, 360) - 180); return ASPECTS.find(([, a, o]) => Math.abs(sep - a) <= o); };
+  for (const [na, la, ra] of bodiesA) for (const [nm, lm, rm] of bodiesM) {
+    const asp = aspectOf(la, lm), sep = Math.abs(mod(la - lm + 180, 360) - 180);
+    // M's hour is unknown: a Moon aspect counts only if it holds all day (R0, same rule as the engine)
+    if (asp && nm === 'Moon' && !M.moonRange.every((l) => aspectOf(la, l)?.[0] === asp[0])) continue;
+    if (asp) found.push({ na, nm, asp: asp[0], orb: Math.abs(sep - asp[1]), p1: pt(CX, CY, ra, la), p2: pt(CX, CY, rm, lm) });
+  }
+  found.sort((a, b) => a.orb - b.orb);
+  found.forEach((f, i) => el('line', { x1: f.p1[0], y1: f.p1[1], x2: f.p2[0], y2: f.p2[1], class: 'aspect' + (i === 0 ? ' lit' : '') }, svg));
+  for (const [n, l, r] of bodiesA) { const p = pt(CX, CY, r, l); el('circle', { cx: p[0], cy: p[1], r: 7, class: 'bead' }, svg); const q = pt(CX, CY, r, l + 9); el('text', { x: q[0], y: q[1], class: 'bead-label' }, svg).textContent = BODY_G[n]; }
+  for (const [n, l, r] of bodiesM) { const p = pt(CX, CY, r, l); el('circle', { cx: p[0], cy: p[1], r: 6, class: 'bead', style: 'fill:var(--panel);stroke:var(--ink)' }, svg); const q = pt(CX, CY, r, l + 11); el('text', { x: q[0], y: q[1], class: 'bead-label' }, svg).textContent = BODY_G[n]; }
+  $('pairReadout').textContent = `${found.length} cross aspect${found.length === 1 ? '' : 's'}${found[0] ? ' · ' + found[0].asp : ''}`;
+  const parts = D.synastry.parts;
+  const draws = parts.filter((p) => p.pts > 0).map((p) => `<li>${esc(p.en)}</li>`);
+  found.forEach((f) => draws.push(`<li>A’s ${f.na} and M’s ${f.nm} form a ${f.asp} (orb ${f.orb.toFixed(1)}°)${f.nm === 'Moon' ? '<span class="flag">M’s birth hour is unknown; this Moon aspect holds across the whole day.</span>' : ''}</li>`));
+  $('draws').innerHTML = draws.join('');
+  $('watch').innerHTML = parts.filter((p) => p.pts === 0).map((p) => `<li>${esc(p.en)}</li>`).join('') + `<li>Both day masters are ${zh('丙')} fire: two people who warm up fast and tire the same way. Plan rest together, not only plans. <i>(draft copy)</i></li>`;
+  $('pairWhy').addEventListener('click', () => openPassport('How this is worked out', 'Sample A × Sample M', [
+    { k: 'bazi', v: `Day branches ${zh('午')} and ${zh('戌')} sit in one harmony triad (${zh('寅午戌')}). Year branches ${zh('亥')} and ${zh('酉')} are neutral.` },
+    { k: 'western', v: 'Sun and Moon cross-aspects with the orbs used across the page: conjunction 8°, sextile 4°, square 6°, trine 6°, opposition 8°.' },
+    { k: 'not shown', v: `The engine also produces a combined score (${D.synastry.base}). It is an entertainment label, so it lives here and never on the front.` },
+    { k: 'source', v: 'src/lib/horoscopeEngine.js synastry() · src/lib/astro.js aspectBetween()' }]));
+}
+
+/* ---------- log ---------- */
+const notes = {};
+function logView() {
+  const [y, m] = W.center.split('-').map(Number), first = new Date(Date.UTC(y, m - 1, 1)), days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  $('logMonth').textContent = first.toLocaleDateString('en-AU', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const lead = (first.getUTCDay() + 6) % 7;
+  let html = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((d) => `<span class="h">${d}</span>`).join('');
+  for (let i = 0; i < lead; i++) html += '<span class="d blank"></span>';
+  for (let d = 1; d <= days; d++) {
+    const iso = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, wd = (lead + d - 1) % 7;
+    html += `<span class="d num${wd > 4 ? ' we' : ''}${iso === W.center ? ' today' : ''}${notes[iso] ? ' has' : ''}">${d}</span>`;
+  }
+  $('cal').innerHTML = html;
+}
+$('saveNote').addEventListener('click', () => {
+  const v = $('noteText').value.trim();
+  if (!v) { $('saveStatus').textContent = 'Write something first.'; return; }
+  notes[W.center] = v; logView(); $('saveStatus').textContent = 'Saved in this tab only (prototype).';
+});
+
+/* ---------- router (deep links work: #today #you #two #log, old #self #relationships #journal) ---------- */
+const ALIAS = { self: 'you', relationships: 'two', journal: 'log' };
+function route() {
+  let v = location.hash.slice(1); v = ALIAS[v] || v;
+  if (!['today', 'you', 'two', 'log'].includes(v)) v = 'today';
+  document.querySelectorAll('.view').forEach((s) => s.classList.toggle('on', s.id === 'v-' + v));
+  document.querySelectorAll('.keys a').forEach((a) => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  if (v === 'log') logView();
+  if (v !== route.last) { route.last = v; window.scrollTo(0, 0); }
+}
+addEventListener('hashchange', route);
+$('noteKey').addEventListener('click', () => setTimeout(() => $('noteText').focus(), 0));
+
+/* ---------- theme ---------- */
+const themeKey = $('themeKey');
+const syncTheme = () => { const n = document.documentElement.dataset.theme === 'night'; themeKey.setAttribute('aria-pressed', n); themeKey.textContent = n ? 'day' : 'night'; };
+themeKey.addEventListener('click', () => { const t = document.documentElement.dataset.theme === 'night' ? 'light' : 'night'; document.documentElement.dataset.theme = t; try { localStorage.setItem('almanac-proto:theme', t); } catch {} syncTheme(); });
+syncTheme();
+
+/* ---------- boot: today is painted first; the dial alone then winds from yesterday
+   (information: how far the sky moved). A throttled background tab simply keeps today. */
+pillarFig(); natalFig(); ziweiFig(); luckFig(); pairFig(); route();
+render();
+if (!reduced) requestAnimationFrame(() => {
+  windup = true; cur = -1; lastT = 0; raf = requestAnimationFrame(tick);
+  setTimeout(() => { if (windup) { windup = false; cur = target; render(); } }, 1600); // backstop for throttled frames
+});
+})();
+</script>
+</body>
+</html>

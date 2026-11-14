@@ -8,7 +8,6 @@ export {
   ELEMENTS_EN,
   ANIMALS_ZH,
   ANIMALS_EN,
-  zodiacIndex,
   ZODIAC_ZH,
   ZODIAC_EN,
 } from '../lib/bazi.js';
@@ -57,6 +56,7 @@ export {
   moonLongitude,
   ascendant,
   signOf,
+  sunSignOf,
   degInSign,
   aspectBetween,
   ASPECT_T,
