@@ -1,0 +1,90 @@
+{
+  "us-dem": {
+    "name": "Democratic Party (United States)",
+    "file": "/assets/elections/parties/us-dem.svg",
+    "official_file": "/assets/elections/parties/official/us-dem.svg",
+    "source_page": "https://en.wikipedia.org/wiki/Democratic_Party_(United_States)",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "b9686fd8aa33a73610c33203962e0074acf37e974a8b8dc11279d83ec2ca7e00",
+    "web_sha256": "b9686fd8aa33a73610c33203962e0074acf37e974a8b8dc11279d83ec2ca7e00",
+    "aspect": 1,
+    "licence": "Public domain (traditional party emblem)"
+  },
+  "us-rep": {
+    "name": "Republican Party (United States)",
+    "file": "/assets/elections/parties/us-rep.svg",
+    "official_file": "/assets/elections/parties/official/us-rep.svg",
+    "source_page": "https://en.wikipedia.org/wiki/Republican_Party_(United_States)",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Republican_Disc.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "b97daafade7cd563c97b911ed1f9c3fb91957180428ea53c61fe5ffc8bbb409e",
+    "web_sha256": "b97daafade7cd563c97b911ed1f9c3fb91957180428ea53c61fe5ffc8bbb409e",
+    "aspect": 1,
+    "licence": "Public domain (RNC three-star elephant emblem)"
+  },
+  "au-alp": {
+    "name": "Australian Labor Party",
+    "file": "/assets/elections/parties/au-alp.svg",
+    "official_file": "/assets/elections/parties/official/au-alp.svg",
+    "source_page": "https://www.alp.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/4/4c/ALP_logo_2017.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "00568c9c740fa06937ab3a327bf277aff7443c2c884a7e8d36326d3275721d3c",
+    "web_sha256": "00568c9c740fa06937ab3a327bf277aff7443c2c884a7e8d36326d3275721d3c",
+    "aspect": 2.83,
+    "licence": "Trademark used for party identification"
+  },
+  "au-liberal": {
+    "name": "Liberal Party of Australia",
+    "file": "/assets/elections/parties/au-liberal.svg",
+    "official_file": "/assets/elections/parties/official/au-liberal.svg",
+    "source_page": "https://www.liberal.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/6/65/Liberal_Party_of_Australia_logo.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "bc5449a403b07d251e4f5c83739c55da38e864ca16d460914ed6c385c937f802",
+    "web_sha256": "620d30d595194ba1aff3dae4fbe1e6e039ce5aaada725ae879d1d44df4e84a1c",
+    "aspect": 1.229,
+    "licence": "Trademark used for party identification"
+  },
+  "au-nationals": {
+    "name": "National Party of Australia (The Nationals)",
+    "file": "/assets/elections/parties/au-nationals.svg",
+    "official_file": "/assets/elections/parties/official/au-nationals-wordmark.svg",
+    "source_page": "https://nationals.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/6/64/The_National_Party_of_Australia_Logo.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "7d8e3cc345a862dd2cc38db2f817e7e3acce74809f5a5fbae40811cc4b81c8aa",
+    "web_sha256": "8297497f199924a56a904315df92413d401ad54345f9f3b6b57d22f76d2cc1dc",
+    "aspect": 1,
+    "licence": "Public domain textlogo / trademark used for party identification"
+  },
+  "au-greens": {
+    "name": "Australian Greens",
+    "file": "/assets/elections/parties/au-greens.svg",
+    "official_file": "/assets/elections/parties/official/au-greens.svg",
+    "source_page": "https://greens.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/11/AustralianGreensLogo_official.svg",
+    "retrieved_on": "2026-11-13",
+    "official_sha256": "aef221d20eea3fa971310e12afb014065d7c8413bd1755b1bbbd02895de74860",
+    "web_sha256": "aef221d20eea3fa971310e12afb014065d7c8413bd1755b1bbbd02895de74860",
+    "aspect": 1.153,
+    "licence": "Public domain geometric/text emblem / trademark used for party identification"
+  },
+  "independent": {
+    "name": "Independent (non-party category)",
+    "file": "/assets/elections/parties/independent.svg",
+    "kind": "editorial-geometric",
+    "retrieved_on": "2026-11-13",
+    "web_sha256": "117f2426dd5510d944ed566903f349ab9bb910959748f322d9ac3604c56e25cc",
+    "aspect": 1
+  },
+  "other": {
+    "name": "Other parties & candidates (non-single-party category)",
+    "file": "/assets/elections/parties/other.svg",
+    "kind": "editorial-geometric",
+    "retrieved_on": "2026-11-13",
+    "web_sha256": "734d01f99525913595be4a88116021e15c7e8a532de02659e70d9f9ef1206069",
+    "aspect": 1
+  }
+}

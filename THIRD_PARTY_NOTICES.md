@@ -149,3 +149,29 @@ version, election validity and SHA-256 are recorded in that folder's
 
 `scripts/build-election-geography.mjs` reproduces them with mapshaper 0.7.101,
 run through npx. mapshaper is not a dependency of the site.
+
+## Political party emblems
+
+Files under `public/assets/elections/parties/` are official party emblems and
+trademarks of their respective political parties (Democratic Party, Republican
+Party, Australian Labor Party, Liberal Party of Australia, National Party of
+Australia, and Australian Greens), plus two geometric editorial marks for
+Independent and Other categories. Party emblems are used on the elections page
+solely for factual party identification and imply no affiliation or endorsement.
+Each file's upstream source page, source URL, retrieval date, licence note and
+SHA-256 digests are recorded in `public/assets/elections/parties/manifest.json`.
+
+## Prior-election baselines
+
+Files under `public/assets/elections/baselines/` contain official prior-election
+district and region results displayed as clearly labelled historical baselines
+while upcoming elections have not yet reported votes. Upstream source URLs,
+retrieval timestamps, workbook SHA-256 digests and output digests are recorded
+in that folder's `manifest.json`:
+
+- © State Government of Victoria (Victorian Electoral Commission), 2022
+  Victorian state election results (including the 2023 Narracan supplementary
+  election), Creative Commons Attribution 4.0 International (CC BY 4.0).
+- © State of New South Wales (NSW Electoral Commission), 2023 New South Wales
+  state general election Legislative Assembly results, Creative Commons
+  Attribution (CC BY).

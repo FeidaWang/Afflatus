@@ -18,6 +18,7 @@ const MAPS = Object.freeze({
     level: 'district',
     areaLabel: { en: 'State', zh: '州' },
     short: { en: 'District boundaries · 120th Congress · 2026 cycle', zh: '选区边界 · 第 120 届国会 · 2026 选举' },
+    credit: { en: 'U.S. Census Bureau · TIGER/Line 2026', zh: '美国人口普查局 · TIGER/Line 2026' },
     source: { en: 'U.S. Census Bureau TIGER/Line 2026, 120th Congress, in effect for the 2026 cycle. Missouri uses its 2022–24 plan, per the Census Bureau. Simplified for display.', zh: '美国人口普查局 TIGER/Line 2026，第 120 届国会，适用于 2026 选举。密苏里按该局说明沿用 2022–24 年方案。已为显示简化。' },
     swing: { en: 'Not computed: nine states were redrawn for 2026 and no verified crosswalk is loaded.', zh: '未计算：九个州在 2026 年重划了选区，且没有经核验的换算表。' },
     insets: true,
@@ -27,6 +28,7 @@ const MAPS = Object.freeze({
     level: 'state',
     areaLabel: { en: 'State', zh: '州' },
     short: { en: 'State outlines · Census 2025', zh: '州界 · 普查局 2025' },
+    credit: { en: 'U.S. Census Bureau · Cartographic Boundary 2025', zh: '美国人口普查局 · 2025 制图边界' },
     source: { en: 'U.S. Census Bureau Cartographic Boundary 2025, states. Filled states have a 2026 contest; outlined states do not. A state shows its contest, never both seats as one result.', zh: '美国人口普查局 2025 制图边界（州）。实心的州有 2026 年比赛，空心的州没有。每州只显示当届比赛，不把两席合成一个结果。' },
     swing: NO_BASELINE,
     insets: true,
@@ -36,24 +38,27 @@ const MAPS = Object.freeze({
     level: 'district',
     areaLabel: { en: 'Region', zh: '大区' },
     short: { en: 'District boundaries · 2021 redivision', zh: '选区边界 · 2021 年重划' },
+    credit: { en: 'Vicmap Admin · © State Government of Victoria, CC BY 4.0', zh: 'Vicmap Admin · © State Government of Victoria，CC BY 4.0' },
     source: { en: 'Vicmap Admin, State Assembly 2022, from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Names as published. Simplified for display.', zh: 'Vicmap Admin 州下院 2022，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。名称按官方数据。已为显示简化。' },
-    swing: NO_BASELINE,
+    swing: { en: '2022 baseline loaded; swing awaits 2026 count.', zh: '已加载 2022 年官方基准；摆幅待 2026 开票后计算。' },
   },
   'vic-2026/council': {
     map: 'vic-council',
     level: 'region',
     areaLabel: { en: 'Region', zh: '大区' },
     short: { en: 'Region boundaries · 2021 redivision', zh: '大区边界 · 2021 年重划' },
+    credit: { en: 'Vicmap Admin · © State Government of Victoria, CC BY 4.0', zh: 'Vicmap Admin · © State Government of Victoria，CC BY 4.0' },
     source: { en: 'Vicmap Admin, State Council 2022, from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Each region elects five members, so a region never shows one winner.', zh: 'Vicmap Admin 州上院 2022，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。每个大区选出五席，因此大区不会显示单一赢家。' },
-    swing: NO_BASELINE,
+    swing: { en: '2022 baseline loaded; swing awaits 2026 count.', zh: '已加载 2022 年官方基准；摆幅待 2026 开票后计算。' },
   },
   'nsw-2027/assembly': {
     map: 'nsw-assembly',
     level: 'district',
     areaLabel: { en: 'Area', zh: '范围' },
     short: { en: 'District boundaries · NSW Spatial Services', zh: '选区边界 · 新州 Spatial Services' },
+    credit: { en: 'NSW Administrative Boundaries · © State of New South Wales, CC BY', zh: '新州行政边界 · © State of New South Wales，CC BY' },
     source: { en: 'NSW Administrative Boundaries, State Electoral District. © State of New South Wales (Spatial Services), CC BY. Lord Howe Island, part of Port Macquarie, is not drawn. Simplified for display.', zh: '新州行政边界（州选区）。© State of New South Wales (Spatial Services)，CC BY。属于 Port Macquarie 的豪勋爵岛未画出。已为显示简化。' },
-    swing: NO_BASELINE,
+    swing: { en: '2023 baseline loaded; swing awaits 2027 count.', zh: '已加载 2023 年官方基准；摆幅待 2027 开票后计算。' },
     presets: [{ id: 'sydney', label: { en: 'Greater Sydney', zh: '大悉尼' } }],
   },
 });
@@ -159,7 +164,7 @@ export function mapSvg(map, binding, { states = {}, parties = [], label, ariaLab
   const insets = (map.insets || []).map(({ state, b }) => (
     `<text class="el-map-inset" x="${b[0]}" y="${b[1]}" dy="-.5em">${insetLabel(state)}</text>`
   )).join('');
-  return `<svg class="el-map-svg" viewBox="${map.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-map="${map.id}">${hatchPatterns(marks, map.viewBox)}${features.join('')}${overlay}<g aria-hidden="true">${insets}<circle class="el-map-locator" r="0" hidden/></g></svg>`;
+  return `<svg class="el-map-svg" viewBox="${map.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-map="${map.id}">${hatchPatterns(marks, map.viewBox)}${features.join('')}${overlay}<g aria-hidden="true">${insets}<path class="el-map-selected-halo" d="" hidden/><path class="el-map-selected-ring" d="" hidden/><circle class="el-map-locator" r="0" hidden/></g></svg>`;
 }
 
 const unionBox = (boxes) => [

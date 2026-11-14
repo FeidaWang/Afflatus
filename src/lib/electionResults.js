@@ -10,7 +10,7 @@ import { eventById } from './electionRules.js';
 const COVERAGE = new Set(['not_covered', 'available', 'stale', 'source_error']);
 const COUNTING = new Set(['no_votes', 'counting', 'rcv_pending', 'runoff', 'recount', 'count_complete']);
 const DECISION = new Set(['uncalled', 'provider_called', 'certified', 'call_rescinded']);
-const MODES = new Set(['preview', 'live']);
+const MODES = new Set(['preview', 'live', 'baseline']);
 
 const isTime = (value) => value === null || (typeof value === 'string' && !Number.isNaN(Date.parse(value)));
 const isCount = (value) => value === null || (Number.isInteger(value) && value >= 0);
@@ -75,7 +75,10 @@ function catalogueErrors(snapshot, add) {
     const name = race?.raceId || 'race';
     const errors = [];
     if (race?.eventId !== event.id) errors.push(`${name}: wrong event`);
-    if (race?.electionDate !== event.pollDate && !isLaterContest(race, event)) errors.push(`${name}: wrong election date`);
+    const isBaselineDate = snapshot.mode === 'baseline'
+      && /^\d{4}-\d{2}-\d{2}$/.test(race?.electionDate ?? '')
+      && (!event.pollDate || race.electionDate < event.pollDate);
+    if (race?.electionDate !== event.pollDate && !isLaterContest(race, event) && !isBaselineDate) errors.push(`${name}: wrong election date`);
     // An Australian seat is declared by one commission. A US race is certified state by state.
     if (event.family === 'au' && race?.decision?.status === 'certified' && race.decision.authority !== event.authority) errors.push(`${name}: wrong declaring authority`);
     const seats = new Map(seatCatalogue(event.id, race?.office).map((seat) => [seat.seatId, seat]));
@@ -110,6 +113,7 @@ export function snapshotProblems(snapshot) {
   if (!MODES.has(snapshot.mode)) errors.push('mode');
   if (typeof snapshot.isSynthetic !== 'boolean') errors.push('isSynthetic');
   if (snapshot.mode === 'live' && snapshot.isSynthetic) errors.push('synthetic data cannot be live');
+  if (snapshot.mode === 'baseline' && snapshot.isSynthetic) errors.push('synthetic data cannot be baseline');
   if (!Array.isArray(snapshot.races)) return { errors: [...errors, 'races'], races };
   for (const change of snapshot.changes || []) {
     if (!CHANGE_TYPES.has(change.type)) errors.push('unknown change');

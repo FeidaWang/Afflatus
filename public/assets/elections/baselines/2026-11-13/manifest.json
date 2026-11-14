@@ -1,0 +1,28 @@
+{
+  "version": "2026-11-13",
+  "retrievedAt": "2026-11-13T12:00:00Z",
+  "files": {
+    "vic-2022.json": {
+      "eventId": "vic-2026",
+      "baselineElection": "2022 Victorian state election (26 Nov 2022; Narracan supplementary 28 Jan 2023)",
+      "authority": "Victorian Electoral Commission (VEC)",
+      "sourceUrl": "https://www.vec.vic.gov.au/results/state-election-results/2022-state-election-results",
+      "workbookUrl": "https://www.vec.vic.gov.au/-/media/c4665365795d431e811d0ce818e373d4.xlsx",
+      "workbookSha256": "1aa313278792ee59c1ef0d694b7f831db0cb48aa5d10880ba6da621a009d46e8",
+      "licence": "CC BY 4.0 · © State Government of Victoria (Victorian Electoral Commission)",
+      "bytes": 313306,
+      "sha256": "fad94c9717e9cd195f613c40e2508f4056440f4e0c6a523b104a92dff229504a"
+    },
+    "nsw-2023.json": {
+      "eventId": "nsw-2027",
+      "baselineElection": "2023 New South Wales state general election (25 Mar 2023)",
+      "authority": "New South Wales Electoral Commission (NSWEC)",
+      "sourceUrl": "https://vtr.elections.nsw.gov.au/SG2301/LA/results",
+      "workbookUrl": "https://vtr.elections.nsw.gov.au/SG2301/LA/state/SGE%202023%20LA%20Final%20Votes.xlsx",
+      "workbookSha256": "d9928c0e0255effb2ee618648d3aad0bd624f359a9c8ab2a8aa6f07de0ba617c",
+      "licence": "CC BY · © State of New South Wales (NSW Electoral Commission)",
+      "bytes": 194785,
+      "sha256": "50318b898b4418783990f88a34677ada8e665e5378dc99736cfb2bd94335474c"
+    }
+  }
+}

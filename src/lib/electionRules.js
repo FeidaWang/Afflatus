@@ -22,6 +22,48 @@ export const PARTIES = Object.freeze({
   ],
 });
 
+export const PARTY_ICONS = Object.freeze({
+  'us-dem': Object.freeze({ src: '/assets/elections/parties/us-dem.svg', width: 18, height: 18 }),
+  'us-rep': Object.freeze({ src: '/assets/elections/parties/us-rep.svg', width: 18, height: 18 }),
+  'au-alp': Object.freeze({ src: '/assets/elections/parties/au-alp.svg', width: 45, height: 16, wide: true }),
+  'au-liberal': Object.freeze({ src: '/assets/elections/parties/au-liberal.svg', width: 20, height: 16 }),
+  'au-nationals': Object.freeze({ src: '/assets/elections/parties/au-nationals.svg', width: 16, height: 16 }),
+  'au-greens': Object.freeze({ src: '/assets/elections/parties/au-greens.svg', width: 18, height: 16 }),
+  independent: Object.freeze({ src: '/assets/elections/parties/independent.svg', width: 16, height: 16 }),
+  other: Object.freeze({ src: '/assets/elections/parties/other.svg', width: 16, height: 16 }),
+});
+
+/**
+ * Official party emblems for a rule-pack party or candidate row.
+ * Aggregate Australian Coalition badges show both Liberal and Nationals emblems
+ * side-by-side; individual candidate rows resolve the specific partner when named.
+ */
+export function partyIconsFor(family, partyId, rawPartyName = '', isIndependent = false) {
+  const raw = String(rawPartyName || '').trim().toLowerCase();
+  if (isIndependent || partyId === 'teal' || raw === 'independent' || raw === 'ind') {
+    return [PARTY_ICONS.independent];
+  }
+  if (family === 'us') {
+    if (partyId === 'dem') return [PARTY_ICONS['us-dem']];
+    if (partyId === 'rep') return [PARTY_ICONS['us-rep']];
+    if (partyId === 'other') return [PARTY_ICONS.other];
+    return [];
+  }
+  if (family === 'au') {
+    if (partyId === 'labor') return [PARTY_ICONS['au-alp']];
+    if (partyId === 'coalition') {
+      const hasLib = /\bliberal\b|^lib$/.test(raw) && !/liberal\s*democrat|libertarian|liberal\s*national/.test(raw);
+      const hasNat = /\bnational|\bnationals\b|^nat$/.test(raw) && !/liberal\s*national/.test(raw);
+      if (hasLib && !hasNat) return [PARTY_ICONS['au-liberal']];
+      if (hasNat && !hasLib) return [PARTY_ICONS['au-nationals']];
+      return [PARTY_ICONS['au-liberal'], PARTY_ICONS['au-nationals']];
+    }
+    if (partyId === 'greens') return [PARTY_ICONS['au-greens']];
+    if (partyId === 'other') return [PARTY_ICONS.other];
+  }
+  return [];
+}
+
 // `noResult` means this page holds no data, not that the contest has no result.
 export const NO_RESULT = Object.freeze({ en: 'No result loaded', zh: '未加载结果' });
 export const NOT_ON_BALLOT = Object.freeze({ en: 'Not on ballot', zh: '本届不改选' });

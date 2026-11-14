@@ -12,6 +12,11 @@ import { validateObservatory } from '../src/sectors/observatory/validate.js';
 import { validateIndustry } from '../src/sectors/industry/industry-core.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateElectionMap, validateElectionMapManifest } from '../src/lib/validateElectionMap.js';
+import {
+  validateElectionBaseline,
+  validateElectionBaselineManifest,
+  validateElectionPartyLogosManifest,
+} from '../src/lib/electionBaseline.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateWorldsData } from '../src/lib/validateWorldsData.js';
 import { validateWorldsUniverse, validateWorldsUniverseManifest } from '../src/lib/validateWorldsUniverse.js';
@@ -72,6 +77,9 @@ const CHECKS = [
   } },
   { path: 'public/assets/elections/maps/2026-11-04/manifest.json', validate: validateElectionMapManifest },
   ...['us-house', 'us-senate', 'vic-assembly', 'vic-council', 'nsw-assembly'].map((map) => ({ path: `public/assets/elections/maps/2026-11-04/${map}.json`, validate: validateElectionMap })),
+  { path: 'public/assets/elections/parties/manifest.json', validate: validateElectionPartyLogosManifest },
+  { path: 'public/assets/elections/baselines/2026-11-13/manifest.json', validate: validateElectionBaselineManifest },
+  ...['vic-2022', 'nsw-2023'].map((baseline) => ({ path: `public/assets/elections/baselines/2026-11-13/${baseline}.json`, validate: validateElectionBaseline })),
   { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
   { path: 'public/assets/globe/earth-land.json', validate: validateGlobeData },
   { path: 'public/sectors-data.json', validate: validateSectorsData },

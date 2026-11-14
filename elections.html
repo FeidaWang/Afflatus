@@ -205,17 +205,20 @@
 <!-- shared-header:end -->
 <a class="el-skip" href="#el-content" data-en="Skip to content" data-zh="跳至主要内容">Skip to content</a>
 <main class="el-main">
-  <div class="el-strip">
-    <b data-en="Preview — no results yet" data-zh="预览 · 尚无结果">Preview — no results yet</b>
-    <span id="el-strip-context"></span>
-    <span class="el-strip-meta" id="el-strip-meta"></span>
-  </div>
   <div class="el-page" id="el-content">
-    <section class="el-hero" aria-labelledby="el-title">
-      <h1 id="el-title"><span id="el-title-main" data-en="ELECTIONS" data-zh="选举">ELECTIONS</span> <span id="el-title-sub" data-en="/ 2026–28" data-zh="/ 2026–28">/ 2026–28</span></h1>
-      <p class="el-sub" id="el-sub" data-en="A clear view of each count, one event at a time." data-zh="一场一场，把每次计票看清楚。">A clear view of each count, one event at a time.</p>
-      <div class="el-hero-controls" id="el-hero-controls"></div>
-    </section>
+    <header class="el-command">
+      <div class="el-command-start">
+        <h1 id="el-title"><span id="el-title-main" data-en="ELECTIONS" data-zh="选举">ELECTIONS</span> <span id="el-title-sub" data-en="2026–28" data-zh="2026–28">2026–28</span></h1>
+        <nav class="el-events" id="el-events" aria-label="Election" data-aria-en="Election" data-aria-zh="选举" hidden></nav>
+      </div>
+      <div class="el-command-end">
+        <div class="el-hero-controls" id="el-hero-controls"></div>
+        <div class="el-strip" id="el-strip" data-mode="preview">
+          <b id="el-strip-flag" data-en="Preview" data-zh="预览">Preview</b>
+          <span class="el-strip-meta" id="el-strip-meta"></span>
+        </div>
+      </div>
+    </header>
     <div id="el-view"></div>
     <noscript><p class="el-note" data-en="This page needs JavaScript to show the election calendar." data-zh="此页面需要 JavaScript 才能显示选举日历。">This page needs JavaScript to show the election calendar.</p></noscript>
   </div>
