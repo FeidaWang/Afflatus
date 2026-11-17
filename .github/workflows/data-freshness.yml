@@ -8,11 +8,8 @@ on:
     - cron: '5 13,14,20 * * *'
   workflow_dispatch:
 
-# The token is never stored in .git/config (persist-credentials: false) and
-# npm install scripts are disabled, so dependency code cannot push to main;
-# only the final publish step is handed the token.
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: data-pipeline-health-main
@@ -22,6 +19,10 @@ jobs:
   freshness:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      ci_sha: ${{ steps.publish.outputs.ci_sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -47,11 +48,16 @@ jobs:
         run: node scripts/check-data-freshness.mjs
 
       - name: Publish a changed daily transit artifact
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet -- public/transits-daily.json; then
             echo "Transit artifact already represents the current Melbourne day."
+            # Recover a dispatch interrupted after the atomic push.
+            if tag=$(git describe --tags --match 'transits-ci-*' --abbrev=0 HEAD 2>/dev/null); then
+              echo "ci_sha=$(git rev-parse "refs/tags/${tag}^{commit}")" >> "$GITHUB_OUTPUT"
+            fi
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -60,4 +66,33 @@ jobs:
           git commit -m "data: refresh Melbourne daily transits"
           remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git pull --rebase "$remote" main
-          git push "$remote" HEAD:main
+          sha=$(git rev-parse HEAD)
+          if [ "$sha" = "$(git rev-parse FETCH_HEAD)" ]; then
+            echo "Main already contains the transit update."
+            exit 0
+          fi
+          # Use a commit-specific ref so a later main push cannot change what CI tests.
+          git push --atomic "$remote" HEAD:refs/heads/main "HEAD:refs/tags/transits-ci-${sha}"
+          echo "ci_sha=$sha" >> "$GITHUB_OUTPUT"
+
+  dispatch-ci:
+    needs: freshness
+    if: needs.freshness.outputs.ci_sha != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Run CI on the published commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_SHA: ${{ needs.freshness.outputs.ci_sha }}
+        run: |
+          # GitHub suppresses CI push events created with GITHUB_TOKEN.
+          runs=$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs" \
+            -f head_sha="$CI_SHA" --jq '[.workflow_runs[] | select(.conclusion != "cancelled")] | length')
+          if [ "$runs" -gt 0 ]; then
+            echo "CI already ran or is running for $CI_SHA."
+            exit 0
+          fi
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "transits-ci-${CI_SHA}"
