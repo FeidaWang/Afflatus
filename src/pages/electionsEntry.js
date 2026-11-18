@@ -2,10 +2,9 @@
 import '../lib/i18n.js';
 import '../lib/nav.js';
 import { eventById } from '../lib/electionRules.js';
-import { getLocale } from '../lib/localeStore.js';
-import { renderElectionHub } from './electionsHub.js';
+import { electionLocale, renderElectionHub } from './electionsHub.js';
 
-const paintHub = () => renderElectionHub(new Date(), window.AfflatusI18N?.get() ?? getLocale('en'));
+const paintHub = () => renderElectionHub(new Date(), electionLocale());
 const event = eventById(new URLSearchParams(window.location.search).get('event'));
 
 if (event) {

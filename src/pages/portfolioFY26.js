@@ -356,7 +356,7 @@ function onScroll() {
 }
 
 let resizeTimer = 0;
-function setup() { buildLayouts(); drawn = -1; onScroll(); draw(); }
+function setup() { buildLayouts(); drawn = -1; onScroll(); }
 setup();
 addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(setup, 120); });
 addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
@@ -625,7 +625,7 @@ function markerBar(share, tone, idx) {
     const end = w - (k ? 6 + r() * 24 : 0);
     if (end > 8) passes += `<path d="${inkLineD(2, y + (r() - .5) * 2, end, y + (r() - .5) * 3, h, r, { taper: .06, wobble: 1.1 })}" opacity="${(k ? .35 + r() * .25 : .78).toFixed(2)}"/>`;
   });
-  return `<svg viewBox="0 0 600 34" preserveAspectRatio="none" aria-hidden="true"><g class="pf-jr-ticks" filter="url(#pf-mk-rule)">${ticks}</g><g class="pf-jr-bar" filter="url(#pf-mk-marker)" style="fill:${tone}">${passes}</g></svg>`;
+  return `<g class="pf-jr-ticks" filter="url(#pf-mk-rule)">${ticks}</g><g class="pf-jr-bar" filter="url(#pf-mk-marker)" style="fill:${tone}">${passes}</g>`;
 }
 const jHost = $('#pfJourneys');
 JOURNEYS.forEach((j, idx) => {
@@ -634,8 +634,11 @@ JOURNEYS.forEach((j, idx) => {
   row.style.setProperty('--w', `${j.r / 215 * 100}%`);
   row.style.setProperty('--tone', THEMES[TICKER_THEME[j.t]].color);
   row.style.setProperty('--i', idx);
-  row.innerHTML = `<div class="pf-jr-head"><b>${j.t}</b><span></span></div><div class="pf-jr-track">${markerBar(j.r / 215, THEMES[TICKER_THEME[j.t]].color, idx)}</div><strong data-count="${j.r}" data-decimals="0" data-prefix="+">+${j.r}%</strong>`;
+  row.innerHTML = `<div class="pf-jr-head"><b>${j.t}</b><span></span></div><div class="pf-jr-track"><svg viewBox="0 0 600 34" preserveAspectRatio="none" aria-hidden="true"></svg></div><strong data-count="${j.r}" data-decimals="0" data-prefix="+">+${j.r}%</strong>`;
   row.querySelector('span').textContent = isZh ? j.zh : j.en;
+  deferChart(row.querySelector('.pf-jr-track svg'), (svg) => {
+    svg.innerHTML = markerBar(j.r / 215, THEMES[TICKER_THEME[j.t]].color, idx);
+  });
   jHost.append(row);
   onView(row, node => node.classList.add('is-in'), .4);
   const num = row.querySelector('[data-count]');

@@ -1,5 +1,12 @@
 import { createDailyJournal, DAILY_PROMPTS, LIFE_AREAS, localDay, shiftDay, dayIndex } from '../lib/dailyJournal.js';
 
+const DATE_FORMATS = {
+  date: { month: 'long', day: 'numeric' },
+  dateWithWeekday: { month: 'long', day: 'numeric', weekday: 'long' },
+  fullDate: { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' },
+  weekday: { weekday: 'short' },
+};
+
 export function mountDailyExperience() {
   const $ = (id) => document.getElementById(id);
   if (!$('observatoryToday')) return;
@@ -11,7 +18,13 @@ export function mountDailyExperience() {
   let currentDay = localDay(), selectedDay = currentDay, noteDay = currentDay, dirty = false;
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
   const views = ['today','self','relationships','journal'];
-  const labelDate = (day, options) => new Date(`${day}T12:00:00`).toLocaleDateString(lang()==='zh'?'zh-CN':'en-AU',options);
+  const dateFormatters = new Map();
+  const labelDate = (day, format) => {
+    const locale = lang() === 'zh' ? 'zh-CN' : 'en-AU';
+    const key = `${locale}:${format}`;
+    if (!dateFormatters.has(key)) dateFormatters.set(key, new Intl.DateTimeFormat(locale, DATE_FORMATS[format]));
+    return dateFormatters.get(key).format(new Date(`${day}T12:00:00`));
+  };
   const icon = (name) => { const img = document.createElement('img'); img.src=`/assets/labs/icons/${name}.svg`; img.alt=''; img.width=24; img.height=24; return img; };
 
   function switchView(view, updateHash = true) {
@@ -37,14 +50,14 @@ export function mountDailyExperience() {
     for(let offset=-6;offset<=0;offset++) {
       const day=shiftDay(currentDay,offset), button=document.createElement('button');
       button.type='button'; button.className='obs-date';
-      button.setAttribute('aria-label',labelDate(day,{month:'long',day:'numeric',weekday:'long'}));
+      button.setAttribute('aria-label',labelDate(day,'dateWithWeekday'));
       button.setAttribute('aria-pressed',String(day===selectedDay));
-      const weekday=document.createElement('span');weekday.textContent=labelDate(day,{weekday:'short'}).replace('周','');
+      const weekday=document.createElement('span');weekday.textContent=labelDate(day,'weekday').replace('周','');
       const date=document.createElement('b'); date.textContent=String(Number(day.slice(-2))).padStart(2,'0');button.append(weekday,date);
       button.addEventListener('click',()=>{selectedDay=day;renderDay();});strip.append(button);
     }
     const prompt=DAILY_PROMPTS[((dayIndex(selectedDay)%DAILY_PROMPTS.length)+DAILY_PROMPTS.length)%DAILY_PROMPTS.length];
-    $('obsDateLabel').textContent=labelDate(selectedDay,{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+    $('obsDateLabel').textContent=labelDate(selectedDay,'fullDate');
     $('obsTitle').textContent=T(prompt[0],prompt[2]);
     if (lang() === 'zh' && prompt[0] === '留一点时间给自己。') $('obsTitle').textContent = '给自己，\n留一点时间。';
     $('obsAction').textContent=T(prompt[1],prompt[3]);
@@ -66,7 +79,9 @@ export function mountDailyExperience() {
     }
   }
   $('obsAreasButton').addEventListener('click',()=>{
-    const opening=$('obsAreas').hidden;$('obsAreas').hidden=!opening;
+    const opening=$('obsAreas').hidden;
+    if (opening) renderAreas();
+    $('obsAreas').hidden=!opening;
     $('obsAreasButton').setAttribute('aria-expanded',String(opening));
   });
   $('obsSourcesButton').addEventListener('click',()=>{
@@ -81,14 +96,14 @@ export function mountDailyExperience() {
     const random=crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;
     const result=journal.draw(selectedDay,random,timezone), prompt=DAILY_PROMPTS[result.index];
     $('drawText').textContent=T(prompt[0],prompt[2]);$('drawAction').textContent=T(prompt[1],prompt[3]);
-    $('drawDate').textContent=labelDate(selectedDay,{month:'long',day:'numeric'});
+    $('drawDate').textContent=labelDate(selectedDay,'date');
     $('drawSaveStatus').textContent=result.persisted ? T('今日的签已保存在本机，刷新不会重抽。','Saved on this device. Reloading will keep this draw.') : T('本次已揭签；浏览器存储不可用，关闭后可能丢失。','Drawn for this visit. Storage is unavailable; this draw may be lost.');
     drawDialog.showModal();renderDay();
   });
   function openNote(day) {
     if(dirty && !saveNote()) return;
     noteDay=day;$('obsNoteText').value=journal.get(day).note||'';dirty=false;
-    $('obsNoteDay').textContent=labelDate(day,{year:'numeric',month:'long',day:'numeric'});
+    $('obsNoteDay').textContent=labelDate(day,'fullDate');
     $('obsNoteStatus').textContent='';switchView('journal');$('obsNoteText').focus({preventScroll:true});
   }
   $('obsWriteNote').addEventListener('click',()=>openNote(selectedDay));
@@ -103,12 +118,12 @@ export function mountDailyExperience() {
   window.addEventListener('beforeunload',(event)=>{if(dirty){event.preventDefault();event.returnValue='';}});
   function renderJournal() {
     if(!dirty && !$('obsNoteText').value) { $('obsNoteText').value=journal.get(noteDay).note||''; }
-    $('obsNoteDay').textContent=labelDate(noteDay,{year:'numeric',month:'long',day:'numeric'});
+    $('obsNoteDay').textContent=labelDate(noteDay,'fullDate');
     const entries=journal.entries();$('obsJournalEmpty').hidden=entries.length>0;
     const list=$('obsJournalList');list.replaceChildren();
     for(const entry of entries) {
       const button=document.createElement('button');button.type='button';button.className='obs-journal-entry';
-      const title=document.createElement('strong');title.textContent=labelDate(entry.day,{month:'long',day:'numeric'});
+      const title=document.createElement('strong');title.textContent=labelDate(entry.day,'date');
       const text=document.createElement('span');text.textContent=entry.note||T(DAILY_PROMPTS[entry.draw]?.[0]||'今日记录',DAILY_PROMPTS[entry.draw]?.[2]||'Daily entry');
       button.append(icon('note'),title,text);button.addEventListener('click',()=>openNote(entry.day));list.append(button);
     }
@@ -126,8 +141,8 @@ export function mountDailyExperience() {
   let clock=setInterval(refreshDate,60000);
   window.addEventListener('pagehide',()=>{clearInterval(clock);clock=0;});
   window.addEventListener('pageshow',()=>{refreshDate();if(!clock)clock=setInterval(refreshDate,60000);});
-  window.addEventListener('afflatus-lang',()=>{renderDay();renderAreas();renderJournal();applyTheme();});
+  window.addEventListener('afflatus-lang',()=>{renderDay();if(!$('obsAreas').hidden)renderAreas();renderJournal();applyTheme();});
   document.addEventListener('afflatus-chart-updated',()=>{$('obsChartLink').textContent=T('查看我的星图','View my chart');});
   document.addEventListener('afflatus-chart-created',()=>switchView('self'));
-  applyTheme();renderDay();renderAreas();switchView(location.hash.slice(1)||'today',false);
+  applyTheme();renderDay();switchView(location.hash.slice(1)||'today',false);
 }

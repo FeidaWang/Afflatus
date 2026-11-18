@@ -40,8 +40,7 @@ import { ELECTION_FEED_BASE, VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, sourceById }
 import { CIVIC_BASE, createCivicReader } from '../lib/civicApi.js';
 import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates, snapshotErrors } from '../lib/electionResults.js';
 import { createFeedController } from '../lib/electionFeed.js';
-import { getLocale } from '../lib/localeStore.js';
-import { electionLabel, renderElectionHub, setElectionText } from './electionsHub.js';
+import { electionLabel, electionLocale, renderElectionHub, setElectionText } from './electionsHub.js';
 
 const $ = (id) => document.getElementById(id);
 const DASH = '—';
@@ -64,7 +63,7 @@ const REDUCED_MOTION_QUERY = typeof window !== 'undefined' && typeof window.matc
   ? window.matchMedia('(prefers-reduced-motion: reduce)')
   : null;
 
-let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
+let lang = electionLocale();
 const T = (en, zh) => (lang === 'zh' ? zh : en);
 const L = (pair) => electionLabel(pair, lang);
 

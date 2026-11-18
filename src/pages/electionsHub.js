@@ -6,6 +6,7 @@ const DASH = '—';
 const keepDate = (text) => text.replace(/\d+ [年月日](?: \d+ [月日])*/g, (date) => date.replaceAll(' ', '\u00a0'));
 
 export const electionLabel = (pair, lang) => (lang === 'zh' ? keepDate(pair.zh) : pair.en);
+export const electionLocale = () => window.AfflatusI18N?.get() ?? (document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
 
 export function setElectionText(element, en, zh, lang) {
   element.setAttribute('data-en', en);
