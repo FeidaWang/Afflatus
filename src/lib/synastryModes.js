@@ -3,7 +3,7 @@
 
    1. relationshipScores(): ONE pair of charts, FIVE relationship lenses
       (朋友/同事/暧昧对象/情侣/夫妻). Same underlying signals — the bazi
-      base + five-domain pillars (horoscopeEngine.synastry) and the cross
+      base (horoscopeEngine.synastry) and the cross
       aspects (synastryAstro.crossAspects) — reweighted per relationship
       type. No new divination is invented; only the mix changes, which is
       exactly how a human reader would answer "as colleagues? as spouses?"
@@ -22,6 +22,8 @@ import { BRANCHES } from './bazi.js';
 import { ZW_STARS_ZH } from './ziwei.js';
 
 const clamp = (n) => Math.max(0, Math.min(100, Math.round(n)));
+
+const LENSES = [['friend', '朋友', 'Friends'], ['colleague', '同事', 'Colleagues'], ['crush', '暧昧对象', 'Sparks'], ['couple', '情侣', 'Dating'], ['spouse', '夫妻', 'Married']];
 
 // ---- signals out of the cross-aspect list ----------------------------------
 // tone: strong (conj/trine on the big pairs), soft (sextile/trine), hard
@@ -44,26 +46,32 @@ function aspectSignal(aspects, bodies, { softW = 12, hardW = -9 } = {}) {
 }
 
 /**
- * @param {{base:number, pillars:Array<{id:string,score:number}>}} baziSyn - horoscopeEngine.synastry() output
- * @param {Array} aspects - synastryAstro.crossAspects() output (may be [])
- * @returns five entries, each {key, zh, en, score, line:{zh,en}}
+ * @param {{base:number}} baziSyn - horoscopeEngine.synastry() output
+ * @param {Array|null} aspects - synastryAstro.crossAspects() output; null = not computed yet
+ * @returns five entries, each {key, zh, en, score, line:{zh,en}}; score and
+ *   line are null while an input is missing (Q4: null is not 50)
  */
 export function relationshipScores(baziSyn, aspects) {
-  const pillar = (id) => { const p = (baziSyn.pillars || []).find((x) => x.id === id); return p ? p.score : 50; };
-  const base = baziSyn.base ?? 50;
+  const base = baziSyn.base ?? null;
+  if (base == null || aspects == null) {
+    return LENSES.map(([key, zh, en]) => ({ key, zh, en, score: null, line: null }));
+  }
 
   const comm = aspectSignal(aspects, [['Mercury', 'Mercury'], ['Mercury', 'Sun'], ['Mercury', 'Moon']]);
   const warm = aspectSignal(aspects, [['Moon', 'Moon'], ['Moon', 'Sun'], ['Moon', 'Venus']]);
   const spark = aspectSignal(aspects, [['Venus', 'Mars'], ['Venus', 'Venus'], ['Sun', 'Venus'], ['Mars', 'Mars']], { softW: 14, hardW: 6 }); // friction still sparks for chemistry
   const grind = aspectSignal(aspects, [['Mars', 'Sun'], ['Mars', 'Moon'], ['Mars', 'Mercury']], { softW: 6, hardW: -14 }); // day-to-day friction tolerance
 
-  const defs = [
-    { key: 'friend', zh: '朋友', en: 'Friends', score: clamp(0.35 * comm + 0.3 * warm + 0.35 * base) },
-    { key: 'colleague', zh: '同事', en: 'Colleagues', score: clamp(0.4 * pillar('career') + 0.3 * comm + 0.3 * grind) },
-    { key: 'crush', zh: '暧昧对象', en: 'Sparks', score: clamp(0.45 * spark + 0.3 * warm + 0.25 * pillar('romance')) },
-    { key: 'couple', zh: '情侣', en: 'Dating', score: clamp(0.35 * pillar('romance') + 0.3 * spark + 0.35 * warm) },
-    { key: 'spouse', zh: '夫妻', en: 'Married', score: clamp(0.4 * pillar('marriage') + 0.3 * base + 0.3 * warm) },
-  ];
+  // Q2: the old per-domain sub-scores were base ± seeded noise; their
+  // expected value was base, so base stands in for them here.
+  const score = {
+    friend: clamp(0.35 * comm + 0.3 * warm + 0.35 * base),
+    colleague: clamp(0.4 * base + 0.3 * comm + 0.3 * grind),
+    crush: clamp(0.45 * spark + 0.3 * warm + 0.25 * base),
+    couple: clamp(0.35 * base + 0.3 * spark + 0.35 * warm),
+    spouse: clamp(0.7 * base + 0.3 * warm),
+  };
+  const defs = LENSES.map(([key, zh, en]) => ({ key, zh, en, score: score[key] }));
 
   const LINES = {
     friend: [
@@ -121,7 +129,7 @@ const GROUP_LINE = {
   'soft+soft': ['温和同频，默契好但都需要人推一把', 'Gently in-tune — great rapport, both may need a push to act'],
 };
 const groupOfPalace = (stars) => {
-  if (!stars.length) return 'soft'; // empty palace borrows the quiet read
+  if (!stars.length) return null;
   const counts = { lead: 0, bright: 0, soft: 0 };
   for (const s of stars) counts[STAR_GROUP[s] || 'soft']++;
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
@@ -147,15 +155,27 @@ export function synastryZiwei(zA, zB) {
     }
   }
   const [score, relZh, relEn] = REL_SCORE[relKey];
-  const gA = groupOfPalace(zA.palaces[bA].stars), gB = groupOfPalace(zB.palaces[bB].stars);
-  const gKey = GROUP_LINE[`${gA}+${gB}`] ? `${gA}+${gB}` : `${gB}+${gA}`;
-  const [tempZh, tempEn] = GROUP_LINE[gKey];
-  const starsZh = (z, b) => z.palaces[b].stars.map((s) => ZW_STARS_ZH[s]).join('') || '空宫';
+  // Q8 命无正曜: temperament is read from the opposite palace (借对宫), but
+  // the opposite palace's stars are reported as borrowed, never moved in.
+  const names = (z, b) => z.palaces[b].stars.map((s) => ZW_STARS_ZH[s]).join('');
+  const side = (z, b) => {
+    const own = z.palaces[b].stars;
+    if (own.length) return { group: groupOfPalace(own), info: { branch: BRANCHES[b], stars: names(z, b), borrowed: null } };
+    const opp = (b + 6) % 12;
+    return { group: groupOfPalace(z.palaces[opp].stars), info: { branch: BRANCHES[b], stars: '命无正曜', borrowed: names(z, opp) || null } };
+  };
+  const sA = side(zA, bA), sB = side(zB, bB);
+  let temperament = null;
+  if (sA.group && sB.group) {
+    const gKey = GROUP_LINE[`${sA.group}+${sB.group}`] ? `${sA.group}+${sB.group}` : `${sB.group}+${sA.group}`;
+    const [tempZh, tempEn] = GROUP_LINE[gKey];
+    temperament = { zh: tempZh, en: tempEn };
+  }
   return {
     relKey, score,
-    mingA: { branch: BRANCHES[bA], stars: starsZh(zA, bA) },
-    mingB: { branch: BRANCHES[bB], stars: starsZh(zB, bB) },
+    mingA: sA.info,
+    mingB: sB.info,
     relation: { zh: `命宫${BRANCHES[bA]}×${BRANCHES[bB]} · ${relZh}`, en: `Life palaces ${BRANCHES[bA]}×${BRANCHES[bB]} · ${relEn}` },
-    temperament: { zh: tempZh, en: tempEn },
+    temperament,
   };
 }
