@@ -450,6 +450,46 @@ describe('collector', () => {
     expect(latest().races.find((item) => item.office === 'council').totals.formal).toBe(75);
   });
 
+  it('keeps collecting the healthy house while its counterpart awaits a retry', async () => {
+    dropLower('20261128_200500', [albert()]);
+    dropUpper('20261128_200500', [regionXml({ name: 'Eastern Victoria' })]);
+    await run(NOW, { source });
+    writeFileSync(join(feedDir, upperName('20261128_201000')), zipOf('x.xml', '<Broken'));
+    const collect = (at) => run(at, { source, force: false });
+    await collect(NOW + 300_000);
+    dropLower('20261128_201500', [albert({ votes: { a: 25, b: 10 } })]);
+    const next = await collect(NOW + 320_000);
+    expect(next).toMatchObject({ outcome: 'partial', kinds: ['malformed'] });
+    expect(race('albert-park').totals.formal).toBe(35);
+    expect(pointer().sources[0].feeds).toEqual([
+      expect.objectContaining({ office: 'assembly', status: 'ok' }),
+      expect.objectContaining({ office: 'council', status: 'error' }),
+    ]);
+    dropUpper('20261128_201500', [regionXml({ name: 'Eastern Victoria' })]);
+    await collect(NOW + 600_000);
+    expect(pointer().sources[0].feeds.every(({ status }) => status === 'ok')).toBe(true);
+  });
+
+  it('identifies a VEC house whose latest file is a batch behind and clears the delay on catch-up', async () => {
+    const official = { ...sourceById('vec-2026'), enabled: true, expectedEventName: 'State Election 2026', expectedEventId: '1' };
+    const officialFile = (name, category, time, contests) => drop(name.replace(/^Test/, ''), feedXml({
+      category, contests, eventName: official.expectedEventName, created: `2026-11-28T${time}`,
+    }));
+    officialFile(lowerName('20261128_200500'), 'LowerHouse', '20:05:00', [albert()]);
+    officialFile(upperName('20261128_200505'), 'UpperHouse', '20:05:05', [regionXml({ name: 'Eastern Victoria' })]);
+    await run(NOW, { source: official });
+    officialFile(lowerName('20261128_201000'), 'LowerHouse', '20:10:00', [albert({ votes: { a: 25, b: 10 } })]);
+    await run(NOW + 20_000, { source: official });
+    expect(pointer().sources[0].feeds).toEqual([
+      expect.objectContaining({ office: 'assembly', status: 'ok', publishedAt: '2026-11-28T09:10:00.000Z' }),
+      expect.objectContaining({ office: 'council', status: 'delayed', publishedAt: '2026-11-28T09:05:05.000Z' }),
+    ]);
+    expect(latest().races.find(({ office }) => office === 'council').totals.formal).toBe(75);
+    officialFile(upperName('20261128_201009'), 'UpperHouse', '20:10:09', [regionXml({ name: 'Eastern Victoria' })]);
+    await run(NOW + 40_000, { source: official });
+    expect(pointer().sources[0].feeds.every(({ status }) => status === 'ok')).toBe(true);
+  });
+
   it('counts a house whose file is missing as a failure, not as empty', async () => {
     dropLower('20261128_200500', [albert()]);
     expect(await run(NOW, { source })).toMatchObject({ outcome: 'partial', kinds: ['gone'] });

@@ -139,15 +139,22 @@ export function featureMark(members, states, parties) {
   return seatMark(contests[0], states[contests[0].seatId], parties);
 }
 
-function featureElement({ feature, seats: members }, mark, label) {
-  const primary = primarySeat(members);
+export function featureAppearance(mark) {
   const hatch = mark.status === 'leading' ? `;--seat-fill:url(#el-map-hatch-${mark.party.id})` : '';
-  const style = mark.party ? ` style="--seat:${mark.party.color}${hatch}"` : '';
-  const record = mark.status === 'final' ? ' data-record' : '';
-  return `<path class="el-feature is-${mark.status}${mark.stale ? ' is-stale' : ''}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${label(primary, members)}"${record}${style}/>`;
+  return {
+    className: `el-feature is-${mark.status}${mark.stale ? ' is-stale' : ''}`,
+    style: mark.party ? `--seat:${mark.party.color}${hatch}` : null,
+  };
 }
 
-function hatchPatterns(marks, viewBox) {
+function featureElement({ feature, seats: members }, mark, label) {
+  const primary = primarySeat(members);
+  const { className, style } = featureAppearance(mark);
+  const record = mark.status === 'final' ? ' data-record' : '';
+  return `<path class="${className}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${label(primary, members)}"${record}${style ? ` style="${style}"` : ''}/>`;
+}
+
+export function mapHatchPatterns(marks, viewBox) {
   const parties = new Map(marks.filter((mark) => mark.status === 'leading').map((mark) => [mark.party.id, mark.party]));
   if (!parties.size) return '';
   const size = Math.round(viewBox[2] / 160);
@@ -164,7 +171,7 @@ export function mapSvg(map, binding, { states = {}, parties = [], label, ariaLab
   const insets = (map.insets || []).map(({ state, b }) => (
     `<text class="el-map-inset" x="${b[0]}" y="${b[1]}" dy="-.5em">${insetLabel(state)}</text>`
   )).join('');
-  return `<svg class="el-map-svg" viewBox="${map.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-map="${map.id}">${hatchPatterns(marks, map.viewBox)}${features.join('')}${overlay}<g aria-hidden="true">${insets}<path class="el-map-selected-halo" d="" hidden/><path class="el-map-selected-ring" d="" hidden/><circle class="el-map-locator" r="0" hidden/></g></svg>`;
+  return `<svg class="el-map-svg" viewBox="${map.viewBox.join(' ')}" role="group" aria-label="${ariaLabel}" data-roving data-map="${map.id}">${mapHatchPatterns(marks, map.viewBox)}${features.join('')}${overlay}<g aria-hidden="true">${insets}<path class="el-map-selected-halo" d="" hidden/><path class="el-map-selected-ring" d="" hidden/><circle class="el-map-locator" r="0" hidden/></g></svg>`;
 }
 
 const unionBox = (boxes) => [

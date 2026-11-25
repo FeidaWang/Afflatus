@@ -57,6 +57,21 @@ test.describe('Elections hub', () => {
     await page.goto('/en/signal.html');
     await expect(page.locator('#af-analysis a[data-header-path="/elections.html"]')).toHaveCount(1);
   });
+
+  test('the Chinese election-night entrance opens the map and the calendar remains reachable', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2026-11-28T06:59:59Z'));
+    await page.goto('/zh/elections.html');
+    await expect(page.locator('.el-next')).toBeVisible();
+    await page.clock.setFixedTime(new Date('2026-11-28T07:00:00Z'));
+    await page.route('**/elections-feed/vic-2026/**', (route) => route.fulfill({ status: 404 }));
+    await page.reload();
+    await expect(page).toHaveURL(/\/zh\/elections\.html\?event=vic-2026&office=assembly$/);
+    await expect(page.locator('.el-map-svg [data-feature]')).toHaveCount(88);
+    await page.getByRole('link', { name: '全部选举', exact: true }).click();
+    await expect(page).toHaveURL(/\?view=calendar$/);
+    await page.reload();
+    await expect(page.locator('.el-next')).toBeVisible();
+  });
 });
 
 test.describe('Elections console', () => {
@@ -794,6 +809,35 @@ test.describe('Elections feed', () => {
     return control;
   }
 
+  const POLLS_CLOSE = '2026-11-28T07:00:00.000Z';
+
+  async function serveOfficial(page, control) {
+    await page.clock.setFixedTime(new Date(POLLS_CLOSE));
+    await page.route('**/elections-feed/vic-2026/**', (route) => {
+      if (control.unavailable) return route.fulfill({ status: 503 });
+      const fixture = stages[control.stage];
+      const sourceIds = ['vec-2026'];
+      if (route.request().url().endsWith('/latest.json')) {
+        const sources = fixture.sources.map((source) => ({
+          ...source,
+          sourceId: sourceIds[0],
+          lastCheckedAt: POLLS_CLOSE,
+          feeds: source.feeds.map((item) => ({ ...item, status: control.status ?? 'ok' })),
+        }));
+        return route.fulfill({ json: { ...fixture, revision: fixture.revision * 10 + (control.checkOnly ?? 0), publishedAt: POLLS_CLOSE, isSynthetic: false, sourceIds, sources } });
+      }
+      const path = new URL(route.request().url()).pathname.slice(FEED.length);
+      const snapshot = JSON.parse(readFileSync(join(root, 'store', path), 'utf8'));
+      const races = snapshot.races.map((race) => ({ ...race, provenance: { ...race.provenance, sourceId: sourceIds[0] } }));
+      return route.fulfill({ json: { ...snapshot, races, publishedAt: POLLS_CLOSE, isSynthetic: false, mode: 'live', sourceIds } });
+    });
+  }
+
+  const checkVisibleFeed = async (page) => {
+    await page.bringToFront();
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  };
+
   const row = (page, seat) => page.locator(`[data-row="${seat}"]`);
   const mark = (page, seat) => page.locator(`.el-chamber-svg [data-seat="${seat}"]`);
   // Only moves the feed along. A phone's open sheet covers this button; a real click is tested on its own below.
@@ -833,31 +877,105 @@ test.describe('Elections feed', () => {
     await expect(page.locator('#el-drawer-title')).toHaveText('Albert Park');
   });
 
-  test('reads the same-origin VEC feed at polls close and shows delays', async ({ page }) => {
-    const close = '2026-11-28T07:00:00.000Z';
-    await page.clock.setFixedTime(new Date(close));
-    const sourceIds = ['vec-2026'];
-    const fixture = stages[1];
-    const pointer = {
-      ...fixture, publishedAt: close, isSynthetic: false, sourceIds,
-      sources: fixture.sources.map((source) => ({ ...source, sourceId: sourceIds[0], lastCheckedAt: close })),
-    };
-    const snapshot = JSON.parse(readFileSync(join(root, 'store', 'vic-2026', 'snapshots', `${fixture.snapshotId}.json`), 'utf8'));
-    let available = true;
-    await page.route('**/elections-feed/vic-2026/**', (route) => {
-      if (!available) return route.fulfill({ status: 503 });
-      return route.fulfill({ json: route.request().url().endsWith('/latest.json')
-        ? pointer
-        : { ...snapshot, publishedAt: close, isSynthetic: false, mode: 'live', sourceIds } });
+  for (const [language, counting, reporting, delay] of [
+    ['en', 'Counting updates', 'districts reporting', 'Updates delayed'],
+    ['zh', '计票更新', '选区已报票', '更新延迟'],
+  ]) {
+    test(`${language} reads the same-origin VEC feed at polls close and shows delays`, async ({ page }) => {
+      const control = { stage: 1, unavailable: false };
+      await serveOfficial(page, control);
+      await page.goto(`/${language}/elections.html?event=vic-2026&office=assembly`);
+      await expect(page.locator('#el-vic-summary')).toContainText(counting);
+      await expect(page.locator('#el-vic-summary')).toContainText(reporting);
+      await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
+      control.unavailable = true;
+      await checkVisibleFeed(page);
+      await expect(page.locator('#el-vic-summary')).toContainText(delay);
+      await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
+      control.unavailable = false;
+      await checkVisibleFeed(page);
+      await expect(page.locator('#el-vic-summary')).toContainText(counting);
     });
-    await page.goto(console_('event=vic-2026&office=assembly'));
-    await expect(page.locator('#el-vic-summary')).toContainText('Counting updates');
-    await expect(page.locator('#el-vic-summary')).toContainText('districts reporting');
-    await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
-    available = false;
-    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
-    await expect(page.locator('#el-vic-summary')).toContainText('Updates delayed');
-    await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
+  }
+
+  test('the bilingual live maps advance together and ignore an older pointer', async ({ page, context }) => {
+    const chinese = await context.newPage();
+    const control = { stage: 1 };
+    const query = 'event=vic-2026&office=assembly&race=albert-park';
+    const district = (tab, id) => tab.locator(`.el-map-svg [data-feature="${id}"]`);
+    const marks = (tab) => tab.locator('.el-map-svg [data-feature]').evaluateAll((regions) => regions.map(
+      (region) => [region.dataset.feature, region.getAttribute('class'), region.getAttribute('style')],
+    ));
+    const checkRevision = async (tab, index, increment = 0) => {
+      const strip = tab.locator('#el-strip');
+      await expect(strip).toHaveAttribute('data-revision', String(stages[index].revision * 10 + increment));
+      await expect(strip).toHaveAttribute('data-snapshot-id', stages[index].snapshotId);
+    };
+    for (const [tab, language, other] of [[page, 'en', 'zh'], [chinese, 'zh', 'en']]) {
+      await serveOfficial(tab, control);
+      await tab.goto(`/${language}/elections.html?${query}`);
+      await checkRevision(tab, 1);
+      await expect(tab.locator('#afflatus-header [data-header-language]')).toHaveAttribute('href', `/${other}/elections.html?${query}`);
+      await expect(district(tab, 'albert-park')).toHaveClass(/is-leading.*is-selected/);
+      await expect(tab.locator('.el-map-svg [data-feature]')).toHaveCount(88);
+    }
+    expect(await marks(page)).toEqual(await marks(chinese));
+
+    // An unchanged snapshot advances the timestamp without touching map shapes.
+    const svg = page.locator('.el-map-svg');
+    await svg.evaluate((element) => {
+      element.resultMutations = 0;
+      new MutationObserver((records) => { element.resultMutations += records.length; }).observe(element, { subtree: true, attributes: true, childList: true });
+    });
+    control.checkOnly = 1;
+    await checkVisibleFeed(page);
+    await checkRevision(page, 1, 1);
+    expect(await svg.evaluate((element) => element.resultMutations)).toBe(0);
+
+    control.stage = 2;
+    control.checkOnly = 0;
+    for (const tab of [page, chinese]) {
+      await checkVisibleFeed(tab);
+      await checkRevision(tab, 2);
+      await expect(district(tab, 'bass')).toHaveClass(/is-leading/);
+      await expect(tab.locator('#el-drawer-title')).toContainText('Albert Park');
+    }
+    expect(await marks(page)).toEqual(await marks(chinese));
+
+    control.status = 'delayed';
+    control.checkOnly = 1;
+    for (const tab of [page, chinese]) {
+      await checkVisibleFeed(tab);
+      await checkRevision(tab, 2, 1);
+      await expect(district(tab, 'albert-park')).toHaveClass(/is-leading.*is-stale/);
+    }
+    control.stage = 1;
+    for (const tab of [page, chinese]) {
+      const response = tab.waitForResponse('**/elections-feed/vic-2026/latest.json');
+      await checkVisibleFeed(tab);
+      await response;
+      await checkRevision(tab, 2, 1);
+    }
+    expect(await marks(page)).toEqual(await marks(chinese));
+
+    control.stage = 3;
+    control.status = 'ok';
+    control.checkOnly = 0;
+    for (const tab of [page, chinese]) {
+      await checkVisibleFeed(tab);
+      await checkRevision(tab, 3);
+      const selected = district(tab, 'albert-park');
+      await expect(selected).toHaveClass(/is-final.*is-selected/);
+      await expect(selected).not.toHaveClass(/is-stale/);
+      expect(await selected.evaluate((element) => getComputedStyle(element).fill)).not.toContain('url(');
+    }
+    expect(await marks(page)).toEqual(await marks(chinese));
+
+    await page.bringToFront();
+    await page.locator('#afflatus-header [data-header-language]').click();
+    await expect(page).toHaveURL(`/zh/elections.html?${query}`);
+    await checkRevision(page, 3);
+    await expect(district(page, 'albert-park')).toHaveClass(/is-final.*is-selected/);
   });
 
   test('labels synthetic data everywhere it appears', async ({ page, isMobile }) => {

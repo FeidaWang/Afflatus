@@ -2,6 +2,11 @@
 export const ELECTION_FEED_BASE = null; // Generic sources are off.
 export const VEC_PUBLIC_FEED_BASE = '/elections-feed/';
 export const VEC_POLLS_CLOSE = '2026-11-28T07:00:00Z';
+const VEC_ELECTION_NIGHT_END = '2026-11-28T13:00:00Z'; // Midnight in Melbourne.
+
+export function isVecElectionNight(now = Date.now()) {
+  return now >= Date.parse(VEC_POLLS_CLOSE) && now < Date.parse(VEC_ELECTION_NIGHT_END);
+}
 
 export const ELECTION_SOURCES = Object.freeze([
   {

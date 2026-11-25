@@ -1,16 +1,25 @@
 /** Render the calendar without downloading the results workbench. */
 import '../lib/i18n.js';
 import '../lib/nav.js';
+import { isVecElectionNight } from '../config/electionSources.js';
 import { eventById } from '../lib/electionRules.js';
 import { electionLocale, renderElectionHub } from './electionsHub.js';
 
 const paintHub = () => renderElectionHub(new Date(), electionLocale());
-const event = eventById(new URLSearchParams(window.location.search).get('event'));
+const params = new URLSearchParams(window.location.search);
+const calendar = params.get('view') === 'calendar';
+if (!window.location.search && electionLocale() === 'zh' && isVecElectionNight()) {
+  params.set('event', 'vic-2026');
+  params.set('office', 'assembly');
+  window.history.replaceState(null, '', `${window.location.pathname}?${params}${window.location.hash}`);
+  window.dispatchEvent(new Event('afflatus-locationchange'));
+}
+const event = eventById(params.get('event'));
 
 if (event) {
   import('./elections.js').catch(paintHub);
 } else {
-  if (window.location.search) {
+  if (window.location.search && !calendar) {
     window.history.replaceState(null, '', window.location.pathname + window.location.hash);
   }
   paintHub();

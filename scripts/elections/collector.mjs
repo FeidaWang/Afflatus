@@ -16,6 +16,8 @@ export const MAX_ZIP_BYTES = 64 * 1024 * 1024;
 const MAX_XML_BYTES = 256 * 1024 * 1024;
 const TIMEOUT_MS = 30000;
 const MAX_BACKOFF_SECONDS = 3600;
+// Allow for slight differences in generation time between houses in a five-minute batch.
+const HOUSE_DELAY_MS = 4 * 60 * 1000;
 
 const sha256 = (data) => createHash('sha256').update(data).digest('hex');
 
@@ -191,7 +193,7 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     const eventRoot = join(root, source.eventId);
     const statePath = join(eventRoot, 'private', `${source.id}.json`);
     const pointerPath = join(eventRoot, 'latest.json');
-    const sourceState = (await readJson(statePath)) || { feeds: {}, failures: 0, backoffUntil: null };
+    const sourceState = (await readJson(statePath)) || { feeds: {} };
     const pointer = await readJson(pointerPath);
     if (pointer && (pointer.isSynthetic !== Boolean(source.synthetic) || !pointer.sourceIds.includes(source.id))) {
       throw new Error('Use a different store for each VEC collection mode');
@@ -204,7 +206,11 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     const results = [];
     const failures = [];
     const feeds = { ...sourceState.feeds };
+    const retries = { ...sourceState.retries };
+    const attempted = new Set();
     for (const feed of source.feeds) {
+      if (!force && now < Date.parse(retries[feed.key]?.until)) continue;
+      attempted.add(feed.key);
       try {
         const response = await transport(feed, feeds[feed.key]);
         if (response.status === 304) continue;
@@ -250,10 +256,21 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
       }
     }
 
-    const nextFailures = failures.length ? sourceState.failures + 1 : 0;
     const previousSource = pointer?.sources.find((item) => item.sourceId === source.id);
-    const worst = failures.reduce((longest, { error }) => Math.max(longest, backoffSeconds(error, nextFailures, source.pollSeconds)), 0);
-    const backoffUntil = failures.length ? new Date(now + worst * 1000).toISOString() : null;
+    const failedByFeed = new Map(failures.map(({ feed, error }) => [feed.key, error]));
+    for (const key of attempted) {
+      const error = failedByFeed.get(key);
+      if (!error) {
+        delete retries[key];
+        continue;
+      }
+      const count = (retries[key]?.count ?? 0) + 1;
+      retries[key] = { count, kind: error.kind, until: new Date(now + backoffSeconds(error, count, source.pollSeconds) * 1000).toISOString() };
+    }
+    const activeRetries = Object.values(retries);
+    // A throttle can apply to a shared upstream account. Respect its longest retry time.
+    const throttledUntil = activeRetries.filter(({ kind }) => kind === 'rate_limited').map(({ until }) => until).sort().at(-1);
+    const backoffUntil = throttledUntil ?? (activeRetries.length === source.feeds.length ? activeRetries.map(({ until }) => until).sort()[0] : null);
 
     for (const { error, feed } of failures) {
       await writeJsonAtomic(join(eventRoot, 'private', 'quarantine', `${fetchedAt.replace(/[:.]/g, '-')}-${feed.key}.json`), { at: fetchedAt, feed: feed.key, kind: error.kind, message: error.message });
@@ -300,6 +317,12 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
     for (const { feed, parsed, response } of results) {
       feeds[feed.key] = { fileName: response.fileName ?? null, etag: response.etag ?? null, lastModified: response.lastModified ?? null, publishedAt: parsed.publishedAt ?? null };
     }
+    const latestFileAt = Math.max(...Object.values(feeds).map(({ publishedAt }) => Date.parse(publishedAt) || 0));
+    const feedStatuses = source.feeds.map(({ key, office }) => {
+      const publishedAt = feeds[key]?.publishedAt ?? null;
+      const delayed = source.id === 'vec-2026' && publishedAt && latestFileAt - Date.parse(publishedAt) >= HOUSE_DELAY_MS;
+      return { key, office, status: retries[key] ? 'error' : delayed ? 'delayed' : 'ok', publishedAt };
+    });
     if (snapshotId) {
       // Newest source time ever seen: a run that refreshed only the older house must not move it back.
       const sourceUpdatedAt = [...fresh.map((race) => race.provenance.sourceUpdatedAt), previousSource?.sourceUpdatedAt].filter(Boolean).sort().at(-1) ?? null;
@@ -317,21 +340,23 @@ export async function collectOnce({ source, store, transport, now = Date.now(), 
           sourceId: source.id,
           name: source.name,
           url: source.url,
-          status: failures.length ? 'error' : 'ok',
-          feeds: source.feeds.map((feed) => ({ key: feed.key, office: feed.office, status: failures.some((item) => item.feed === feed) ? 'error' : 'ok' })),
+          status: activeRetries.length ? 'error' : 'ok',
+          feeds: feedStatuses,
           lastCheckedAt: fetchedAt,
           // A 304 or a failure moves lastCheckedAt only. The source's own time stays what it was.
           sourceUpdatedAt,
-          lastSuccessAt: failures.length ? previousSource?.lastSuccessAt ?? null : fetchedAt,
-          lastError: failures.length ? { kind: failures[0].error.kind, at: fetchedAt } : null,
+          lastSuccessAt: activeRetries.length ? previousSource?.lastSuccessAt ?? null : fetchedAt,
+          lastError: failures.length ? { kind: failures[0].error.kind, at: fetchedAt } : activeRetries.length ? previousSource?.lastError ?? null : null,
         }],
       });
     }
 
-    await writeJsonAtomic(statePath, { feeds, failures: nextFailures, backoffUntil });
+    await writeJsonAtomic(statePath, { feeds, retries, backoffUntil });
 
-    if (failures.length) return { outcome: published ? 'partial' : 'failed', kinds: failures.map(({ error }) => error.kind), backoffUntil, ...(rejected.length ? { rejected } : {}) };
-    if (rejected.length) return { outcome: published ? 'partial' : 'unchanged', kinds: ['schema_drift'], rejected, snapshotId };
-    return { outcome: published ? 'published' : 'unchanged', snapshotId };
+    const batch = { snapshotId, feeds: feedStatuses };
+    if (failures.length) return { outcome: published ? 'partial' : 'failed', kinds: failures.map(({ error }) => error.kind), backoffUntil, ...(rejected.length ? { rejected } : {}), ...batch };
+    if (rejected.length) return { outcome: published ? 'partial' : 'unchanged', kinds: ['schema_drift'], rejected, ...batch };
+    if (published && activeRetries.length) return { outcome: 'partial', kinds: activeRetries.map(({ kind }) => kind), ...batch };
+    return { outcome: published ? 'published' : 'unchanged', ...batch };
   });
 }

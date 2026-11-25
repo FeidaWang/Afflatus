@@ -140,6 +140,7 @@ export function pointerErrors(pointer) {
   else if (!pointer.history.every((entry) => /^[\w.-]+$/.test(entry.snapshotId) && isTime(entry.publishedAt ?? null))) errors.push('history id');
   for (const source of Array.isArray(pointer.sources) ? pointer.sources : []) {
     if (!['lastCheckedAt', 'lastSuccessAt', 'sourceUpdatedAt'].every((key) => isTime(source[key] ?? null))) errors.push('source time');
+    if (Array.isArray(source.feeds) && source.feeds.some((feed) => !isTime(feed?.publishedAt ?? null))) errors.push('feed time');
   }
   if (!isTime(pointer.publishedAt ?? null)) errors.push('published time');
   return errors;
@@ -314,7 +315,8 @@ export function raceFreshness(race, pointer) {
   if (race.coverage === 'stale' || race.coverage === 'source_error') return 'stale';
   const source = pointer?.sources?.find((item) => item.sourceId === race.provenance.sourceId);
   const feed = source?.feeds?.find((item) => item.office === race.office);
-  return (feed || source)?.status === 'error' ? 'stale' : 'fresh';
+  const status = (feed || source)?.status;
+  return status === 'error' || status === 'delayed' ? 'stale' : 'fresh';
 }
 
 /** Age in seconds, or null when the source gave no time or the time is ahead of the clock. */

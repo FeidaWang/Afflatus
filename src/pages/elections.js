@@ -26,20 +26,24 @@ import {
   areaMembers,
   areaSummary,
   bindFeatures,
+  featureAppearance,
+  featureMark,
   findSeat,
   geographyAreas,
   geographyFor,
   geographyGap,
+  mapHatchPatterns,
   mapSvg,
   mapUrl,
+  primarySeat,
   seatFeature,
   zoomViewBox,
 } from '../lib/electionGeography.js';
 import { parseState, serializeState, withEvent, withGeography, withOffice, withRace } from '../lib/electionState.js';
-import { ELECTION_FEED_BASE, VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, sourceById } from '../config/electionSources.js';
+import { ELECTION_FEED_BASE, VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, isVecElectionNight, sourceById } from '../config/electionSources.js';
 import { CIVIC_BASE, createCivicReader } from '../lib/civicApi.js';
 import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates, snapshotErrors } from '../lib/electionResults.js';
-import { createFeedController } from '../lib/electionFeed.js';
+import { VISIBLE_CHECK_MS, createFeedController } from '../lib/electionFeed.js';
 import { electionLabel, electionLocale, renderElectionHub, setElectionText } from './electionsHub.js';
 
 const $ = (id) => document.getElementById(id);
@@ -175,7 +179,7 @@ function tableStatus(seat) {
 
 const contestCount = (seats) => seats.filter((seat) => seat.onBallot).length;
 const eventHref = (eventId) => serializeState(withEvent(eventId)) || window.location.pathname;
-const hubHref = () => window.location.pathname;
+const hubHref = () => `${window.location.pathname}${isVecElectionNight() ? '?view=calendar' : ''}`;
 
 const setText = (element, en, zh) => setElectionText(element, en, zh, lang);
 
@@ -196,6 +200,8 @@ function defaultStagePrimary(event, office) {
   if (!seatCatalogue(event.id, office.id).length) return 'chamber';
   return geographyFor(event.id, office.id) || state.geographyView === 'schematic' ? 'explore' : 'chamber';
 }
+
+const isAssemblyElectionNight = () => state.event === 'vic-2026' && state.office === 'assembly' && isVecElectionNight();
 
 function renderFeedButton() {
   if (!feed?.state.pointer) return '';
@@ -249,6 +255,7 @@ function renderConsole(now) {
   stagePrimary = defaultStagePrimary(event, office);
 
   const hasExplore = seats.length > 0;
+  const mapOpen = isAssemblyElectionNight();
   $('el-view').innerHTML = `
     ${renderFeedBanner()}
     ${renderTally(event, office, seats, unit, now)}
@@ -258,11 +265,11 @@ function renderConsole(now) {
           ${renderStageSwitcher(event, office)}
           <div class="el-stage-actions">
             <button type="button" class="el-pip-swap" data-stage="explore">⇄ ${T('Expand', '放大')}</button>
-            <button type="button" class="el-explore-toggle" id="el-explore-toggle" aria-expanded="false" aria-controls="el-explore-body">${T('Show', '展开')}</button>
+            <button type="button" class="el-explore-toggle" id="el-explore-toggle" aria-expanded="${mapOpen}" aria-controls="el-explore-body">${mapOpen ? T('Hide', '收起') : T('Show', '展开')}</button>
           </div>
         </div>
         <h2 id="el-explore-title" class="el-sr">${exploreTitle()}</h2>
-        <div class="el-explore-body" id="el-explore-body">${renderExplore(event, office, seats)}</div>
+        <div class="el-explore-body${mapOpen ? ' is-open' : ''}" id="el-explore-body">${renderExplore(event, office, seats)}</div>
       </section>` : ''}
       <section class="el-panel el-chamber" id="el-chamber" aria-labelledby="el-chamber-title">
         <div class="el-chamber-head">
@@ -340,7 +347,7 @@ function syncWorkbenchOrder() {
   const segHost = !PHONE_QUERY?.matches && stagePrimary === 'chamber' ? $('el-chamber-tools') : $('el-explore-head');
   if (seg && segHost && seg.parentElement !== segHost) segHost.prepend(seg);
   const desired = PHONE_QUERY?.matches
-    ? [chamber, dock, explore]
+    ? (isAssemblyElectionNight() ? [explore, chamber, dock] : [chamber, dock, explore])
     : stagePrimary === 'chamber'
       ? [chamber, explore, dock]
       : [explore, chamber, dock];
@@ -358,7 +365,7 @@ function renderVicContext(event, office, now = Date.now()) {
   const source = shown?.pointer?.sources?.[0];
   const assembly = source?.feeds?.find((item) => item.office === office.id);
   const delayed = !isReplay() && !feed?.state.paused && source && ageSeconds(source.lastCheckedAt, now) >= 20 * 60;
-  const failed = !isReplay() && (feed?.state.status === 'error' || assembly?.status === 'error');
+  const failed = !isReplay() && (feed?.state.status === 'error' || assembly?.status === 'error' || assembly?.status === 'delayed');
   const beforeClose = now < Date.parse(VEC_POLLS_CLOSE);
 
   let status;
@@ -556,7 +563,6 @@ function renderMap(host, map) {
   const geography = geographyFor(event.id, office.id);
   const seats = seatCatalogue(event.id, office.id);
   const binding = bindFeatures(map.features, seats);
-  activeMap = { map, binding, geography };
   const areas = geographyAreas(event.id, office.id);
   const hasOff = tallySeats(seats, NO_STATES).off > 0;
   host.innerHTML = `<div class="el-map-tools">
@@ -570,6 +576,9 @@ function renderMap(host, map) {
     <p class="el-map-area" id="el-map-area" role="status"></p>
     ${hasOff ? `<ul class="el-chamber-key"><li><i class="el-neutral"></i>${L(NO_RESULT)}</li><li><i class="el-off"></i>${L(NOT_ON_BALLOT)}</li></ul>` : ''}
     ${renderMissing(binding, seats)}`;
+  const svg = host.querySelector('.el-map-svg');
+  const elements = new Map([...svg.querySelectorAll('[data-feature]')].map((mark) => [mark.dataset.feature, mark]));
+  activeMap = { map, binding, geography, svg, elements, hatches: svg.querySelector(':scope > defs')?.outerHTML ?? '' };
   syncMarks();
   showAreaSummary();
   maybeStartTimelineSweep();
@@ -837,6 +846,7 @@ function renderSourcesInner(event, seats) {
   ].map(([kind, label]) => `<li><i class="el-sw el-sw-${kind}"></i>${L(label)}</li>`).join('');
   const feedSource = feed?.state.pointer?.sources?.[0];
   const source = isReplay() ? null : feedSource;
+  const officeFileTime = source?.feeds?.find((item) => item.office === office.id)?.publishedAt;
   return `<div class="el-sources-head">
       <h2 id="el-sources-title">${T('Sources & status', '来源与状态')}</h2>
       <button type="button" class="el-drawer-close" data-sources-close popovertarget="el-sources" popovertargetaction="hide" aria-label="${T('Close sources', '关闭来源说明')}">×</button>
@@ -853,6 +863,7 @@ function renderSourcesInner(event, seats) {
       <dt>${T('Voting', '投票制度')}</dt><dd>${L(event.votingSystem)}</dd>
       ${isReplay() ? `<dt>${T('Recorded', '记录时间')}</dt><dd>${formatTime(shown.snapshot.publishedAt)}</dd>` : `<dt>${T('Last check', '上次检查')}</dt><dd>${source ? formatTime(source.lastCheckedAt) : DASH}</dd>`}
       ${source ? `<dt>${T('Newest source time', '最新来源时间')}</dt><dd>${formatTime(source.sourceUpdatedAt)}</dd>` : ''}
+      ${officeFileTime ? `<dt>${T('Latest file for this house', '本议院最新文件')}</dt><dd>${formatTime(officeFileTime)}</dd>` : ''}
     </dl>
     <p class="el-note">${L(event.note)}</p>
     <details class="el-legend">
@@ -978,6 +989,8 @@ function renderConsoleStrip(event, office, seats) {
       : hasOfficeData
         ? (shown.snapshot.isSynthetic ? 'synthetic' : 'live')
         : 'preview';
+  updateAttribute(strip, 'data-snapshot-id', shown?.snapshot.snapshotId ?? null);
+  updateAttribute(strip, 'data-revision', shown?.pointer ? String(shown.pointer.revision) : null);
   if (!hasOfficeData) setText(flag, 'Preview', '预览');
   else if (isReplay()) setText(flag, 'Replay · not live', '回放 · 非实时');
   else if (baseline) setText(flag, shown.snapshot.baselineLabel.en, shown.snapshot.baselineLabel.zh);
@@ -1071,6 +1084,7 @@ function syncFeed(event) {
     serverApprovedSource: vec && (!local || window.__VEC_PRIVATE_PREVIEW__ === true) ? 'vec-2026' : undefined,
     fetchJson: direct?.fetchJson || fetchFeedJson,
     isHidden: () => document.hidden,
+    visibleCheckMs: (now) => vec && !local && isVecElectionNight(now) ? 15_000 : VISIBLE_CHECK_MS,
     onChange: feedChanged,
   });
   feed.start();
@@ -1078,11 +1092,51 @@ function syncFeed(event) {
 
 function feedChanged({ snapshot, pointer }) {
   if (!state.event) return;
-  const changed = !isReplay() && (snapshot !== shown?.snapshot || pointer !== shown?.pointer);
-  const arrived = changed && snapshot && snapshot !== shown?.snapshot;
-  if (changed) setShown(snapshot, pointer);
-  refreshResults();
-  if (arrived) $('el-live').textContent = T(`Updated. Recorded ${formatTime(snapshot.publishedAt)}.`, `已更新，记录于 ${formatTime(snapshot.publishedAt)}。`);
+  const arrived = !isReplay() && snapshot && snapshot !== shown?.snapshot;
+  const freshnessChanged = !isReplay() && snapshot?.races.some((race) => (
+    raceFreshness(race, shown?.pointer) !== raceFreshness(race, pointer)
+  ));
+  if (arrived || freshnessChanged) {
+    setShown(snapshot, pointer);
+    refreshResults();
+  } else {
+    if (!isReplay() && shown && shown.snapshot === snapshot) shown.pointer = pointer;
+    refreshFeedStatus();
+  }
+  if (arrived) {
+    $('el-live').textContent = T(`Updated. Recorded ${formatTime(snapshot.publishedAt)}.`, `已更新，记录于 ${formatTime(snapshot.publishedAt)}。`);
+    performance.mark('election-snapshot-applied', {
+      detail: { snapshotId: snapshot.snapshotId, revision: pointer.revision, appliedAt: new Date().toISOString() },
+    });
+  }
+}
+
+function updateAttribute(element, name, value) {
+  if (element.getAttribute(name) === value) return;
+  if (value === null) element.removeAttribute(name);
+  else element.setAttribute(name, value);
+}
+
+function updateMapMarks(parties) {
+  const { svg, map, binding, elements, geography } = activeMap;
+  const states = currentStates();
+  const label = mapLabel(geography.level);
+  const marks = binding.bound.map(({ seats }) => featureMark(seats, states, parties));
+  const hatches = mapHatchPatterns(marks, map.viewBox);
+  if (hatches !== activeMap.hatches) {
+    svg.querySelector(':scope > defs')?.remove();
+    if (hatches) svg.insertAdjacentHTML('afterbegin', hatches);
+    activeMap.hatches = hatches;
+  }
+  binding.bound.forEach(({ feature, seats }, index) => {
+    const el = elements.get(feature.id);
+    const mark = marks[index];
+    const { className, style } = featureAppearance(mark);
+    updateAttribute(el, 'class', `${className}${holdsRace(el) ? ' is-selected' : ''}`);
+    updateAttribute(el, 'aria-label', label(primarySeat(seats), seats));
+    updateAttribute(el, 'style', style);
+    el.toggleAttribute('data-record', mark.status === 'final');
+  });
 }
 
 function repaintMarks(svg, markup) {
@@ -1099,7 +1153,7 @@ function repaintMarks(svg, markup) {
   for (const mark of svg.querySelectorAll('[data-seat]')) {
     const source = byId.get(mark.dataset.feature || mark.dataset.seat);
     if (!source) continue;
-    mark.setAttribute('class', source.getAttribute('class'));
+    mark.setAttribute('class', `${source.getAttribute('class')}${holdsRace(mark) ? ' is-selected' : ''}`);
     mark.setAttribute('aria-label', source.getAttribute('aria-label'));
     mark.toggleAttribute('data-record', source.hasAttribute('data-record'));
     if (source.hasAttribute('style')) mark.setAttribute('style', source.getAttribute('style'));
@@ -1118,6 +1172,28 @@ function keepFocus(update) {
   if (name && !active.isConnected) document.querySelector(name)?.focus({ preventScroll: true });
 }
 
+function refreshSources(event, seats) {
+  const sources = $('el-sources');
+  const legendOpen = sources.querySelector('.el-legend')?.open;
+  sources.innerHTML = renderSourcesInner(event, seats);
+  if (legendOpen) sources.querySelector('.el-legend').open = true;
+}
+
+function refreshFeedStatus() {
+  const event = eventById(state.event);
+  const office = officeById(event, state.office);
+  const seats = seatCatalogue(event.id, office.id);
+  keepFocus(() => {
+    syncFeedButton();
+    renderConsoleStrip(event, office, seats);
+    $('el-feed-banner').outerHTML = renderFeedBanner();
+    const summary = $('el-vic-summary');
+    if (summary) summary.outerHTML = renderVicContext(event, office);
+    refreshSources(event, seats);
+    if (isReplay()) $('el-replay').outerHTML = renderReplay();
+  });
+}
+
 function refreshResults() {
   stopTimelineSweep(true);
   const event = eventById(state.event);
@@ -1130,22 +1206,19 @@ function refreshResults() {
     $('el-feed-banner').outerHTML = renderFeedBanner();
     $('el-tally').outerHTML = renderTally(event, office, seats, unit);
     if (office.geometry) repaintMarks(document.querySelector('.el-chamber-svg'), chamberMarkup(event, office, seats));
-    if (activeMap) repaintMarks(document.querySelector('.el-map-svg'), mapMarkup(event, office, activeMap.geography, activeMap.map, activeMap.binding));
+    if (activeMap) updateMapMarks(partiesOf(event));
     for (const tile of document.querySelectorAll('.el-tile')) {
       const seat = seats.find((item) => item.seatId === tile.dataset.seat);
       if (!seat) continue;
       const { className, style, tag } = tileLook(seat, Boolean(tile.closest('.is-compact')));
-      tile.className = className;
+      tile.className = `${className}${holdsRace(tile) ? ' is-selected' : ''}`;
       if (style) tile.setAttribute('style', style);
       else tile.removeAttribute('style');
       tile.innerHTML = tag;
       tile.setAttribute('aria-label', `${L(seat.label)} · ${seatStatus(seat)}`);
     }
     renderRaces();
-    const sourcesEl = $('el-sources');
-    const legendOpen = sourcesEl.querySelector('.el-legend')?.open;
-    sourcesEl.innerHTML = renderSourcesInner(event, seats);
-    if (legendOpen) sourcesEl.querySelector('.el-legend').open = true;
+    refreshSources(event, seats);
     $('el-replay').outerHTML = renderReplay();
     $('el-foot').textContent = footText();
     const drawer = $('el-drawer');
@@ -1155,7 +1228,7 @@ function refreshResults() {
       drawer.innerHTML = renderDrawer(event, office, seat);
       drawer.scrollTop = scrollTop;
     }
-    syncMarks();
+    showReadout(state.raceId);
     showAreaSummary();
   });
   maybeStartTimelineSweep();
@@ -1235,6 +1308,8 @@ function stopTimelineSweep(snapToFinal = true) {
 
 function maybeStartTimelineSweep() {
   if (!state.event || isReplay()) return;
+  // Official VEC colours are visible immediately, including on first entry.
+  if (state.event === 'vic-2026' && shown?.snapshot.mode === 'live') return;
   const viewKey = `${state.event}/${state.office}`;
   if (animatedViews.has(viewKey) || activeSweep?.viewKey === viewKey) return;
   const event = eventById(state.event);
@@ -1591,7 +1666,7 @@ function render() {
 }
 
 function go(next, { push = true } = {}) {
-  const url = `${window.location.pathname}${serializeState(next)}`;
+  const url = next.event ? `${window.location.pathname}${serializeState(next)}` : hubHref();
   const moved = applyState(next);
   window.history[push ? 'pushState' : 'replaceState'](null, '', url);
   window.dispatchEvent(new Event('afflatus-locationchange'));
@@ -1845,6 +1920,6 @@ window.addEventListener('afflatus-lang', (event) => {
   syncPageTitle();
 });
 
-window.history.replaceState(null, '', `${window.location.pathname}${serializeState(state)}${window.location.hash}`);
+if (state.event) window.history.replaceState(null, '', `${window.location.pathname}${serializeState(state)}${window.location.hash}`);
 render();
 syncPageTitle();

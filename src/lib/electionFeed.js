@@ -12,6 +12,7 @@ const MAX_CHECK_MS = 15 * 60 * 1000;
 
 export function createFeedController({
   base, eventId, hostname, serverApprovedSource, fetchJson, onChange, isHidden = () => false, now = Date.now, schedule = setTimeout, cancel = clearTimeout,
+  visibleCheckMs = () => VISIBLE_CHECK_MS,
 }) {
   const state = { status: 'idle', pointer: null, snapshot: null, paused: false, lastAttemptAt: null, error: null };
   const snapshots = new Map();
@@ -21,7 +22,7 @@ export function createFeedController({
   let checking = false;
 
   const delay = () => {
-    const normal = isHidden() ? HIDDEN_CHECK_MS : VISIBLE_CHECK_MS;
+    const normal = isHidden() ? HIDDEN_CHECK_MS : visibleCheckMs(now());
     return failures ? Math.min(normal * 2 ** failures, MAX_CHECK_MS) : normal;
   };
 

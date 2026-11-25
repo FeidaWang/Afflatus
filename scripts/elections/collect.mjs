@@ -3,7 +3,7 @@
 import { readdir } from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { parseArgs } from 'node:util';
-import { sourceById } from '../../src/config/electionSources.js';
+import { isVecElectionNight, sourceById } from '../../src/config/electionSources.js';
 import { assertPrivateStore, collectOnce, directoryTransport, readVecZip, stampTime } from './collector.mjs';
 import { publishVecLatest } from './publish.mjs';
 import { parseVecFeed, vecFeedHeader } from './vec-adapter.mjs';
@@ -62,6 +62,12 @@ async function main() {
   }
 
   const source = configureSource(values.source, values.inspect, process.env);
+  const pollOverride = values.watch && values.azure && source.id === 'vec-2026' ? process.env.VEC_AZURE_POLL_SECONDS : undefined;
+  const nightPoll = pollOverride === undefined ? source.pollSeconds : Number(pollOverride);
+  if (!Number.isInteger(nightPoll) || nightPoll < 1 || nightPoll > 2_147_483) {
+    throw new Error('VEC_AZURE_POLL_SECONDS must be a positive whole number of seconds supported by the timer');
+  }
+  const pollSeconds = (now) => isVecElectionNight(now) ? nightPoll : source.pollSeconds;
   const transport = () => values.azure
     ? vecAzureTransport(process.env.VEC_AZURE_SAS_URL, { prefix: process.env.VEC_BLOB_PREFIX })
     : directoryTransport(values.dir);
@@ -118,20 +124,24 @@ async function main() {
     return;
   }
 
-  const run = async () => {
-    if (source.id === 'vec-2026' && Date.now() < Date.parse(source.liveNotBefore)) return { outcome: 'waiting_for_polls_to_close' };
-    const result = await collectOnce({ source, store, transport: transport(), force: values.force });
-    if (values.publish && result.outcome !== 'locked') result.publication = await publishVecLatest(store);
+  const run = async (now) => {
+    if (source.id === 'vec-2026' && now < Date.parse(source.liveNotBefore)) return { outcome: 'waiting_for_polls_to_close' };
+    const result = await collectOnce({ source: { ...source, pollSeconds: pollSeconds(now) }, store, transport: transport(), now, force: values.force });
+    if (values.publish && result.outcome !== 'locked') {
+      result.publication = await publishVecLatest(store);
+      if (result.publication === 'published') result.publishedAt = new Date().toISOString();
+    }
     return result;
   };
 
-  const tick = async () => {
+  const tick = async (started) => {
+    const checkedAt = new Date(started).toISOString();
     try {
-      const result = await run();
-      console.log(JSON.stringify(result));
+      const result = await run(started);
+      console.log(JSON.stringify({ ...result, checkedAt, finishedAt: new Date().toISOString() }));
       if (!values.watch && result.outcome === 'failed') process.exitCode = 1;
     } catch (error) {
-      console.error(JSON.stringify({ outcome: 'failed', kind: error.kind ?? error.code ?? 'operator_error' }));
+      console.error(JSON.stringify({ outcome: 'failed', kind: error.kind ?? error.code ?? 'operator_error', checkedAt }));
       if (!values.watch) throw error;
     }
   };
@@ -139,8 +149,12 @@ async function main() {
   // Runs are serial. The collector also honours server retry-after and persistent backoff.
   do {
     const started = Date.now();
-    await tick();
-    if (values.watch) await sleep(Math.max(1000, source.pollSeconds * 1000 - (Date.now() - started)));
+    await tick(started);
+    if (values.watch) {
+      const close = source.id === 'vec-2026' ? Date.parse(source.liveNotBefore) : null;
+      const next = Math.min(started + pollSeconds(started) * 1000, close > started ? close : Infinity);
+      await sleep(Math.max(0, next - Date.now()));
+    }
   } while (values.watch);
 }
 

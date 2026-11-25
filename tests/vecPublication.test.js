@@ -113,11 +113,16 @@ it('separates test identity, election-day collection, and explicitly enabled pub
   await request('latest.json');
   expect(res.status).toHaveBeenLastCalledWith(200);
   expect(res.json).toHaveBeenLastCalledWith(expect.objectContaining({ snapshotId: collected.snapshotId }));
+  expect(res.setHeader).toHaveBeenLastCalledWith('Vercel-CDN-Cache-Control', 'public, s-maxage=10');
   await request(`snapshots/${collected.snapshotId}.json`);
   expect(res.status).toHaveBeenLastCalledWith(200);
   expect(res.json).toHaveBeenLastCalledWith(expect.objectContaining({
     races: [expect.objectContaining({ totals: expect.objectContaining({ formal: 15 }) })],
   }));
+  expect(res.setHeader).toHaveBeenLastCalledWith('Vercel-CDN-Cache-Control', 'public, s-maxage=120');
+  vi.setSystemTime(new Date('2026-11-28T13:00:00Z'));
+  await request('latest.json');
+  expect(res.setHeader).toHaveBeenLastCalledWith('Vercel-CDN-Cache-Control', 'public, s-maxage=20');
   await request('private/vec-2026.json');
   expect(res.status).toHaveBeenLastCalledWith(404);
 });
