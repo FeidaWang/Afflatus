@@ -397,22 +397,33 @@ function renderVicContext(event, office, now = Date.now()) {
   </div>`;
 }
 
+// One number per party: seats won plus seats ahead. The split shows only once both kinds exist.
+function tallySplitText({ decided, leading }) {
+  return decided && leading ? T(`${decided} won · ${leading} ahead`, `${decided} 已定 · ${leading} 领先`) : '';
+}
+
+function tallyNumber(partyId, count) {
+  const split = tallySplitText(count);
+  return `<span class="el-tally-num" data-party-num="${partyId}"><b>${count.decided + count.leading}</b><small${split ? '' : ' hidden'}>${split}</small></span>`;
+}
+
 function renderTally(event, office, seats, unit, now = Date.now()) {
   const majorityAt = (office.majority / office.seats) * 100;
   const parties = partiesOf(event);
   const hasOfficeData = hasShownForOffice(office.id);
   const states = hasOfficeData ? currentStates() : NO_STATES;
   const counts = hasOfficeData ? partyTally(seats, states, parties) : null;
-  const keys = parties.map((party) => {
-    const count = counts?.[party.id];
-    return `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${count ? count.decided + count.leading : DASH}</b>${count?.leading ? `<small>${count.leading} ${T('leading', '领先')} · ${count.decided} ${T('decided', '已定')}</small>` : ''}</li>`;
-  }).join('');
+  const active = counts ? parties.filter((party) => counts[party.id].decided || counts[party.id].leading) : [];
+  const anyLeading = active.some((party) => counts[party.id].leading);
+  const anyDecided = active.some((party) => counts[party.id].decided);
+  const keys = active.length
+    ? `${anyLeading ? `<li class="el-tally-legend"><i class="is-ahead"></i>${T('Ahead on current count', '按当前计票领先')}</li>` : ''}${anyDecided ? `<li class="el-tally-legend"><i class="is-won"></i>${T('Decided', '已定')}</li>` : ''}`
+    : parties.map((party) => `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${counts ? counts[party.id].decided : DASH}</b></li>`).join('');
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" data-party="${party.id}" data-kind="${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
   const marker = (withLabel) => (office.heldSeatsUnknown ? '' : `<span class="el-tally-mark" style="left:${majorityAt}%">${withLabel ? `<span>${L(office.majorityLabel)}</span>` : ''}</span>`);
-  const active = counts ? parties.filter((party) => counts[party.id].decided || counts[party.id].leading) : [];
   const bars = active.length
-    ? `<div class="el-tally-rows">${active.map((party, index) => `<div class="el-tally-row" data-party-row="${party.id}"><span class="el-tally-name">${renderPartyBadge(event.family, party.id, 'sm')}<span>${L(party)}</span></span><div class="el-tally-bar">${segment(party, counts[party.id].decided, 'decided')}${segment(party, counts[party.id].leading, 'leading')}${marker(index === 0)}</div></div>`).join('')}</div>`
+    ? `<div class="el-tally-rows">${active.map((party, index) => `<div class="el-tally-row" data-party-row="${party.id}"><span class="el-tally-name">${renderPartyBadge(event.family, party.id, 'sm')}<span>${L(party)}</span></span><div class="el-tally-bar">${segment(party, counts[party.id].decided, 'decided')}${segment(party, counts[party.id].leading, 'leading')}${marker(index === 0)}</div>${tallyNumber(party.id, counts[party.id])}</div>`).join('')}</div>`
     : `<div class="el-tally-bar">${marker(true)}</div>`;
   const declaredRegion = hasOfficeData ? seats.filter((seat) => {
     const race = currentRaces().get(seat.seatId);
@@ -1389,7 +1400,7 @@ function maybeStartTimelineSweep() {
 
   const finalCounts = partyTally(seats, states, parties);
   const running = Object.fromEntries(parties.map((p) => [p.id, { decided: 0, leading: 0 }]));
-  const keyEls = new Map(parties.map((p) => [p.id, document.querySelector(`#el-tally .el-tally-keys li[data-party="${p.id}"]`)]));
+  const numEls = new Map(parties.map((p) => [p.id, document.querySelector(`#el-tally [data-party-num="${p.id}"]`)]));
   const segEls = new Map();
   for (const p of parties) {
     for (const kind of ['decided', 'leading']) {
@@ -1409,14 +1420,14 @@ function maybeStartTimelineSweep() {
 
   const syncTallyFrame = (countsObj, remaining) => {
     for (const p of parties) {
-      const li = keyEls.get(p.id);
+      const num = numEls.get(p.id);
       const c = countsObj[p.id];
-      const bEl = li?.querySelector('b');
-      if (bEl) bEl.textContent = String(c.decided);
-      const smEl = li?.querySelector('small');
+      const bEl = num?.querySelector('b');
+      if (bEl) bEl.textContent = String(c.decided + c.leading);
+      const smEl = num?.querySelector('small');
       if (smEl) {
-        smEl.hidden = c.leading === 0;
-        if (c.leading > 0) smEl.textContent = `+${c.leading} ${T('leading', '领先')}`;
+        smEl.textContent = tallySplitText(c);
+        smEl.hidden = !smEl.textContent;
       }
       const decSeg = segEls.get(`${p.id}:decided`);
       if (decSeg) decSeg.style.width = `${(c.decided / office.seats) * 100}%`;
@@ -1494,6 +1505,11 @@ function exitReplay() {
 
 /* ---------- Selection ---------- */
 
+function candidateTint(candidate, event) {
+  const listed = partiesOf(event).find((party) => party.id === displayPartyId(candidate) && party.id !== 'other');
+  return listed?.color || (event.family === 'au' && !candidate.independent ? auMinorParty(candidate.party)?.color : null);
+}
+
 function renderCandidates(race, event) {
   const byBallot = race.candidates.every((candidate) => candidate.ballotPosition !== null)
     ? [...race.candidates].sort((a, b) => a.ballotPosition - b.ballotPosition)
@@ -1507,10 +1523,11 @@ function renderCandidates(race, event) {
     const share = pct !== null ? `${pct.toFixed(1)}%` : DASH;
     const won = race.decision.candidateIds?.includes(candidate.candidateId);
     const listed = parties.find((party) => party.id === displayPartyId(candidate) && party.id !== 'other');
-    const tint = listed?.color || (event.family === 'au' && !candidate.independent ? auMinorParty(candidate.party)?.color : null);
+    const tint = candidateTint(candidate, event);
     const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%${tint ? `;--party:${tint}` : ''}"` : '';
     // Liberal and National candidates can meet in one seat, so the Coalition keeps its own party names.
-    const shortLabel = listed && (listed.id === 'coalition' ? esc(candidate.party?.split(' - ')[0]) : L(listed));
+    const coalitionPartner = /national/i.test(candidate.party || '') ? T('Nationals', '国家党') : T('Liberal', '自由党');
+    const shortLabel = listed && (listed.id === 'coalition' ? coalitionPartner : L(listed));
     const partyLabel = shortLabel || esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);
     const badge = renderCandidatePartyBadge(event.family, candidate, 'sm');
     return `<tr${won ? ' class="is-winner"' : ''}${barStyle}><td>${esc(candidate.name) || DASH}${won ? ` <b>${esc(race.decision.status === 'certified' ? T('Elected', '当选') : T('Called', '已判定'))}</b>` : ''}</td><td><span class="el-cand-party">${badge}<span${listed && candidate.party ? ` title="${esc(candidate.party)}"` : ''}>${partyLabel}</span></span></td><td class="el-num">${candidate.votes === null ? DASH : candidate.votes.toLocaleString('en-AU')}</td><td class="el-num">${share}</td></tr>`;
@@ -1533,11 +1550,15 @@ function renderTwoCandidate(race, event) {
     const badge = candidate ? renderCandidatePartyBadge(event.family, candidate, 'sm') : '';
     return `<tr><td><span class="el-cand-party">${badge}<span>${esc(candidate?.name) || DASH}</span></span></td><td class="el-num">${item.votes === null ? DASH : esc(item.votes.toLocaleString('en-AU'))}</td><td class="el-num">${sum && item.votes !== null ? `${((item.votes / sum) * 100).toFixed(1)}%` : DASH}</td></tr>`;
   }).join('');
+  const split = sum ? `<div class="el-tcp-bar" aria-hidden="true">${two.candidates.map((item) => {
+    const candidate = race.candidates.find((entry) => entry.candidateId === item.candidateId);
+    return `<i style="flex-grow:${item.votes};background:${candidateTint(candidate, event) || 'var(--el-rule-strong)'}"></i>`;
+  }).join('')}</div>` : '';
   return `<table class="el-cands el-cands-two">
       <caption>${T('Two-candidate count · indicative', '两候选人计票 · 仅供参考')}</caption>
       <thead><tr><th scope="col">${T('Candidate', '候选人')}</th><th scope="col" class="el-num">${T('Votes', '票数')}</th><th scope="col" class="el-num">%</th></tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table>${split}`;
 }
 
 function decisionText(event, race) {
