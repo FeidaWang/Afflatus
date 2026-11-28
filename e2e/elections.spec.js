@@ -1050,6 +1050,10 @@ test.describe('Elections feed', () => {
     await open(page);
     await toStage(page, control, 2);
     await expect(page.locator('.el-changes')).toContainText('Correction');
+    const correction = page.locator('#el-change-ticker [data-change="correction"]').filter({ hasText: 'Albert Park' });
+    await expect(correction).toContainText('Net -1 votes');
+    await expect(page.locator('#el-change-ticker time').first()).toHaveAttribute('datetime', /T/);
+    await expect(page.locator('#el-change-ticker button')).toHaveCount(0);
     await row(page, 'albert-park').locator('button').click();
     await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two)')).toContainText('38');
   });
@@ -1099,14 +1103,16 @@ test.describe('Elections feed', () => {
     control.stage = 2;
     await page.locator('#el-feed-toggle').focus();
     await page.evaluate(() => window.scrollTo(0, 300));
+    const workbenchTop = () => page.locator('#el-workbench').evaluate((element) => element.getBoundingClientRect().top);
+    const anchor = await workbenchTop();
     await page.keyboard.press('Enter');
     await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two)')).toContainText('38');
     await expect(page.locator('#el-feed-toggle')).toBeFocused();
     await expect(page.locator('#el-drawer')).toBeVisible();
     await expect(page.locator('#el-drawer-title')).toHaveText('Albert Park');
     await expect(page.locator('.el-chamber-svg .is-selected')).toHaveAttribute('data-seat', 'albert-park');
-    // A new party bar can grow the tally; the browser then anchors the scroll so the content does not jump.
-    expect(Math.abs(await page.evaluate(() => window.scrollY) - 300)).toBeLessThan(40);
+    // The tally and messages can change height while the workbench stays within one line of its position.
+    await expect.poll(async () => Math.abs(await workbenchTop() - anchor)).toBeLessThan(18);
     expect(page.url()).toBe(url);
   });
 

@@ -93,6 +93,11 @@ let replayIndex = null;
 const REPLAY_STEP_MS = 1400;
 let replayPlaying = false;
 let replayTimer = null;
+const TICKER_STEP_MS = 4200;
+let tickerTimer = null;
+const tickerTime = new Intl.DateTimeFormat('en-AU', {
+  timeZone: 'Australia/Melbourne', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+});
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const currentStates = () => shown?.states || NO_STATES;
@@ -258,6 +263,7 @@ function renderConsole(now) {
   const mapOpen = isAssemblyElectionNight();
   $('el-view').innerHTML = `
     ${renderFeedBanner()}
+    ${renderChangeTicker()}
     ${renderTally(event, office, seats, unit, now)}
     ${renderReplay()}
     <div class="el-workbench${hasExplore ? '' : ' is-single-stage'}" id="el-workbench" data-primary="${stagePrimary}">
@@ -300,6 +306,7 @@ function renderConsole(now) {
     <p class="el-sr" id="el-live" role="status"></p>`;
 
   syncWorkbenchOrder();
+  syncChangeTicker();
   renderRaces();
   syncSelection();
   showMap();
@@ -999,14 +1006,14 @@ function footText() {
   return T('Seat numbers, dates and electorate names checked against official sources Nov 2026.', '席位数、日期和选区名称已于 2026 年 11 月对照官方来源核对。');
 }
 
-// Surfaces live feed alerts and snapshot corrections inline; completely hidden in quiet preview.
+// Feed alerts stay separate from the Victorian change list and its scroll position.
 function renderFeedBanner() {
   const note = feed?.state.pointer
     ? feed.state.status === 'error'
       ? T(`Could not refresh at ${formatTime(feed.state.lastAttemptAt)}. This is the last good data.`, `${formatTime(feed.state.lastAttemptAt)} 刷新失败，这是上次的有效数据。`)
       : feed.state.paused ? T(`Paused. Checked ${formatTime(feed.state.lastAttemptAt)}.`, `已暂停，上次检查 ${formatTime(feed.state.lastAttemptAt)}。`) : ''
     : '';
-  const changes = shown?.snapshot.changes || [];
+  const changes = state.event === 'vic-2026' ? [] : shown?.snapshot.changes || [];
   if (!note && !changes.length) return '<div class="el-feed-banner" id="el-feed-banner" hidden></div>';
   const raceName = (raceId) => shown?.snapshot.races.find((race) => race.raceId === raceId)?.contestName || raceId;
   const delta = (change) => (change.delta ? ` ${change.delta > 0 ? '+' : ''}${esc(change.delta.toLocaleString('en-AU'))}` : '');
@@ -1014,6 +1021,73 @@ function renderFeedBanner() {
     ${note ? `<p class="el-feed-note" id="el-feed-note">${note}</p>` : ''}
     ${changes.length ? `<ul class="el-changes">${changes.slice(0, 5).map((change) => `<li><b>${L(CHANGE_WORDS[change.type])}</b>${delta(change)} · ${esc(raceName(change.raceId))}</li>`).join('')}${changes.length > 5 ? `<li>+${changes.length - 5}</li>` : ''}</ul>` : ''}
   </div>`;
+}
+
+function tickerChangeDetail(change, race) {
+  if (change.type === 'new_batch' && change.delta === null) {
+    const votes = race.totals.formal?.toLocaleString('en-AU');
+    return votes ? T(`First report · ${votes} votes`, `首次报票 · ${votes} 票`) : T('First report', '首次报票');
+  }
+  if (Number.isInteger(change.delta)) {
+    const count = change.delta.toLocaleString('en-AU', { signDisplay: 'exceptZero' });
+    return change.type === 'correction' ? T(`Net ${count} votes`, `净变化 ${count} 票`) : T(`${count} votes`, `${count} 票`);
+  }
+  return change.authority || '';
+}
+
+function renderTickerTime(at) {
+  if (!at || !Number.isFinite(Date.parse(at))) return '';
+  return `<time datetime="${esc(at)}" title="${esc(formatTime(at))}">${tickerTime.format(new Date(at))}</time>`;
+}
+
+function renderChangeTicker() {
+  const snapshot = shown?.snapshot;
+  const token = `${snapshot?.snapshotId ?? ''}/${state.office}/${isReplay()}`;
+  const races = new Map(officeRacesOf().map((race) => [race.raceId, race]));
+  const changes = state.event === 'vic-2026' ? (snapshot?.changes ?? []).filter((change) => CHANGE_WORDS[change.type] && races.has(change.raceId)) : [];
+  if (!changes.length) return `<section id="el-change-ticker" data-batch="${esc(token)}" hidden></section>`;
+  const batchAt = changes[0].at || snapshot.sourcePublishedAt || snapshot.publishedAt;
+  const items = changes.map((change) => {
+    const race = races.get(change.raceId);
+    const type = change.type === 'new_batch' ? '' : L(CHANGE_WORDS[change.type]);
+    const detail = tickerChangeDetail(change, race);
+    const name = (race.contestName || '').replace(/ (?:District|Region)$/, '') || race.raceId;
+    return `<li data-change="${change.type}">${change.at && change.at !== batchAt ? renderTickerTime(change.at) : ''}<b>${esc(name)}</b>${type ? `<span class="el-change-type">${type}</span>` : ''}${detail ? `<strong class="el-change-value">${esc(detail)}</strong>` : ''}</li>`;
+  }).join('');
+  return `<section class="el-panel el-change-ticker" id="el-change-ticker" data-batch="${esc(token)}" aria-label="${isReplay() ? T('Recorded count changes', '回放批次变动') : T('Count updates', '开票变动')}">
+    ${renderTickerTime(batchAt)}
+    <ul class="el-changes el-change-track" id="el-change-track" tabindex="0" aria-label="${T('Scroll through count updates', '横向浏览票数变动')}">${items}</ul>
+  </section>`;
+}
+
+function stepChangeTicker(track) {
+  if (!track?.firstElementChild) return;
+  const limit = track.scrollWidth - track.clientWidth;
+  if (limit < 2) return;
+  const first = track.firstElementChild.offsetLeft;
+  const offsets = [...track.children].map((item) => Math.min(item.offsetLeft - first, limit));
+  const target = offsets.find((left) => left > track.scrollLeft + 2);
+  track.scrollTo({ left: target ?? 0, behavior: target === undefined ? 'instant' : 'auto' });
+}
+
+function scheduleChangeTicker() {
+  clearTimeout(tickerTimer);
+  const track = $('el-change-track');
+  if (!track || isReplay() || REDUCED_MOTION_QUERY?.matches || document.hidden || track.scrollWidth - track.clientWidth < 2) return;
+  tickerTimer = setTimeout(() => {
+    const { top, bottom } = track.getBoundingClientRect();
+    if (bottom > 0 && top < innerHeight && !track.matches(':hover, :focus-within')) stepChangeTicker(track);
+    scheduleChangeTicker();
+  }, TICKER_STEP_MS);
+}
+
+const tickerResize = typeof ResizeObserver === 'function' ? new ResizeObserver(scheduleChangeTicker) : null;
+
+function syncChangeTicker() {
+  tickerResize?.disconnect();
+  const track = $('el-change-track');
+  if (track) tickerResize?.observe(track);
+  scheduleChangeTicker();
 }
 
 const replayHistory = () => feed?.state.pointer?.history || [];
@@ -1224,7 +1298,7 @@ function repaintMarks(svg, markup) {
 
 function keepFocus(update) {
   const active = document.activeElement;
-  const host = active?.closest?.('#el-races-table, #el-sources, #el-drawer, #el-replay, #el-tally, #el-hero-controls, #el-strip');
+  const host = active?.closest?.('#el-races-table, #el-sources, #el-drawer, #el-replay, #el-tally, #el-hero-controls, #el-strip, #el-change-ticker');
   const attribute = active && ['data-seat', 'data-sort', 'data-replay', 'data-close', 'data-expand', 'data-sources-close'].find((name) => active.hasAttribute?.(name));
   const name = !host || !active ? null
     : active.id ? `#${active.id}`
@@ -1265,6 +1339,11 @@ function refreshResults() {
     syncFeedButton();
     renderConsoleStrip(event, office, seats);
     $('el-feed-banner').outerHTML = renderFeedBanner();
+    const ticker = $('el-change-ticker');
+    if (ticker.dataset.batch !== `${shown?.snapshot.snapshotId ?? ''}/${state.office}/${isReplay()}`) {
+      ticker.outerHTML = renderChangeTicker();
+      syncChangeTicker();
+    }
     const primaryOpen = $('el-tally').querySelector('.el-vic-primary')?.open;
     $('el-tally').outerHTML = renderTally(event, office, seats, unit, Date.now(), primaryOpen);
     if (office.geometry) repaintMarks(document.querySelector('.el-chamber-svg'), chamberMarkup(event, office, seats));
@@ -1795,6 +1874,7 @@ function render() {
   } else {
     syncFeed(null);
     renderElectionHub(now, lang);
+    syncChangeTicker();
   }
 }
 
@@ -2051,7 +2131,12 @@ window.addEventListener('popstate', () => {
   if (hadRace && !state.raceId) trigger?.focus({ preventScroll: true });
 });
 
-document.addEventListener('visibilitychange', () => feed?.visibilityChanged());
+document.addEventListener('visibilitychange', () => {
+  feed?.visibilityChanged();
+  scheduleChangeTicker();
+});
+
+REDUCED_MOTION_QUERY?.addEventListener?.('change', scheduleChangeTicker);
 
 window.addEventListener('afflatus-lang', (event) => {
   stopTimelineSweep(false);

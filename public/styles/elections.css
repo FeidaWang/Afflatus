@@ -186,6 +186,16 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-feed-note{font-weight:600}
 .el-changes{display:flex;flex-wrap:wrap;gap:6px 14px}
 .el-changes li{display:inline-flex;align-items:center;gap:4px}
+.el-change-ticker{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;min-inline-size:0;margin-block-end:12px;padding:4px 11px;color:var(--el-ink);font:12px/1.35 var(--el-sans);white-space:nowrap}
+.el-change-ticker[hidden]{display:none}
+.el-change-ticker time{color:var(--el-muted);font:600 11px/1.35 var(--el-mono);font-variant-numeric:tabular-nums}
+.el-change-track{position:relative;flex-wrap:nowrap;gap:0;min-inline-size:0;overflow-x:auto;margin:0;padding:3px 0;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--el-rule-strong) transparent}
+.el-change-track li{flex:none;gap:5px;padding-inline:9px;border-inline-start:1px solid var(--el-rule);scroll-snap-align:start}
+.el-change-track:focus-visible{outline:2px solid var(--el-focus);outline-offset:-2px}
+.el-change-type{font-size:11px;color:var(--el-muted)}
+.el-change-track li[data-change=correction] .el-change-type{padding-inline:3px;border-radius:2px;background:var(--el-warn-bg);color:var(--el-warn-ink)}
+.el-change-value{font:700 11px/1.35 var(--el-mono);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){.el-change-track{scroll-behavior:smooth}}
 
 /* ---------- Scoreboard (.el-tally) ---------- */
 .el-tally{position:relative;overflow:clip;display:flex;flex-direction:column;gap:10px;margin-block-end:14px;padding:14px 18px}
