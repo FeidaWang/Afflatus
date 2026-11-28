@@ -60,16 +60,32 @@ const AU_MINOR_PARTIES = Object.freeze([
   { match: /^family first\b/i, color: '#5A58A6', icon: PARTY_ICONS['au-familyfirst'] },
   { match: /^animal justice party\b/i, color: '#5B2C86', icon: PARTY_ICONS['au-ajp'] },
   { match: /^the west party\b/i, color: '#499567', icon: PARTY_ICONS['au-west'] },
-  { match: /^libertarian party\b/i, color: '#FEC327', icon: PARTY_ICONS['au-libertarian'] },
+  { match: /^libertarian\b/i, color: '#FEC327', icon: PARTY_ICONS['au-libertarian'] },
   { match: /^legalise cannabis\b/i, color: '#6FC442', icon: PARTY_ICONS['au-cannabis'] },
   { match: /^socialist alliance\b/i, color: '#990000', icon: PARTY_ICONS['au-socialistalliance'] },
-  { match: /^democratic labour party\b/i, color: '#FFFF34' },
+  { match: /^(democratic labour party|labour dlp)\b/i, color: '#FFFF34' },
   { match: /^shooters, fishers and farmers\b/i, color: '#E52B50', icon: PARTY_ICONS['au-sff'] },
   { match: /^australian democrats\b/i, color: '#FFCD00', icon: PARTY_ICONS['au-democrats'] },
-  { match: /^australian citizens party\b/i, color: '#656600', icon: PARTY_ICONS['au-citizens'] },
+  { match: /^(australian )?citizens party\b/i, color: '#656600', icon: PARTY_ICONS['au-citizens'] },
   { match: /^i'm voting to avoid the fine\b/i, color: '#BDA08E', icon: PARTY_ICONS['au-avoidfine'] },
-  { match: /^the republican make australia great again\b/i, color: '#DB222A', icon: PARTY_ICONS['au-maga'] },
+  { match: /^the republican\b/i, color: '#DB222A', icon: PARTY_ICONS['au-maga'] },
+  { match: /^(affordable housing now – )?sustainable australia\b/i, color: '#008751' },
 ]);
+// Upper-house groups arrive with a ticket name and no party, so the ticket name stands in for one.
+// Lettered groups with no ticket name ("Group J") have no party.
+const GROUP_PARTY_RULES = [
+  [/^australian labor party\b/i, 'labor'],
+  [/^(the )?(australian )?greens\b/i, 'greens'],
+  [/^liberal\b(?!\s*democrat)/i, 'coalition'],
+  [/^(the )?nationals\b|^national party\b/i, 'coalition'],
+];
+export function groupAsCandidate(candidate) {
+  if (!String(candidate?.candidateId || '').startsWith('vec-group-') || candidate.party || candidate.partyId) return candidate;
+  const name = String(candidate.name || '').trim();
+  if (!name || /^group [a-z]{1,2}$/i.test(name)) return candidate;
+  return { ...candidate, party: name, partyId: GROUP_PARTY_RULES.find(([pattern]) => pattern.test(name))?.[1] || 'other', isGroup: true };
+}
+
 export const auMinorParty = (rawPartyName) => AU_MINOR_PARTIES.find((party) => party.match.test(String(rawPartyName || '').trim())) || null;
 
 /**

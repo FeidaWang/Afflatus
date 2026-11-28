@@ -3,6 +3,9 @@ import {
   ELECTION_EVENTS,
   PARTIES,
   displayPartyId,
+  groupAsCandidate,
+  partyIconsFor,
+  PARTY_ICONS,
   daysUntil,
   eventById,
   eventPhase,
@@ -50,6 +53,16 @@ describe('election rule packs', () => {
     expect(color('au', 'teal')).toBe('#0F8FA6');
     expect(color('au', 'other')).toBe('#7B4FB0');
     expect(color('au', 'onenation')).toBe('#F36C21');
+    const group = (name) => groupAsCandidate({ candidateId: 'vec-group-1', name, party: null, partyId: null, independent: false });
+    expect(group('Australian Labor Party').partyId).toBe('labor');
+    expect(group('The Greens').partyId).toBe('greens');
+    expect(group('Liberal / The Nationals').partyId).toBe('coalition');
+    expect(group('Libertarian (formerly Liberal Democrats)').partyId).toBe('other');
+    expect(displayPartyId(group('One Nation Victoria'))).toBe('onenation');
+    expect(partyIconsFor('au', 'coalition', group('Liberal / The Nationals').party)).toEqual([PARTY_ICONS['au-liberal'], PARTY_ICONS['au-nationals']]);
+    expect(partyIconsFor('au', 'other', group('Labour DLP').party)).toEqual([{ dot: '#FFFF34' }]);
+    expect(group('Group J').partyId).toBe(null);
+    expect(groupAsCandidate({ candidateId: 'vec-1', name: 'SMITH, Jo', party: null, partyId: 'teal', independent: true }).partyId).toBe('teal');
     expect(displayPartyId({ partyId: 'other', party: 'One Nation Victoria' })).toBe('onenation');
     expect(displayPartyId({ partyId: 'other', party: 'Victorian Socialists' })).toBe('other');
     expect(displayPartyId({ partyId: 'labor', party: 'Australian Labor Party - Victorian Branch' })).toBe('labor');

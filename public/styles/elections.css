@@ -520,14 +520,15 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-sw-unavailable{box-shadow:inset 0 0 0 1.5px var(--el-muted)}
 
 /* ---------- Conditional Replay Bar ---------- */
-.el-replay{display:flex;flex-wrap:wrap;align-items:safe center;gap:8px 20px;margin-block-start:14px;padding:12px 16px}
+.el-replay{display:flex;flex-wrap:wrap;align-items:safe center;gap:4px 16px;margin-block:-4px 14px;padding:10px 16px}
 .el-replay[hidden]{display:none}
 .el-replay h2{font-size:15px;font-weight:700}
 .elections-body .el-replay h2 button{text-decoration:underline;text-underline-offset:4px}
 .el-replay.is-active{background:var(--el-ink);color:var(--el-bg);border-color:var(--el-ink)}
 .el-replay.is-active .el-note{flex-basis:100%;color:#D6D3CA}
 .el-replay-tools{display:flex;flex-wrap:wrap;align-items:safe center;gap:8px 12px;flex:1;min-inline-size:0}
-.el-replay-tools input{flex:1;min-inline-size:120px;min-block-size:32px;accent-color:var(--el-amber)}
+.el-replay-tools input{flex:1 1 100%;min-inline-size:120px;min-block-size:32px;accent-color:var(--el-amber)}
+.el-replay.is-active h2{flex-basis:100%}
 .elections-body .el-replay.is-active .el-btn{background:var(--el-bg);color:var(--el-ink)}
 .elections-body .el-replay.is-active .el-btn-o{background:transparent;color:var(--el-bg);border-color:#A8A69E}
 .elections-body .el-replay.is-active .el-btn-o:disabled{color:#787B76;border-color:#575B5E;cursor:not-allowed}

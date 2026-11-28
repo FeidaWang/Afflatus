@@ -13,6 +13,7 @@ import {
   auMinorParty,
   daysUntil,
   displayPartyId,
+  groupAsCandidate,
   eventById,
   eventPhase,
   nextEvent,
@@ -88,6 +89,10 @@ let feedEventId = null;
 let vecStartTimer;
 let shown = null;
 let replayIndex = null;
+// Replay plays forward one recorded snapshot at a time, so the map fills as the count did.
+const REPLAY_STEP_MS = 1400;
+let replayPlaying = false;
+let replayTimer = null;
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const currentStates = () => shown?.states || NO_STATES;
@@ -261,6 +266,7 @@ function renderConsole(now) {
   $('el-view').innerHTML = `
     ${renderFeedBanner()}
     ${renderTally(event, office, seats, unit, now)}
+    ${renderReplay()}
     <div class="el-workbench${hasExplore ? '' : ' is-single-stage'}" id="el-workbench" data-primary="${stagePrimary}">
       ${hasExplore ? `<section class="el-panel el-explore" id="el-explore" aria-labelledby="el-explore-title">
         <div class="el-explore-head" id="el-explore-head">
@@ -297,7 +303,6 @@ function renderConsole(now) {
       </div>
     </div>
     <section class="el-panel el-sources" id="el-sources" popover="auto" aria-labelledby="el-sources-title">${renderSourcesInner(event, seats)}</section>
-    ${renderReplay()}
     <p class="el-foot" id="el-foot">${footText()}</p>
     <p class="el-sr" id="el-live" role="status"></p>`;
 
@@ -976,18 +981,19 @@ function renderReplay() {
   }
   if (!isReplay()) {
     return `<section class="el-panel el-replay" id="el-replay" aria-labelledby="el-replay-title">
-      <h2 id="el-replay-title"><button type="button" data-replay="start">${T('Replay election night', '回放开票夜')}</button></h2>
-      <span class="el-note">${T(`${history.length} recorded snapshots`, `${history.length} 个已记录快照`)}</span>
+      <h2 id="el-replay-title"><button type="button" data-replay="start"><span aria-hidden="true">▶</span> ${T('Replay election night', '回放开票夜')}</button></h2>
+      <span class="el-note">${T(`${history.length} recorded snapshots since ${formatTime(history[0].publishedAt)}`, `自 ${formatTime(history[0].publishedAt)} 起 ${history.length} 个已记录快照`)}</span>
     </section>`;
   }
   const entry = history[replayIndex];
   return `<section class="el-panel el-replay is-active" id="el-replay" aria-labelledby="el-replay-title">
       <h2 id="el-replay-title">${T('Replay', '回放')}</h2>
       <div class="el-replay-tools">
+        <button type="button" class="el-btn el-btn-sm" data-replay="play" aria-pressed="${replayPlaying}">${replayPlaying ? T('Pause', '暂停') : T('Play', '播放')}</button>
         <button type="button" class="el-btn el-btn-o el-btn-sm" data-replay="prev" ${replayIndex === 0 ? 'disabled' : ''}>${T('Earlier', '上一个')}</button>
-        <input type="range" id="el-replay-range" min="0" max="${history.length - 1}" value="${replayIndex}" aria-label="${T('Recorded snapshot', '已记录的快照')}">
         <button type="button" class="el-btn el-btn-o el-btn-sm" data-replay="next" ${replayIndex === history.length - 1 ? 'disabled' : ''}>${T('Later', '下一个')}</button>
-        <button type="button" class="el-btn el-btn-sm" data-replay="exit">${T('Back to latest', '回到最新')}</button>
+        <button type="button" class="el-btn el-btn-o el-btn-sm" data-replay="exit">${T('Back to latest', '回到最新')}</button>
+        <input type="range" id="el-replay-range" min="0" max="${history.length - 1}" value="${replayIndex}" aria-label="${T('Recorded snapshot', '已记录的快照')}">
       </div>
       <p class="el-note" id="el-replay-position">${T(`Snapshot ${replayIndex + 1} of ${history.length} · recorded ${formatTime(entry.publishedAt)}`, `第 ${replayIndex + 1} 个，共 ${history.length} 个 · 记录于 ${formatTime(entry.publishedAt)}`)}</p>
     </section>`;
@@ -1064,6 +1070,7 @@ function fetchFeedJson(url) {
 function syncFeed(event) {
   if (feedEventId === event?.id) return;
   stopTimelineSweep(false);
+  stopReplayPlay();
   feed?.stop();
   clearTimeout(vecStartTimer);
   feed = null;
@@ -1482,6 +1489,43 @@ function maybeStartTimelineSweep() {
   activeSweep = { viewKey, rafId: requestAnimationFrame(step), finish };
 }
 
+function stopReplayPlay() {
+  replayPlaying = false;
+  clearTimeout(replayTimer);
+  replayTimer = null;
+}
+
+function scheduleReplay() {
+  clearTimeout(replayTimer);
+  replayTimer = null;
+  if (!replayPlaying || !isReplay()) return;
+  const history = replayHistory();
+  if (replayIndex >= history.length - 1) {
+    replayPlaying = false;
+    $('el-replay').outerHTML = renderReplay();
+    return;
+  }
+  feed.loadSnapshot(history[replayIndex + 1].snapshotId).catch(() => {});
+  replayTimer = setTimeout(async () => {
+    if (!replayPlaying) return;
+    const moved = await stepReplay(replayIndex + 1);
+    if (!moved) stopReplayPlay();
+    scheduleReplay();
+  }, REPLAY_STEP_MS);
+}
+
+async function toggleReplayPlay() {
+  if (replayPlaying) {
+    stopReplayPlay();
+    $('el-replay').outerHTML = renderReplay();
+    return;
+  }
+  replayPlaying = true;
+  if (replayIndex >= replayHistory().length - 1) await stepReplay(0);
+  else $('el-replay').outerHTML = renderReplay();
+  scheduleReplay();
+}
+
 async function stepReplay(index) {
   const history = replayHistory();
   const entry = history[index];
@@ -1492,12 +1536,15 @@ async function stepReplay(index) {
     setShown(snapshot, null);
     refreshResults();
     $('el-live').textContent = T(`Showing snapshot ${index + 1} of ${history.length}.`, `正在显示第 ${index + 1} 个快照，共 ${history.length} 个。`);
+    return true;
   } catch {
     $('el-live').textContent = T('That snapshot could not be read. Replay did not move.', '无法读取该快照，回放没有移动。');
+    return false;
   }
 }
 
 function exitReplay() {
+  stopReplayPlay();
   replayIndex = null;
   setShown(feed.state.snapshot, feed.state.pointer);
   refreshResults();
@@ -1515,7 +1562,7 @@ function renderCandidates(race, event) {
     ? [...race.candidates].sort((a, b) => a.ballotPosition - b.ballotPosition)
     : race.candidates;
   // Once votes are in, the highest count leads; ballot order breaks ties and covers the wait.
-  const ordered = [...byBallot].sort((a, b) => (b.votes ?? -1) - (a.votes ?? -1));
+  const ordered = [...byBallot].sort((a, b) => (b.votes ?? -1) - (a.votes ?? -1)).map(groupAsCandidate);
   const parties = partiesOf(event);
   const formal = race.totals?.formal ?? null;
   const rows = ordered.map((candidate) => {
@@ -1526,10 +1573,14 @@ function renderCandidates(race, event) {
     const tint = candidateTint(candidate, event);
     const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%${tint ? `;--party:${tint}` : ''}"` : '';
     // Liberal and National candidates can meet in one seat, so the Coalition keeps its own party names.
-    const coalitionPartner = /national/i.test(candidate.party || '') ? T('Nationals', '国家党') : T('Liberal', '自由党');
+    const raw = candidate.party || '';
+    const coalitionPartner = /liberal/i.test(raw) && /national/i.test(raw) ? T('Liberal / Nationals', '自由党 / 国家党')
+      : /national/i.test(raw) ? T('Nationals', '国家党') : T('Liberal', '自由党');
     const shortLabel = listed && (listed.id === 'coalition' ? coalitionPartner : L(listed));
-    const partyLabel = shortLabel || esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);
     const badge = renderCandidatePartyBadge(event.family, candidate, 'sm');
+    // A group row already shows its ticket name, so its party cell repeats only a short major-party name.
+    const partyLabel = candidate.isGroup ? shortLabel || (badge ? '' : DASH)
+      : shortLabel || esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);
     return `<tr${won ? ' class="is-winner"' : ''}${barStyle}><td>${esc(candidate.name) || DASH}${won ? ` <b>${esc(race.decision.status === 'certified' ? T('Elected', '当选') : T('Called', '已判定'))}</b>` : ''}</td><td><span class="el-cand-party">${badge}<span${listed && candidate.party ? ` title="${esc(candidate.party)}"` : ''}>${partyLabel}</span></span></td><td class="el-num">${candidate.votes === null ? DASH : candidate.votes.toLocaleString('en-AU')}</td><td class="el-num">${share}</td></tr>`;
   }).join('');
   return `<table class="el-cands">
@@ -1851,8 +1902,15 @@ document.addEventListener('click', (event) => {
   } else if (target.matches('[data-replay]')) {
     const step = target.dataset.replay;
     if (step === 'exit') exitReplay();
-    else if (step === 'start') stepReplay(0);
-    else stepReplay(replayIndex + (step === 'next' ? 1 : -1));
+    else if (step === 'play') toggleReplayPlay();
+    else if (step === 'start') {
+      // Reduced motion starts paused on the first snapshot; Play is one tap away.
+      replayPlaying = !REDUCED_MOTION_QUERY?.matches;
+      stepReplay(0).then(scheduleReplay);
+    } else {
+      stopReplayPlay();
+      stepReplay(replayIndex + (step === 'next' ? 1 : -1));
+    }
   } else if (target.matches('#el-explore-toggle')) {
     const body = $('el-explore-body');
     const open = body.classList.toggle('is-open');
@@ -1865,6 +1923,7 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('change', (event) => {
   if (event.target.id === 'el-replay-range') {
+    stopReplayPlay();
     stepReplay(Number(event.target.value));
   } else if (event.target.id === 'el-area') {
     zoomedSeat = null;
