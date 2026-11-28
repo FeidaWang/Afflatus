@@ -1,6 +1,7 @@
 import { VEC_POLLS_CLOSE } from '../../src/config/electionSources.js';
 import { pointerErrors, snapshotErrors } from '../../src/lib/electionResults.js';
 import { azureContainer } from './azure-blob.mjs';
+import { redisSnapshotStore } from './redis-snapshot-store.mjs';
 
 export const VEC_EVENT = 'vic-2026';
 const SNAPSHOT_ID = /^vic-2026-\d{8}T\d{9}Z-[a-f0-9]{8}$/;
@@ -12,7 +13,16 @@ const atOrAfterClose = (at) => Date.parse(at) >= Date.parse(VEC_POLLS_CLOSE);
 export const publicFeedOpen = (env, now = Date.now()) =>
   env.VEC_PUBLIC_RESULTS === '1' && now >= Date.parse(VEC_POLLS_CLOSE);
 
-export const publicStorage = (url) => azureContainer(url, { name: 'afflatus-elections' });
+export function publicStorage(env, { write = false } = {}) {
+  if (env.ELECTION_SNAPSHOT_BACKEND === 'redis') {
+    return redisSnapshotStore(env.KV_REST_API_URL, write ? env.KV_REST_API_TOKEN : env.KV_REST_API_READ_ONLY_TOKEN);
+  }
+  if (env.ELECTION_SNAPSHOT_BACKEND && env.ELECTION_SNAPSHOT_BACKEND !== 'azure') {
+    throw new Error('Unknown election snapshot storage backend');
+  }
+  const url = write ? env.ELECTION_SNAPSHOT_WRITER_URL : env.ELECTION_SNAPSHOT_READER_URL;
+  return azureContainer(url, { name: 'afflatus-elections' });
+}
 export const publicFile = (name) => typeof name === 'string' && (name === 'latest.json' || SNAPSHOT_PATH.test(name));
 
 export function validPublicDocument(name, data) {

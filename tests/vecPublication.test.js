@@ -8,6 +8,7 @@ import { sourceById } from '../src/config/electionSources.js';
 import { collectOnce, directoryTransport } from '../scripts/elections/collector.mjs';
 import { publishVecLatest } from '../scripts/elections/publish.mjs';
 import { vecAzureTransport } from '../scripts/elections/vec-azure-transport.mjs';
+import { publicStorage } from '../scripts/elections/vec-public-store.mjs';
 import { contestXml, feedXml, zipOf } from './helpers/electionFixtures.js';
 
 const source = sourceById('vec-2026');
@@ -56,6 +57,48 @@ it('lists across Azure pages, selects only the newest official ZIP, and reuses t
 it('scrubs Azure connection errors that contain the SAS URL', async () => {
   const transport = vecAzureTransport(SAS, { fetchImpl: async () => { throw new Error(SAS); } });
   await expect(transport(assembly)).rejects.toMatchObject({ kind: 'network', message: 'Upstream connection failed' });
+});
+
+it('uses a read-only Redis token and rejects a stale conditional pointer update', async () => {
+  const env = {
+    ELECTION_SNAPSHOT_BACKEND: 'redis',
+    KV_REST_API_URL: 'https://fixture.upstash.io',
+    KV_REST_API_TOKEN: 'writer',
+    KV_REST_API_READ_ONLY_TOKEN: 'reader',
+  };
+  const writer = publicStorage(env, { write: true });
+  const reader = publicStorage(env);
+  const file = 'vic-2026/latest.json';
+  let stored = null;
+  const fetchImpl = vi.fn(async (url, options) => {
+    expect(url.host).toBe('fixture.upstash.io');
+    expect(options.method).toBe('POST');
+    const [command, ...args] = JSON.parse(options.body);
+    expect(options.headers.Authorization).toBe(command === 'GET' ? 'Bearer reader' : 'Bearer writer');
+    if (command === 'GET') {
+      expect(args).toEqual([`afflatus:elections:v1:${file}`]);
+      return Response.json({ result: stored });
+    }
+    if (command === 'SET') {
+      expect([args[0], args[2]]).toEqual([`afflatus:elections:v1:${file}`, 'NX']);
+      if (stored !== null) return Response.json({ result: null });
+      stored = args[1];
+      return Response.json({ result: 'OK' });
+    }
+    expect(command).toBe('EVAL');
+    expect(args.slice(1, 3)).toEqual(['1', `afflatus:elections:v1:${file}`]);
+    if (args[3] !== stored) return Response.json({ result: 0 });
+    stored = args[4];
+    return Response.json({ result: 1 });
+  });
+  const read = () => reader.get(file, { maxBytes: 1024, fetchImpl });
+  await expect(read()).rejects.toMatchObject({ kind: 'gone' });
+  await expect(writer.put(file, '{"revision":1}', { 'If-None-Match': '*' }, fetchImpl)).resolves.toBe(true);
+  const initial = await read();
+  await expect(writer.put(file, '{"revision":2}', { 'If-None-Match': '*' }, fetchImpl)).resolves.toBe(false);
+  await expect(writer.put(file, '{"revision":2}', { 'If-Match': initial.etag }, fetchImpl)).resolves.toBe(true);
+  await expect(writer.put(file, '{"revision":3}', { 'If-Match': initial.etag }, fetchImpl)).resolves.toBe(false);
+  expect((await read()).bytes.toString()).toBe('{"revision":2}');
 });
 
 it('separates test identity, election-day collection, and explicitly enabled publication', async () => {

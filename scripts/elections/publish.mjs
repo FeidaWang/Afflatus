@@ -5,7 +5,7 @@ import { publicFeedOpen, publicStorage, readPublicBlob, validPublicDocument, MAX
 /** Publish the pending snapshots first, then conditionally advance the public pointer. */
 export async function publishVecLatest(store, { env = process.env, fetchImpl } = {}) {
   if (!publicFeedOpen(env)) throw new Error('VEC public publication is disabled');
-  const storage = publicStorage(env.ELECTION_SNAPSHOT_WRITER_URL);
+  const storage = publicStorage(env, { write: true });
   const readLocal = async (name) => {
     const bytes = await readFile(join(store, VEC_EVENT, name));
     if (bytes.length > MAX_PUBLIC_BYTES) throw new Error('VEC publication document exceeds the size limit');

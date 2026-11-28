@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const storage = publicStorage(process.env.ELECTION_SNAPSHOT_READER_URL);
+    const storage = publicStorage(process.env);
     const result = await readPublicBlob(storage, file);
     if (!result) return sendApiError(res, 404, 'RESULT_UNAVAILABLE', requestId);
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');

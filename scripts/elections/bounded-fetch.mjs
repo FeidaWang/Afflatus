@@ -18,7 +18,7 @@ function retryAfter(headers, now) {
 }
 
 export async function boundedFetch(url, {
-  allowedHosts, timeoutMs, maxBytes, etag = null, lastModified = null, headers = {}, now = Date.now(), fetchImpl = fetch,
+  allowedHosts, timeoutMs, maxBytes, etag = null, lastModified = null, headers = {}, body, now = Date.now(), fetchImpl = fetch,
 }) {
   const parsed = new URL(url);
   if (!allowedHosts.includes(parsed.host)) throw new FeedError('host_blocked', `${parsed.host} is not on the allowlist`);
@@ -30,7 +30,10 @@ export async function boundedFetch(url, {
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     // A redirect could leave the allowlist, so it is an error here rather than followed.
-    const response = await fetchImpl(url, { headers: request, redirect: 'manual', signal: controller.signal });
+    const response = await fetchImpl(url, {
+      headers: request, redirect: 'manual', signal: controller.signal,
+      ...(body === undefined ? {} : { method: 'POST', body }),
+    });
     const meta = { status: response.status, etag: response.headers.get('etag'), lastModified: response.headers.get('last-modified') };
     if (response.status === 304) return { ...meta, bytes: null };
     if (response.status === 429 || response.status === 503) {

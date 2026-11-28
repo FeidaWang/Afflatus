@@ -5,7 +5,7 @@
 ```text
 VEC Azure results 容器或 SharePoint 手动 ZIP
   → Verbose V2 XML → 身份、时间与计票校验 → 本机私有快照
-  → 站方私有 afflatus-elections 容器 → 同源只读 API → 选举页面
+  → 站方私有结果存储 → 同源只读 API → 选举页面
 ```
 
 两个议院分别采集。下议院保留第一优先票、2CP、投票点进度及 VEC 宣布状态。上议院按大区显示票数和宣布状态。分组票不用于推断分配给个人的席位。公开 API 默认关闭，投票结束后还需要显式配置。没有可用结果时，页面保留选区地图、搜索和 VEC 官方入口。
@@ -49,8 +49,11 @@ node scripts/elections/collect.mjs --source vec-trial --azure --store "$VEC_TRIA
 | `VEC_AZURE_SAS_URL` | 私有采集器 | VEC 提供的 `results` 容器 SAS URL，使用 read/list 权限 |
 | `VEC_EVENT_NAME`、`VEC_EVENT_ID` | 私有采集器 | 从同一场选举的 VEC 零值 ZIP 核验的 EMS 身份 |
 | `VEC_BLOB_PREFIX` | 私有采集器，可选 | Azure 区分大小写的前缀，默认为 `State2026mediafileverbose`。若 ZIP 在子目录，前缀包含该路径 |
+| `ELECTION_SNAPSHOT_BACKEND` | 私有采集器与 Vercel 生产环境 | `redis` 使用站方 Upstash Redis。默认使用 Azure |
 | `ELECTION_SNAPSHOT_WRITER_URL` | 私有采集器 | 站方另建私有 Azure 容器 `afflatus-elections` 的 SAS，使用 read/create/write 权限 |
 | `ELECTION_SNAPSHOT_READER_URL` | Vercel 服务器环境 | 同一个站方容器的只读 SAS |
+| `KV_REST_API_URL` | 私有采集器与 Vercel 生产环境 | 选择 Redis 时使用的 Upstash REST 地址 |
+| `KV_REST_API_TOKEN`、`KV_REST_API_READ_ONLY_TOKEN` | 分别用于私有采集器与 Vercel 服务器环境 | Redis 写入与读取凭据 |
 | `VEC_PUBLIC_RESULTS=1` | 私有采集器与 Vercel 生产环境 | 确认公开展示授权后启用发布和读取 |
 
 SAS 通过私有密钥管理器注入运行环境。部署的前端只读取本站 JSON API，访问者拿不到 SAS。生产只读 SAS 与采集器写入 SAS 独立。站方 Azure 容器应关闭匿名访问，且只存放经过发布校验的标准化 JSON。

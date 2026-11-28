@@ -75,7 +75,7 @@ async function main() {
   if (values.azure) transport(); // Fail on invalid configuration before entering the watch loop.
   if (values.publish) {
     if (process.env.VEC_PUBLIC_RESULTS !== '1') throw new Error('VEC public publication is disabled');
-    publicStorage(process.env.ELECTION_SNAPSHOT_WRITER_URL);
+    publicStorage(process.env, { write: true });
   }
   if (values.inspect) {
     const read = transport();
