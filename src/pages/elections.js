@@ -351,6 +351,9 @@ function syncWorkbenchOrder() {
     : stagePrimary === 'chamber'
       ? [chamber, explore, dock]
       : [explore, chamber, dock];
+  const search = $('el-search-form');
+  if (search && PHONE_QUERY?.matches) desired.unshift(search);
+  else if (search && search.parentElement !== dock) dock.prepend(search);
   desired.forEach((node, index) => {
     if (workbench.children[index] !== node) workbench.insertBefore(node, workbench.children[index] || null);
   });
@@ -400,7 +403,7 @@ function renderTally(event, office, seats, unit, now = Date.now()) {
   const counts = hasOfficeData ? partyTally(seats, states, parties) : null;
   const keys = parties.map((party) => {
     const count = counts?.[party.id];
-    return `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${count ? count.decided : DASH}</b>${count?.leading ? `<small>+${count.leading} ${T('leading', '领先')}</small>` : ''}</li>`;
+    return `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${count ? count.decided + count.leading : DASH}</b>${count?.leading ? `<small>${count.leading} ${T('leading', '领先')} · ${count.decided} ${T('decided', '已定')}</small>` : ''}</li>`;
   }).join('');
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" data-party="${party.id}" data-kind="${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
@@ -1490,18 +1493,24 @@ function exitReplay() {
 /* ---------- Selection ---------- */
 
 function renderCandidates(race, event) {
-  const ordered = race.candidates.every((candidate) => candidate.ballotPosition !== null)
+  const byBallot = race.candidates.every((candidate) => candidate.ballotPosition !== null)
     ? [...race.candidates].sort((a, b) => a.ballotPosition - b.ballotPosition)
     : race.candidates;
+  // Once votes are in, the highest count leads; ballot order breaks ties and covers the wait.
+  const ordered = [...byBallot].sort((a, b) => (b.votes ?? -1) - (a.votes ?? -1));
+  const parties = partiesOf(event);
   const formal = race.totals?.formal ?? null;
   const rows = ordered.map((candidate) => {
     const pct = formal && candidate.votes !== null ? (candidate.votes / formal) * 100 : null;
     const share = pct !== null ? `${pct.toFixed(1)}%` : DASH;
     const won = race.decision.candidateIds?.includes(candidate.candidateId);
-    const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%"` : '';
-    const partyLabel = esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);
+    const listed = parties.find((party) => party.id === candidate.partyId && party.id !== 'other');
+    const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%${listed ? `;--party:${listed.color}` : ''}"` : '';
+    // Liberal and National candidates can meet in one seat, so the Coalition keeps its own party names.
+    const shortLabel = listed && (listed.id === 'coalition' ? esc(candidate.party?.split(' - ')[0]) : L(listed));
+    const partyLabel = shortLabel || esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);
     const badge = renderCandidatePartyBadge(event.family, candidate, 'sm');
-    return `<tr${won ? ' class="is-winner"' : ''}${barStyle}><td>${esc(candidate.name) || DASH}${won ? ` <b>${esc(race.decision.status === 'certified' ? T('Elected', '当选') : T('Called', '已判定'))}</b>` : ''}</td><td><span class="el-cand-party">${badge}<span>${partyLabel}</span></span></td><td class="el-num">${candidate.votes === null ? DASH : candidate.votes.toLocaleString('en-AU')}</td><td class="el-num">${share}</td></tr>`;
+    return `<tr${won ? ' class="is-winner"' : ''}${barStyle}><td>${esc(candidate.name) || DASH}${won ? ` <b>${esc(race.decision.status === 'certified' ? T('Elected', '当选') : T('Called', '已判定'))}</b>` : ''}</td><td><span class="el-cand-party">${badge}<span${listed && candidate.party ? ` title="${esc(candidate.party)}"` : ''}>${partyLabel}</span></span></td><td class="el-num">${candidate.votes === null ? DASH : candidate.votes.toLocaleString('en-AU')}</td><td class="el-num">${share}</td></tr>`;
   }).join('');
   return `<table class="el-cands">
       <thead><tr><th scope="col">${T('Candidate', '候选人')}</th><th scope="col">${T('Party', '党派')}</th><th scope="col" class="el-num">${T('Votes', '票数')}</th><th scope="col" class="el-num">%</th></tr></thead>
@@ -1566,8 +1575,8 @@ function renderRaceDrawer(event, office, seat, race) {
     ${seat.area && seat.feature ? `<p class="el-note">${T('This region elects five members together.', '这个大区一起选出五席。')}</p>` : ''}
     ${baselineLater ? `<p class="el-note">${T(`Supplementary election held on ${formatDay(race.electionDate)}.`, `${formatDay(race.electionDate)} 补选结果。`)}</p>` : ''}
     ${cycleLater ? `<p class="el-note">${T(`Held on ${formatDay(race.electionDate)}, after the main polling day.`, `于 ${formatDay(race.electionDate)} 举行，晚于主投票日。`)}</p>` : ''}
-    ${renderCandidates(race, event)}
     ${renderTwoCandidate(race, event)}
+    ${renderCandidates(race, event)}
     <dl class="el-kv">
       <dt>${T('Decided by', '判定方')}</dt><dd>${decisionText(event, race)}</dd>
       <dt>${T('Progress', '进度')}</dt><dd>${progress || (race.counting.status === 'recount' ? T('Recount: only contest totals are published', '重新计票：只发布比赛总数') : DASH)}</dd>
