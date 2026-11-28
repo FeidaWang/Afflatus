@@ -81,6 +81,16 @@ export function ascendant(jd, latDeg, eastLonDeg) {
 }
 
 export const signOf = (lonDeg) => Math.floor(mod(lonDeg, 360) / 30); // 0 = Aries
+
+// Sun sign from the real solar longitude (Q3c), not a month/day table.
+// Unknown hour: the noon sign, `stable` only if 00:00 and 23:59 CST agree.
+export function sunSignOf({ y, m, d, hour }) {
+  const sign = signOf(sunLongitude(cstToJD(y, m, d, hour)));
+  if (hour != null) return { sign, stable: true };
+  const first = signOf(sunLongitude(julianDayUTC(y, m, d, -8)));
+  const last = signOf(sunLongitude(julianDayUTC(y, m, d, 23 + 59 / 60 - 8)));
+  return { sign, stable: first === last };
+}
 export const degInSign = (lonDeg) => mod(lonDeg, 30);
 
 // ---- aspects ----------------------------------------------------------------

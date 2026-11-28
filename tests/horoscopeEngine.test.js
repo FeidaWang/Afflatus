@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { elementRelation, dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../src/lib/horoscopeEngine.js';
+import { dayPillar } from '../src/lib/bazi.js';
 
 const P1 = { y: 1994, m: 4, d: 18, hour: 8 };
 const P2 = { y: 1996, m: 11, d: 2, hour: null };
@@ -72,14 +73,71 @@ describe('dailyFortune', () => {
   });
 });
 
+// A birth date in 1990 whose day stem is `stem` (0=甲 … 9=癸).
+const withDayStem = (stem, from = 1) => {
+  for (let d = from; d <= 28; d++) if (dayPillar(1990, 6, d).stem === stem) return { y: 1990, m: 6, d, hour: 10 };
+  throw new Error('no date');
+};
+const dm = (s) => s.parts.find((p) => p.id === 'daymaster');
+
+describe('health copy (C1)', () => {
+  it('never names organs or body systems across a year of readings', () => {
+    const banned = /脾|胃|肝|肺|肾|心脏|肠|气血|血压|Digestion|stomach|liver|kidney|lung|blood/i;
+    for (let i = 0; i < 366; i++) {
+      const d = new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10);
+      for (const p of [P1, P2]) expect(JSON.stringify(dailyFortune(p, d))).not.toMatch(banned);
+    }
+  });
+});
+
 describe('synastry', () => {
-  it('is symmetric-ish in bounds and deterministic', () => {
+  it('is deterministic and bounded, with no per-domain sub-scores (Q2)', () => {
     const s1 = synastry(P1, P2), s2 = synastry(P1, P2);
     expect(s1.base).toBe(s2.base);
     expect(s1.base).toBeGreaterThanOrEqual(8);
     expect(s1.base).toBeLessThanOrEqual(96);
-    expect(s1.pillars).toHaveLength(5);
-    for (const p of s1.pillars) { expect(p.score).toBeGreaterThanOrEqual(8); expect(p.score).toBeLessThanOrEqual(96); }
+    expect(s1.pillars).toBeUndefined();
+  });
+  it('swapping the two people never changes base or any part (Q3)', () => {
+    for (let i = 0; i < 300; i++) {
+      const a = { y: 1970 + (i % 37), m: 1 + (i * 7) % 12, d: 1 + (i * 11) % 28, hour: i % 3 ? (i * 5) % 24 : null };
+      const b = { y: 1975 + (i * 3 % 30), m: 1 + (i * 5) % 12, d: 1 + (i * 13) % 28, hour: i % 4 ? (i * 3) % 24 : null };
+      const ab = synastry(a, b), ba = synastry(b, a);
+      expect(ba.base).toBe(ab.base);
+      expect(ba.parts.map((p) => p.pts)).toEqual(ab.parts.map((p) => p.pts));
+    }
+  });
+  it('day stems in 五合 (甲己) score as a combination, not as 相克 (Q3)', () => {
+    const p = dm(synastry(withDayStem(0), withDayStem(5)));
+    expect(p.pts).toBe(8);
+    expect(p.zh).toContain('五合');
+  });
+  it('天干四冲 (甲庚) scores below a same-polarity check (甲戊) and both below zero', () => {
+    const chong = dm(synastry(withDayStem(0), withDayStem(6))).pts;
+    const sha = dm(synastry(withDayStem(0), withDayStem(4))).pts;
+    expect(chong).toBe(-6);
+    expect(sha).toBe(-3);
+  });
+  it('same-element day masters read as 比和, never as 相生 (C2b)', () => {
+    const p = dm(synastry(withDayStem(0), withDayStem(1)));
+    expect(p.pts).toBe(3);
+    expect(p.zh).toContain('比和');
+    expect(p.zh).not.toContain('相生');
+  });
+  it('zodiac part uses the real solar longitude and element-specific copy (C2, Q3c)', () => {
+    // 2024-03-20 11:06 CST is the March equinox: 08:00 is still Pisces (water), 13:00 is Aries (fire)
+    const before = synastry({ y: 2024, m: 3, d: 20, hour: 7 }, { y: 1990, m: 7, d: 1, hour: 9 }); // Cancer, water
+    const after = synastry({ y: 2024, m: 3, d: 20, hour: 13 }, { y: 1990, m: 7, d: 1, hour: 9 });
+    const z = (s) => s.parts.find((p) => p.id === 'zodiac');
+    expect(z(before).pts).toBe(8);
+    expect(z(before).zh).toContain('水象');
+    expect(z(after).pts).toBe(0);
+    expect(z(after).zh).not.toContain('火焰');
+  });
+  it('unknown hour on a sign-change day leaves the zodiac part unscored and says why', () => {
+    const z = synastry({ y: 2024, m: 3, d: 20, hour: null }, P1).parts.find((p) => p.id === 'zodiac');
+    expect(z.pts).toBe(0);
+    expect(z.unknown).toBe(true);
   });
   it('六合 year branches score above 相冲 year branches (all else similar)', () => {
     // 1996 丙子 (rat) vs 1997 丁丑 (ox) = 子丑六合; 1996 vs 1990 庚午 (horse) = 子午相冲
@@ -95,12 +153,30 @@ describe('synastry', () => {
   });
 });
 
-describe('dailyPull', () => {
-  it('deterministic per (pair, date), varies across dates', () => {
-    expect(dailyPull(P1, P2, '2026-07-05')).toEqual(dailyPull(P1, P2, '2026-07-05'));
-    const days = ['2026-07-05', '2026-07-06', '2026-07-07', '2026-07-08'];
-    const scores = days.map((d) => dailyPull(P1, P2, d).score);
-    expect(new Set(scores).size).toBeGreaterThan(1);
+describe('dailyPull (流日 reading, Q5)', () => {
+  it('is a three-level tone, deterministic, with no 0-100 score', () => {
+    const r = dailyPull(P1, P2, '2026-07-05');
+    expect(r).toEqual(dailyPull(P1, P2, '2026-07-05'));
+    expect(['smooth', 'even', 'yield']).toContain(r.tone);
+    expect(r.score).toBeUndefined();
+    expect(r.gz).toMatch(/^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$/);
+    expect(r.why.zh && r.why.en).toBeTruthy();
+  });
+  it('a day branch that clashes either day branch reads 宜让', () => {
+    // find a date whose day branch clashes P1's day branch
+    const p1Day = dayPillar(P1.y, P1.m, P1.d).branch;
+    for (let d = 1; d <= 28; d++) {
+      if (dayPillar(2026, 8, d).branch === (p1Day + 6) % 12) {
+        expect(dailyPull(P1, P2, `2026-08-${String(d).padStart(2, '0')}`).tone).toBe('yield');
+        return;
+      }
+    }
+    throw new Error('no clash day found');
+  });
+  it('does not depend on who is A and who is B', () => {
+    for (const day of ['2026-07-05', '2026-07-06', '2026-07-07', '2026-07-08', '2026-07-09']) {
+      expect(dailyPull(P2, P1, day)).toEqual(dailyPull(P1, P2, day));
+    }
   });
 });
 
