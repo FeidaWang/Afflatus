@@ -5,7 +5,7 @@
    ============================================================ */
 import { sourceById } from '../config/electionSources.js';
 import { seatCatalogue } from './electionCatalogue.js';
-import { eventById } from './electionRules.js';
+import { displayPartyId, eventById } from './electionRules.js';
 
 const COVERAGE = new Set(['not_covered', 'available', 'stale', 'source_error']);
 const COUNTING = new Set(['no_votes', 'counting', 'rcv_pending', 'runoff', 'recount', 'count_complete']);
@@ -267,11 +267,11 @@ export function seatStates(snapshot, pointer = null) {
       const winner = decided && race.candidates.find((candidate) => candidate.candidateId === race.decision.candidateIds[0]);
       if (winner) {
         states[race.seatIds[0]] = race.decision.status === 'certified'
-          ? { status: 'final', party: winner.partyId, record: race.decision }
-          : { status: 'called', party: winner.partyId };
+          ? { status: 'final', party: displayPartyId(winner), record: race.decision }
+          : { status: 'called', party: displayPartyId(winner) };
       } else {
         const leader = contestLeader(race);
-        if (leader) states[race.seatIds[0]] = { status: 'leading', party: leader.partyId };
+        if (leader) states[race.seatIds[0]] = { status: 'leading', party: displayPartyId(leader) };
       }
       // Marks must not look fresh when the data under them is not.
       const seatState = states[race.seatIds[0]];

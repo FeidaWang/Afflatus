@@ -155,7 +155,8 @@ run through npx. mapshaper is not a dependency of the site.
 Files under `public/assets/elections/parties/` are official party emblems and
 trademarks of their respective political parties (Democratic Party, Republican
 Party, Australian Labor Party, Liberal Party of Australia, National Party of
-Australia, and Australian Greens), plus two geometric editorial marks for
+Australia, Australian Greens, Pauline Hanson's One Nation, Victorian
+Socialists, Libertarian Party and Australian Citizens Party), plus two geometric editorial marks for
 Independent and Other categories. Party emblems are used on the elections page
 solely for factual party identification and imply no affiliation or endorsement.
 Each file's upstream source page, source URL, retrieval date, licence note and

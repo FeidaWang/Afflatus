@@ -86,5 +86,45 @@
     "retrieved_on": "2026-11-13",
     "web_sha256": "734d01f99525913595be4a88116021e15c7e8a532de02659e70d9f9ef1206069",
     "aspect": 1
+  },
+  "au-onenation": {
+    "name": "Pauline Hanson's One Nation",
+    "file": "/assets/elections/parties/au-onenation.svg",
+    "source_page": "https://www.onenation.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/5/52/Pauline_Hanson%27s_One_Nation_logo.svg",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "3dc2141ce4d0ae308d2e44e5394d5b74821b95b960bfe4a8fd357409dbb2f941",
+    "aspect": 2.027,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
+  },
+  "au-vicsocialists": {
+    "name": "Victorian Socialists",
+    "file": "/assets/elections/parties/au-vicsocialists.webp",
+    "source_page": "https://www.victoriansocialists.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/7/78/Victorian_Socialists_logo%2C_2025.webp",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "a11a8a55120db91dbb425d4f1d2b6b03857decfeaf0cf53f7909a610301c4607",
+    "aspect": 1.831,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
+  },
+  "au-libertarian": {
+    "name": "Libertarian Party (Australia)",
+    "file": "/assets/elections/parties/au-libertarian.svg",
+    "source_page": "https://www.libertarians.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/Logo_of_the_Libertarian_Party_%28Australia%29.svg",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "9011f5bb85ff055c88ab75c5e4e98790003aced50027bb74d1eade8aa67407bd",
+    "aspect": 1.144,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
+  },
+  "au-citizens": {
+    "name": "Australian Citizens Party",
+    "file": "/assets/elections/parties/au-citizens.png",
+    "source_page": "https://citizensparty.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Australian_Citizens_Party_%282026%29.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "db5825cbe7c2acb0e2f80f7cbad7d74208b8225cf7008736f78edadac0ba7668",
+    "aspect": 1.05,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
   }
 }
