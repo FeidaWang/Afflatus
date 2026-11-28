@@ -1178,6 +1178,19 @@ test.describe('Elections feed', () => {
     expect(control.requests.some((path) => path.includes('snapshots/'))).toBe(true);
   });
 
+  test('replay plays forward by itself and can be paused', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await serve(page, 4);
+    await open(page);
+    await page.locator('[data-replay="start"]').click();
+    await expect(page.locator('#el-replay-position')).toContainText('Snapshot 2 of 5', { timeout: 5000 });
+    await page.locator('[data-replay="play"]').click();
+    await expect(page.locator('[data-replay="play"]')).toHaveAttribute('aria-pressed', 'false');
+    const paused = await page.locator('#el-replay-position').textContent();
+    await page.waitForTimeout(2000);
+    await expect(page.locator('#el-replay-position')).toHaveText(paused);
+  });
+
   test('a replay is not moved by new data', async ({ page }) => {
     const control = await serve(page, 3);
     await open(page);
