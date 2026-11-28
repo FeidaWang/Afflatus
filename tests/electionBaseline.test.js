@@ -50,6 +50,9 @@ describe('official party emblems', () => {
     expect(partyIconsFor('au', 'greens')).toEqual([PARTY_ICONS['au-greens']]);
     expect(partyIconsFor('au', 'teal')).toEqual([PARTY_ICONS.independent]);
     expect(partyIconsFor('au', 'other', 'Liberal Democrats')).toEqual([PARTY_ICONS.other]);
+    expect(partyIconsFor('au', 'onenation')).toEqual([PARTY_ICONS['au-onenation']]);
+    expect(partyIconsFor('au', 'other', 'Victorian Socialists')).toEqual([PARTY_ICONS['au-vicsocialists']]);
+    expect(partyIconsFor('au', 'other', 'Animal Justice Party')).toEqual([{ dot: '#5B2C86' }]);
   });
 });
 
@@ -81,6 +84,7 @@ describe('official prior-election baselines', () => {
       labor: { decided: 56, leading: 0 },
       coalition: { decided: 28, leading: 0 },
       greens: { decided: 4, leading: 0 },
+      onenation: { decided: 0, leading: 0 },
       teal: { decided: 0, leading: 0 },
       other: { decided: 0, leading: 0 },
     });
@@ -101,6 +105,7 @@ describe('official prior-election baselines', () => {
       labor: { decided: 45, leading: 0 },
       coalition: { decided: 36, leading: 0 },
       greens: { decided: 3, leading: 0 },
+      onenation: { decided: 0, leading: 0 },
       teal: { decided: 9, leading: 0 },
       other: { decided: 0, leading: 0 },
     });

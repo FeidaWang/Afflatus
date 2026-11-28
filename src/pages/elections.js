@@ -10,7 +10,9 @@ import {
   NO_RESULT,
   NOT_ON_BALLOT,
   PARTIES,
+  auMinorParty,
   daysUntil,
+  displayPartyId,
   eventById,
   eventPhase,
   nextEvent,
@@ -99,12 +101,12 @@ const hasShownForOffice = (officeId = state.office) => Boolean(shown && (!shown.
 
 function renderPartyIcons(icons, size = 'md') {
   if (!icons.length) return '';
-  const imgs = icons.map((icon) => `<img class="el-party-icon${icon.wide ? ' is-wide' : ''}" src="${icon.src}" alt="" width="${icon.width}" height="${icon.height}" decoding="async">`).join('');
+  const imgs = icons.map((icon) => (icon.dot ? `<i class="el-party-dot" style="background:${icon.dot}"></i>` : `<img class="el-party-icon${icon.wide ? ' is-wide' : ''}" src="${icon.src}" alt="" width="${icon.width}" height="${icon.height}" decoding="async">`)).join('');
   return `<span class="el-party-badge el-party-badge-${size}${icons.length > 1 ? ' is-pair' : ''}" aria-hidden="true">${imgs}</span>`;
 }
 
 const renderPartyBadge = (family, partyId, size = 'md') => renderPartyIcons(partyIconsFor(family, partyId), size);
-const renderCandidatePartyBadge = (family, candidate, size = 'sm') => renderPartyIcons(partyIconsFor(family, candidate?.partyId, candidate?.party, candidate?.independent), size);
+const renderCandidatePartyBadge = (family, candidate, size = 'sm') => renderPartyIcons(partyIconsFor(family, displayPartyId(candidate), candidate?.party, candidate?.independent), size);
 
 const NOT_LOADED = () => T('Not loaded: no verified source yet', '未加载：尚无经核验的来源');
 const NOT_PUBLISHED = () => T('Not published by the source', '来源未发布');
@@ -1504,8 +1506,9 @@ function renderCandidates(race, event) {
     const pct = formal && candidate.votes !== null ? (candidate.votes / formal) * 100 : null;
     const share = pct !== null ? `${pct.toFixed(1)}%` : DASH;
     const won = race.decision.candidateIds?.includes(candidate.candidateId);
-    const listed = parties.find((party) => party.id === candidate.partyId && party.id !== 'other');
-    const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%${listed ? `;--party:${listed.color}` : ''}"` : '';
+    const listed = parties.find((party) => party.id === displayPartyId(candidate) && party.id !== 'other');
+    const tint = listed?.color || (event.family === 'au' && !candidate.independent ? auMinorParty(candidate.party)?.color : null);
+    const barStyle = pct !== null ? ` style="--share:${Math.min(100, Math.max(0, pct)).toFixed(1)}%${tint ? `;--party:${tint}` : ''}"` : '';
     // Liberal and National candidates can meet in one seat, so the Coalition keeps its own party names.
     const shortLabel = listed && (listed.id === 'coalition' ? esc(candidate.party?.split(' - ')[0]) : L(listed));
     const partyLabel = shortLabel || esc(candidate.party) || (candidate.independent ? T('Independent', '独立') : DASH);

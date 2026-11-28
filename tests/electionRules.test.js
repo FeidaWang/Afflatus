@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ELECTION_EVENTS,
   PARTIES,
+  displayPartyId,
   daysUntil,
   eventById,
   eventPhase,
@@ -48,6 +49,10 @@ describe('election rule packs', () => {
     expect(color('au', 'greens')).toBe('#4C8A1F');
     expect(color('au', 'teal')).toBe('#0F8FA6');
     expect(color('au', 'other')).toBe('#7B4FB0');
+    expect(color('au', 'onenation')).toBe('#F36C21');
+    expect(displayPartyId({ partyId: 'other', party: 'One Nation Victoria' })).toBe('onenation');
+    expect(displayPartyId({ partyId: 'other', party: 'Victorian Socialists' })).toBe('other');
+    expect(displayPartyId({ partyId: 'labor', party: 'Australian Labor Party - Victorian Branch' })).toBe('labor');
   });
 
   it('keeps separate status vocabularies and names the declaring authority', () => {

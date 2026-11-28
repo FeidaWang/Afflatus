@@ -17,6 +17,7 @@ export const PARTIES = Object.freeze({
     { id: 'labor', en: 'Labor', zh: '工党', color: '#C8302E', tag: { en: 'L', zh: '工' } },
     { id: 'coalition', en: 'Coalition', zh: '联盟党', color: '#1F4E9C', tag: { en: 'C', zh: '联' } },
     { id: 'greens', en: 'Greens', zh: '绿党', color: '#4C8A1F', tag: { en: 'G', zh: '绿' } },
+    { id: 'onenation', en: 'One Nation', zh: '一国党', color: '#F36C21', tag: { en: 'N', zh: '一' } },
     { id: 'teal', en: 'Independent', zh: '独立', color: '#0F8FA6', tag: { en: 'I', zh: '独' } },
     { id: 'other', en: 'Other', zh: '其他', color: '#7B4FB0', tag: { en: 'O', zh: '其' } },
   ],
@@ -29,9 +30,38 @@ export const PARTY_ICONS = Object.freeze({
   'au-liberal': Object.freeze({ src: '/assets/elections/parties/au-liberal.svg', width: 20, height: 16 }),
   'au-nationals': Object.freeze({ src: '/assets/elections/parties/au-nationals.svg', width: 16, height: 16 }),
   'au-greens': Object.freeze({ src: '/assets/elections/parties/au-greens.svg', width: 18, height: 16 }),
+  'au-onenation': Object.freeze({ src: '/assets/elections/parties/au-onenation.svg', width: 32, height: 16, wide: true }),
+  'au-vicsocialists': Object.freeze({ src: '/assets/elections/parties/au-vicsocialists.webp', width: 29, height: 16, wide: true }),
+  'au-libertarian': Object.freeze({ src: '/assets/elections/parties/au-libertarian.svg', width: 18, height: 16 }),
+  'au-citizens': Object.freeze({ src: '/assets/elections/parties/au-citizens.png', width: 17, height: 16 }),
   independent: Object.freeze({ src: '/assets/elections/parties/independent.svg', width: 16, height: 16 }),
   other: Object.freeze({ src: '/assets/elections/parties/other.svg', width: 16, height: 16 }),
 });
+
+// Collected snapshots file One Nation under "other"; it gets its own colour and tally row.
+const ONE_NATION = /^(pauline hanson'?s )?one nation\b/i;
+export const displayPartyId = (candidate) => (
+  candidate?.partyId === 'other' && ONE_NATION.test(candidate.party || '') ? 'onenation' : candidate?.partyId ?? null
+);
+
+// Smaller Australian parties keep their registered name and count under Other in the tally.
+// Each has its own colour; a logo appears only where a freely licensed file exists.
+const AU_MINOR_PARTIES = Object.freeze([
+  { match: /^victorian socialists\b/i, color: '#000000', icon: PARTY_ICONS['au-vicsocialists'] },
+  { match: /^family first\b/i, color: '#5A58A6' },
+  { match: /^animal justice party\b/i, color: '#5B2C86' },
+  { match: /^the west party\b/i, color: '#499567' },
+  { match: /^libertarian party\b/i, color: '#FEC327', icon: PARTY_ICONS['au-libertarian'] },
+  { match: /^legalise cannabis\b/i, color: '#6FC442' },
+  { match: /^socialist alliance\b/i, color: '#990000' },
+  { match: /^democratic labour party\b/i, color: '#FFFF34' },
+  { match: /^shooters, fishers and farmers\b/i, color: '#E52B50' },
+  { match: /^australian democrats\b/i, color: '#FFCD00' },
+  { match: /^australian citizens party\b/i, color: '#656600', icon: PARTY_ICONS['au-citizens'] },
+  { match: /^i'm voting to avoid the fine\b/i, color: '#BDA08E' },
+  { match: /^the republican make australia great again\b/i, color: '#DB222A' },
+]);
+export const auMinorParty = (rawPartyName) => AU_MINOR_PARTIES.find((party) => party.match.test(String(rawPartyName || '').trim())) || null;
 
 /**
  * Official party emblems for a rule-pack party or candidate row.
@@ -59,7 +89,11 @@ export function partyIconsFor(family, partyId, rawPartyName = '', isIndependent 
       return [PARTY_ICONS['au-liberal'], PARTY_ICONS['au-nationals']];
     }
     if (partyId === 'greens') return [PARTY_ICONS['au-greens']];
-    if (partyId === 'other') return [PARTY_ICONS.other];
+    if (partyId === 'onenation') return [PARTY_ICONS['au-onenation']];
+    if (partyId === 'other') {
+      const minor = auMinorParty(rawPartyName);
+      return [minor ? minor.icon || { dot: minor.color } : PARTY_ICONS.other];
+    }
   }
   return [];
 }
