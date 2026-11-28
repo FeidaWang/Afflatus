@@ -1003,8 +1003,8 @@ test.describe('Elections feed', () => {
     await expect(mark(page, 'albert-park')).toHaveAttribute('style', /--seat:#C8302E/);
     await expect(mark(page, 'bass')).toHaveClass(/is-neutral/);
     await expect(row(page, 'bass')).toContainText('Withheld by source');
-    await expect(page.locator('.el-tally-keys')).toContainText('+1 leading');
-    await expect(page.locator('.el-tally-keys li').first().locator('b')).toHaveText('0');
+    await expect(page.locator('.el-tally-keys')).toContainText('1 leading · 0 decided');
+    await expect(page.locator('.el-tally-keys li').first().locator('b')).toHaveText('1');
   });
 
   test('a correction lowers the numbers and is labelled as one', async ({ page }) => {
@@ -1013,7 +1013,7 @@ test.describe('Elections feed', () => {
     await toStage(page, control, 2);
     await expect(page.locator('.el-changes')).toContainText('Correction');
     await row(page, 'albert-park').locator('button').click();
-    await expect(page.locator('#el-drawer .el-cands').first()).toContainText('38');
+    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two)')).toContainText('38');
   });
 
   test('a declaration fills the seat with its authority, and withdrawing it un-fills the seat', async ({ page }) => {
@@ -1035,7 +1035,7 @@ test.describe('Elections feed', () => {
     await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
     await expect(row(page, 'albert-park')).toContainText('Decision withdrawn');
     await expect(drawer).toContainText('has been withdrawn by the source');
-    await expect(page.locator('.el-tally-keys li').first().locator('b')).toHaveText('0');
+    await expect(page.locator('.el-tally-keys li').first()).toContainText('1 leading · 0 decided');
     await expect(page.locator('.el-changes')).toContainText('Decision withdrawn');
   });
 
@@ -1061,7 +1061,7 @@ test.describe('Elections feed', () => {
     await page.locator('#el-feed-toggle').focus();
     await page.evaluate(() => window.scrollTo(0, 300));
     await page.keyboard.press('Enter');
-    await expect(page.locator('#el-drawer .el-cands').first()).toContainText('38');
+    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two)')).toContainText('38');
     await expect(page.locator('#el-feed-toggle')).toBeFocused();
     await expect(page.locator('#el-drawer')).toBeVisible();
     await expect(page.locator('#el-drawer-title')).toHaveText('Albert Park');
@@ -1199,7 +1199,7 @@ test.describe('Elections feed', () => {
     const control = await serve(page, 1);
     control.patchSnapshot = (snapshot) => ({ ...snapshot, races: snapshot.races.map((race) => ({ ...race, candidates: race.candidates.map((candidate) => ({ ...candidate, name: '<img src=x id=el-injected>' })) })) });
     await open(page, 'event=vic-2026&race=albert-park');
-    await expect(page.locator('#el-drawer .el-cands').first()).toContainText('<img src=x id=el-injected>');
+    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two)')).toContainText('<img src=x id=el-injected>');
     await expect(page.locator('#el-injected')).toHaveCount(0);
   });
 

@@ -143,6 +143,16 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-countdown strong{font:700 clamp(38px,4.2vw,56px)/1 var(--el-mono);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .el-countdown span{font:600 12px/1.3 var(--el-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--el-muted)}
 
+.el-next-live{grid-template-columns:minmax(0,1fr)}
+.el-live-flag{display:inline-flex;align-items:center;gap:7px;padding:3px 9px;border-radius:4px;background:var(--el-ink);color:var(--el-bg);font:700 12px/1.4 var(--el-mono)}
+.el-live-flag::before{content:"";inline-size:8px;block-size:8px;border-radius:50%;background:#E5484D}
+.el-hub-count{align-self:stretch;display:grid;gap:8px}
+.el-hub-count:empty{display:none}
+.el-hub-count .el-tally-rows{padding-block-start:18px}
+.el-hub-count .el-tally-row{grid-template-columns:minmax(0,5.5em) minmax(0,1fr) 2.2em;font-size:13px}
+.el-hub-count .el-tally-row b{font:700 17px/1 var(--el-mono);text-align:right;font-variant-numeric:tabular-nums}
+.el-tally-seg.is-ahead{opacity:.7}
+
 .el-cards{display:contents}
 .el-card{
   grid-column:span 4;background:var(--el-card);border:1px solid var(--el-rule);border-radius:var(--el-radius);
@@ -394,11 +404,11 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-cands th:last-child,.el-cands td:last-child{padding-inline-end:0}
 .el-cands th{padding-block:6px;border-block-end:1px solid var(--el-ink);font:600 12px/1.3 var(--el-mono);color:var(--el-muted);text-align:left;white-space:nowrap}
 .el-cands th.el-num{text-align:right}
-.el-cands tbody tr{background:linear-gradient(90deg,rgba(22,25,26,.07) var(--share,0%),transparent var(--share,0%))}
+.el-cands tbody tr{--bar:color-mix(in srgb,var(--party,#16191A) 22%,transparent);background:linear-gradient(90deg,var(--bar) var(--share,0%),transparent var(--share,0%))}
 .el-cands td{padding-block:7px;border-block-end:1px solid var(--el-rule)}
 .el-cands tr.is-winner td{font-weight:700}
 .el-cands b{font:700 11px/1 var(--el-mono);text-transform:uppercase}
-.el-cands-two{margin-block-start:12px}
+.el-cands-two{margin-block:10px 4px}
 .el-cands-two caption{padding-block-end:5px;font:600 12px/1.3 var(--el-mono);text-align:left;color:var(--el-muted)}
 
 .el-races{padding:12px 14px}
@@ -527,7 +537,8 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 
 /* ---------- Phone (<=640px): Chamber -> Search & Races -> Lazy Map Toggle + Bottom Sheet ---------- */
 @media (max-width:640px){
-  .el-tally-row{grid-template-columns:minmax(0,8.6em) minmax(0,1fr)}
+  .el-tally-row{grid-template-columns:minmax(0,10.5em) minmax(0,1fr)}
+  .el-workbench > .el-search{grid-column:1}
   .el-page{padding-inline:14px}
   .el-command{padding:10px 12px;gap:8px 10px}
   .el-command-start,.el-command-end{inline-size:100%;margin-inline-start:0}
