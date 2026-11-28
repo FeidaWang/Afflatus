@@ -8,6 +8,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, resolve, sep } from 'node:path';
 import { parseArgs } from 'node:util';
+import { withVicSwing } from './vic-swing.mjs';
 
 const { values } = parseArgs({ options: { store: { type: 'string' }, port: { type: 'string', default: '4180' }, dist: { type: 'string', default: 'dist' } } });
 if (!values.store) {
@@ -44,6 +45,16 @@ createServer(async (request, response) => {
   if (extname(file) === '.html') {
     const html = await readFile(file, 'utf8');
     response.writeHead(200, { 'content-type': type }).end(html.replace('<head>', `<head>${HOOK}`));
+    return;
+  }
+  if (decoded.startsWith('/elections-feed/vic-2026/snapshots/')) {
+    try {
+      const snapshot = JSON.parse(await readFile(file, 'utf8'));
+      const body = JSON.stringify(withVicSwing(snapshot));
+      response.writeHead(200, { 'content-type': type, 'cache-control': 'no-store' }).end(body);
+    } catch {
+      response.writeHead(500).end();
+    }
     return;
   }
   response.writeHead(200, { 'content-type': type, 'cache-control': 'no-store' });

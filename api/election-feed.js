@@ -1,6 +1,7 @@
 import { getRequestId, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
 import { isVecElectionNight } from '../src/config/electionSources.js';
 import { publicFeedOpen, publicFile, publicStorage, readPublicBlob, VEC_EVENT } from '../scripts/elections/vec-public-store.mjs';
+import { withVicSwing } from '../scripts/elections/vic-swing.mjs';
 
 export default async function handler(req, res) {
   const requestId = getRequestId(req);
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     const ttl = file === 'latest.json' ? (isVecElectionNight() ? 10 : 20) : 120;
     res.setHeader('Vercel-CDN-Cache-Control', `public, s-maxage=${ttl}`);
-    return res.status(200).json(result.data);
+    return res.status(200).json(file === 'latest.json' ? result.data : withVicSwing(result.data));
   } catch {
     return sendApiError(res, 503, 'RESULT_FEED_UNAVAILABLE', requestId);
   }

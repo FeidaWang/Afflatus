@@ -245,18 +245,27 @@ export function primaryLeader(race) {
 }
 
 /** Counts published Victorian first preferences separately from seats or 2CP. */
+export function vicPrimaryVotes(race) {
+  const formal = race.totals.formal;
+  if (!formal || race.coverage === 'not_covered' || race.coverage === 'source_error' || race.candidates.some(({ votes }) => votes === null)) return null;
+  const partyVotes = {};
+  for (const candidate of race.candidates) {
+    const party = displayPartyId(groupAsCandidate(candidate)) || 'other';
+    partyVotes[party] = (partyVotes[party] || 0) + candidate.votes;
+  }
+  return { formal, partyVotes };
+}
+
 export function vicOfficeCount(snapshot, office) {
   const count = { reported: 0, declared: 0, formal: 0, primary: {} };
   for (const race of snapshot?.races ?? []) {
     if (race.office !== office || race.coverage === 'not_covered' || race.coverage === 'source_error') continue;
     if (race.decision.status === 'certified') count.declared += 1;
     if (race.counting.status !== 'no_votes' || race.decision.status === 'certified') count.reported += 1;
-    if (!race.totals.formal || race.candidates.some(({ votes }) => votes === null)) continue;
-    count.formal += race.totals.formal;
-    for (const candidate of race.candidates) {
-      const party = displayPartyId(groupAsCandidate(candidate)) || 'other';
-      count.primary[party] = (count.primary[party] || 0) + candidate.votes;
-    }
+    const primary = vicPrimaryVotes(race);
+    if (!primary) continue;
+    count.formal += primary.formal;
+    for (const [party, votes] of Object.entries(primary.partyVotes)) count.primary[party] = (count.primary[party] || 0) + votes;
   }
   return count;
 }

@@ -401,13 +401,42 @@ function renderVicContext(event, office, now = Date.now()) {
   </div>`;
 }
 
+const swingNumber = new Intl.NumberFormat('en-AU', { signDisplay: 'exceptZero', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+function renderVicSwingTable(event, label, rows, { statewide = false } = {}) {
+  const parties = PARTIES.au;
+  const ordered = [...rows].sort((a, b) => b.currentPct - a.currentPct);
+  return `<div class="el-swing-scroll" tabindex="0" role="region" aria-label="${esc(label)}">
+    <table class="el-swing-table">
+      <caption class="el-sr">${label}</caption>
+      <thead><tr><th scope="col">${T('Party', '政党')}</th><th scope="col">${T('Prior final', '上届最终')}</th><th scope="col">${T('2026 counted', '2026 已计')}</th><th scope="col" title="${T('Calculated before rounding the vote shares.', '以四舍五入前的得票率计算。')}">${T('Change (pp)', '变化（百分点）')}</th>${statewide ? `<th scope="col">${T('Fixed weights (pp)', '固定权重（百分点）')}</th>` : ''}</tr></thead>
+      <tbody>${ordered.map(({ party, priorPct, currentPct, deltaPp, weightedDeltaPp, currentVotes }) => {
+        const identity = parties.find(({ id }) => id === party);
+        if (!identity) return '';
+        return `<tr><th scope="row"><span class="el-cand-party">${renderPartyBadge(event.family, party, 'sm')}<span>${L(identity)}</span></span></th><td>${priorPct.toFixed(1)}%</td><td>${currentPct.toFixed(1)}%${statewide ? `<small class="el-swing-votes">${currentVotes.toLocaleString('en-AU')} ${T('votes', '票')}</small>` : ''}</td><td><strong>${swingNumber.format(deltaPp)}</strong></td>${statewide ? `<td>${swingNumber.format(weightedDeltaPp)}</td>` : ''}</tr>`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
 function renderVicPrimary(event, office, open) {
   if (event.id !== 'vic-2026') return '';
   const { formal, primary } = vicOfficeCount(shown?.snapshot, office.id);
   if (!formal) return '';
+  const comparison = shown.snapshot.comparison;
+  const swing = comparison?.offices?.[office.id];
+  const title = T('Statewide first preferences', '全州第一优先票');
+  if (swing) {
+    const matchedPlaces = office.id === 'assembly' ? T('matched districts', '个可比较选区') : T('matched regions', '个可比较大区');
+    return `<details class="el-vic-primary"${open ? ' open' : ''}>
+      <summary id="el-vic-primary-summary">${title} · ${swing.currentFormal.toLocaleString('en-AU')} ${T('formal votes counted', '张有效票已计')}</summary>
+      ${renderVicSwingTable(event, title, swing.parties, { statewide: true })}
+      <p class="el-note">${swing.matchedContests}/${swing.totalContests} ${matchedPlaces} · ${T('Fixed weights use each area’s prior formal vote total. Current shares are provisional.', '固定权重采用上届各地区有效票数。本届得票率随计票更新。')}${office.id === 'assembly' ? ` ${T('The prior cycle includes the January 2023 Narracan supplementary election.', '上届周期含 2023 年 1 月 Narracan 补选。')}` : ''} <a href="${esc(comparison.sourceUrl)}" target="_blank" rel="noopener noreferrer">${T('VEC 2022 results', 'VEC 上届结果')} ↗</a></p>
+    </details>`;
+  }
   const rows = PARTIES.au.filter(({ id }) => primary[id] > 0).sort((a, b) => primary[b.id] - primary[a.id]);
   return `<details class="el-vic-primary"${open ? ' open' : ''}>
-    <summary id="el-vic-primary-summary">${T('Statewide first preferences', '全州第一优先票')} · ${formal.toLocaleString('en-AU')} ${T('formal votes counted', '张有效票已计')}</summary>
+    <summary id="el-vic-primary-summary">${title} · ${formal.toLocaleString('en-AU')} ${T('formal votes counted', '张有效票已计')}</summary>
     <table class="el-cands" aria-labelledby="el-vic-primary-summary">
       <thead><tr><th scope="col">${T('Party', '党派')}</th><th scope="col" class="el-num">${T('Votes', '票数')}</th><th scope="col" class="el-num">%</th></tr></thead>
       <tbody>${rows.map((party) => {
@@ -428,7 +457,7 @@ function tallyNumber(partyId, count) {
   return `<span class="el-tally-num" data-party-num="${partyId}"><b>${count.decided + count.leading}</b><small${split ? '' : ' hidden'}>${split}</small></span>`;
 }
 
-function renderTally(event, office, seats, unit, now = Date.now(), primaryOpen = office.id === 'council') {
+function renderTally(event, office, seats, unit, now = Date.now(), primaryOpen = office.id === 'council' || Boolean(shown?.snapshot.comparison?.offices?.[office.id])) {
   const majorityAt = (office.majority / office.seats) * 100;
   const parties = partiesOf(event);
   const hasOfficeData = hasShownForOffice(office.id);
@@ -1746,6 +1775,19 @@ function decisionText(event, race) {
   return T('No decision yet.', '尚无判定。');
 }
 
+function renderVicRaceSwing(event, race) {
+  const result = shown?.snapshot.comparison?.races?.[race.raceId];
+  if (event.id !== 'vic-2026' || !result) return '';
+  const first = T('First-preference swing', '第一优先票摆幅');
+  const tcp = T('Same-pair 2CP swing', '同组两候选人摆幅');
+  return `<section class="el-race-swing" aria-labelledby="el-race-swing-title">
+    <h4 id="el-race-swing-title">${first}</h4>
+    ${renderVicSwingTable(event, first, result.primary)}
+    ${result.tcp ? `<h4>${tcp}</h4>${renderVicSwingTable(event, tcp, result.tcp)}` : ''}
+    <p class="el-note">${T(`Prior final count from the ${formatDay(result.priorDate)} election.`, `上届基准为 ${formatDay(result.priorDate)} 选举的最终计票。`)}${race.office === 'assembly' && !result.tcp ? ` ${T('A 2CP comparison requires the same pair of parties in both contests.', '两候选人摆幅要求两届为同一对政党。')}` : ''}</p>
+  </section>`;
+}
+
 function renderRaceDrawer(event, office, seat, race) {
   const stale = raceFreshness(race, shown.pointer) === 'stale';
   const progress = progressText(race);
@@ -1770,6 +1812,7 @@ function renderRaceDrawer(event, office, seat, race) {
     ${cycleLater ? `<p class="el-note">${T(`Held on ${formatDay(race.electionDate)}, after the main polling day.`, `于 ${formatDay(race.electionDate)} 举行，晚于主投票日。`)}</p>` : ''}
     ${renderTwoCandidate(race, event)}
     ${renderCandidates(race, event)}
+    ${renderVicRaceSwing(event, race)}
     <dl class="el-kv">
       <dt>${T('Decided by', '判定方')}</dt><dd>${decisionText(event, race)}</dd>
       <dt>${T('Progress', '进度')}</dt><dd>${progress || (race.counting.status === 'recount' ? T('Recount: only contest totals are published', '重新计票：只发布比赛总数') : DASH)}</dd>

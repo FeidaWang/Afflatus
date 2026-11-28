@@ -214,6 +214,16 @@ a.el-btn:not(.el-btn-o){color:var(--el-bg)}
 .el-vic-primary summary{cursor:pointer;color:var(--el-ink);font-size:13px}
 .el-vic-primary .el-cands{max-inline-size:36rem}
 .el-vic-primary .el-cands tbody th{color:var(--el-ink);border-block-end-color:var(--el-rule);white-space:normal}
+.el-swing-scroll{margin-block-start:8px;max-inline-size:100%;overflow:auto}
+.el-swing-scroll:focus-visible{outline:2px solid var(--el-focus);outline-offset:-2px}
+.el-swing-table{inline-size:100%;border-spacing:0;color:var(--el-ink);font:12px/1.35 var(--el-mono);font-variant-numeric:tabular-nums}
+.el-swing-table :is(th,td){padding:6px 8px;border-block-end:1px solid var(--el-rule);text-align:end;white-space:nowrap}
+.el-swing-table thead th{color:var(--el-muted);font-size:11px}
+.el-swing-table th:first-child{position:sticky;inset-inline-start:0;background:var(--el-card);text-align:start;padding-inline-start:3px}
+.el-swing-votes{display:block;color:var(--el-muted);font-size:10px}
+.el-race-swing{margin-block-start:14px;padding-block-start:8px;border-block-start:1px solid var(--el-rule)}
+.el-race-swing h4{margin:8px 0 0;font:700 13px/1.3 var(--el-sans)}
+.el-race-swing .el-note,.el-vic-primary .el-note{margin-block-start:7px}
 .el-tally-bar{position:relative;display:flex;block-size:16px;border-radius:3px;background:var(--el-unknown)}
 .el-tally-seg{display:block;block-size:100%;background:var(--seat)}
 .el-tally-seg.is-leading{background:repeating-linear-gradient(45deg,var(--seat) 0 3px,transparent 3px 6px)}

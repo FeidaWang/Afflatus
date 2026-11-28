@@ -6,6 +6,7 @@ import { expect, test } from '@playwright/test';
 import { sourceById } from '../src/config/electionSources.js';
 import { collectOnce, directoryTransport } from '../scripts/elections/collector.mjs';
 import { parseVecFeed } from '../scripts/elections/vec-adapter.mjs';
+import { withVicSwing } from '../scripts/elections/vic-swing.mjs';
 import { contestXml, feedXml, lowerName, regionXml, zipOf } from '../tests/helpers/electionFixtures.js';
 import { civicHouse, civicRegion, civicSenate } from '../tests/helpers/civicFixture.js';
 
@@ -831,7 +832,8 @@ test.describe('Elections feed', () => {
       const snapshot = JSON.parse(readFileSync(join(root, 'store', path), 'utf8'));
       const council = control.includeCouncil ? councilRaces(control.stage) : [];
       const races = [...snapshot.races, ...council].map((race) => ({ ...race, provenance: { ...race.provenance, sourceId: sourceIds[0] } }));
-      return route.fulfill({ json: { ...snapshot, races, publishedAt: POLLS_CLOSE, isSynthetic: false, mode: 'live', sourceIds } });
+      const official = { ...snapshot, races, publishedAt: POLLS_CLOSE, isSynthetic: false, mode: 'live', sourceIds };
+      return route.fulfill({ json: control.swing ? withVicSwing(official) : official });
     });
   }
 
@@ -887,6 +889,19 @@ test.describe('Elections feed', () => {
     await expect(lead).toHaveAttribute('aria-label', /First-preference leader Australian Labor Party/);
     await expect(page.locator('.el-chamber-svg .el-seat.is-leading')).toHaveCount(0);
     await expect(page.locator('.el-chamber-svg .el-seat.is-final')).toHaveCount(0);
+  });
+
+  test('live swing shows prior shares, fixed weights and a comparable 2CP without overflowing the page', async ({ page }) => {
+    await serveOfficial(page, { stage: 1, swing: true });
+    await page.goto(console_('event=vic-2026&office=assembly&race=albert-park'));
+    const statewide = page.getByRole('table', { name: 'Statewide first preferences' });
+    await expect(statewide.getByRole('columnheader', { name: 'Fixed weights (pp)' })).toBeVisible();
+    const tcp = page.getByRole('table', { name: 'Same-pair 2CP swing' });
+    const coalition = tcp.getByRole('row', { name: /Coalition/ });
+    await expect(coalition).toContainText('38.8%');
+    await expect(coalition).toContainText('35.7%');
+    await expect(coalition).toContainText('-3.1');
+    await noOverflow(page);
   });
 
   test('before polls close Victoria shows an empty preview and fetches no result data', async ({ page }) => {
