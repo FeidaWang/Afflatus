@@ -101,7 +101,7 @@ const hasShownForOffice = (officeId = state.office) => Boolean(shown && (!shown.
 
 function renderPartyIcons(icons, size = 'md') {
   if (!icons.length) return '';
-  const imgs = icons.map((icon) => (icon.dot ? `<i class="el-party-dot" style="background:${icon.dot}"></i>` : `<img class="el-party-icon${icon.wide ? ' is-wide' : ''}" src="${icon.src}" alt="" width="${icon.width}" height="${icon.height}" decoding="async">`)).join('');
+  const imgs = icons.map((icon) => (icon.dot ? `<i class="el-party-dot" style="background:${icon.dot}"></i>` : `<img class="el-party-icon${icon.wide ? ' is-wide' : ''}"${icon.bg ? ` style="background:${icon.bg}"` : ''} src="${icon.src}" alt="" width="${icon.width}" height="${icon.height}" decoding="async">`)).join('');
   return `<span class="el-party-badge el-party-badge-${size}${icons.length > 1 ? ' is-pair' : ''}" aria-hidden="true">${imgs}</span>`;
 }
 

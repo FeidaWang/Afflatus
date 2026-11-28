@@ -126,5 +126,95 @@
     "web_sha256": "db5825cbe7c2acb0e2f80f7cbad7d74208b8225cf7008736f78edadac0ba7668",
     "aspect": 1.05,
     "licence": "Public domain on Wikimedia / trademark used for party identification"
+  },
+  "au-familyfirst": {
+    "name": "Family First Party (2021)",
+    "file": "/assets/elections/parties/au-familyfirst.png",
+    "source_page": "https://www.familyfirstparty.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/3/3f/Family_First_Party_%282021%29_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "c39c7c3b4f2a71d16355732957052498f88c477c3facf4679d7f01f16fee7aea",
+    "aspect": 1.0,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-ajp": {
+    "name": "Animal Justice Party",
+    "file": "/assets/elections/parties/au-ajp.png",
+    "source_page": "https://www.animaljusticeparty.org/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/3/30/Animal_Justice_Party_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "c1b0f4131c98b069372a6717fa62a36ea442c00acd548edc17ad8ad46ebc1736",
+    "aspect": 1.6,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-west": {
+    "name": "The West Party",
+    "file": "/assets/elections/parties/au-west.png",
+    "source_page": "https://en.wikipedia.org/wiki/The_West_Party",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/8/8c/The_West_Party_registered_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "d1284e67b973eb5ef65504e17a6c54ebb892ac41a00fb0ab1ae423831154e18c",
+    "aspect": 1.0,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-cannabis": {
+    "name": "Legalise Cannabis Australia",
+    "file": "/assets/elections/parties/au-cannabis.png",
+    "source_page": "https://www.legalisecannabis.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/1/10/Legalise_Party_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "2adf0d791af12219ad0e48e68d4239598312d10b2ddf811b864503c93c53fc51",
+    "aspect": 2.941,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-sff": {
+    "name": "Shooters, Fishers and Farmers Party",
+    "file": "/assets/elections/parties/au-sff.png",
+    "source_page": "https://www.shootersfishersandfarmers.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/1/13/Shooters%2C_Fishers_and_Farmers_Party_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "c533152f21b3cad5e86547136869511528bf63d5db44dc50b656ca1a13d13276",
+    "aspect": 1.0,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-democrats": {
+    "name": "Australian Democrats",
+    "file": "/assets/elections/parties/au-democrats.png",
+    "source_page": "https://www.democrats.org.au/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Australian_Democrats_2020_Logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "da31116aff4bdffccddd56963cc9cc0b1ef9e4bfe12feb46d6ac622ee1629586",
+    "aspect": 1.004,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
+  },
+  "au-avoidfine": {
+    "name": "I'm Voting to Avoid the Fine",
+    "file": "/assets/elections/parties/au-avoidfine.png",
+    "source_page": "https://en.wikipedia.org/wiki/I%27m_Voting_to_Avoid_the_Fine",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/7/7e/I%27m_Voting_to_Avoid_the_Fine_registered_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "3aace819d75ba7a79866ada788b90263b1118103cca8cd9cbe75c6e90eaf6872",
+    "aspect": 1.0,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-maga": {
+    "name": "The Republican Make Australia Great Again",
+    "file": "/assets/elections/parties/au-maga.png",
+    "source_page": "https://en.wikipedia.org/wiki/The_Republican_Make_Australia_Great_Again",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/4/47/The_Republican_Make_Australia_Great_Again_registered_logo.png",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "8c8de5686adfc8039eb3f541489e0771417fe936ea171a81fed782fd1accca44",
+    "aspect": 1.0,
+    "licence": "Copyright of the party; held by Wikipedia under fair use; used here for party identification only"
+  },
+  "au-socialistalliance": {
+    "name": "Socialist Alliance (Australia)",
+    "file": "/assets/elections/parties/au-socialistalliance.svg",
+    "source_page": "https://socialist-alliance.org/",
+    "source_url": "https://upload.wikimedia.org/wikipedia/en/8/85/Socialist_Alliance_%28Australia%29_logo.svg",
+    "retrieved_on": "2026-11-28",
+    "web_sha256": "22f831bd077b29c9ab70dca38ea52fd349345ae7dce7bbad306ef3507b151b12",
+    "aspect": 3.131,
+    "licence": "Public domain on Wikimedia / trademark used for party identification"
   }
 }

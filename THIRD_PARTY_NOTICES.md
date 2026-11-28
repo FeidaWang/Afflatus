@@ -156,7 +156,10 @@ Files under `public/assets/elections/parties/` are official party emblems and
 trademarks of their respective political parties (Democratic Party, Republican
 Party, Australian Labor Party, Liberal Party of Australia, National Party of
 Australia, Australian Greens, Pauline Hanson's One Nation, Victorian
-Socialists, Libertarian Party and Australian Citizens Party), plus two geometric editorial marks for
+Socialists, Libertarian Party, Australian Citizens Party, Family First, Animal
+Justice Party, The West Party, Legalise Cannabis, Shooters, Fishers and Farmers,
+Australian Democrats, Socialist Alliance, I'm Voting to Avoid the Fine and The
+Republican Make Australia Great Again), plus two geometric editorial marks for
 Independent and Other categories. Party emblems are used on the elections page
 solely for factual party identification and imply no affiliation or endorsement.
 Each file's upstream source page, source URL, retrieval date, licence note and

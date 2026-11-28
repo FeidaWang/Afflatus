@@ -34,6 +34,15 @@ export const PARTY_ICONS = Object.freeze({
   'au-vicsocialists': Object.freeze({ src: '/assets/elections/parties/au-vicsocialists.webp', width: 29, height: 16, wide: true }),
   'au-libertarian': Object.freeze({ src: '/assets/elections/parties/au-libertarian.svg', width: 18, height: 16 }),
   'au-citizens': Object.freeze({ src: '/assets/elections/parties/au-citizens.png', width: 17, height: 16 }),
+  'au-familyfirst': Object.freeze({ src: '/assets/elections/parties/au-familyfirst.png', width: 16, height: 16 }),
+  'au-ajp': Object.freeze({ src: '/assets/elections/parties/au-ajp.png', width: 26, height: 16, wide: true }),
+  'au-west': Object.freeze({ src: '/assets/elections/parties/au-west.png', width: 16, height: 16 }),
+  'au-cannabis': Object.freeze({ src: '/assets/elections/parties/au-cannabis.png', width: 47, height: 16, wide: true }),
+  'au-sff': Object.freeze({ src: '/assets/elections/parties/au-sff.png', width: 16, height: 16 }),
+  'au-democrats': Object.freeze({ src: '/assets/elections/parties/au-democrats.png', width: 16, height: 16 }),
+  'au-avoidfine': Object.freeze({ src: '/assets/elections/parties/au-avoidfine.png', width: 16, height: 16 }),
+  'au-maga': Object.freeze({ src: '/assets/elections/parties/au-maga.png', width: 16, height: 16 }),
+  'au-socialistalliance': Object.freeze({ src: '/assets/elections/parties/au-socialistalliance.svg', width: 50, height: 16, wide: true, bg: '#990000' }),
   independent: Object.freeze({ src: '/assets/elections/parties/independent.svg', width: 16, height: 16 }),
   other: Object.freeze({ src: '/assets/elections/parties/other.svg', width: 16, height: 16 }),
 });
@@ -48,18 +57,18 @@ export const displayPartyId = (candidate) => (
 // Each has its own colour; a logo appears only where a freely licensed file exists.
 const AU_MINOR_PARTIES = Object.freeze([
   { match: /^victorian socialists\b/i, color: '#000000', icon: PARTY_ICONS['au-vicsocialists'] },
-  { match: /^family first\b/i, color: '#5A58A6' },
-  { match: /^animal justice party\b/i, color: '#5B2C86' },
-  { match: /^the west party\b/i, color: '#499567' },
+  { match: /^family first\b/i, color: '#5A58A6', icon: PARTY_ICONS['au-familyfirst'] },
+  { match: /^animal justice party\b/i, color: '#5B2C86', icon: PARTY_ICONS['au-ajp'] },
+  { match: /^the west party\b/i, color: '#499567', icon: PARTY_ICONS['au-west'] },
   { match: /^libertarian party\b/i, color: '#FEC327', icon: PARTY_ICONS['au-libertarian'] },
-  { match: /^legalise cannabis\b/i, color: '#6FC442' },
-  { match: /^socialist alliance\b/i, color: '#990000' },
+  { match: /^legalise cannabis\b/i, color: '#6FC442', icon: PARTY_ICONS['au-cannabis'] },
+  { match: /^socialist alliance\b/i, color: '#990000', icon: PARTY_ICONS['au-socialistalliance'] },
   { match: /^democratic labour party\b/i, color: '#FFFF34' },
-  { match: /^shooters, fishers and farmers\b/i, color: '#E52B50' },
-  { match: /^australian democrats\b/i, color: '#FFCD00' },
+  { match: /^shooters, fishers and farmers\b/i, color: '#E52B50', icon: PARTY_ICONS['au-sff'] },
+  { match: /^australian democrats\b/i, color: '#FFCD00', icon: PARTY_ICONS['au-democrats'] },
   { match: /^australian citizens party\b/i, color: '#656600', icon: PARTY_ICONS['au-citizens'] },
-  { match: /^i'm voting to avoid the fine\b/i, color: '#BDA08E' },
-  { match: /^the republican make australia great again\b/i, color: '#DB222A' },
+  { match: /^i'm voting to avoid the fine\b/i, color: '#BDA08E', icon: PARTY_ICONS['au-avoidfine'] },
+  { match: /^the republican make australia great again\b/i, color: '#DB222A', icon: PARTY_ICONS['au-maga'] },
 ]);
 export const auMinorParty = (rawPartyName) => AU_MINOR_PARTIES.find((party) => party.match.test(String(rawPartyName || '').trim())) || null;
 

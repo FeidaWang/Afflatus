@@ -52,7 +52,8 @@ describe('official party emblems', () => {
     expect(partyIconsFor('au', 'other', 'Liberal Democrats')).toEqual([PARTY_ICONS.other]);
     expect(partyIconsFor('au', 'onenation')).toEqual([PARTY_ICONS['au-onenation']]);
     expect(partyIconsFor('au', 'other', 'Victorian Socialists')).toEqual([PARTY_ICONS['au-vicsocialists']]);
-    expect(partyIconsFor('au', 'other', 'Animal Justice Party')).toEqual([{ dot: '#5B2C86' }]);
+    expect(partyIconsFor('au', 'other', 'Animal Justice Party')).toEqual([PARTY_ICONS['au-ajp']]);
+    expect(partyIconsFor('au', 'other', 'Democratic Labour Party (DLP)')).toEqual([{ dot: '#FFFF34' }]);
   });
 });
 
