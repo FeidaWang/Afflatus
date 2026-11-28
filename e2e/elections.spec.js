@@ -80,7 +80,7 @@ test.describe('Elections console', () => {
     await expect(page.locator('[data-office]')).toHaveCount(2);
     await expect(page.locator('[data-office="assembly"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.el-tally-mark').first()).toContainText('45 for majority');
-    await expect(page.locator('.el-tally-keys')).toContainText('Labor');
+    await expect(page.locator('#el-tally')).toContainText('Labor');
     await expect(page.locator('.el-strip b')).toHaveText('2022 baseline');
     await expect(page.locator('.el-strip')).toContainText('Coverage 88/88');
     await expect(page.locator('#el-sources')).toBeHidden();
@@ -246,7 +246,7 @@ test.describe('Elections console', () => {
     await page.goto('/zh/elections.html?event=vic-2026');
     await expect(page.locator('h1')).toContainText('维州 2026');
     await expect(page.locator('.el-strip b')).toHaveText('上届基准 · 2022');
-    await expect(page.locator('.el-tally-keys')).toContainText('工党');
+    await expect(page.locator('#el-tally')).toContainText('工党');
     await noOverflow(page);
   });
 
@@ -1003,8 +1003,8 @@ test.describe('Elections feed', () => {
     await expect(mark(page, 'albert-park')).toHaveAttribute('style', /--seat:#C8302E/);
     await expect(mark(page, 'bass')).toHaveClass(/is-neutral/);
     await expect(row(page, 'bass')).toContainText('Withheld by source');
-    await expect(page.locator('.el-tally-keys')).toContainText('1 leading · 0 decided');
-    await expect(page.locator('.el-tally-keys li').first().locator('b')).toHaveText('1');
+    await expect(page.locator('[data-party-num="labor"] b')).toHaveText('1');
+    await expect(page.locator('.el-tally-keys')).toContainText('Ahead on current count');
   });
 
   test('a correction lowers the numbers and is labelled as one', async ({ page }) => {
@@ -1021,7 +1021,8 @@ test.describe('Elections feed', () => {
     await open(page, 'event=vic-2026&race=albert-park');
     await toStage(page, control, 3);
     await expect(mark(page, 'albert-park')).toHaveClass(/is-final/);
-    await expect(page.locator('.el-tally-keys li').first().locator('b')).toHaveText('1');
+    await expect(page.locator('[data-party-num="labor"] b')).toHaveText('1');
+    await expect(page.locator('.el-tally-keys')).toContainText('Decided');
     const drawer = page.locator('#el-drawer');
     await expect(drawer).toContainText('VEC · first seen in the feed');
     await expect(drawer).toContainText('the feed gives no declaration date');
@@ -1035,7 +1036,7 @@ test.describe('Elections feed', () => {
     await expect(mark(page, 'albert-park')).toHaveClass(/is-leading/);
     await expect(row(page, 'albert-park')).toContainText('Decision withdrawn');
     await expect(drawer).toContainText('has been withdrawn by the source');
-    await expect(page.locator('.el-tally-keys li').first()).toContainText('1 leading · 0 decided');
+    await expect(page.locator('[data-party-num="labor"] b')).toHaveText('1');
     await expect(page.locator('.el-changes')).toContainText('Decision withdrawn');
   });
 
@@ -1303,11 +1304,10 @@ test.describe('Elections civicAPI', () => {
 
   test('renders official party SVG emblems across US and Australian views including dual Coalition partners', async ({ page }) => {
     await page.goto(console_('event=vic-2026&office=assembly&race=bass'));
-    await expect(page.locator('.el-tally-keys li[data-party="labor"] img[src$="/au-alp.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-keys li[data-party="coalition"] img[src$="/au-liberal.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-keys li[data-party="coalition"] img[src$="/au-nationals.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-keys li[data-party="greens"] img[src$="/au-greens.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-keys li[data-party="teal"] img[src$="/independent.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="labor"] img[src$="/au-alp.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="coalition"] img[src$="/au-liberal.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="coalition"] img[src$="/au-nationals.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="greens"] img[src$="/au-greens.svg"]')).toHaveCount(1);
     await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two) img[src$="/au-liberal.svg"]')).toHaveCount(1);
     await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two) img[src$="/au-nationals.svg"]')).toHaveCount(1);
     await expect(page.locator('#el-drawer .el-cands-two img[src$="/au-liberal.svg"]')).toHaveCount(1);
@@ -1316,8 +1316,8 @@ test.describe('Elections civicAPI', () => {
 
     await serveCivic(page, { house: civicHouse({ 'ca-12': civicRegion('ca-12', { winner: 'd' }), 'tx-23': civicRegion('tx-23', { winner: 'r' }) }) });
     await page.goto(console_('event=us-2026&office=house&race=CA-12'));
-    await expect(page.locator('.el-tally-keys li[data-party="dem"] img[src$="/us-dem.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-keys li[data-party="rep"] img[src$="/us-rep.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="dem"] img[src$="/us-dem.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-row[data-party-row="rep"] img[src$="/us-rep.svg"]')).toHaveCount(1);
     await expect(page.locator('#el-drawer .el-cands img[src$="/us-dem.svg"]')).toHaveCount(1);
   });
 
