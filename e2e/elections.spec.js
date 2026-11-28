@@ -5,7 +5,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { sourceById } from '../src/config/electionSources.js';
 import { collectOnce, directoryTransport } from '../scripts/elections/collector.mjs';
-import { contestXml, feedXml, lowerName, zipOf } from '../tests/helpers/electionFixtures.js';
+import { parseVecFeed } from '../scripts/elections/vec-adapter.mjs';
+import { contestXml, feedXml, lowerName, regionXml, zipOf } from '../tests/helpers/electionFixtures.js';
 import { civicHouse, civicRegion, civicSenate } from '../tests/helpers/civicFixture.js';
 
 const HUB = '/en/elections.html';
@@ -828,9 +829,19 @@ test.describe('Elections feed', () => {
       }
       const path = new URL(route.request().url()).pathname.slice(FEED.length);
       const snapshot = JSON.parse(readFileSync(join(root, 'store', path), 'utf8'));
-      const races = snapshot.races.map((race) => ({ ...race, provenance: { ...race.provenance, sourceId: sourceIds[0] } }));
+      const council = control.includeCouncil ? councilRaces(control.stage) : [];
+      const races = [...snapshot.races, ...council].map((race) => ({ ...race, provenance: { ...race.provenance, sourceId: sourceIds[0] } }));
       return route.fulfill({ json: { ...snapshot, races, publishedAt: POLLS_CLOSE, isSynthetic: false, mode: 'live', sourceIds } });
     });
+  }
+
+  function councilRaces(stage) {
+    const source = sourceById('vec-sample');
+    const groups = [['One Nation Victoria', stage === 1 ? 60 : 70], ['Australian Labor Party - Victorian Branch', stage === 1 ? 30 : 90]];
+    const contest = regionXml({ name: 'Eastern Victoria', groups, ungrouped: 10 });
+    return parseVecFeed(feedXml({ category: 'UpperHouse', contests: [contest] }), {
+      feed: source.feeds[1], source, fetchedAt: POLLS_CLOSE, payloadHash: null, fileName: 'council-test.zip',
+    }).races;
   }
 
   const checkVisibleFeed = async (page) => {
@@ -852,6 +863,31 @@ test.describe('Elections feed', () => {
     await page.goto(console_(query));
     await expect(page.locator('.el-strip b')).toHaveText('Synthetic test data');
   };
+
+  test('the calendar and Council visualizations update from the same official feed', async ({ page, isMobile }) => {
+    const control = { stage: 1, includeCouncil: true };
+    await serveOfficial(page, control);
+    await page.goto('/en/elections.html?view=calendar');
+    const hub = page.locator('#el-hub-count');
+    await expect(hub).toContainText('Assembly 2/88 districts reporting');
+    await expect(hub).toContainText('Council 1/8 regions reporting');
+    await expect(hub.locator('[data-party-row="labor"] b')).toHaveText('1');
+    control.stage = 2;
+    await checkVisibleFeed(page);
+    await expect(hub.locator('[data-party-row="coalition"] b')).toHaveText('1');
+
+    await page.getByRole('link', { name: 'Council results →' }).click();
+    await expect(page.locator('#el-vic-summary')).toContainText('1/8 regions reporting');
+    await expect(page.locator('.el-vic-primary')).toContainText('170 formal votes counted');
+    await expect(page.locator('.el-vic-primary')).toContainText('52.9%');
+    await expect(page.locator('.el-table tbody tr')).toHaveCount(8);
+    await expect(page.getByRole('button', { name: 'Eastern Victoria', exact: true })).toBeVisible();
+    if (isMobile) await page.locator('#el-explore-toggle').evaluate((button) => button.click());
+    const lead = page.locator('.el-map-svg [data-feature].is-leading');
+    await expect(lead).toHaveAttribute('aria-label', /First-preference leader Australian Labor Party/);
+    await expect(page.locator('.el-chamber-svg .el-seat.is-leading')).toHaveCount(0);
+    await expect(page.locator('.el-chamber-svg .el-seat.is-final')).toHaveCount(0);
+  });
 
   test('before polls close Victoria shows an empty preview and fetches no result data', async ({ page }) => {
     const urls = [];

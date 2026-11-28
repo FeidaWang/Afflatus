@@ -7,6 +7,7 @@
    ============================================================ */
 import { seatMark } from './chamberLayout.js';
 import { seatCatalogue } from './electionCatalogue.js';
+import { escapeHtml } from './escapeHtml.js';
 
 export const GEOGRAPHY_VERSION = '2026-11-04';
 
@@ -151,7 +152,8 @@ function featureElement({ feature, seats: members }, mark, label) {
   const primary = primarySeat(members);
   const { className, style } = featureAppearance(mark);
   const record = mark.status === 'final' ? ' data-record' : '';
-  return `<path class="${className}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${label(primary, members)}"${record}${style ? ` style="${style}"` : ''}/>`;
+  const aria = escapeHtml(label(primary, members)).replaceAll('"', '&quot;');
+  return `<path class="${className}" d="${feature.d}" data-feature="${feature.id}" data-seat="${primary.seatId}" data-seats="${members.map((seat) => seat.seatId).join(' ')}" tabindex="-1" role="button" aria-pressed="false" aria-label="${aria}"${record}${style ? ` style="${style}"` : ''}/>`;
 }
 
 export function mapHatchPatterns(marks, viewBox) {
@@ -164,8 +166,8 @@ export function mapHatchPatterns(marks, viewBox) {
 }
 
 /** The map as a string. `states` maps seatId to verified state; the page passes none. */
-export function mapSvg(map, binding, { states = {}, parties = [], label, ariaLabel, insetLabel }) {
-  const marks = binding.bound.map(({ seats: members }) => featureMark(members, states, parties));
+export function mapSvg(map, binding, { states = {}, parties = [], markFor = featureMark, label, ariaLabel, insetLabel }) {
+  const marks = binding.bound.map(({ seats: members }) => markFor(members, states, parties));
   const features = binding.bound.map((item, index) => featureElement(item, marks[index], label));
   const overlay = map.overlay ? `<path class="el-map-overlay" d="${map.overlay}" aria-hidden="true"/>` : '';
   const insets = (map.insets || []).map(({ state, b }) => (

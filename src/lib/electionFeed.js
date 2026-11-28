@@ -10,6 +10,13 @@ export const VISIBLE_CHECK_MS = 60 * 1000;
 export const HIDDEN_CHECK_MS = 5 * 60 * 1000;
 const MAX_CHECK_MS = 15 * 60 * 1000;
 
+export async function fetchFeedJson(url) {
+  const response = await fetch(url, { cache: 'no-cache', signal: AbortSignal.timeout(20000) });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
 export function createFeedController({
   base, eventId, hostname, serverApprovedSource, fetchJson, onChange, isHidden = () => false, now = Date.now, schedule = setTimeout, cancel = clearTimeout,
   visibleCheckMs = () => VISIBLE_CHECK_MS,

@@ -18,7 +18,6 @@ import {
   eventPhase,
   nextEvent,
   officeById,
-  partyIconsFor,
   statusVocabulary,
 } from '../lib/electionRules.js';
 import { baselineFor, baselineUrl } from '../lib/electionBaseline.js';
@@ -45,9 +44,10 @@ import {
 import { parseState, serializeState, withEvent, withGeography, withOffice, withRace } from '../lib/electionState.js';
 import { ELECTION_FEED_BASE, VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, isVecElectionNight, sourceById } from '../config/electionSources.js';
 import { CIVIC_BASE, createCivicReader } from '../lib/civicApi.js';
-import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates, snapshotErrors } from '../lib/electionResults.js';
-import { VISIBLE_CHECK_MS, createFeedController } from '../lib/electionFeed.js';
-import { electionLabel, electionLocale, renderElectionHub, setElectionText } from './electionsHub.js';
+import { renderCandidatePartyBadge, renderPartyBadge } from '../lib/electionPartyMarkup.js';
+import { ageSeconds, contestLeader, coveredSeats, isLocalHost, partyTally, primaryLeader, raceFreshness, raceIndex, seatStates, snapshotErrors, vicOfficeCount } from '../lib/electionResults.js';
+import { VISIBLE_CHECK_MS, createFeedController, fetchFeedJson } from '../lib/electionFeed.js';
+import { electionLabel, electionLocale, renderElectionHub, setElectionText, stopElectionHub } from './electionsHub.js';
 
 const $ = (id) => document.getElementById(id);
 const DASH = '—';
@@ -103,15 +103,6 @@ const ageClock = () => (isReplay() ? Date.parse(shown.snapshot.publishedAt) : Da
 const officeRacesOf = (officeId = state.office) => (shown ? shown.snapshot.races.filter((race) => race.office === officeId) : []);
 const isBaselineForOffice = (officeId = state.office) => Boolean(shown?.isBaseline && officeRacesOf(officeId).length > 0);
 const hasShownForOffice = (officeId = state.office) => Boolean(shown && (!shown.isBaseline || officeRacesOf(officeId).length > 0));
-
-function renderPartyIcons(icons, size = 'md') {
-  if (!icons.length) return '';
-  const imgs = icons.map((icon) => (icon.dot ? `<i class="el-party-dot" style="background:${icon.dot}"></i>` : `<img class="el-party-icon${icon.wide ? ' is-wide' : ''}"${icon.bg ? ` style="background:${icon.bg}"` : ''} src="${icon.src}" alt="" width="${icon.width}" height="${icon.height}" decoding="async">`)).join('');
-  return `<span class="el-party-badge el-party-badge-${size}${icons.length > 1 ? ' is-pair' : ''}" aria-hidden="true">${imgs}</span>`;
-}
-
-const renderPartyBadge = (family, partyId, size = 'md') => renderPartyIcons(partyIconsFor(family, partyId), size);
-const renderCandidatePartyBadge = (family, candidate, size = 'sm') => renderPartyIcons(partyIconsFor(family, displayPartyId(candidate), candidate?.party, candidate?.independent), size);
 
 const NOT_LOADED = () => T('Not loaded: no verified source yet', '未加载：尚无经核验的来源');
 const NOT_PUBLISHED = () => T('Not published by the source', '来源未发布');
@@ -209,6 +200,8 @@ function defaultStagePrimary(event, office) {
 }
 
 const isAssemblyElectionNight = () => state.event === 'vic-2026' && state.office === 'assembly' && isVecElectionNight();
+const isVicCouncil = () => state.event === 'vic-2026' && state.office === 'council';
+const coverageContests = (seats) => isVicCouncil() ? [...new Map(seats.map((seat) => [seat.area, seat])).values()] : seats;
 
 function renderFeedButton() {
   if (!feed?.state.pointer) return '';
@@ -368,13 +361,13 @@ function syncWorkbenchOrder() {
 }
 
 function renderVicContext(event, office, now = Date.now()) {
-  if (event.id !== 'vic-2026' || office.id !== 'assembly') return '';
-  const races = officeRacesOf(office.id);
-  const hasResults = races.length > 0;
+  if (event.id !== 'vic-2026') return '';
+  const council = office.id === 'council';
+  const hasResults = officeRacesOf(office.id).length > 0;
   const source = shown?.pointer?.sources?.[0];
-  const assembly = source?.feeds?.find((item) => item.office === office.id);
+  const houseFeed = source?.feeds?.find((item) => item.office === office.id);
   const delayed = !isReplay() && !feed?.state.paused && source && ageSeconds(source.lastCheckedAt, now) >= 20 * 60;
-  const failed = !isReplay() && (feed?.state.status === 'error' || assembly?.status === 'error' || assembly?.status === 'delayed');
+  const failed = !isReplay() && (feed?.state.status === 'error' || houseFeed?.status === 'error' || houseFeed?.status === 'delayed');
   const beforeClose = now < Date.parse(VEC_POLLS_CLOSE);
 
   let status;
@@ -385,18 +378,37 @@ function renderVicContext(event, office, now = Date.now()) {
   else if (hasResults) status = T('Counting updates', '计票更新');
   else status = beforeClose ? `${L(event.dateLabel)} · ${L(event.pollsClose)}` : T('Polls closed', '投票已结束');
 
-  const counting = races.filter((race) => race.counting.status !== 'no_votes' || race.decision.status === 'certified').length;
-  const declared = races.filter((race) => race.decision.status === 'certified').length;
+  const { reported, declared } = vicOfficeCount(shown?.snapshot, office.id);
+  const contests = contestCount(coverageContests(seatCatalogue(event.id, office.id)));
+  const reportingLabel = council ? T('regions reporting', '大区已报票') : T('districts reporting', '选区已报票');
   const metrics = hasResults
-    ? `<span><b>${counting}</b>/${office.seats} ${T('districts reporting', '选区已报票')}</span><span><b>${declared}</b> ${T('declared', '已宣布')}</span>`
+    ? `<span><b>${reported}</b>/${contests} ${reportingLabel}</span><span><b>${declared}</b> ${council ? T('regions declared', '大区已宣布') : T('declared', '已宣布')}</span>`
     : '';
-  const officialHref = beforeClose && !hasResults ? 'https://www.vec.vic.gov.au/electoral-boundaries/state-districts' : event.officialUrl;
-  const officialText = beforeClose && !hasResults ? T('VEC districts', 'VEC 选区') : T('VEC official', 'VEC 官方');
+  const districtLink = !council && beforeClose && !hasResults;
+  const officialHref = districtLink ? 'https://www.vec.vic.gov.au/electoral-boundaries/state-districts' : event.officialUrl;
+  const officialText = districtLink ? T('VEC districts', 'VEC 选区') : T('VEC official', 'VEC 官方');
   return `<div class="el-tally-context" id="el-vic-summary">
     <span class="el-tally-badge${failed || delayed ? ' is-delayed' : ''}">${status}</span>
     ${metrics}
     <a id="el-vic-official" href="${officialHref}" target="_blank" rel="noopener noreferrer">${officialText} ↗</a>
   </div>`;
+}
+
+function renderVicPrimary(event, office, open) {
+  if (event.id !== 'vic-2026') return '';
+  const { formal, primary } = vicOfficeCount(shown?.snapshot, office.id);
+  if (!formal) return '';
+  const rows = PARTIES.au.filter(({ id }) => primary[id] > 0).sort((a, b) => primary[b.id] - primary[a.id]);
+  return `<details class="el-vic-primary"${open ? ' open' : ''}>
+    <summary id="el-vic-primary-summary">${T('Statewide first preferences', '全州第一优先票')} · ${formal.toLocaleString('en-AU')} ${T('formal votes counted', '张有效票已计')}</summary>
+    <table class="el-cands" aria-labelledby="el-vic-primary-summary">
+      <thead><tr><th scope="col">${T('Party', '党派')}</th><th scope="col" class="el-num">${T('Votes', '票数')}</th><th scope="col" class="el-num">%</th></tr></thead>
+      <tbody>${rows.map((party) => {
+        const share = (primary[party.id] / formal * 100).toFixed(1);
+        return `<tr style="--share:${share}%;--party:${party.color}"><th scope="row"><span class="el-cand-party">${renderPartyBadge(event.family, party.id, 'sm')}<span>${L(party)}</span></span></th><td class="el-num">${primary[party.id].toLocaleString('en-AU')}</td><td class="el-num">${share}%</td></tr>`;
+      }).join('')}</tbody>
+    </table>
+  </details>`;
 }
 
 // One number per party: seats won plus seats ahead. The split shows only once both kinds exist.
@@ -409,7 +421,7 @@ function tallyNumber(partyId, count) {
   return `<span class="el-tally-num" data-party-num="${partyId}"><b>${count.decided + count.leading}</b><small${split ? '' : ' hidden'}>${split}</small></span>`;
 }
 
-function renderTally(event, office, seats, unit, now = Date.now()) {
+function renderTally(event, office, seats, unit, now = Date.now(), primaryOpen = office.id === 'council') {
   const majorityAt = (office.majority / office.seats) * 100;
   const parties = partiesOf(event);
   const hasOfficeData = hasShownForOffice(office.id);
@@ -420,7 +432,8 @@ function renderTally(event, office, seats, unit, now = Date.now()) {
   const anyDecided = active.some((party) => counts[party.id].decided);
   const keys = active.length
     ? `${anyLeading ? `<li class="el-tally-legend"><i class="is-ahead"></i>${T('Ahead on current count', '按当前计票领先')}</li>` : ''}${anyDecided ? `<li class="el-tally-legend"><i class="is-won"></i>${T('Decided', '已定')}</li>` : ''}`
-    : parties.map((party) => `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${counts ? counts[party.id].decided : DASH}</b></li>`).join('');
+    : isVicCouncil() && hasOfficeData ? ''
+      : parties.map((party) => `<li data-party="${party.id}">${renderPartyBadge(event.family, party.id)}${L(party)}<b>${counts ? counts[party.id].decided : DASH}</b></li>`).join('');
   const tally = tallySeats(seats, states, parties);
   const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" data-party="${party.id}" data-kind="${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
   const marker = (withLabel) => (office.heldSeatsUnknown ? '' : `<span class="el-tally-mark" style="left:${majorityAt}%">${withLabel ? `<span>${L(office.majorityLabel)}</span>` : ''}</span>`);
@@ -442,8 +455,9 @@ function renderTally(event, office, seats, unit, now = Date.now()) {
     ${renderVicContext(event, office, now)}
     <div class="el-tally-main">
       ${bars}
-      <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${hasOfficeData ? T('No decision or lead', '无判定或领先') : L(NO_RESULT)}<b id="el-tally-open-count">${open}</b></li>${declaredRegion ? `<li><i class="el-neutral"></i>${T('Declared, not allocated to seats', '已宣布，未按席位分配')}<b>${declaredRegion}</b></li>` : ''}${unlisted ? `<li><i class="el-neutral"></i>${T('Decision or lead, no listed party', '有判定或领先，无所列党派')}<b>${unlisted}</b></li>` : ''}${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
+      <ul class="el-tally-keys">${keys}<li><i class="el-neutral"></i>${hasOfficeData ? (isVicCouncil() ? T('Pending seat results', '席位结果待公布') : T('No decision or lead', '无判定或领先')) : L(NO_RESULT)}<b id="el-tally-open-count">${open}</b></li>${declaredRegion ? `<li><i class="el-neutral"></i>${T('Declared, not allocated to seats', '已宣布，未按席位分配')}<b>${declaredRegion}</b></li>` : ''}${unlisted ? `<li><i class="el-neutral"></i>${T('Decision or lead, no listed party', '有判定或领先，无所列党派')}<b>${unlisted}</b></li>` : ''}${tally.off ? `<li><i class="el-off"></i>${L(NOT_ON_BALLOT)}<b>${tally.off}</b></li>` : ''}</ul>
     </div>
+    ${renderVicPrimary(event, office, primaryOpen)}
     ${noteParts.length ? `<p class="el-note el-tally-note">${noteParts.join(' · ')}</p>` : ''}
     <p class="el-sr">${office.seats} ${unit}</p>
   </section>`;
@@ -481,9 +495,10 @@ function showReadout(seatId) {
   const seat = seatId && seatCatalogue(state.event, state.office).find((item) => item.seatId === seatId);
   const updated = seat ? currentRaces().get(seat.seatId)?.provenance.sourceUpdatedAt : null;
   const text = seat ? `${L(seat.label)} · ${seatStatus(seat)}${updated ? ` · ${formatTime(updated)}` : ''}` : '';
-  for (const host of [$('el-chamber-readout'), $('el-map-readout')]) {
-    if (host) host.textContent = text;
-  }
+  const chamber = $('el-chamber-readout');
+  if (chamber) chamber.textContent = text;
+  const map = $('el-map-readout');
+  if (map) map.textContent = text + (seat && isVicCouncil() ? councilLeaderLabel(seat) : '');
 }
 
 const exploreTitle = () => (state.geographyView === 'map' ? T('Map', '地图') : T('Seat blocks', '席位块'));
@@ -545,10 +560,33 @@ function showMap() {
   });
 }
 
+function councilRegionLeader(seat) {
+  const race = currentRaces().get(seat.seatId);
+  if (!race || race.coverage === 'not_covered' || race.coverage === 'source_error') return null;
+  return groupAsCandidate(primaryLeader(race));
+}
+
+function councilLeaderLabel(seat) {
+  const leader = councilRegionLeader(seat);
+  return leader ? ` · ${T('First-preference leader', '第一优先票领先者')} ${leader.name}` : '';
+}
+
+function councilFeatureMark(members, _states, parties) {
+  const seat = primarySeat(members);
+  const leader = councilRegionLeader(seat);
+  if (!leader) return { status: 'neutral' };
+  const party = parties.find(({ id }) => id === displayPartyId(leader)) || parties.find(({ id }) => id === 'other');
+  const minor = party.id === 'other' ? auMinorParty(leader.party) : null;
+  const colour = minor ? { id: `group-${minor.color.slice(1)}`, color: minor.color } : party;
+  return { status: 'leading', party: colour, stale: raceFreshness(currentRaces().get(seat.seatId), shown.pointer) === 'stale' };
+}
+
+const currentFeatureMark = () => isVicCouncil() ? councilFeatureMark : featureMark;
+
 function mapLabel(level) {
   return (primary, members) => {
     if (level === 'district') return `${L(primary.label)} · ${seatStatus(primary)}`;
-    if (level === 'region') return `${primary.group} · ${members.length} ${T('seats', '席')} · ${seatStatus(primary)}`;
+    if (level === 'region') return `${primary.group} · ${members.length} ${T('seats', '席')} · ${seatStatus(primary)}${isVicCouncil() ? councilLeaderLabel(primary) : ''}`;
     return `${primary.group} · ${seatStatus(primary)}`;
   };
 }
@@ -569,6 +607,7 @@ function mapMarkup(event, office, geography, map, binding) {
   return mapSvg(map, binding, {
     states: currentStates(),
     parties: partiesOf(event),
+    markFor: currentFeatureMark(),
     label: mapLabel(geography.level),
     ariaLabel: `${L(office.fullName)} · ${T('map', '地图')} · ${binding.bound.length}`,
     insetLabel: (code) => `${code}<tspan class="el-map-inset-word"> · ${T('inset', '插图')}</tspan>`,
@@ -589,6 +628,7 @@ function renderMap(host, map) {
       <button type="button" class="el-btn el-btn-o" id="el-zoom-seat" disabled>${T('Zoom to seat', '缩放到席位')}</button>
       <span class="el-map-credit">${L(geography.credit)}</span>
     </div>
+    ${isVicCouncil() ? `<p class="el-note">${T('Shading shows each region’s first-preference leader.', '填色表示各大区第一优先票领先者。')}</p>` : ''}
     ${mapMarkup(event, office, geography, map, binding)}
     <p class="el-chamber-readout" id="el-map-readout"></p>
     <p class="el-map-area" id="el-map-area" role="status"></p>
@@ -682,7 +722,7 @@ function matchesQuery(seat, query) {
 
 function renderRaces() {
   const event = eventById(state.event);
-  const seats = seatCatalogue(event.id, state.office);
+  const seats = coverageContests(seatCatalogue(event.id, state.office));
   const host = $('el-races-table');
   if (!seats.length) {
     host.innerHTML = `<p class="el-empty">${T('No contest list yet.', '暂无比赛列表。')}</p>`;
@@ -690,8 +730,9 @@ function renderRaces() {
   }
   const sorted = sortSeats(seats, table.key, table.direction, tableStatus);
   const query = table.query.trim();
-  const filtered = query ? sorted.filter((seat) => matchesQuery(seat, query)) : sorted;
-  const selected = filtered.find((seat) => seat.seatId === state.raceId);
+  const selectedId = selectedTableRow();
+  const filtered = query ? sorted.filter((seat) => matchesQuery(seat, query) || (isVicCouncil() && seat.seatId === selectedId)) : sorted;
+  const selected = filtered.find((seat) => seat.seatId === selectedId);
   const short = filtered.slice(0, INITIAL_ROWS);
   const rows = query || table.expanded ? filtered : selected && !short.includes(selected) ? [...short, selected] : short;
 
@@ -726,7 +767,7 @@ function renderRaces() {
       ...(showUpdated ? [numHeading(T('Updated', '更新'))] : []),
     ]
     : [
-      heading('seat', T('Electorate', '选区')),
+      heading('seat', isVicCouncil() ? T('Region', '大区') : T('Electorate', '选区')),
       ...(grouped ? [heading('group', T('Region', '大区'), true)] : []),
       progressHeading(auProgressCol),
       textHeading(T('Primary', '第一优先')),
@@ -734,10 +775,10 @@ function renderRaces() {
       heading('status', T('Status', '状态')),
       ...(showUpdated ? [numHeading(T('Updated', '更新'))] : []),
     ];
-  const textCell = (text, optional = true, race = null) => (
+  const textCell = (text, optional = true, race = null, badge = '') => (
     text === null
       ? `<td class="${optional ? 'el-opt ' : ''}el-col-text" title="${race ? NOT_PUBLISHED() : NOT_LOADED()}">${DASH}</td>`
-      : `<td class="${optional ? 'el-opt ' : ''}el-col-text"><span title="${text}">${text}</span></td>`
+      : `<td class="${optional ? 'el-opt ' : ''}el-col-text"><span title="${text}">${badge}${text}</span></td>`
   );
   const numCell = (text, optional = true, race = null) => (
     text === null
@@ -754,7 +795,7 @@ function renderRaces() {
     const race = races.get(seat.seatId);
     const mark = seat.onBallot ? seatMark(seat, currentStates()[seat.seatId], parties) : null;
     const badge = mark?.party ? renderPartyBadge(event.family, mark.party.id, 'xs') : '';
-    const seatCell = `<th scope="row"><button type="button" class="el-seat-link" data-seat="${seat.seatId}">${L(seat.label)}</button></th>`;
+    const seatCell = `<th scope="row"><button type="button" class="el-seat-link" data-seat="${seat.seatId}">${isVicCouncil() ? esc(seat.group) : L(seat.label)}</button></th>`;
     const fullStatus = seatStatus(seat);
     const shortStatus = tableStatus(seat);
     const status = `<td class="el-col-status"><span class="el-status${seat.onBallot ? '' : ' is-off'}" data-status="${esc(currentStates()[seat.seatId]?.status || 'neutral')}" title="${esc(fullStatus)}">${badge}<span>${shortStatus}</span></span></td>`;
@@ -773,8 +814,8 @@ function renderRaces() {
         seatCell,
         ...(grouped ? [`<td class="el-opt el-col-text" title="${esc(seat.group)}">${esc(seat.group)}</td>`] : []),
         progressCell(race ? progressText(race, { short: true }) : null, race),
-        textCell(race ? leaderName(race, primaryLeader) : null, true, race),
-        ...(showTcp ? [textCell(race ? tcpText(race) : null, true, race)] : []),
+        textCell(race ? leaderName(race, primaryLeader) : null, true, race, race ? renderCandidatePartyBadge(event.family, groupAsCandidate(primaryLeader(race)), 'xs') : ''),
+        ...(showTcp ? [textCell(race ? tcpText(race) : null, true, race, race ? renderCandidatePartyBadge(event.family, contestLeader(race), 'xs') : '')] : []),
         status,
         age,
       ];
@@ -870,13 +911,14 @@ function renderSourcesInner(event, seats) {
   const feedSource = feed?.state.pointer?.sources?.[0];
   const source = isReplay() ? null : feedSource;
   const officeFileTime = source?.feeds?.find((item) => item.office === office.id)?.publishedAt;
+  const contests = coverageContests(seats);
   return `<div class="el-sources-head">
       <h2 id="el-sources-title">${T('Sources & status', '来源与状态')}</h2>
       <button type="button" class="el-drawer-close" data-sources-close popovertarget="el-sources" popovertargetaction="hide" aria-label="${T('Close sources', '关闭来源说明')}">×</button>
     </div>
     <dl class="el-kv">
       <dt>${T('Mode', '模式')}</dt><dd>${L(modeLabel())}</dd>
-      <dt>${T('Coverage', '覆盖')}</dt><dd>${seats.length ? `${coveredSeats(seats, currentRaces())} ${T('of', '/')} ${contestCount(seats)}` : DASH}</dd>
+      <dt>${T('Coverage', '覆盖')}</dt><dd>${contests.length ? `${coveredSeats(contests, currentRaces())} ${T('of', '/')} ${contestCount(contests)}` : DASH}</dd>
       <dt>${T('Feed', '数据源')}</dt><dd>${feedSource ? (feedSource.url ? `<a href="${esc(feedSource.url)}" target="_blank" rel="noopener noreferrer">${esc(feedSource.name)} ↗</a>` : esc(feedSource.name)) : L(event.feed)}</dd>
       ${isBaselineForOffice(office.id) ? `<dt>${T('Baseline', '上届基准')}</dt><dd>${L(shown.snapshot.baselineDetail)}</dd>` : ''}
       ${source ? `<dt>${T('Feed status', '数据源状态')}</dt><dd>${feedStatusText(source)}</dd>` : ''}
@@ -1024,8 +1066,9 @@ function renderConsoleStrip(event, office, seats) {
   const races = hasOfficeData ? officeRacesOf(office.id) : [];
   const stale = races.filter((race) => raceFreshness(race, shown.pointer) === 'stale').length;
   const source = shown?.pointer?.sources?.[0];
+  const contests = coverageContests(seats);
   const meta = [
-    seats.length ? `${T('Coverage', '覆盖')} ${coveredSeats(seats, currentRaces())}/${contestCount(seats)}` : `${T('Coverage', '覆盖')} ${DASH}`,
+    contests.length ? `${T('Coverage', '覆盖')} ${coveredSeats(contests, currentRaces())}/${contestCount(contests)}` : `${T('Coverage', '覆盖')} ${DASH}`,
     ...(source && !isReplay() ? [`${T('Checked', '检查')} ${formatAge(ageSeconds(source.lastCheckedAt, Date.now()))}`] : []),
     ...(stale ? [`<em>${T(`${stale} stale`, `${stale} 场已过时`)}</em>`] : []),
     event.timeLabel,
@@ -1055,14 +1098,6 @@ function loadBaseline(file) {
 
 function fetchCivicJson(url) {
   return fetch(url, { cache: 'no-cache', credentials: 'omit', referrerPolicy: 'no-referrer' }).then((response) => {
-    if (response.status === 404) return null;
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  });
-}
-
-function fetchFeedJson(url) {
-  return fetch(url, { cache: 'no-cache', signal: AbortSignal.timeout(20000) }).then((response) => {
     if (response.status === 404) return null;
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
@@ -1146,7 +1181,8 @@ function updateMapMarks(parties) {
   const { svg, map, binding, elements, geography } = activeMap;
   const states = currentStates();
   const label = mapLabel(geography.level);
-  const marks = binding.bound.map(({ seats }) => featureMark(seats, states, parties));
+  const markFor = currentFeatureMark();
+  const marks = binding.bound.map(({ seats }) => markFor(seats, states, parties));
   const hatches = mapHatchPatterns(marks, map.viewBox);
   if (hatches !== activeMap.hatches) {
     svg.querySelector(':scope > defs')?.remove();
@@ -1229,7 +1265,8 @@ function refreshResults() {
     syncFeedButton();
     renderConsoleStrip(event, office, seats);
     $('el-feed-banner').outerHTML = renderFeedBanner();
-    $('el-tally').outerHTML = renderTally(event, office, seats, unit);
+    const primaryOpen = $('el-tally').querySelector('.el-vic-primary')?.open;
+    $('el-tally').outerHTML = renderTally(event, office, seats, unit, Date.now(), primaryOpen);
     if (office.geometry) repaintMarks(document.querySelector('.el-chamber-svg'), chamberMarkup(event, office, seats));
     if (activeMap) updateMapMarks(partiesOf(event));
     for (const tile of document.querySelectorAll('.el-tile')) {
@@ -1687,10 +1724,18 @@ function renderDrawer(event, office, seat) {
     <a class="el-link" href="${event.officialUrl}" target="_blank" rel="noopener noreferrer">${L(event.officialLabel)} ↗</a>`;
 }
 
+function selectedTableRow() {
+  if (!isVicCouncil() || !state.raceId) return state.raceId;
+  const seats = seatCatalogue(state.event, state.office);
+  const area = seats.find((seat) => seat.seatId === state.raceId)?.area;
+  return seats.find((seat) => seat.area === area)?.seatId;
+}
+
 function markSelected() {
-  document.querySelectorAll('[data-row]').forEach((row) => row.classList.toggle('is-selected', row.dataset.row === state.raceId));
+  const selectedRow = selectedTableRow();
+  document.querySelectorAll('[data-row]').forEach((row) => row.classList.toggle('is-selected', row.dataset.row === selectedRow));
   document.querySelectorAll('.el-seat-link').forEach((link) => {
-    if (link.dataset.seat === state.raceId) link.setAttribute('aria-current', 'true');
+    if (link.dataset.seat === selectedRow) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
   });
 }
@@ -1744,8 +1789,10 @@ function syncSelection() {
 
 function render() {
   const now = new Date();
-  if (state.event) renderConsole(now);
-  else {
+  if (state.event) {
+    stopElectionHub();
+    renderConsole(now);
+  } else {
     syncFeed(null);
     renderElectionHub(now, lang);
   }

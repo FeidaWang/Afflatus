@@ -1,5 +1,6 @@
 import { ELECTION_EVENTS, PARTIES, daysUntil, eventById, eventPhase, nextEvent, railPositions } from '../lib/electionRules.js';
 import { createChamberLayout } from '../lib/chamberLayout.js';
+import { renderPartyBadge } from '../lib/electionPartyMarkup.js';
 import { VEC_POLLS_CLOSE, VEC_PUBLIC_FEED_BASE, isVecElectionNight } from '../config/electionSources.js';
 
 const $ = (id) => document.getElementById(id);
@@ -17,23 +18,55 @@ const resultsEvent = (now) => {
 };
 
 let hubCount = null;
-let hubCountLoad = null;
+let hubCheck = null;
+let repaintHubCount = null;
 
-/** Reads the published pointer and snapshot through the same gate as the workbench. Null when nothing is cleared. */
-async function loadHubCount(event) {
-  const [results, { seatCatalogue }] = await Promise.all([import('../lib/electionResults.js'), import('../lib/electionCatalogue.js')]);
-  const read = async (path) => {
-    const response = await fetch(`${VEC_PUBLIC_FEED_BASE}${event.id}/${path}`, { cache: 'no-cache', signal: AbortSignal.timeout(20000) });
-    return response.ok ? response.json() : null;
-  };
-  const pointer = await read('latest.json');
-  if (!pointer || results.pointerErrors(pointer).length) return null;
-  const snapshot = await read(`snapshots/${pointer.snapshotId}.json`);
-  if (!snapshot || results.snapshotErrors(snapshot).length || snapshot.snapshotId !== pointer.snapshotId) return null;
-  if (!results.feedAllowed(snapshot, window.location.hostname, { serverApprovedSource: 'vec-2026' })) return null;
-  const office = event.offices[0];
-  const tally = results.partyTally(seatCatalogue(event.id, office.id), results.seatStates(snapshot, pointer), PARTIES[event.family]);
-  return { tally, publishedAt: snapshot.publishedAt };
+export function stopElectionHub() {
+  hubCheck?.listeners.abort();
+  hubCheck?.feed?.stop();
+  hubCheck = null;
+  repaintHubCount = null;
+}
+
+/** The calendar and workbench use the same validated pointer and refresh policy. */
+async function startHubCount(event) {
+  if (hubCheck) return;
+  const check = { listeners: new AbortController(), feed: null };
+  hubCheck = check;
+  try {
+    const [results, { seatCatalogue }, { createFeedController, fetchFeedJson, VISIBLE_CHECK_MS }] = await Promise.all([
+      import('../lib/electionResults.js'), import('../lib/electionCatalogue.js'), import('../lib/electionFeed.js'),
+    ]);
+    if (hubCheck !== check) return;
+    check.feed = createFeedController({
+      base: VEC_PUBLIC_FEED_BASE,
+      eventId: event.id,
+      hostname: window.location.hostname,
+      serverApprovedSource: 'vec-2026',
+      fetchJson: fetchFeedJson,
+      isHidden: () => document.hidden,
+      visibleCheckMs: (now) => isVecElectionNight(now) ? 15_000 : VISIBLE_CHECK_MS,
+      onChange({ snapshot, pointer, status }) {
+        if (snapshot) {
+          const tally = results.partyTally(seatCatalogue(event.id, 'assembly'), results.seatStates(snapshot, pointer), PARTIES[event.family]);
+          const files = pointer.sources[0]?.feeds ?? [];
+          hubCount = {
+            tally,
+            assembly: results.vicOfficeCount(snapshot, 'assembly'),
+            council: results.vicOfficeCount(snapshot, 'council'),
+            fileTimes: Object.fromEntries(files.map(({ office, publishedAt }) => [office, publishedAt])),
+            delayed: status === 'error' || files.some((file) => file.status === 'error' || file.status === 'delayed') ||
+              results.ageSeconds(pointer.sources[0]?.lastCheckedAt, Date.now()) >= 20 * 60,
+          };
+        }
+        repaintHubCount?.();
+      },
+    });
+    document.addEventListener('visibilitychange', check.feed.visibilityChanged, { signal: check.listeners.signal });
+    await check.feed.start();
+  } catch {
+    if (hubCheck === check) hubCheck = null;
+  }
 }
 
 export function setElectionText(element, en, zh, lang) {
@@ -46,7 +79,7 @@ export function renderElectionHub(now, lang) {
   const T = (en, zh) => (lang === 'zh' ? zh : en);
   const L = (pair) => electionLabel(pair, lang);
   const setText = (element, en, zh) => setElectionText(element, en, zh, lang);
-  const eventHref = (event) => `?${new URLSearchParams({ event: event.id, office: event.offices[0].id })}`;
+  const eventHref = (event, office = event.offices[0].id) => `?${new URLSearchParams({ event: event.id, office })}`;
 
   function formatNow() {
     const options = { timeZone: 'Australia/Melbourne', day: 'numeric', month: 'short', year: 'numeric' };
@@ -115,16 +148,23 @@ export function renderElectionHub(now, lang) {
     if (!hubCount) return '';
     const office = event.offices[0];
     const parties = PARTIES[event.family].filter((party) => hubCount.tally[party.id].decided || hubCount.tally[party.id].leading);
-    const declared = parties.reduce((sum, party) => sum + hubCount.tally[party.id].decided, 0);
-    const time = new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-AU', { timeZone: 'Australia/Melbourne', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(hubCount.publishedAt));
     const segment = (party, count, kind) => (count ? `<i class="el-tally-seg is-${kind}" style="width:${(count / office.seats) * 100}%;--seat:${party.color}"></i>` : '');
     const rows = parties.map((party, index) => {
       const { decided, leading } = hubCount.tally[party.id];
       const mark = `<span class="el-tally-mark" style="left:${(office.majority / office.seats) * 100}%">${index === 0 ? `<span>${L(office.majorityLabel)}</span>` : ''}</span>`;
-      return `<div class="el-tally-row"><span class="el-tally-name">${L(party)}</span><div class="el-tally-bar">${segment(party, decided, 'decided')}${segment(party, leading, 'ahead')}${mark}</div><b>${decided + leading}</b></div>`;
+      return `<div class="el-tally-row" data-party-row="${party.id}"><span class="el-tally-name">${renderPartyBadge(event.family, party.id, 'sm')}<span>${L(party)}</span></span><div class="el-tally-bar" aria-hidden="true">${segment(party, decided, 'decided')}${segment(party, leading, 'leading')}${mark}</div><b>${decided + leading}</b></div>`;
     }).join('');
-    return `<div class="el-tally-rows">${rows}</div>
-      <p class="el-next-facts">${T(`Seats won or ahead on the current count · ${declared} declared · unofficial · ${time} Melbourne`, `已宣布或按当前计票领先的席位 · 已宣布 ${declared} 席 · 非正式结果 · 墨尔本时间 ${time}`)}</p>`;
+    return `${rows ? `<div class="el-tally-rows">${rows}</div><p class="el-next-facts">${T('Assembly seats declared or leading on the current 2CP count · 45 for majority', '下议院已宣布或按当前两候选人计票领先的席位 · 45 席过半')}</p>` : ''}
+      <p class="el-next-facts">${renderHubReporting()}</p>`;
+  }
+
+  function renderHubReporting() {
+    if (!hubCount) return '';
+    const { assembly, council, fileTimes, delayed } = hubCount;
+    const time = new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-AU', { timeZone: 'Australia/Melbourne', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const fromFile = (office) => fileTimes[office] ? ` · ${time.format(new Date(fileTimes[office]))}` : '';
+    return `${T(`Assembly ${assembly.reported}/88 districts reporting · ${assembly.declared} declared`, `下议院 ${assembly.reported}/88 个选区已报票 · ${assembly.declared} 席已宣布`)}${fromFile('assembly')}
+      <br>${T(`Council ${council.reported}/8 regions reporting · ${council.declared} declared`, `上议院 ${council.reported}/8 个大区已报票 · ${council.declared} 个大区已宣布`)}${fromFile('council')}${delayed ? ` · ${T('Updates delayed', '更新延迟')}` : ''}`;
   }
 
   function renderResultsCard(event) {
@@ -135,14 +175,17 @@ export function renderElectionHub(now, lang) {
         <h2 id="el-next-title">${night ? T('Victoria is counting', '维多利亚州正在计票') : T('Victoria: the count so far', '维多利亚州：目前计票结果')}</h2>
         <p class="el-next-facts">${officeFacts(event)} · ${L(event.extraFact)}</p>
         <div class="el-hub-count" id="el-hub-count">${renderHubCount(event)}</div>
-        <a class="el-btn" href="${eventHref(event)}" data-nav>${night ? T('See live results', '查看实时结果') : T('See results', '查看结果')} →</a>
+        <div class="el-hub-offices"><a class="el-btn" href="${eventHref(event)}" data-nav>${T('Assembly results', '下议院结果')} →</a>
+        <a class="el-btn el-btn-o" href="${eventHref(event, 'council')}" data-nav>${T('Council results', '上议院结果')} →</a></div>
       </div>
     </section>`;
   }
 
   function renderCard(event, wide = false) {
     const phase = eventPhase(event, now);
-    const pill = phase === 'past'
+    const pill = phase === 'past' && event.id === 'vic-2026'
+      ? `<span class="el-pill" id="el-vic-card-count">${renderHubReporting()}</span>`
+      : phase === 'past'
       ? `<span class="el-pill">${T('Voted · no verified results loaded', '已投票 · 未加载经核验的结果')}</span>`
       : '';
     return `<li class="el-card${wide ? ' el-card-wide' : ''}">
@@ -162,9 +205,6 @@ export function renderElectionHub(now, lang) {
 
   const lead = resultsEvent(now.getTime());
   const strip = $('el-strip');
-  strip.dataset.mode = lead ? 'live' : 'preview';
-  if (lead) setText($('el-strip-flag'), 'Unofficial results', '非正式结果');
-  else setText($('el-strip-flag'), 'Preview', '预览');
   $('el-strip-meta').innerHTML = `<span>5 ${T('events', '场')}</span><span>AEDT · ET</span>`;
 
   setText($('el-title-main'), 'ELECTIONS', '选举');
@@ -180,17 +220,22 @@ export function renderElectionHub(now, lang) {
 
   const next = lead || nextEvent(now);
   const others = ELECTION_EVENTS.filter((event) => event !== next);
-  if (lead && !hubCountLoad) {
-    hubCountLoad = loadHubCount(lead).catch(() => null).then((count) => {
-      hubCount = count;
-      const host = $('el-hub-count');
-      if (count && host) renderElectionHub(new Date(), electionLocale());
-    });
-  }
   $('el-view').innerHTML = `${renderRail()}
     <div class="el-bento">
       ${lead ? renderResultsCard(lead) : next ? renderNextCard(next) : ''}
       <ul class="el-cards">${others.map((event, index) => renderCard(event, index === 0)).join('')}</ul>
     </div>
     <p class="el-foot">${T('Australia/Melbourne & America/New_York · Checked against official sources Nov 2026.', '墨尔本与纽约时区 · 2026 年 11 月对照官方来源核对。')}</p>`;
+  repaintHubCount = () => {
+    const hasResults = Boolean(lead && hubCount);
+    strip.dataset.mode = hasResults ? 'live' : 'preview';
+    if (hasResults) setText($('el-strip-flag'), 'Unofficial results', '非正式结果');
+    else setText($('el-strip-flag'), 'Preview', '预览');
+    const countHost = $('el-hub-count');
+    if (countHost) countHost.innerHTML = renderHubCount(lead);
+    const cardHost = $('el-vic-card-count');
+    if (cardHost) cardHost.innerHTML = renderHubReporting();
+  };
+  repaintHubCount();
+  if (now.getTime() >= Date.parse(VEC_POLLS_CLOSE)) void startHubCount(eventById('vic-2026'));
 }
