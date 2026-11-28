@@ -39,8 +39,8 @@ const MAPS = Object.freeze({
     areaLabel: { en: 'Region', zh: '大区' },
     short: { en: 'District boundaries · 2021 redivision', zh: '选区边界 · 2021 年重划' },
     credit: { en: 'Vicmap Admin · © State Government of Victoria, CC BY 4.0', zh: 'Vicmap Admin · © State Government of Victoria，CC BY 4.0' },
-    source: { en: 'Vicmap Admin, State Assembly 2022, from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Names as published. Simplified for display.', zh: 'Vicmap Admin 州下院 2022，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。名称按官方数据。已为显示简化。' },
-    swing: { en: '2022 baseline loaded; swing awaits 2026 count.', zh: '已加载 2022 年官方基准；摆幅待 2026 开票后计算。' },
+    source: { en: 'Vicmap Admin, Legislative Assembly boundaries from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Names as published. Simplified for display.', zh: 'Vicmap Admin 立法议会选区边界，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。名称按官方数据。已为显示简化。' },
+    swing: null,
   },
   'vic-2026/council': {
     map: 'vic-council',
@@ -48,8 +48,8 @@ const MAPS = Object.freeze({
     areaLabel: { en: 'Region', zh: '大区' },
     short: { en: 'Region boundaries · 2021 redivision', zh: '大区边界 · 2021 年重划' },
     credit: { en: 'Vicmap Admin · © State Government of Victoria, CC BY 4.0', zh: 'Vicmap Admin · © State Government of Victoria，CC BY 4.0' },
-    source: { en: 'Vicmap Admin, State Council 2022, from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Each region elects five members, so a region never shows one winner.', zh: 'Vicmap Admin 州上院 2022，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。每个大区选出五席，因此大区不会显示单一赢家。' },
-    swing: { en: '2022 baseline loaded; swing awaits 2026 count.', zh: '已加载 2022 年官方基准；摆幅待 2026 开票后计算。' },
+    source: { en: 'Vicmap Admin, Legislative Council boundaries from the 2021 redivision. © State Government of Victoria, CC BY 4.0. Each region elects five members, so a region never shows one winner.', zh: 'Vicmap Admin 立法院大区边界，来自 2021 年重划。© State Government of Victoria，CC BY 4.0。每个大区选出五席，因此大区不会显示单一赢家。' },
+    swing: null,
   },
   'nsw-2027/assembly': {
     map: 'nsw-assembly',

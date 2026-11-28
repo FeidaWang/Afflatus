@@ -173,9 +173,6 @@ while upcoming elections have not yet reported votes. Upstream source URLs,
 retrieval timestamps, workbook SHA-256 digests and output digests are recorded
 in that folder's `manifest.json`:
 
-- © State Government of Victoria (Victorian Electoral Commission), 2022
-  Victorian state election results (including the 2023 Narracan supplementary
-  election), Creative Commons Attribution 4.0 International (CC BY 4.0).
 - © State of New South Wales (NSW Electoral Commission), 2023 New South Wales
   state general election Legislative Assembly results, Creative Commons
   Attribution (CC BY).

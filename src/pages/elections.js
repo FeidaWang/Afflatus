@@ -370,8 +370,7 @@ function syncWorkbenchOrder() {
 function renderVicContext(event, office, now = Date.now()) {
   if (event.id !== 'vic-2026' || office.id !== 'assembly') return '';
   const races = officeRacesOf(office.id);
-  const baseline = isBaselineForOffice(office.id);
-  const hasResults = races.length > 0 && !baseline;
+  const hasResults = races.length > 0;
   const source = shown?.pointer?.sources?.[0];
   const assembly = source?.feeds?.find((item) => item.office === office.id);
   const delayed = !isReplay() && !feed?.state.paused && source && ageSeconds(source.lastCheckedAt, now) >= 20 * 60;
@@ -388,11 +387,9 @@ function renderVicContext(event, office, now = Date.now()) {
 
   const counting = races.filter((race) => race.counting.status !== 'no_votes' || race.decision.status === 'certified').length;
   const declared = races.filter((race) => race.decision.status === 'certified').length;
-  const metrics = baseline
-    ? `<span><b>${L(shown.snapshot.baselineLabel)}</b> · ${declared}/${office.seats} ${T('declared', '已宣布')}</span>`
-    : hasResults
-      ? `<span><b>${counting}</b>/${office.seats} ${T('districts reporting', '选区已报票')}</span><span><b>${declared}</b> ${T('declared', '已宣布')}</span>`
-      : '';
+  const metrics = hasResults
+    ? `<span><b>${counting}</b>/${office.seats} ${T('districts reporting', '选区已报票')}</span><span><b>${declared}</b> ${T('declared', '已宣布')}</span>`
+    : '';
   const officialHref = beforeClose && !hasResults ? 'https://www.vec.vic.gov.au/electoral-boundaries/state-districts' : event.officialUrl;
   const officialText = beforeClose && !hasResults ? T('VEC districts', 'VEC 选区') : T('VEC official', 'VEC 官方');
   return `<div class="el-tally-context" id="el-vic-summary">
@@ -855,7 +852,12 @@ function sourceAgeCell(race) {
   return `<td class="el-opt el-num${stale ? ' is-stale' : ''}" title="${esc(formatTime(race.provenance.sourceUpdatedAt))}">${age}${stale ? ` · ${T('stale', '已过时')}` : ''}</td>`;
 }
 
-const swingNote = (event, office) => geographyFor(event.id, office.id)?.swing || { en: 'Not computed: no verified baseline is loaded.', zh: '未计算：尚未加载经核验的基准。' };
+function renderSwing(event, office) {
+  const swing = geographyFor(event.id, office.id)?.swing;
+  if (swing === null) return '';
+  const note = swing ? L(swing) : T('Not computed: no verified baseline is loaded.', '未计算：尚未加载经核验的基准。');
+  return `<dt>${T('Swing', '摆动')}</dt><dd>${note}</dd>`;
+}
 
 function renderSourcesInner(event, seats) {
   const vocabulary = statusVocabulary(event);
@@ -879,7 +881,7 @@ function renderSourcesInner(event, seats) {
       ${isBaselineForOffice(office.id) ? `<dt>${T('Baseline', '上届基准')}</dt><dd>${L(shown.snapshot.baselineDetail)}</dd>` : ''}
       ${source ? `<dt>${T('Feed status', '数据源状态')}</dt><dd>${feedStatusText(source)}</dd>` : ''}
       <dt>${T('Geography', '地理')}</dt><dd>${geography ? L(geography.source) : T('Schematic only · no verified boundaries', '仅示意 · 无经核验的边界')}</dd>
-      <dt>${T('Swing', '摆动')}</dt><dd>${L(swingNote(event, office))}</dd>
+      ${renderSwing(event, office)}
       <dt>${T('Polls', '投票')}</dt><dd>${L(event.dateLabel)} · ${L(event.pollsClose)}</dd>
       <dt>${T('Voting', '投票制度')}</dt><dd>${L(event.votingSystem)}</dd>
       ${isReplay() ? `<dt>${T('Recorded', '记录时间')}</dt><dd>${formatTime(shown.snapshot.publishedAt)}</dd>` : `<dt>${T('Last check', '上次检查')}</dt><dd>${source ? formatTime(source.lastCheckedAt) : DASH}</dd>`}
@@ -1655,7 +1657,7 @@ function renderRaceDrawer(event, office, seat, race) {
     <dl class="el-kv">
       <dt>${T('Decided by', '判定方')}</dt><dd>${decisionText(event, race)}</dd>
       <dt>${T('Progress', '进度')}</dt><dd>${progress || (race.counting.status === 'recount' ? T('Recount: only contest totals are published', '重新计票：只发布比赛总数') : DASH)}</dd>
-      <dt>${T('Swing', '摆动')}</dt><dd>${L(swingNote(event, office))}</dd>
+      ${renderSwing(event, office)}
       <dt>${T('Source time', '来源时间')}</dt><dd>${formatTime(provenance.sourceUpdatedAt)}</dd>
     </dl>
     <a class="el-link" href="${event.officialUrl}" target="_blank" rel="noopener noreferrer">${L(event.officialLabel)} ↗</a>`;
@@ -1679,7 +1681,7 @@ function renderDrawer(event, office, seat) {
     ${seat.contest === 'special' ? `<p class="el-note">${T('Special contest in 2026.', '2026 年特别选举。')}</p>` : ''}
     ${!onBallot ? `<p class="el-note">${T(`This seat is not on the ${electionYear(event)} ballot.`, `此席位不在 ${electionYear(event)} 年改选之列。`)}</p>` : ''}
     <dl class="el-kv">
-      ${onBallot ? `<dt>${T('Swing', '摆动')}</dt><dd>${L(swingNote(event, office))}</dd>` : ''}
+      ${onBallot ? renderSwing(event, office) : ''}
       <dt>${T('Decided by', '判定方')}</dt><dd>${L(event.decision)}</dd>
     </dl>
     <a class="el-link" href="${event.officialUrl}" target="_blank" rel="noopener noreferrer">${L(event.officialLabel)} ↗</a>`;

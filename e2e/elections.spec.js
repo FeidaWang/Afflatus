@@ -81,13 +81,13 @@ test.describe('Elections console', () => {
     await expect(page.locator('[data-office="assembly"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.el-tally-mark').first()).toContainText('45 for majority');
     await expect(page.locator('#el-tally')).toContainText('Labor');
-    await expect(page.locator('.el-strip b')).toHaveText('2022 baseline');
-    await expect(page.locator('.el-strip')).toContainText('Coverage 88/88');
+    await expect(page.locator('.el-strip b')).toHaveText('Preview');
+    await expect(page.locator('.el-strip')).toContainText('Coverage 0/88');
     await expect(page.locator('#el-sources')).toBeHidden();
     await page.locator('#el-source-btn').click();
     await expect(page.locator('#el-sources')).toBeVisible();
     await expect(page.locator('#el-sources')).toContainText('VEC results feed: not connected');
-    await expect(page.locator('#el-sources')).toContainText('VEC 2022 Victorian state election · official final results');
+    await expect(page.locator('#el-sources')).not.toContainText(/2022|Baseline|Swing/);
     await page.keyboard.press('Escape');
     await expect(page.locator('#el-sources')).toBeHidden();
     await noOverflow(page);
@@ -245,7 +245,7 @@ test.describe('Elections console', () => {
   test('the Chinese document translates the rules', async ({ page }) => {
     await page.goto('/zh/elections.html?event=vic-2026');
     await expect(page.locator('h1')).toContainText('维州 2026');
-    await expect(page.locator('.el-strip b')).toHaveText('上届基准 · 2022');
+    await expect(page.locator('.el-strip b')).toHaveText('预览');
     await expect(page.locator('#el-tally')).toContainText('工党');
     await noOverflow(page);
   });
@@ -402,7 +402,7 @@ test.describe('Elections map', () => {
   const MAPS = [
     ['us-2026', 'house', 'us-house', 435, 'TIGER/Line 2026', 0],
     ['us-2026', 'senate', 'us-senate', 50, 'Cartographic Boundary 2025', 0],
-    ['vic-2026', 'assembly', 'vic-assembly', 88, 'Vicmap Admin', 88],
+    ['vic-2026', 'assembly', 'vic-assembly', 88, 'Vicmap Admin', 0],
     ['vic-2026', 'council', 'vic-council', 8, 'Vicmap Admin', 0],
     ['nsw-2027', 'assembly', 'nsw-assembly', 93, 'NSW Administrative Boundaries', 93],
   ];
@@ -660,7 +660,7 @@ test.describe('Elections map', () => {
     await expect(page.locator('.el-table thead')).toContainText('Region');
     await expect(page.locator('.el-table thead')).not.toContainText('Swing');
     await expect(page.locator('[data-row="albert-park"] td').first()).not.toHaveText('—');
-    await expect(page.locator('[data-row="albert-park"]')).toContainText('TAYLOR, Nina');
+    await expect(page.locator('[data-row="albert-park"]')).toContainText('No result');
     await page.goto(console_('event=nsw-2027'));
     await expect(page.locator('.el-table thead')).not.toContainText('Region');
     await expect(page.locator('.el-table thead')).not.toContainText('State');
@@ -853,18 +853,18 @@ test.describe('Elections feed', () => {
     await expect(page.locator('.el-strip b')).toHaveText('Synthetic test data');
   };
 
-  test('before polls close the production path asks for no live feed and shows the labelled 2022 baseline', async ({ page }) => {
+  test('before polls close Victoria shows an empty preview and fetches no result data', async ({ page }) => {
     const urls = [];
     page.on('request', (request) => urls.push(request.url()));
     await page.goto(console_('event=vic-2026'));
     await expect(page.locator('.el-chamber-svg .el-seat')).toHaveCount(88);
     await page.waitForLoadState('networkidle');
-    expect(urls.filter((url) => /elections-feed|snapshots|civicapi|vec\.vic|latest\.json/.test(url))).toEqual([]);
-    await expect(page.locator('.el-strip b')).toHaveText('2022 baseline');
-    await expect(page.locator('.el-seat.is-final')).toHaveCount(88);
+    expect(urls.filter((url) => /elections-feed|snapshots|baselines|civicapi|vec\.vic|latest\.json/.test(url))).toEqual([]);
+    await expect(page.locator('.el-strip b')).toHaveText('Preview');
+    await expect(page.locator('.el-seat.is-final')).toHaveCount(0);
     await expect(page.locator('#el-feed-toggle')).toHaveCount(0);
     await expect(page.locator('#el-replay')).toBeHidden();
-    await expect(page.locator('.el-tally-seg')).toHaveCount(3);
+    await expect(page.locator('.el-tally-seg')).toHaveCount(0);
   });
 
   test('live-filters and selects a district from the dock search bar', async ({ page }) => {
@@ -986,6 +986,8 @@ test.describe('Elections feed', () => {
     await expect(page.locator('#el-foot')).toContainText('Synthetic test data on this computer only');
     await row(page, 'albert-park').locator('button').click();
     await expect(page.locator('#el-drawer')).toContainText('Synthetic test data. Not a real result.');
+    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two) img[src$="/au-liberal.svg"]')).toHaveCount(1);
+    await expect(page.locator('#el-drawer .el-cands-two img[src$="/au-liberal.svg"]')).toHaveCount(1);
     if (!isMobile) await noOverflow(page);
   });
 
@@ -1311,19 +1313,16 @@ test.describe('Elections civicAPI', () => {
     const requests = await serveCivic(page);
     await page.goto(HUB);
     await page.goto(console_('event=vic-2026'));
-    await expect(page.locator('.el-strip b')).toHaveText('2022 baseline');
+    await expect(page.locator('.el-strip b')).toHaveText('Preview');
     expect(requests).toEqual([]);
   });
 
   test('renders official party SVG emblems across US and Australian views including dual Coalition partners', async ({ page }) => {
     await page.goto(console_('event=vic-2026&office=assembly&race=bass'));
-    await expect(page.locator('.el-tally-row[data-party-row="labor"] img[src$="/au-alp.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-row[data-party-row="coalition"] img[src$="/au-liberal.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-row[data-party-row="coalition"] img[src$="/au-nationals.svg"]')).toHaveCount(1);
-    await expect(page.locator('.el-tally-row[data-party-row="greens"] img[src$="/au-greens.svg"]')).toHaveCount(1);
-    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two) img[src$="/au-liberal.svg"]')).toHaveCount(1);
-    await expect(page.locator('#el-drawer .el-cands:not(.el-cands-two) img[src$="/au-nationals.svg"]')).toHaveCount(1);
-    await expect(page.locator('#el-drawer .el-cands-two img[src$="/au-liberal.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-keys [data-party="labor"] img[src$="/au-alp.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-keys [data-party="coalition"] img[src$="/au-liberal.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-keys [data-party="coalition"] img[src$="/au-nationals.svg"]')).toHaveCount(1);
+    await expect(page.locator('.el-tally-keys [data-party="greens"] img[src$="/au-greens.svg"]')).toHaveCount(1);
     const loaded = await page.locator('.el-party-icon').evaluateAll((imgs) => imgs.every((img) => img.complete && img.naturalWidth > 0));
     expect(loaded).toBe(true);
 
@@ -1336,19 +1335,19 @@ test.describe('Elections civicAPI', () => {
 
   test('paints districts progressively on first entry and respects prefers-reduced-motion', async ({ page, isMobile }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.goto(console_('event=vic-2026&office=assembly'));
+    await page.goto(console_('event=nsw-2027&office=assembly'));
     if (!isMobile) {
       await expect.poll(async () => {
         const count = await page.locator('.el-map-svg [style*="--seat"]').count();
         const sweeping = await page.evaluate(() => document.body.dataset.sweeping === 'true');
-        return sweeping && count < 88;
+        return sweeping && count < 93;
       }, { timeout: 2500 }).toBe(true);
-      await expect(page.locator('.el-map-svg [style*="--seat"]')).toHaveCount(88);
+      await expect(page.locator('.el-map-svg [style*="--seat"]')).toHaveCount(93);
     }
-    await expect(page.locator('.el-chamber-svg .el-seat.is-final')).toHaveCount(88);
+    await expect(page.locator('.el-chamber-svg .el-seat.is-final')).toHaveCount(93);
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(console_('event=nsw-2027&office=assembly'));
+    await page.reload();
     await expect(page.locator('.el-chamber-svg .el-seat.is-final')).toHaveCount(93);
     const reducedSweeping = await page.evaluate(() => document.body.dataset.sweeping === 'true');
     expect(reducedSweeping).toBe(false);
@@ -1372,10 +1371,10 @@ test.describe('Elections civicAPI', () => {
       await page.goto(url);
       await page.locator('.el-table tbody tr').first().waitFor();
       if (url === console_('event=vic-2026&office=assembly')) {
-        await expect(page.locator('.el-strip b')).toHaveText('2022 baseline');
+        await expect(page.locator('.el-strip b')).toHaveText('Preview');
         await page.locator('[data-expand]').click();
       } else if (url === '/zh/elections.html?event=vic-2026&office=assembly') {
-        await expect(page.locator('.el-strip b')).toHaveText('上届基准 · 2022');
+        await expect(page.locator('.el-strip b')).toHaveText('预览');
       } else if (url === console_('event=nsw-2027&office=assembly')) {
         await expect(page.locator('.el-strip b')).toHaveText('2023 baseline');
       }

@@ -69,27 +69,11 @@ describe('official prior-election baselines', () => {
     }
   });
 
-  it('validates VIC 2022 baseline with exact 56/28/4 Assembly tally and neutral multi-member Council regions', () => {
-    const meta = baselineFor('vic-2026');
-    expect(baselineUrl(meta.file)).toBe(`/assets/elections/baselines/${BASELINE_VERSION}/vic-2022.json`);
-    const vic = readJson(`public${baselineUrl(meta.file)}`);
-    expect(validateElectionBaseline(vic)).toEqual({ ok: true, errors: [] });
-
-    const states = seatStates(vic);
-    const races = raceIndex(vic);
-    const assemblySeats = seatCatalogue('vic-2026', 'assembly');
-    const councilSeats = seatCatalogue('vic-2026', 'council');
-    expect(coveredSeats(assemblySeats, races)).toBe(88);
-    expect(coveredSeats(councilSeats, races)).toBe(40);
-    expect(partyTally(assemblySeats, states, PARTIES.au)).toEqual({
-      labor: { decided: 56, leading: 0 },
-      coalition: { decided: 28, leading: 0 },
-      greens: { decided: 4, leading: 0 },
-      onenation: { decided: 0, leading: 0 },
-      teal: { decided: 0, leading: 0 },
-      other: { decided: 0, leading: 0 },
-    });
-    expect(councilSeats.every((seat) => states[seat.seatId] === undefined)).toBe(true);
+  it('publishes no historical Victorian baseline or downloadable result file', () => {
+    expect(baselineFor('vic-2026')).toBeNull();
+    expect(existsSync(`public${baselineUrl('vic-2022')}`)).toBe(false);
+    const manifest = readJson(`public/assets/elections/baselines/${BASELINE_VERSION}/manifest.json`);
+    expect(Object.values(manifest.files).map(({ eventId }) => eventId)).not.toContain('vic-2026');
   });
 
   it('validates NSW 2023 baseline with exact 45/36/3/9 Assembly tally', () => {

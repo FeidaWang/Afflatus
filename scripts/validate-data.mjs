@@ -79,7 +79,7 @@ const CHECKS = [
   ...['us-house', 'us-senate', 'vic-assembly', 'vic-council', 'nsw-assembly'].map((map) => ({ path: `public/assets/elections/maps/2026-11-04/${map}.json`, validate: validateElectionMap })),
   { path: 'public/assets/elections/parties/manifest.json', validate: validateElectionPartyLogosManifest },
   { path: 'public/assets/elections/baselines/2026-11-13/manifest.json', validate: validateElectionBaselineManifest },
-  ...['vic-2022', 'nsw-2023'].map((baseline) => ({ path: `public/assets/elections/baselines/2026-11-13/${baseline}.json`, validate: validateElectionBaseline })),
+  { path: 'public/assets/elections/baselines/2026-11-13/nsw-2023.json', validate: validateElectionBaseline },
   { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
   { path: 'public/assets/globe/earth-land.json', validate: validateGlobeData },
   { path: 'public/sectors-data.json', validate: validateSectorsData },

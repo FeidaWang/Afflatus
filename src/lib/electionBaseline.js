@@ -8,14 +8,6 @@ import { snapshotErrors } from './electionResults.js';
 export const BASELINE_VERSION = '2026-11-13';
 
 const BASELINES = Object.freeze({
-  'vic-2026': Object.freeze({
-    file: 'vic-2022',
-    year: 2022,
-    label: { en: '2022 baseline', zh: '上届基准 · 2022' },
-    detail: { en: 'VEC 2022 Victorian state election · official final results', zh: 'VEC 2022 年维州选举 · 官方最终结果' },
-    credit: { en: 'Baseline: © State Government of Victoria (VEC), CC BY 4.0', zh: '上届基准：© State Government of Victoria（VEC），CC BY 4.0' },
-    drawerNote: { en: '2022 state election baseline · 2026 polls close 28 Nov', zh: '上届基准（2022 年州选举）· 本届于 11 月 28 日开票' },
-  }),
   'nsw-2027': Object.freeze({
     file: 'nsw-2023',
     year: 2023,
